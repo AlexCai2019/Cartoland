@@ -14,6 +14,10 @@ public class MessageHandle implements GenericMessageHandle
             case ".invite":
                 return "https://discord.gg/UMYxwHyRNE";
 
+            case ".help":
+                commandName = "help";
+                break;
+
             case ".cmd":
                 commandName = "cmd";
                 break;

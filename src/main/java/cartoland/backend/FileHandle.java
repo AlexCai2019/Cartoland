@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class FileHandle
 {
@@ -45,7 +46,7 @@ public class FileHandle
         {
             //一定要事先備好logs資料夾
             FileWriter logWriter = new FileWriter("logs/" + LocalDate.now(), true);
-            logWriter.write(output + "\n");
+            logWriter.write(LocalTime.now() + " " + output + "\n"); //時間 內容 換行
             logWriter.close();
         }
         catch (IOException e)

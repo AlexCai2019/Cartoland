@@ -33,7 +33,7 @@ public class ChannelMessage extends ListenerAdapter
 
         if (member.getIdLong() == 355953951469731842L) //是我自己
         {
-            ret = adminHandle.commandProcess(Long.toString(355953951469731842L), messages);
+            ret = adminHandle.commandProcess("355953951469731842", messages);
             if (ret != null)
                 channel.sendMessage(ret).queue();
         }

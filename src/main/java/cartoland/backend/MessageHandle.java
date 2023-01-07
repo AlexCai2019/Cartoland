@@ -38,8 +38,8 @@ public class MessageHandle implements GenericMessageHandle
 
         jsonHandle.lastUse(userID);
 
-        if (messages.length == 1) //如果指令沒有參數
+        if (messages.length == 1) //如果傳入的指令沒有引數
             return jsonHandle.command(commandName);
-        return jsonHandle.command(commandName, messages[1]); //指令有一個參數
+        return jsonHandle.command(commandName, messages[1]); //指令有一個引數
     }
 }

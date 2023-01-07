@@ -2,6 +2,7 @@ package cartoland.backend;
 
 public class AdminHandle implements GenericMessageHandle
 {
+    //TODO: 考慮重新設計前後端系統 藉此完善管理員控制
     @Override
     public String commandProcess(String userID, String[] messages)
     {

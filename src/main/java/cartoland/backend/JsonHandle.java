@@ -11,7 +11,7 @@ public class JsonHandle
     private final JSONObject usersFile = new JSONObject(fileHandle.buildJsonStringFromFile("users.json")); //使用者的語言設定
     private final HashMap<Integer, JSONObject> languageFileMap= new HashMap<>();
 
-    private JSONObject file = null; //在setLang中獲得這個ID對應的語言檔案 並在指令中使用
+    private JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
     private String id = null;
 
     JsonHandle()

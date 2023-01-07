@@ -2,3 +2,5 @@
 /target/
 # Project exclude paths
 /out/
+protocol.txt
+system_analysis.png

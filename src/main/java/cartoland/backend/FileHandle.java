@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 public class FileHandle
 {
+    //將JSON讀入進字串
     String buildJsonStringFromFile(String fileName)
     {
         try
@@ -42,6 +43,7 @@ public class FileHandle
     {
         try
         {
+            //一定要事先備好logs資料夾
             FileWriter logWriter = new FileWriter("logs/" + LocalDate.now(), true);
             logWriter.write(output + "\n");
             logWriter.close();

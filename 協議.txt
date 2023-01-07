@@ -1,0 +1,8 @@
+Maps 地圖指令開發討論協會(以下簡稱Maps)和創世聯邦 Cartoland(以下簡稱Cartoland)，現在就合併事宜，由Maps方開出條件：
+1. 原Maps管理員(截至2021年12月13日前獲得的身分組)若有意願，在經過米格Mega同意後可直接成為Cartoland管理員。
+2. 原Maps成員(截至2021年12月13日前獲得的身分組)若有意願，可直接加入Cartoland。
+2. Maps不予刪除，其將會仿照Vertex Creation的模式進行封存。
+3. Cartoland需提供一唯讀頻道放置Maps連結，並說明其為舊資料儲存伺服器。(Maps連結：https://discord.gg/ygHqRZt)
+4. Maps也須開設一個唯讀頻道放置Cartoland連結。
+5. Cartoland方不可在沒有任何知會與討論的情況下，隨意刪除或削減原Maps管理員的權限。
+6. 上述事項由所有在職Cartoland管理員討論而通過並實施，修正時亦同。

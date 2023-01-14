@@ -1,7 +1,21 @@
 {
+	"help.begin": "Available commands: `",
+	"help.end": "`",
+	"help.fail": "Invalid ask, please try to use `/help` to check every available commands.",
+	"help.list":
+	[
+		"cmd",
+		"faq",
+		"dtp",
+		"lang"
+	],
+	"help.name.cmd": "Syntax: `/cmd [<command>]`",
+	"help.name.faq": "Syntax: `/faq [<question>]`",
+	"help.name.dtp": "Syntax: `/dtp [<datapack feature>]`",
+	"help.name.lang": "Syntax: `/lang [<code>]`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",
-	"cmd.fail": "Invalid command, please try to use `.cmd` to check every commands.",
+	"cmd.fail": "Invalid command, please try to use `/cmd` to check every commands.",
 	"cmd.list":
 	[
 		"advancement",
@@ -163,7 +177,7 @@
 	"cmd.name.xp": "https://minecraft.fandom.com/wiki/Commands/xp",
 	"faq.begin": "`Questions: ",
 	"faq.end": "`",
-	"faq.fail": "Invalid question, please try to use `.faq` to check every questions.",
+	"faq.fail": "Invalid question, please try to use `/faq` to check every questions.",
 	"faq.list":
 	[
 		"slots",
@@ -178,7 +192,7 @@
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`Datapack features: ",
 	"dtp.end": "`",
-	"dtp.fail": "Invalid datapack feature, please try to use `.faq` to check every datapack features.",
+	"dtp.fail": "Invalid datapack feature, please try to use `/dtp` to check every datapack features.",
 	"dtp.list":
 	[
 		"advancements",
@@ -240,7 +254,7 @@
 	"dtp.name.wg": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
 	"dtp.name.w": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
-	"lang.begin": "Language settings: `.lang [<code>]`\n",
+	"lang.begin": "Language settings: `/lang [<code>]`\n",
 	"lang.end": "",
 	"lang.fail": "Invalid language setting.",
 	"lang.list":

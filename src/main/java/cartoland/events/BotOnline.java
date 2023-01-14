@@ -1,6 +1,7 @@
-package cartoland.frontend;
+package cartoland.events;
 
-import cartoland.backend.FileHandle;
+import cartoland.Cartoland;
+import cartoland.utility.FileHandle;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,7 +13,7 @@ public class BotOnline extends ListenerAdapter
     public void onReady(@NotNull ReadyEvent event)
     {
         super.onReady(event);
-        TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Main.BOT_CHANNEL_ID); //創聯的機器人頻道
+        TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID); //創聯的機器人頻道
         if (channel != null)
         {
             channel.sendMessage("Cartoland Bot is now online").queue();

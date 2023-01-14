@@ -1,4 +1,4 @@
-package cartoland.backend;
+package cartoland.utility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,8 +34,9 @@ public class JsonHandle
         id = userID;
     }
 
-    static String command(String typeCommandName)
+    public static String command(String userID, String typeCommandName)
     {
+        lastUse(userID);
         StringBuilder builder = new StringBuilder();
         builder.append(file.getString(typeCommandName + ".begin")); //開頭
         JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
@@ -45,8 +46,9 @@ public class JsonHandle
         return builder.toString();
     }
 
-    static String command(String typeCommandName, String argument)
+    public static String command(String userID, String typeCommandName, String argument)
     {
+        lastUse(userID);
         String fileKey = typeCommandName + ".name." + argument;
         if (file.has(fileKey))
         {

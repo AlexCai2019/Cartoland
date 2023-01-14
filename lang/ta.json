@@ -1,7 +1,7 @@
 {
 	"help.begin": "可用指令: `",
 	"help.end": "`",
-	"help.fail": "無效的詢問，請試看覓使用`.help`查看所有指令。",
+	"help.fail": "無效的詢問，請試看覓使用`/help`查看所有指令。",
 	"help.list":
 	[
 		"cmd",
@@ -9,13 +9,13 @@
 		"dtp",
 		"lang"
 	],
-	"help.name.cmd": "格式: `.cmd [<指令>]`",
-	"help.name.faq": "格式: `.faq [<問題>]`",
-	"help.name.dtp": "格式: `.dtp [<資料包功能>]`",
-	"help.name.lang": "格式: `.lang [<代碼>]`",
+	"help.name.cmd": "格式: `/cmd [<指令>]`",
+	"help.name.faq": "格式: `/faq [<問題>]`",
+	"help.name.dtp": "格式: `/dtp [<資料包功能>]`",
+	"help.name.lang": "格式: `/lang [<代碼>]`",
 	"cmd.begin": "`指令: ",
 	"cmd.end": "`",
-	"cmd.fail": "無效的指令，請試看覓使用`.cmd`查看所有指令。",
+	"cmd.fail": "無效的指令，請試看覓使用`/cmd`查看所有指令。",
 	"cmd.list":
 	[
 		"advancement",
@@ -177,7 +177,7 @@
 	"cmd.name.xp": "https://minecraft.fandom.com/zh/wiki/命令/xp?variant=zh-tw",
 	"faq.begin": "`問題: ",
 	"faq.end": "`",
-	"faq.fail": "無效的問題，請試看覓使用`.faq`查看所有問題。",
+	"faq.fail": "無效的問題，請試看覓使用`/faq`查看所有問題。",
 	"faq.list":
 	[
 		"slots",
@@ -192,7 +192,7 @@
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`資料包功能: ",
 	"dtp.end": "`",
-	"dtp.fail": "無效的資料包功能，請試看覓使用`.dtp`查看所有資料包功能。",
+	"dtp.fail": "無效的資料包功能，請試看覓使用`/dtp`查看所有資料包功能。",
 	"dtp.list":
 	[
 		"advancements",
@@ -254,7 +254,7 @@
 	"dtp.name.wg": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"dtp.name.w": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
-	"lang.begin": "話語設定: `.lang [<代碼>]`\n",
+	"lang.begin": "話語設定: `/lang [<代碼>]`\n",
 	"lang.end": "",
 	"lang.fail": "無效的話語設定。",
 	"lang.list":

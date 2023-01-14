@@ -1,7 +1,21 @@
 {
+	"help.begin": "可用命令: `",
+	"help.end": "`",
+	"help.fail": "无效的询问，请尝试使用`/help`查看所有命令。",
+	"help.list":
+	[
+		"cmd",
+		"faq",
+		"dtp",
+		"lang"
+	],
+	"help.name.cmd": "格式: `/cmd [<命令>]`",
+	"help.name.faq": "格式: `/faq [<问题>]`",
+	"help.name.dtp": "格式: `/dtp [<数据包功能>]`",
+	"help.name.lang": "格式: `/lang [<代码>]`",
 	"cmd.begin": "`命令: ",
 	"cmd.end": "`",
-	"cmd.fail": "无效的命令，请尝试使用`.cmd`查看所有命令。",
+	"cmd.fail": "无效的命令，请尝试使用`/cmd`查看所有命令。",
 	"cmd.list":
 	[
 		"advancement",
@@ -163,7 +177,7 @@
 	"cmd.name.xp": "https://minecraft.fandom.com/zh/wiki/命令/xp?variant=zh-cn",
 	"faq.begin": "`问题: ",
 	"faq.end": "`",
-	"faq.fail": "无效的问题，请尝试使用`.faq`查看所有问题。",
+	"faq.fail": "无效的问题，请尝试使用`/faq`查看所有问题。",
 	"faq.list":
 	[
 		"slots",
@@ -178,7 +192,7 @@
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`数据包功能: ",
 	"dtp.end": "`",
-	"dtp.fail": "无效的数据包功能，请尝试使用`.dtp`查看所有数据包功能。",
+	"dtp.fail": "无效的数据包功能，请尝试使用`/dtp`查看所有数据包功能。",
 	"dtp.list":
 	[
 		"advancements",
@@ -240,7 +254,7 @@
 	"dtp.name.wg": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/",
 	"dtp.name.w": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/",
-	"lang.begin": "语言设置: `.lang [<代码>]`\n",
+	"lang.begin": "语言设置: `/lang [<代码>]`\n",
 	"lang.end": "",
 	"lang.fail": "无效的语言设置。",
 	"lang.list":

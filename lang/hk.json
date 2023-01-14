@@ -1,7 +1,7 @@
 {
 	"help.begin": "可用指令: `",
 	"help.end": "`",
-	"help.fail": "無效嘅詢問，請嘗試使用`.help`查看所有指令。",
+	"help.fail": "無效嘅詢問，請嘗試使用`/help`查看所有指令。",
 	"help.list":
 	[
 		"cmd",
@@ -9,13 +9,13 @@
 		"dtp",
 		"lang"
 	],
-	"help.name.cmd": "格式: `.cmd [<指令>]`",
-	"help.name.faq": "格式: `.faq [<問題>]`",
-	"help.name.dtp": "格式: `.dtp [<資料包功能>]`",
-	"help.name.lang": "格式: `.lang [<代碼>]`",
+	"help.name.cmd": "格式: `/cmd [<指令>]`",
+	"help.name.faq": "格式: `/faq [<問題>]`",
+	"help.name.dtp": "格式: `/dtp [<資料包功能>]`",
+	"help.name.lang": "格式: `/lang [<代碼>]`",
 	"cmd.begin": "`指令: ",
 	"cmd.end": "`",
-	"cmd.fail": "無效嘅指令，請嘗試用`.cmd`查看所有指令。",
+	"cmd.fail": "無效嘅指令，請嘗試用`/cmd`查看所有指令。",
 	"cmd.list":
 	[
 		"advancement",
@@ -177,7 +177,7 @@
 	"cmd.name.xp": "https://minecraft.fandom.com/zh/wiki/命令/xp?variant=zh-hk",
 	"faq.begin": "`問題: ",
 	"faq.end": "`",
-	"faq.fail": "無效嘅問題，請嘗試用`.faq`查看所有問題。",
+	"faq.fail": "無效嘅問題，請嘗試用`/faq`查看所有問題。",
 	"faq.list":
 	[
 		"slots",
@@ -190,32 +190,9 @@
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
-	"lang.begin": "語言設定: `.lang [<代碼>]`\n",
-	"lang.end": "",
-	"lang.fail": "無效嘅語言設定。",
-	"lang.list":
-	[
-		"advancements",
-		"chat_type",
-		"dimensions",
-		"dimension_type",
-		"functions",
-		"item_modifiers",
-		"loot_tables",
-		"predicates",
-		"structures",
-		"recipes",
-		"tags",
-		"worldgen"
-	],
-	"lang.name.0": "Language set to English.",
-	"lang.name.1": "語言設定為 台灣正體",
-	"lang.name.2": "話語設定為 台語文字",
-	"lang.name.3": "語言設定為 粵語漢字",
-	"lang.name.4": "语言设置为 简体中文",
 	"dtp.begin": "`資料包功能: ",
 	"dtp.end": "`",
-	"dtp.fail": "無效嘅資料包功能，請嘗試用`.dtp`查看所有資料包功能。",
+	"dtp.fail": "無效嘅資料包功能，請嘗試用`/dtp`查看所有資料包功能。",
 	"dtp.list":
 	[
 		"advancement",
@@ -274,5 +251,28 @@
 	"dtp.name.worldgen": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
 	"dtp.name.wg": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
 	"dtp.name.w": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
-	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/"
+	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
+	"lang.begin": "語言設定: `/lang [<代碼>]`\n",
+	"lang.end": "",
+	"lang.fail": "無效嘅語言設定。",
+	"lang.list":
+	[
+		"advancements",
+		"chat_type",
+		"dimensions",
+		"dimension_type",
+		"functions",
+		"item_modifiers",
+		"loot_tables",
+		"predicates",
+		"structures",
+		"recipes",
+		"tags",
+		"worldgen"
+	],
+	"lang.name.0": "Language set to English.",
+	"lang.name.1": "語言設定為 台灣正體",
+	"lang.name.2": "話語設定為 台語文字",
+	"lang.name.3": "語言設定為 粵語漢字",
+	"lang.name.4": "语言设置为 简体中文"
 }

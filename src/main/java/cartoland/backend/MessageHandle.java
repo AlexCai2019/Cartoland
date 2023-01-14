@@ -1,10 +1,10 @@
 package cartoland.backend;
 
-public class MessageHandle implements GenericMessageHandle
+public class MessageHandle// extends GenericMessageHandle
 {
     private final JsonHandle jsonHandle = new JsonHandle();
 
-    @Override
+    //@Override
     public String commandProcess(String userID, String[] messages)
     {
         String commandName; //指令名稱
@@ -40,7 +40,7 @@ public class MessageHandle implements GenericMessageHandle
                 return null;
         }
 
-        jsonHandle.lastUse(userID);
+        JsonHandle.lastUse(userID);
 
         if (messages.length == 1) //如果傳入的指令沒有引數
             return jsonHandle.command(commandName);

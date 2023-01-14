@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class FileHandle
 {
     //將JSON讀入進字串
-    String buildJsonStringFromFile(String fileName)
+    static String buildJsonStringFromFile(String fileName)
     {
         try
         {
@@ -25,7 +25,7 @@ public class FileHandle
         return null;
     }
 
-    void synchronizeUsersFile(String usersFileString)
+    static void synchronizeUsersFile(String usersFileString)
     {
         try
         {
@@ -40,7 +40,7 @@ public class FileHandle
         }
     }
 
-    void logIntoFile(String output)
+    public static void logIntoFile(String output)
     {
         try
         {

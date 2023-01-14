@@ -21,7 +21,7 @@ public class JsonHandle
         languageFileMap.put(Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
         languageFileMap.put(Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
     }
-    static void lastUse(String userID)
+    private static void lastUse(String userID)
     {
         int userLanguage;
 

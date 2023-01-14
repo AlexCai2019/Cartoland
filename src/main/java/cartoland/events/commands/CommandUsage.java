@@ -70,8 +70,8 @@ public class CommandUsage extends ListenerAdapter
 
     String minecraftCommandRelated(String jsonKey, @NotNull SlashCommandInteractionEvent event)
     {
-        argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString);
-        if (argument == null)
+        argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
+        if (argument == null) //沒有參數
             return JsonHandle.command(userID, jsonKey);
         return JsonHandle.command(userID, jsonKey, argument);
     }

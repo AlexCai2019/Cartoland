@@ -3,6 +3,7 @@ package cartoland.utility;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -49,7 +50,7 @@ public class FileHandle
         {
             //一定要事先備好logs資料夾
             FileWriter logWriter = new FileWriter("logs/" + LocalDate.now(), true);
-            logWriter.write(LocalTime.now() + " " + output + "\n"); //時間 內容 換行
+            logWriter.write(LocalTime.now() + "\t" + output + "\n"); //時間 內容 換行
             logWriter.close();
         }
         catch (IOException e)
@@ -59,13 +60,15 @@ public class FileHandle
         }
     }
 
-    static Random random = new Random();
+    private static final Random random = new Random();
+    private static final Path megumin = Paths.get("megumin");
     public static String readRandomMeguminUrl()
     {
         int lineNumber = random.nextInt(350);
+
         try
         {
-            Stream<String> lines = Files.lines(Paths.get("megumin"));
+            Stream<String> lines = Files.lines(megumin);
             Optional<String> line = lines.skip(lineNumber).findFirst();
             return line.orElse("pensukeo/status/1184557949714219009");
         }

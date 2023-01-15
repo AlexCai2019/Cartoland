@@ -50,6 +50,7 @@ public class Cartoland
                         .addOption(OptionType.INTEGER,"lang_name", "The language that user want to change", false),
                 Commands.slash("language", "Change language or check current languages")
                         .addOption(OptionType.INTEGER,"lang_name", "The language that user want to change", false),
+                Commands.slash("megumin", "The best anime girl"),
 
                 Commands.slash("shutdown", "Use this to shutdown the bot")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))

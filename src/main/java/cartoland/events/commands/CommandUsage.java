@@ -4,6 +4,7 @@ import cartoland.Cartoland;
 import cartoland.utility.FileHandle;
 import cartoland.utility.JsonHandle;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -39,6 +40,9 @@ public class CommandUsage extends ListenerAdapter
         commands.put("shutdown", event ->
         {
             event.reply("Shutting down...").queue();
+            TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID);
+            if (channel != null)
+                channel.sendMessage("Cartoland bot is now offline").queue();
             event.getJDA().shutdown();
         });
     }
@@ -54,8 +58,16 @@ public class CommandUsage extends ListenerAdapter
         userID = member.getId();
         commands.get(event.getName()).commandProcess(event);
 
-        System.out.println(member.getUser().getName() + "(" + userID + ") used " + event.getName() + " " + argument);
-        FileHandle.logIntoFile(member.getUser().getName() + "(" + userID + ") used " + event.getName() + " " + argument);
+        if (argument != null)
+        {
+            System.out.println(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + " " + argument);
+            FileHandle.logIntoFile(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + " " + argument);
+        }
+        else
+        {
+            System.out.println(member.getUser().getName() + "(" + userID + ") used /" + event.getName());
+            FileHandle.logIntoFile(member.getUser().getName() + "(" + userID + ") used /" + event.getName());
+        }
     }
 
     String minecraftCommandRelated(String jsonKey, @NotNull SlashCommandInteractionEvent event)

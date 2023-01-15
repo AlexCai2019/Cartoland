@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Stream;
 
 public class FileHandle
 {
@@ -54,5 +57,24 @@ public class FileHandle
             e.printStackTrace(System.err);
             System.exit(-1);
         }
+    }
+
+    static Random random = new Random();
+    public static String readRandomMeguminUrl()
+    {
+        int lineNumber = random.nextInt(350);
+        try
+        {
+            Stream<String> lines = Files.lines(Paths.get("megumin"));
+            Optional<String> line = lines.skip(lineNumber).findFirst();
+            return line.orElse("pensukeo/status/1184557949714219009");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace(System.err);
+            System.exit(-1);
+        }
+
+        return "pensukeo/status/1184557949714219009";
     }
 }

@@ -18,6 +18,6 @@ public class BotOffline extends ListenerAdapter
             channel.sendMessage("Cartoland bot is now offline").queue();
         System.out.println("Cartoland Bot is now offline");
         FileHandle.logIntoFile("Cartoland Bot is now offline");
-        System.exit(0);
+        //System.exit(0);
     }
 }

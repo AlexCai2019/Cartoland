@@ -4,7 +4,6 @@ import cartoland.Cartoland;
 import cartoland.utility.FileHandle;
 import cartoland.utility.JsonHandle;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -34,21 +33,12 @@ public class CommandUsage extends ListenerAdapter
             commands.put(s, event ->
                     event.reply(minecraftCommandRelated(s, event)).queue());
 
+        commands.put("megumin", event ->
+                event.reply("https://twitter.com/" + FileHandle.readRandomMeguminUrl()).queue());
+
         commands.put("shutdown", event ->
         {
             event.reply("Shutting down...").queue();
-            TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID); //創聯的機器人頻道
-            if (channel != null)
-            {
-                channel.sendMessage("Cartoland Bot is now offline").queue();
-                System.out.println("Cartoland Bot is now offline");
-                FileHandle.logIntoFile("Cartoland Bot is now offline");
-            }
-            else
-            {
-                System.err.println("Can't find Bot Channel");
-                FileHandle.logIntoFile("Can't find Bot Channel");
-            }
             event.getJDA().shutdown();
         });
     }

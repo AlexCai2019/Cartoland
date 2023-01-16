@@ -3,13 +3,9 @@ package cartoland.utility;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Stream;
 
 public class FileHandle
 {
@@ -58,26 +54,5 @@ public class FileHandle
             e.printStackTrace(System.err);
             System.exit(-1);
         }
-    }
-
-    private static final Random random = new Random();
-    private static final Path megumin = Paths.get("megumin");
-    public static String readRandomMeguminUrl()
-    {
-        int lineNumber = random.nextInt(350);
-
-        try
-        {
-            Stream<String> lines = Files.lines(megumin);
-            Optional<String> line = lines.skip(lineNumber).findFirst();
-            return line.orElse("pensukeo/status/1184557949714219009");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace(System.err);
-            System.exit(-1);
-        }
-
-        return "pensukeo/status/1184557949714219009";
     }
 }

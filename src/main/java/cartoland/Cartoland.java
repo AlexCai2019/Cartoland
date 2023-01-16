@@ -53,7 +53,10 @@ public class Cartoland
                 Commands.slash("megumin", "The best anime girl"),
 
                 Commands.slash("shutdown", "Use this to shutdown the bot")
-                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER)),
+
+                Commands.slash("oneatwob", "Play 1A2B game")
+                        .addOption(OptionType.STRING, "answer", "The answer that you think", false)
         ).queue();
 
         jda.awaitReady();

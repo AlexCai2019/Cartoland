@@ -180,15 +180,17 @@
 	"faq.fail": "無效的問題，請嘗試使用`/faq`查看所有問題。",
 	"faq.list":
 	[
-		"slots",
+		"aec",
 		"format",
 		"optimize",
+		"slots",
 		"standsvsclouds"
 	],
-	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
-	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
+	"faq.name.aec": "https://minecraft.fandom.com/zh/wiki/区域效果云?variant=zh-tw\n藥水效果雲是一種隱形、無重力、碰撞箱極小的實體，在1.9~1.16期間可作為標記實體，1.17後被標記取代，但還是可以做為懸浮文字使用。\n指令: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<名字>\"',CustomNameVisible:true}`",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
+	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
+	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "資料包功能: `",
 	"dtp.end": "`",

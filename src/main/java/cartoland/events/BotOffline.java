@@ -11,7 +11,7 @@ public class BotOffline extends ListenerAdapter
     public void onShutdown(@NotNull ShutdownEvent event)
     {
         super.onShutdown(event);
-        System.out.println("Cartoland Bot is now offline");
-        FileHandle.logIntoFile("Cartoland Bot is now offline");
+        System.out.println("Cartoland Bot is now offline.");
+        FileHandle.logIntoFile("Cartoland Bot is now offline.");
     }
 }

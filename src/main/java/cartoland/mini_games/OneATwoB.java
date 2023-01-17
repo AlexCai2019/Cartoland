@@ -58,7 +58,6 @@ public class OneATwoB implements MiniGameInterface
 
     public int calculateAAndB(String input)
     {
-        System.out.println("input " + input);
         guesses++;
         if (input == null || !input.matches(digitsRegex)) //不是ANSWER_LENGTH個數字
             return ErrorCode.INVALID;
@@ -68,7 +67,6 @@ public class OneATwoB implements MiniGameInterface
         for (int i = 0, digitValueOfInput; i < ANSWER_LENGTH; i++)
         {
             digitValueOfInput = Character.getNumericValue(input.charAt(i));
-            System.out.println("digitValueOfInput " + digitValueOfInput);
             if (zeroToNine[digitValueOfInput] == -1) //遇過這個數字了
                 return ErrorCode.NOT_UNIQUE;
             else

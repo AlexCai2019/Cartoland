@@ -2,6 +2,7 @@ package cartoland.events;
 
 import cartoland.Cartoland;
 import cartoland.utility.FileHandle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -25,10 +26,13 @@ public class PrivateMessage extends ListenerAdapter
         super.onMessageReceived(event);
         if (event.isFromType(ChannelType.PRIVATE))
         {
-            String message = event.getMessage().getContentRaw();
-            channel.sendMessage(message).queue();
-            System.out.println(event.getAuthor().getName() + "(" + event.getAuthor().getId() + ") typed \"" + message + "\" in direct message.");
-            FileHandle.logIntoFile(event.getAuthor().getName() + "(" + event.getAuthor().getId() + ") typed \"" + message + "\" in direct message.");
+            String rawMessage = event.getMessage().getContentRaw();
+            channel.sendMessage(rawMessage).queue();
+
+            User author = event.getAuthor();
+            String logString = author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.";
+            System.out.println(logString);
+            FileHandle.logIntoFile(logString);
         }
     }
 }

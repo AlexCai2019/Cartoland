@@ -112,22 +112,15 @@ public class CommandUsage extends ListenerAdapter
     {
         super.onSlashCommandInteraction(event);
         Member member = event.getMember();
-        if (member == null || member.getUser().isBot() || event.getChannel().getIdLong() == Cartoland.ZH_CHAT_CHANNEL_ID) //不是機器人 and 不要在主頻道用
+        if (member == null || member.getUser().isBot()) //不是機器人
             return;
 
         userID = member.getId();
         commands.get(event.getName()).commandProcess(event);
 
-        if (argument != null)
-        {
-            System.out.println(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + " " + argument + ".");
-            FileHandle.logIntoFile(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + " " + argument + ".");
-        }
-        else
-        {
-            System.out.println(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + ".");
-            FileHandle.logIntoFile(member.getUser().getName() + "(" + userID + ") used /" + event.getName() + ".");
-        }
+        String logString = member.getUser().getName() + "(" + userID + ") used /" + event.getName() + (argument != null ? " " + argument + "." : ".");
+        System.out.println(logString);
+        FileHandle.logIntoFile(logString);
     }
 
     private String minecraftCommandRelated(String jsonKey, @NotNull SlashCommandInteractionEvent event)

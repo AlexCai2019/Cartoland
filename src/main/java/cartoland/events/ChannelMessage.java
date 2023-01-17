@@ -1,6 +1,8 @@
 package cartoland.events;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +18,12 @@ public class ChannelMessage extends ListenerAdapter
         "勸你小心點，我認識這群群主。",
         "tag我都小雞雞。",
         "不要耍智障好不好。",
-        "你看看，就是有像你這種臭俗辣。"
+        "你看看，就是有像你這種臭俗辣。",
+        "吃屎比較快。",
+        "在那叫什麼？",
+        "我知道我很帥，不用一直tag我",
+        "tag我該女裝負責吧。",
+        "沒梗的人才會整天tag機器人。"
     };
 
     @Override
@@ -27,10 +34,11 @@ public class ChannelMessage extends ListenerAdapter
         Member member = event.getMember();
         if (member == null || member.getUser().isBot()) //獲取成員失敗 或 傳訊息的是機器人
             return; //不用執行
-        String message = event.getMessage().getContentRaw(); //獲取訊息
-        if (message.equalsIgnoreCase("megumin") || message.contains("惠惠") || message.contains("めぐみん"))
+        Message message = event.getMessage();
+        String rawMessage = message.getContentRaw(); //獲取訊息
+        if (rawMessage.equalsIgnoreCase("megumin") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
             event.getChannel().sendMessage("☆めぐみん大好き！☆").queue();
-        if (message.contains("<@919939882196033596>")) //有人tag機器人
-            event.getMessage().reply(replyMention[random.nextInt(replyMention.length)]).mentionRepliedUser(false).queue();
+        if (message.getMentions().isMentioned(event.getJDA().getSelfUser(), MentionType.USER)) //有人tag機器人
+            message.reply(replyMention[random.nextInt(replyMention.length)]).mentionRepliedUser(false).queue();
     }
 }

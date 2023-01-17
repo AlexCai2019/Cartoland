@@ -14,16 +14,19 @@ public class BotOnline extends ListenerAdapter
     {
         super.onReady(event);
         TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID); //創聯的機器人頻道
+        String logString;
         if (channel != null)
         {
-            channel.sendMessage("Cartoland Bot is now online.").queue();
-            System.out.println("Cartoland Bot is now online.");
-            FileHandle.logIntoFile("Cartoland Bot is now online.");
+            logString = "Cartoland Bot is now online.";
+            channel.sendMessage(logString).queue();
+            System.out.println(logString);
+            FileHandle.logIntoFile(logString);
         }
         else
         {
-            System.err.println("Can't find Bot Channel.");
-            FileHandle.logIntoFile("Can't find Bot Channel.");
+            logString = "Can't find Bot Channel.";
+            System.err.println(logString);
+            FileHandle.logIntoFile(logString);
         }
     }
 }

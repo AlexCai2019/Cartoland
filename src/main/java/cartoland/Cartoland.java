@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 public class Cartoland
 {
     public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
-    public static final long ZH_CHAT_CHANNEL_ID = 886936474723950611L; //創聯的中文聊天頻道
 
     public static void main(String[] args) throws InterruptedException
     {
@@ -25,11 +24,11 @@ public class Cartoland
             return;
 
         JDA jda = JDABuilder.createDefault(args[0])
-                .addEventListeners(new BotOnline()) //當機器人上線的時候
-                .addEventListeners(new BotOffline()) //當機器人下線的時候
-                .addEventListeners(new ChannelMessage()) //當有人在群組傳訊息
-                .addEventListeners(new PrivateMessage()) //當有人傳私訊給機器人
-                .addEventListeners(new CommandUsage()) //當有人使用指令
+                .addEventListeners(new BotOnline(), //當機器人上線的時候
+                                   new BotOffline(), //當機器人下線的時候
+                                   new ChannelMessage(), //當有人在群組傳訊息
+                                   new PrivateMessage(), //當有人傳私訊給機器人
+                                   new CommandUsage()) //當有人使用指令
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.playing("Use /help to check more information")) //正在玩
                 .build();

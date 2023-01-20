@@ -17,6 +17,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 public class Cartoland
 {
     public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
+    public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的機器人頻道
+    public static final long AC_ID = 355953951469731842L;
+    public static final String AC_ID_STRING = "355953951469731842";
 
     public static void main(String[] args) throws InterruptedException
     {
@@ -53,6 +56,7 @@ public class Cartoland
 
                 Commands.slash("shutdown", "Use this to shutdown the bot")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER)),
+                Commands.slash("whosyourdaddy", "Reveal this bot's dad"),
 
                 Commands.slash("oneatwob", "Play 1A2B game")
                         .addOption(OptionType.STRING, "answer", "The answer that you think", false)

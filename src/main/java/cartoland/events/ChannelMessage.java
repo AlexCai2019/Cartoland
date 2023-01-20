@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.Cartoland;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.MentionType;
@@ -12,6 +13,13 @@ import java.util.Random;
 public class ChannelMessage extends ListenerAdapter
 {
     private final Random random = new Random();
+    private final String[] replyACMention =
+    {
+        "父親，您找我有事嗎？",
+        "爹，您好呀。",
+        "爸爸，我今天也有認真工作。",
+        "聽候您差遣。"
+    };
     private final String[] replyMention =
     {
         "你媽沒教你不要亂tag人嗎？",
@@ -39,6 +47,7 @@ public class ChannelMessage extends ListenerAdapter
         if (rawMessage.equalsIgnoreCase("megumin") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
             event.getChannel().sendMessage("☆めぐみん大好き！☆").queue();
         if (message.getMentions().isMentioned(event.getJDA().getSelfUser(), MentionType.USER)) //有人tag機器人
-            message.reply(replyMention[random.nextInt(replyMention.length)]).mentionRepliedUser(false).queue();
+            message.reply(member.getIdLong() == Cartoland.AC_ID ? replyACMention[random.nextInt(replyACMention.length)] : replyMention[random.nextInt(replyMention.length)])
+                    .mentionRepliedUser(false).queue();
     }
 }

@@ -47,7 +47,7 @@ public class CommandUsage extends ListenerAdapter
 
         commands.put("shutdown", event ->
         {
-            if (!userID.equals("355953951469731842")) //不是我
+            if (!userID.equals(Cartoland.AC_ID_STRING)) //不是我
                 return;
             event.reply("Shutting down...").queue();
             TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID);
@@ -55,6 +55,8 @@ public class CommandUsage extends ListenerAdapter
                 channel.sendMessage("Cartoland bot is now offline.").queue();
             event.getJDA().shutdown();
         });
+
+        commands.put("whosyourdaddy", event -> event.reply(userID.equals(Cartoland.AC_ID_STRING) ? "You." : "Not you.").queue());
 
         commands.put("oneatwob", event ->
         {
@@ -84,8 +86,7 @@ public class CommandUsage extends ListenerAdapter
                                     "Not a valid answer, please enter " + OneATwoB.ANSWER_LENGTH + " integers.";
                             case OneATwoB.ErrorCode.NOT_UNIQUE ->
                                     "Please enter " + OneATwoB.ANSWER_LENGTH + " unique integers.";
-                            default ->
-                                    argument + " = " + ab / 10 + " A " + ab % 10 + " B";
+                            default -> argument + " = " + ab / 10 + " A " + ab % 10 + " B";
                         };
 
                         //猜出ANSWER_LENGTH個A 遊戲結束

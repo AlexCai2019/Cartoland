@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -19,7 +20,8 @@ public class Cartoland
     public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
     public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的機器人頻道
     public static final long AC_ID = 355953951469731842L;
-    public static final String AC_ID_STRING = "355953951469731842";
+    public static TextChannel botChannel;
+    public static TextChannel undergroundChannel;
 
     public static void main(String[] args) throws InterruptedException
     {

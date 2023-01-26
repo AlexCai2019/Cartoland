@@ -11,7 +11,7 @@ public class JsonHandle
     private static final HashMap<Integer, JSONObject> languageFileMap= new HashMap<>();
 
     private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
-    private static String id = null;
+    private static String userIDString = null; //將ID轉換成字串
 
     static
     {
@@ -21,20 +21,20 @@ public class JsonHandle
         languageFileMap.put(Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
         languageFileMap.put(Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
     }
-    private static void lastUse(String userID)
+    private static void lastUse(long userID)
     {
+        userIDString = Long.toUnsignedString(userID);
         int userLanguage;
 
-        if (usersFile.has(userID))
-            userLanguage = usersFile.getInt(userID); //獲取使用者設定的語言
+        if (usersFile.has(userIDString))
+            userLanguage = usersFile.getInt(userIDString); //獲取使用者設定的語言
         else //找不到設定的語言
-            usersFile.put(userID, userLanguage = Languages.ENGLISH); //放英文進去
+            usersFile.put(userIDString, userLanguage = Languages.ENGLISH); //放英文進去
 
         file = languageFileMap.get(userLanguage);
-        id = userID;
     }
 
-    public static String command(String userID, String typeCommandName)
+    public static String command(long userID, String typeCommandName)
     {
         lastUse(userID);
         StringBuilder builder = new StringBuilder();
@@ -46,7 +46,7 @@ public class JsonHandle
         return builder.toString();
     }
 
-    public static String command(String userID, String typeCommandName, String argument)
+    public static String command(long userID, String typeCommandName, String argument)
     {
         lastUse(userID);
         String fileKey = typeCommandName + ".name." + argument;
@@ -54,7 +54,7 @@ public class JsonHandle
         {
             if (typeCommandName.equals("lang"))
             {
-                usersFile.put(id, Integer.parseInt(argument));
+                usersFile.put(userIDString, Integer.parseInt(argument));
                 FileHandle.synchronizeUsersFile(usersFile.toString());
             }
             return file.getString(typeCommandName + ".name." + argument);

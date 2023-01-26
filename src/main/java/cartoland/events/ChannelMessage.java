@@ -31,14 +31,15 @@ public class ChannelMessage extends ListenerAdapter
         "在那叫什麼？",
         "我知道我很帥，不用一直tag我",
         "tag我該女裝負責吧。",
-        "沒梗的人才會整天tag機器人。"
+        "沒梗的人才會整天tag機器人。",
+        "你只會tag機器人嗎？",
+        "再吵，就把你放到亞馬遜上面賣。",
+        "你除了tag機器人沒別的事情好做嗎？",
     };
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event)
     {
-        super.onMessageReceived(event);
-
         Member member = event.getMember();
         if (member == null || member.getUser().isBot()) //獲取成員失敗 或 傳訊息的是機器人
             return; //不用執行

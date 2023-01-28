@@ -1,4 +1,4 @@
-package cartoland.utility;
+package cartoland.utilities;
 
 import java.io.FileWriter;
 import java.io.IOException;

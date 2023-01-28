@@ -5,11 +5,10 @@ import cartoland.events.BotOnline;
 import cartoland.events.ChannelMessage;
 import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
-import net.dv8tion.jda.api.JDA;
+import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -17,18 +16,12 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Cartoland
 {
-    public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
-    public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的機器人頻道
-    public static final long AC_ID = 355953951469731842L;
-    public static TextChannel botChannel;
-    public static TextChannel undergroundChannel;
-
     public static void main(String[] args) throws InterruptedException
     {
         if (args.length < 1)
             return;
 
-        JDA jda = JDABuilder.createDefault(args[0])
+        IDAndEntities.jda = JDABuilder.createDefault(args[0])
                 .addEventListeners(new BotOnline(), //當機器人上線的時候
                                    new BotOffline(), //當機器人下線的時候
                                    new ChannelMessage(), //當有人在群組傳訊息
@@ -38,7 +31,7 @@ public class Cartoland
                 .setActivity(Activity.playing("Use /help to check more information")) //正在玩
                 .build();
 
-        jda.updateCommands().addCommands(
+        IDAndEntities.jda.updateCommands().addCommands(
                 Commands.slash("invite", "Get invite link of Cartoland"),
                 Commands.slash("help","Get help of bot commands")
                         .addOption(OptionType.STRING, "help_name", "The command that want check", false),
@@ -64,6 +57,6 @@ public class Cartoland
                         .addOption(OptionType.STRING, "answer", "The answer that you think", false)
         ).queue();
 
-        jda.awaitReady();
+        IDAndEntities.jda.awaitReady();
     }
 }

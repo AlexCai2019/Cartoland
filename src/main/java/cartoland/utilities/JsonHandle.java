@@ -1,4 +1,4 @@
-package cartoland.utility;
+package cartoland.utilities;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,10 +1,11 @@
 package cartoland.events.commands;
 
-import cartoland.Cartoland;
-import cartoland.mini_games.MiniGameInterface;
+import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoB;
-import cartoland.utility.FileHandle;
-import cartoland.utility.JsonHandle;
+import cartoland.utilities.FileHandle;
+import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,7 +20,7 @@ import java.util.Random;
 public class CommandUsage extends ListenerAdapter
 {
     private final Map<String, ICommand> commands = new HashMap<>();
-    private final Map<Long, MiniGameInterface> games = new HashMap<>();
+    private final Map<Long, IMiniGame> games = new HashMap<>();
     private long userID;
     private String argument;
     private final Random random = new Random();
@@ -50,16 +51,20 @@ public class CommandUsage extends ListenerAdapter
 
         commands.put("shutdown", event ->
         {
-            if (userID != Cartoland.AC_ID) //不是我
+            if (userID != IDAndEntities.AC_ID) //不是我
+            {
+                event.reply("You can't do that.").queue();
                 return;
+            }
             event.reply("Shutting down...").queue();
-            TextChannel channel = event.getJDA().getChannelById(TextChannel.class, Cartoland.BOT_CHANNEL_ID);
+            JDA jda = event.getJDA();
+            TextChannel channel = jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID);
             if (channel != null)
                 channel.sendMessage("Cartoland bot is now offline.").queue();
-            event.getJDA().shutdown();
+            jda.shutdown();
         });
 
-        commands.put("whosyourdaddy", event -> event.reply(userID == Cartoland.AC_ID ? "You." : "Not you.").queue());
+        commands.put("whosyourdaddy", event -> event.reply(userID == IDAndEntities.AC_ID ? "You." : "Alex Cai").queue());
 
         commands.put("oneatwob", event ->
         {
@@ -78,7 +83,7 @@ public class CommandUsage extends ListenerAdapter
             {
                 if (games.containsKey(userID)) //已經有在玩遊戲
                 {
-                    MiniGameInterface playing = games.get(userID);
+                    IMiniGame playing = games.get(userID);
                     if (playing.gameName().equals("1A2B")) //是1A2B沒錯
                     {
                         OneATwoB oneATwoB = (OneATwoB) playing;
@@ -115,7 +120,7 @@ public class CommandUsage extends ListenerAdapter
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
     {
         Member member = event.getMember();
-        if (member == null || member.getUser().isBot()) //是機器人
+        if (member == null)
             return;
 
         userID = member.getIdLong();

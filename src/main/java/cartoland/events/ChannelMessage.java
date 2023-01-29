@@ -38,7 +38,8 @@ public class ChannelMessage extends ListenerAdapter
         "你只會tag機器人嗎？",
         "再吵，就把你放到亞馬遜上面賣。",
         "你除了tag機器人沒別的事情好做嗎？",
-        "有病要去看醫生。"
+        "有病要去看醫生。",
+        "<:ping:1065915559918719006>"
     };
 
     @Override

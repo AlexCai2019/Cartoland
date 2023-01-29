@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 
-public class OneATwoB implements IMiniGame
+public class OneATwoBGame implements IMiniGame
 {
     private static final Random random = new Random();
     public static final int ANSWER_LENGTH = 4;
@@ -16,7 +16,7 @@ public class OneATwoB implements IMiniGame
     private final Instant begin;
     private int guesses = 0;
 
-    public OneATwoB()
+    public OneATwoBGame()
     {
         shuffleZeroToNine(); //洗牌0 ~ 9
         generateAnswer(); //產生答案

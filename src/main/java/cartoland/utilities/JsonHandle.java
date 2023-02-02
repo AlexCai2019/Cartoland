@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class JsonHandle
 {
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile("users.json")); //使用者的語言設定
-	private static final HashMap<String, JSONObject> languageFileMap= new HashMap<>();
+	private static final HashMap<Integer, JSONObject> languageFileMap= new HashMap<>();
 
 	private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
 	private static String userIDString = null; //將ID轉換成字串
@@ -25,10 +25,10 @@ public class JsonHandle
 	private static void lastUse(long userID)
 	{
 		userIDString = Long.toUnsignedString(userID);
-		String userLanguage;
+		int userLanguage;
 
 		if (usersFile.has(userIDString))
-			userLanguage = usersFile.getString(userIDString); //獲取使用者設定的語言
+			userLanguage = usersFile.getInt(userIDString); //獲取使用者設定的語言
 		else //找不到設定的語言
 			usersFile.put(userIDString, userLanguage = Languages.ENGLISH); //放英文進去
 
@@ -56,7 +56,7 @@ public class JsonHandle
 		{
 			if (typeCommandName.equals("lang"))
 			{
-				usersFile.put(userIDString, argument);
+				usersFile.put(userIDString, Integer.parseInt(argument));
 				FileHandle.synchronizeUsersFile(usersFile.toString());
 			}
 			return file.getString(typeCommandName + ".name." + argument);
@@ -64,13 +64,4 @@ public class JsonHandle
 		else
 			return file.getString(typeCommandName + ".fail");
 	}
-}
-
-class Languages
-{
-	static final String ENGLISH = "en";
-	static final String TW_MANDARIN = "tw";
-	static final String TAIWANESE = "ta";
-	static final String CANTONESE = "hk";
-	static final String CHINESE = "cn";
 }

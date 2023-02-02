@@ -5,6 +5,7 @@ import cartoland.events.BotOnline;
 import cartoland.events.ChannelMessage;
 import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
+import cartoland.utilities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -46,12 +47,12 @@ public class Cartoland
 				Commands.slash("lang", "Change language or check current languages")
 						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
 				Commands.slash("language", "Change language or check current languages")
-						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
-											.addChoice("English", "en")
-											.addChoice("台灣正體", "tw")
-											.addChoice("台語文字", "ta")
-											.addChoice("粵語漢字", "hk")
-											.addChoice("简体中文", "cn")),
+						.addOptions(new OptionData(OptionType.INTEGER, "lang_name", "The language that user want to change", false)
+											.addChoice("English", Languages.ENGLISH)
+											.addChoice("台灣正體", Languages.TW_MANDARIN)
+											.addChoice("台語文字", Languages.TAIWANESE)
+											.addChoice("粵語漢字", Languages.CANTONESE)
+											.addChoice("简体中文", Languages.CHINESE)),
 				Commands.slash("megumin", "The best anime girl"),
 
 				Commands.slash("shutdown", "Use this to shutdown the bot"),

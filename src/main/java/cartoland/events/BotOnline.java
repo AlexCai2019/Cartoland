@@ -9,34 +9,34 @@ import org.jetbrains.annotations.NotNull;
 
 public class BotOnline extends ListenerAdapter
 {
-    @Override
-    public void onReady(@NotNull ReadyEvent event)
-    {
-        IDAndEntities.botChannel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID); //創聯的機器人頻道
-        String logString;
-        if (IDAndEntities.botChannel != null)
-        {
-            logString = "Cartoland Bot is now online.";
-            IDAndEntities.botChannel.sendMessage(logString).queue();
-            FileHandle.logIntoFile(logString);
-        }
-        else
-        {
-            logString = "Can't find Bot Channel.";
-            System.err.println(logString);
-            FileHandle.logIntoFile(logString);
-            System.exit(-1);
-        }
+	@Override
+	public void onReady(@NotNull ReadyEvent event)
+	{
+		IDAndEntities.botChannel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID); //創聯的機器人頻道
+		String logString;
+		if (IDAndEntities.botChannel != null)
+		{
+			logString = "Cartoland Bot is now online.";
+			IDAndEntities.botChannel.sendMessage(logString).queue();
+			FileHandle.logIntoFile(logString);
+		}
+		else
+		{
+			logString = "Can't find Bot Channel.";
+			System.err.println(logString);
+			FileHandle.logIntoFile(logString);
+			System.exit(-1);
+		}
 
-        IDAndEntities.undergroundChannel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.UNDERGROUND_CHANNEL_ID); //地下聊天室
-        if (IDAndEntities.undergroundChannel == null)
-        {
-            logString = "Can't find Underground Channel.";
-            System.err.println(logString);
-            FileHandle.logIntoFile(logString);
-            System.exit(-1);
-        }
+		IDAndEntities.undergroundChannel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.UNDERGROUND_CHANNEL_ID); //地下聊天室
+		if (IDAndEntities.undergroundChannel == null)
+		{
+			logString = "Can't find Underground Channel.";
+			System.err.println(logString);
+			FileHandle.logIntoFile(logString);
+			System.exit(-1);
+		}
 
-        IDAndEntities.botItself = IDAndEntities.jda.getSelfUser();
-    }
+		IDAndEntities.botItself = IDAndEntities.jda.getSelfUser();
+	}
 }

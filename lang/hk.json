@@ -180,11 +180,13 @@
 	"faq.fail": "無效嘅問題，請嘗試用`/faq`查看所有問題。",
 	"faq.list":
 	[
+		"aec",
 		"slots",
 		"format",
 		"optimize",
 		"standsvsclouds"
 	],
+	"faq.name.aec": "https://minecraft.fandom.com/zh/wiki/区域效果云?variant=zh-hk",
 	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",

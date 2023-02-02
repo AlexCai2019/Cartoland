@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 
 public class PrivateMessage extends ListenerAdapter
 {
-    @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event)
-    {
-        if (event.isFromType(ChannelType.PRIVATE))
-        {
-            Message message = event.getMessage();
-            String rawMessage = message.getContentRaw();
-            String attachments = "\n" + message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
-            IDAndEntities.undergroundChannel.sendMessage(rawMessage + attachments).queue(); //私訊轉到地下聊天室
+	@Override
+	public void onMessageReceived(@NotNull MessageReceivedEvent event)
+	{
+		if (event.isFromType(ChannelType.PRIVATE))
+		{
+			Message message = event.getMessage();
+			String rawMessage = message.getContentRaw();
+			String attachments = "\n" + message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
+			IDAndEntities.undergroundChannel.sendMessage(rawMessage + attachments).queue(); //私訊轉到地下聊天室
 
-            User author = event.getAuthor();
-            FileHandle.logIntoFile(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + attachments + "\" in direct message.");
-        }
-    }
+			User author = event.getAuthor();
+			FileHandle.logIntoFile(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + attachments + "\" in direct message.");
+		}
+	}
 }

@@ -4,5 +4,5 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public interface ICommand
 {
-    void commandProcess(SlashCommandInteractionEvent event); //指令
+	void commandProcess(SlashCommandInteractionEvent event); //指令
 }

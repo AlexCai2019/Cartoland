@@ -46,7 +46,17 @@ public class JsonHandle
 		lastUse(userID);
 		StringBuilder builder = new StringBuilder();
 		builder.append(file.getString(typeCommandName + ".begin")); //開頭
-		JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
+
+		String jsonKey = typeCommandName + ".list";
+		JSONObject hasKeyFile;
+		if (file.has(jsonKey)) //如果有這個key
+			hasKeyFile = file;
+		else if (englishFile.has(jsonKey)) //預設使用英文
+			hasKeyFile = englishFile;
+		else
+			return file.getString(typeCommandName + ".fail");
+
+		JSONArray dotListArray = hasKeyFile.getJSONArray(jsonKey);
 		int dotListArrayLength = dotListArray.length();
 		for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
 			builder.append(dotListArray.getString(i)).append(' ');
@@ -57,11 +67,11 @@ public class JsonHandle
 	public static String command(long userID, String typeCommandName, String argument)
 	{
 		lastUse(userID);
-		String fileKey = typeCommandName + ".name." + argument;
+		String jsonKey = typeCommandName + ".name." + argument;
 		JSONObject hasKeyFile;
-		if (file.has(fileKey)) //如果有這個key
+		if (file.has(jsonKey)) //如果有這個key
 			hasKeyFile = file;
-		else if (englishFile.has(fileKey)) //預設使用英文
+		else if (englishFile.has(jsonKey)) //預設使用英文
 			hasKeyFile = englishFile;
 		else
 			return file.getString(typeCommandName + ".fail");

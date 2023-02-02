@@ -191,11 +191,11 @@
 	],
 	"faq.name.aec": "藥水效果雲是一種隱形、無重力、碰撞箱極小的實體，在1.9~1.16期間可作為標記實體，1.17後被標記取代，但還是可以做為懸浮文字使用，另外其擁有定時銷毀的特性。\n指令: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<名字>\"',CustomNameVisible:true}`\nhttps://minecraft.fandom.com/zh/wiki/区域效果云?variant=zh-tw",
 	"faq.name.area_effect_cloud": "藥水效果雲是一種隱形、無重力、碰撞箱極小的實體，在1.9~1.16期間可作為標記實體，1.17後被標記取代，但還是可以做為懸浮文字使用，另外其擁有定時銷毀的特性。\n指令: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<名字>\"',CustomNameVisible:true}`\nhttps://minecraft.fandom.com/zh/wiki/区域效果云?variant=zh-tw",
-	"faq.name.datapack": "在一個資料夾內放入data資料夾和pack.mcmeta檔案，即可形成資料包。\n資料包結構：\n```\uD83D\uDCC2pack.mcmeta\n\uD83D\uDCC2data\n\t\uD83D\uDCC1namespace\n\t\t\uD83D\uDCC1advancements\n\t\t\uD83D\uDCC2chat_type\n\t\t\uD83D\uDCC1datapacks\n\t\t\uD83D\uDCC1dimension\n\t\t\uD83D\uDCC1dimension_type\n\t\t\uD83D\uDCC1functions\n\t\t\uD83D\uDCC1loot_tables\n\t\t\uD83D\uDCC1predicates\n\t\t\uD83D\uDCC1recipes\n\t\t\uD83D\uDCC1structures\n\t\t\uD83D\uDCC2tags\n\t\t\t\uD83D\uDCC1blocks\n\t\t\t\uD83D\uDCC1entity_types\n\t\t\t\uD83D\uDCC1fluids\n\t\t\t\uD83D\uDCC1functions\n\t\t\t\uD83D\uDCC1game_events\n\t\t\t\uD83D\uDCC1items\n\t\t\t\uD83D\uDCC2worldgen\n\t\t\t\t\uD83D\uDCC1biome\n\t\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\uD83D\uDCC2worldgen\n\t\t\t\uD83D\uDCC1biome\n\t\t\t\uD83D\uDCC1configured_carver\n\t\t\t\uD83D\uDCC1configured_feature\n\t\t\t\uD83D\uDCC1density_function\n\t\t\t\uD83D\uDCC1flat_level_generator_preset\n\t\t\t\uD83D\uDCC1noise\n\t\t\t\uD83D\uDCC1noise_settings\n\t\t\t\uD83D\uDCC1structure\n\t\t\t\uD83D\uDCC1structure_set\n\t\t\t\uD83D\uDCC1world_preset\n\t\t\t\uD83D\uDCC1placed_feature\n\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\t\uD83D\uDCC1configured_surface_builder\n\t\t\t\uD83D\uDCC1processor_list\n\t\t\t\uD83D\uDCC1template_pool```\nhttps://minecraft.fandom.com/zh/wiki/教程/制作数据包?variant=zh-tw",
+	"faq.name.datapack": "在一個資料夾內放入data資料夾和pack.mcmeta檔案，即可形成資料包。\n資料包結構:\n```\uD83D\uDCC2pack.mcmeta\n\uD83D\uDCC2data\n\t\uD83D\uDCC1namespace\n\t\t\uD83D\uDCC1advancements\n\t\t\uD83D\uDCC2chat_type\n\t\t\uD83D\uDCC1datapacks\n\t\t\uD83D\uDCC1dimension\n\t\t\uD83D\uDCC1dimension_type\n\t\t\uD83D\uDCC1functions\n\t\t\uD83D\uDCC1loot_tables\n\t\t\uD83D\uDCC1predicates\n\t\t\uD83D\uDCC1recipes\n\t\t\uD83D\uDCC1structures\n\t\t\uD83D\uDCC2tags\n\t\t\t\uD83D\uDCC1blocks\n\t\t\t\uD83D\uDCC1entity_types\n\t\t\t\uD83D\uDCC1fluids\n\t\t\t\uD83D\uDCC1functions\n\t\t\t\uD83D\uDCC1game_events\n\t\t\t\uD83D\uDCC1items\n\t\t\t\uD83D\uDCC2worldgen\n\t\t\t\t\uD83D\uDCC1biome\n\t\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\uD83D\uDCC2worldgen\n\t\t\t\uD83D\uDCC1biome\n\t\t\t\uD83D\uDCC1configured_carver\n\t\t\t\uD83D\uDCC1configured_feature\n\t\t\t\uD83D\uDCC1density_function\n\t\t\t\uD83D\uDCC1flat_level_generator_preset\n\t\t\t\uD83D\uDCC1noise\n\t\t\t\uD83D\uDCC1noise_settings\n\t\t\t\uD83D\uDCC1structure\n\t\t\t\uD83D\uDCC1structure_set\n\t\t\t\uD83D\uDCC1world_preset\n\t\t\t\uD83D\uDCC1placed_feature\n\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\t\uD83D\uDCC1configured_surface_builder\n\t\t\t\uD83D\uDCC1processor_list\n\t\t\t\uD83D\uDCC1template_pool```\nhttps://minecraft.fandom.com/zh/wiki/教程/制作数据包?variant=zh-tw",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.log": "`latest.log`是一份存在於`.minecraft/logs`資料夾內的文字文件，記錄了遊戲的log，包含指令的輸出、伺服器的聊天紀錄、資料包載入時的錯誤等等。",
 	"faq.name.logs": "`latest.log`是一份存在於`.minecraft/logs`資料夾內的文字文件，記錄了遊戲的log，包含指令的輸出、伺服器的聊天紀錄、資料包載入時的錯誤等等。",
-	"faq.name.marker": "`標記是一種只存在於伺服端的實體，是專為指令而生的。標記完全隱形、沒有碰撞箱，且可以透過`{data}`儲存任何NBT。\n標記無法擁有`{Passengers}`標籤，且即使將`{CustomNameVisible}`設定為`true`，依舊不會顯示名字\n指令: `/summon marker ~ ~ ~ {data:{YourNBTHere:\"\"}}`",
+	"faq.name.marker": "`標記是一種只存在於伺服端的實體，是專為指令而生的。標記完全隱形、沒有碰撞箱，且可以透過`{data}`儲存任何NBT。\n標記無法擁有`{Passengers}`標籤，且即使將`{CustomNameVisible}`設定為`true`，依舊不會顯示名字\n指令: `/summon marker ~ ~ ~ {data:{YourNBTHere:\"\"}}`\nhttps://minecraft.fandom.com/zh/wiki/标记?variant=zh-tw",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
 	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
@@ -270,18 +270,5 @@
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"lang.begin": "語言設定: `/lang [<代碼>]`\n",
 	"lang.end": "",
-	"lang.fail": "無效的語言設定。",
-	"lang.list":
-	[
-		"English",
-		"台灣正體",
-		"台語文字",
-		"粵語漢字",
-		"简体中文"
-	],
-	"lang.name.1": "Language set to English.",
-	"lang.name.2": "語言設定為 台灣正體",
-	"lang.name.3": "話語設定為 台語文字",
-	"lang.name.4": "語言設定為 粵語漢字",
-	"lang.name.5": "语言设置为 简体中文"
+	"lang.fail": "無效的語言設定。"
 }

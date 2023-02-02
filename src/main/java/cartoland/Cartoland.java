@@ -47,7 +47,7 @@ public class Cartoland
 				Commands.slash("lang", "Change language or check current languages")
 						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
 				Commands.slash("language", "Change language or check current languages")
-						.addOptions(new OptionData(OptionType.INTEGER, "lang_name", "The language that user want to change", false)
+						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
 											.addChoice("English", Languages.ENGLISH)
 											.addChoice("台灣正體", Languages.TW_MANDARIN)
 											.addChoice("台語文字", Languages.TAIWANESE)

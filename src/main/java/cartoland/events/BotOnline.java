@@ -18,6 +18,7 @@ public class BotOnline extends ListenerAdapter
 		{
 			logString = "Cartoland Bot is now online.";
 			IDAndEntities.botChannel.sendMessage(logString).queue();
+			System.out.println(logString);
 			FileHandle.logIntoFile(logString);
 		}
 		else

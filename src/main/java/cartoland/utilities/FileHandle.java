@@ -14,23 +14,21 @@ public class FileHandle
 	{
 		try
 		{
-			return new String(Files.readAllBytes(Paths.get(fileName)));
+			return Files.readString(Paths.get(fileName));
 		}
 		catch (IOException exception)
 		{
 			exception.printStackTrace(System.err);
-			System.exit(-1);
+			return "{}";
 		}
-
-		return null;
 	}
 
-	static void synchronizeUsersFile(String usersFileString)
+	public static void synchronizeUsersFile()
 	{
 		try
 		{
 			FileWriter writer = new FileWriter("users.json"); //同步到檔案裡
-			writer.write(usersFileString);
+			writer.write(JsonHandle.getUsersFileString());
 			writer.close();
 		}
 		catch (IOException exception)

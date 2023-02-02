@@ -5,7 +5,6 @@ import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -54,9 +53,7 @@ public class CommandUsage extends ListenerAdapter
 				return;
 			}
 			event.reply("Shutting down...").queue();
-			TextChannel channel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID);
-			if (channel != null)
-				channel.sendMessage("Cartoland bot is now offline.").queue();
+			IDAndEntities.botChannel.sendMessage( "Cartoland Bot is now offline.").queue();
 			IDAndEntities.jda.shutdown();
 		});
 

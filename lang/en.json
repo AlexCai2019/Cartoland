@@ -180,14 +180,22 @@
 	"faq.fail": "Invalid question, please try to use `/faq` to check every questions.",
 	"faq.list":
 	[
+		"aec",
 		"slots",
 		"format",
+		"log",
 		"optimize",
 		"standsvsclouds"
 	],
+	"faq.name.aec": "Area Effect Cloud is an entity that is invisible, no gravity and almost no hitbox. It was used as a marker entity from 1.9 to 1.16. After 1.17, Area Effect Cloud was replaced by Marker, but still can be use as floating text.\nCommand: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<Name>\"',CustomNameVisible:true}`\nhttps://minecraft.fandom.com/wiki/Lingering_Potion#Area_Effect_Cloud",
+	"faq.name.area_effect_cloud": "Area Effect Cloud is an entity that is invisible, no gravity and almost no hitbox. It was used as a marker entity from 1.9 to 1.16. After 1.17, Area Effect Cloud was replaced by Marker, but still can be use as floating text.\nCommand: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<Name>\"',CustomNameVisible:true}`\nhttps://minecraft.fandom.com/wiki/Lingering_Potion#Area_Effect_Cloud",
+	"faq.name.datapack": "A datapack can be create by putting a data folder and a pack.mcmeta file into a folder\nDatapack structure:\n```\uD83D\uDCC2pack.mcmeta\n\uD83D\uDCC2data\n\t\uD83D\uDCC1namespace\n\t\t\uD83D\uDCC1advancements\n\t\t\uD83D\uDCC2chat_type\n\t\t\uD83D\uDCC1datapacks\n\t\t\uD83D\uDCC1dimension\n\t\t\uD83D\uDCC1dimension_type\n\t\t\uD83D\uDCC1functions\n\t\t\uD83D\uDCC1loot_tables\n\t\t\uD83D\uDCC1predicates\n\t\t\uD83D\uDCC1recipes\n\t\t\uD83D\uDCC1structures\n\t\t\uD83D\uDCC2tags\n\t\t\t\uD83D\uDCC1blocks\n\t\t\t\uD83D\uDCC1entity_types\n\t\t\t\uD83D\uDCC1fluids\n\t\t\t\uD83D\uDCC1functions\n\t\t\t\uD83D\uDCC1game_events\n\t\t\t\uD83D\uDCC1items\n\t\t\t\uD83D\uDCC2worldgen\n\t\t\t\t\uD83D\uDCC1biome\n\t\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\uD83D\uDCC2worldgen\n\t\t\t\uD83D\uDCC1biome\n\t\t\t\uD83D\uDCC1configured_carver\n\t\t\t\uD83D\uDCC1configured_feature\n\t\t\t\uD83D\uDCC1density_function\n\t\t\t\uD83D\uDCC1flat_level_generator_preset\n\t\t\t\uD83D\uDCC1noise\n\t\t\t\uD83D\uDCC1noise_settings\n\t\t\t\uD83D\uDCC1structure\n\t\t\t\uD83D\uDCC1structure_set\n\t\t\t\uD83D\uDCC1world_preset\n\t\t\t\uD83D\uDCC1placed_feature\n\t\t\t\uD83D\uDCC1configured_structure_feature\n\t\t\t\uD83D\uDCC1configured_surface_builder\n\t\t\t\uD83D\uDCC1processor_list\n\t\t\t\uD83D\uDCC1template_pool```\nhttps://minecraft.fandom.com/wiki/Tutorials/Creating_a_data_pack",
+	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
+	"faq.name.log": "`latest.log` is a text document that exist in `.minecraft/logs`folder, it logs the game, including outputs of commands, chat history and error output when loading a datapack.",
+	"faq.name.logs": "`latest.log` is a text document that exist in `.minecraft/logs`folder, it logs the game, including outputs of commands, chat history and error output when loading a datapack.",
+	"faq.name.marker": "Marker is an entity that only exist in server side, it was born for command, can store any nby through `{data}` NBT.\nMarker can't have `{Passengers}` NBT, won't show CustomName even `{CustomNameVisible}` is set to true.\nCommand: `/summon marker ~ ~ ~ {data:{YourNBTHere:\"\"}}`\nhttps://minecraft.fandom.com/wiki/Marker",
 	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
-	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`Datapack features: ",
@@ -265,9 +273,9 @@
 		"粵語漢字",
 		"简体中文"
 	],
-	"lang.name.1": "Language set to English.",
-	"lang.name.2": "語言設定為 台灣正體",
-	"lang.name.3": "話語設定為 台語文字",
-	"lang.name.4": "語言設定為 粵語漢字",
-	"lang.name.5": "语言设置为 简体中文"
+	"lang.name.en": "Language set to English.",
+	"lang.name.tw": "語言設定為 台灣正體",
+	"lang.name.ta": "話語設定為 台語文字",
+	"lang.name.hk": "語言設定為 粵語漢字",
+	"lang.name.cn": "语言设置为 简体中文"
 }

@@ -4,7 +4,6 @@ import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -55,11 +54,10 @@ public class CommandUsage extends ListenerAdapter
 				return;
 			}
 			event.reply("Shutting down...").queue();
-			JDA jda = event.getJDA();
-			TextChannel channel = jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID);
+			TextChannel channel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.BOT_CHANNEL_ID);
 			if (channel != null)
 				channel.sendMessage("Cartoland bot is now offline.").queue();
-			jda.shutdown();
+			IDAndEntities.jda.shutdown();
 		});
 
 		commands.put("whosyourdaddy", event -> event.reply(userID == IDAndEntities.AC_ID ? "You." : "Alex Cai").queue());

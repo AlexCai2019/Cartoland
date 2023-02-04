@@ -26,7 +26,7 @@ public class BotOnline extends ListenerAdapter
 			logString = "Can't find Bot Channel.";
 			System.err.println(logString);
 			FileHandle.logIntoFile(logString);
-			System.exit(-1);
+			System.exit(1);
 		}
 
 		IDAndEntities.undergroundChannel = IDAndEntities.jda.getChannelById(TextChannel.class, IDAndEntities.UNDERGROUND_CHANNEL_ID); //地下聊天室
@@ -35,7 +35,7 @@ public class BotOnline extends ListenerAdapter
 			logString = "Can't find Underground Channel.";
 			System.err.println(logString);
 			FileHandle.logIntoFile(logString);
-			System.exit(-1);
+			System.exit(1);
 		}
 
 		IDAndEntities.botItself = IDAndEntities.jda.getSelfUser();

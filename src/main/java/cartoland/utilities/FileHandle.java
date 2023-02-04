@@ -18,7 +18,7 @@ public class FileHandle
 		}
 		catch (IOException exception)
 		{
-			exception.printStackTrace(System.err);
+			exception.printStackTrace();
 			return "{}";
 		}
 	}
@@ -33,8 +33,8 @@ public class FileHandle
 		}
 		catch (IOException exception)
 		{
-			exception.printStackTrace(System.err);
-			System.exit(-1);
+			exception.printStackTrace();
+			System.exit(1);
 		}
 	}
 
@@ -47,10 +47,10 @@ public class FileHandle
 			logWriter.write(LocalTime.now() + "\t" + output + "\n"); //時間 內容 換行
 			logWriter.close();
 		}
-		catch (IOException e)
+		catch (IOException exception)
 		{
-			e.printStackTrace(System.err);
-			System.exit(-1);
+			exception.printStackTrace();
+			System.exit(1);
 		}
 	}
 }

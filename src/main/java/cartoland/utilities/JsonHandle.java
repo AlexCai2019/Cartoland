@@ -46,17 +46,7 @@ public class JsonHandle
 		lastUse(userID);
 		StringBuilder builder = new StringBuilder();
 		builder.append(file.getString(typeCommandName + ".begin")); //開頭
-
-		String jsonKey = typeCommandName + ".list";
-		JSONObject hasKeyFile;
-		if (file.has(jsonKey)) //如果有這個key
-			hasKeyFile = file;
-		else if (englishFile.has(jsonKey)) //預設使用英文
-			hasKeyFile = englishFile;
-		else
-			return file.getString(typeCommandName + ".fail");
-
-		JSONArray dotListArray = hasKeyFile.getJSONArray(jsonKey);
+		JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
 		int dotListArrayLength = dotListArray.length();
 		for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
 			builder.append(dotListArray.getString(i)).append(' ');
@@ -78,6 +68,10 @@ public class JsonHandle
 
 		if (typeCommandName.equals("lang"))
 			usersFile.put(userIDString, argument);
-		return hasKeyFile.getString(typeCommandName + ".name." + argument);
+
+		String result = hasKeyFile.getString(jsonKey); //要獲得的字串
+		if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找
+			return hasKeyFile.getString(result.substring(1));
+		return result;
 	}
 }

@@ -5,6 +5,7 @@ import cartoland.events.BotOnline;
 import cartoland.events.ChannelMessage;
 import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
+import cartoland.utilities.FileHandle;
 import cartoland.utilities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -15,9 +16,16 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import static cartoland.utilities.IDAndEntities.jda;
 
+/**
+ * {@code Cartoland} is the class that has the {@link #main} method, which is the entry point of the entire program. All the
+ * settings of JDA was done here.
+ *
+ * @since 1.0
+ * @author Alex Cai
+ */
 public class Cartoland
 {
-	public static void main(String[] args) throws InterruptedException
+	public static void main(String[] args)
 	{
 		if (args.length < 1)
 			return;
@@ -69,6 +77,14 @@ public class Cartoland
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false)
 		).queue();
 
-		jda.awaitReady();
+		try
+		{
+			jda.awaitReady();
+		}
+		catch (InterruptedException exception)
+		{
+			exception.printStackTrace();
+			FileHandle.log(exception);
+		}
 	}
 }

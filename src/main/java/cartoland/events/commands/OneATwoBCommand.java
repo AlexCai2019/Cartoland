@@ -6,6 +6,15 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * {@code OneATwoBCommand} is an execution when user uses /oneatwob command. This can be seen as a frontend of
+ * the 1A2B game. This class implements {@link ICommand} interface, which is for the commands HashMap in
+ * {@link CommandUsage}. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
+ *
+ * @since 1.3
+ * @see cartoland.mini_games.OneATwoBGame The backend of the 1A2B game.
+ * @author Alex Cai
+ */
 public class OneATwoBCommand implements ICommand
 {
 	private final CommandUsage commandCore;

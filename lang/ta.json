@@ -187,10 +187,10 @@
 		"standsvsclouds"
 	],
 	"faq.name.aec": "https://minecraft.fandom.com/zh/wiki/区域效果云?variant=zh-tw",
+	"faq.name.slot": "&faq.name.slots",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
-	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`資料包功能: ",
 	"dtp.end": "`",

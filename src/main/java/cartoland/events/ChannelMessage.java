@@ -10,6 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
+/**
+ * {@code ChannelMessage} is a listener that triggers when a user types anything in any channel that the bot can
+ * access. This class was registered in {@link cartoland.Cartoland#main}, with the build of JDA.
+ *
+ * @since 1.0
+ * @author Alex Cai
+ */
 public class ChannelMessage extends ListenerAdapter
 {
 	private final Random random = new Random();
@@ -41,6 +48,7 @@ public class ChannelMessage extends ListenerAdapter
 		"有病要去看醫生。",
 		"<:ping:1065915559918719006>"
 	};
+	private final MentionType[] botType = { MentionType.USER,MentionType.ROLE };
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
@@ -52,7 +60,7 @@ public class ChannelMessage extends ListenerAdapter
 		String rawMessage = message.getContentRaw(); //獲取訊息
 		if (rawMessage.contains("megumin") || rawMessage.contains("Megumin") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
 			event.getChannel().sendMessage("☆めぐみん大好き！☆").queue();
-		if (message.getMentions().isMentioned(IDAndEntities.botItself, MentionType.USER)) //有人tag機器人
+		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(member.getIdLong() == IDAndEntities.AC_ID ? replyACMention[random.nextInt(replyACMention.length)] : replyMention[random.nextInt(replyMention.length)])
 					.mentionRepliedUser(false).queue();
 	}

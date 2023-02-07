@@ -4,6 +4,15 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Random;
 
+/**
+ * {@code OneATwoBGame} is the backend of the 1A2B game, it can process the entire game with all fields and methods.
+ * This game will generate a {@link #ANSWER_LENGTH} digits long number. Leading 0 is allowed. Players need to guess
+ * the number, if the place of a digit is right, that is an A; if the digit is right but the place is wrong, that is a B.
+ *
+ * @since 1.1
+ * @see cartoland.events.commands.OneATwoBCommand The frontend of the 1A2B game.
+ * @author Alex Cai
+ */
 public class OneATwoBGame implements IMiniGame
 {
 	private static final Random random = new Random();

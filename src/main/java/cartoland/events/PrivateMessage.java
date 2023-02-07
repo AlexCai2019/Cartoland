@@ -11,6 +11,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
+/**
+ * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This class was registered in
+ * {@link cartoland.Cartoland#main}, with the build of JDA.
+ *
+ * @since 1.0
+ * @author Alex Cai
+ */
 public class PrivateMessage extends ListenerAdapter
 {
 	@Override
@@ -24,7 +31,7 @@ public class PrivateMessage extends ListenerAdapter
 			IDAndEntities.undergroundChannel.sendMessage(rawMessage + attachments).queue(); //私訊轉到地下聊天室
 
 			User author = event.getAuthor();
-			FileHandle.logIntoFile(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + attachments + "\" in direct message.");
+			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + attachments + "\" in direct message.");
 		}
 	}
 }

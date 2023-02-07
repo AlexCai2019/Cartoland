@@ -5,10 +5,17 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+/**
+ * @since 1.0
+ * @author Alex Cai
+ */
 public class JsonHandle
 {
+	private JsonHandle() {}
+
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile("users.json")); //使用者的語言設定
-	private static final HashMap<String, JSONObject> languageFileMap= new HashMap<>();
+	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
+	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
 	private static final JSONObject englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json"));
@@ -44,12 +51,13 @@ public class JsonHandle
 	public static String command(long userID, String typeCommandName)
 	{
 		lastUse(userID);
-		StringBuilder builder = new StringBuilder();
+		builder.setLength(0);
 		builder.append(file.getString(typeCommandName + ".begin")); //開頭
 		JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
-		int dotListArrayLength = dotListArray.length();
-		for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
-			builder.append(dotListArray.getString(i)).append(' ');
+		dotListArray.forEach(s -> builder.append(s).append(' '));
+		//int dotListArrayLength = dotListArray.length();
+		//for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
+			//builder.append(dotListArray.getString(i)).append(' ');
 		builder.append(file.getString(typeCommandName + ".end")); //結尾
 		return builder.toString();
 	}

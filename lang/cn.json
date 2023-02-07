@@ -180,12 +180,13 @@
 	"faq.fail": "无效的问题，请尝试使用`/faq`查看所有问题。",
 	"faq.list":
 	[
+		"aec",
 		"slots",
 		"format",
 		"optimize",
 		"standsvsclouds"
 	],
-	"faq.name.slot": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
+	"faq.name.slot": "&faq.name.slots",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",

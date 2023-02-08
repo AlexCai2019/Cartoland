@@ -4,6 +4,7 @@ import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.MentionType;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -56,12 +57,17 @@ public class ChannelMessage extends ListenerAdapter
 		Member member = event.getMember();
 		if (member == null || member.getUser().isBot()) //獲取成員失敗 或 傳訊息的是機器人
 			return; //不用執行
+		MessageChannelUnion channel = event.getChannel();
 		Message message = event.getMessage();
 		String rawMessage = message.getContentRaw(); //獲取訊息
 		if (rawMessage.contains("megumin") || rawMessage.contains("Megumin") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
-			event.getChannel().sendMessage("☆めぐみん大好き！☆").queue();
+			channel.sendMessage("☆めぐみん大好き！☆").queue();
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(member.getIdLong() == IDAndEntities.AC_ID ? replyACMention[random.nextInt(replyACMention.length)] : replyMention[random.nextInt(replyMention.length)])
 					.mentionRepliedUser(false).queue();
+		if (rawMessage.contains("早安"))
+			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
+		if (rawMessage.contains("晚安"))
+			channel.sendMessage("那我也要睡啦").queue();
 	}
 }

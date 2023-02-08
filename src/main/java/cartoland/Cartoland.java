@@ -5,7 +5,6 @@ import cartoland.events.BotOnline;
 import cartoland.events.ChannelMessage;
 import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -25,7 +24,7 @@ import static cartoland.utilities.IDAndEntities.jda;
  */
 public class Cartoland
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws InterruptedException
 	{
 		if (args.length < 1)
 			return;
@@ -44,7 +43,11 @@ public class Cartoland
 		jda.updateCommands().addCommands(
 				Commands.slash("invite", "Get invite link of Cartoland"),
 				Commands.slash("help", "Get help of bot commands")
-						.addOption(OptionType.STRING, "help_name", "The command that want check", false),
+						.addOptions(new OptionData(OptionType.STRING, "help_name", "The command that want check", false)
+											.addChoice("cmd", "cmd")
+											.addChoice("faq", "faq")
+											.addChoice("dtp", "dtp")
+											.addChoice("lang", "lang")),
 				Commands.slash("cmd", "Get help of Minecraft commands")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
 				Commands.slash("mcc", "Get help of Minecraft commands")
@@ -77,14 +80,6 @@ public class Cartoland
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false)
 		).queue();
 
-		try
-		{
-			jda.awaitReady();
-		}
-		catch (InterruptedException exception)
-		{
-			exception.printStackTrace();
-			FileHandle.log(exception);
-		}
+		jda.awaitReady();
 	}
 }

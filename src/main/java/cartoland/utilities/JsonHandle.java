@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 /**
+ * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
+ * at the beginning of process, and provide every information that the outer classes need.
+ *
  * @since 1.0
  * @author Alex Cai
  */
@@ -54,7 +57,7 @@ public class JsonHandle
 		builder.setLength(0);
 		builder.append(file.getString(typeCommandName + ".begin")); //開頭
 		JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
-		dotListArray.forEach(s -> builder.append(s).append(' '));
+		dotListArray.forEach(s -> builder.append((String) s).append(' '));
 		//int dotListArrayLength = dotListArray.length();
 		//for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
 			//builder.append(dotListArray.getString(i)).append(' ');

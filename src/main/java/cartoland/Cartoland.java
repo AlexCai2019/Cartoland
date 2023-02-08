@@ -77,7 +77,9 @@ public class Cartoland
 				Commands.slash("whosyourdaddy", "Reveal this bot's dad"),
 
 				Commands.slash("oneatwob", "Play 1A2B game")
-						.addOption(OptionType.STRING, "answer", "The answer that you think", false)
+						.addOption(OptionType.STRING, "answer", "The answer that you think", false),
+				Commands.slash("lottery", "Play a lottery")
+						.addOption(OptionType.INTEGER, "bet", "The bet amount that you want to offer", false)
 		).queue();
 
 		jda.awaitReady();

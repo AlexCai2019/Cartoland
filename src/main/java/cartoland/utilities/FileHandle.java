@@ -31,12 +31,12 @@ public class FileHandle
 		}
 	}
 
-	public static void synchronizeUsersFile()
+	public static void synchronizeFile(String fileName)
 	{
 		try
 		{
-			FileWriter writer = new FileWriter("users.json"); //同步到檔案裡
-			writer.write(JsonHandle.getUsersFileString());
+			FileWriter writer = new FileWriter(fileName); //同步到檔案裡
+			writer.write(JsonHandle.getFileString(fileName));
 			writer.close();
 		}
 		catch (IOException exception)

@@ -1,8 +1,9 @@
 package cartoland.mini_games;
 
+import cartoland.utilities.IDAndEntities;
+
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Random;
 
 /**
  * {@code OneATwoBGame} is the backend of the 1A2B game, it can process the entire game with all fields and methods.
@@ -15,7 +16,6 @@ import java.util.Random;
  */
 public class OneATwoBGame implements IMiniGame
 {
-	private static final Random random = new Random();
 	public static final int ANSWER_LENGTH = 4;
 	private static final String digitsRegex = "\\d".repeat(ANSWER_LENGTH); //ANSWER_LENGTH個數字
 
@@ -42,7 +42,7 @@ public class OneATwoBGame implements IMiniGame
 	{
 		for (int i = 0, destIndex, temp; i < 9; i++) //到8為止 因為第9項沒必要交換
 		{
-			destIndex = random.nextInt(10 - i) + i; //0會得到0~9 1會得到1~9 2會得到2~9
+			destIndex = IDAndEntities.random.nextInt(10 - i) + i; //0會得到0~9 1會得到1~9 2會得到2~9
 			//交換
 			temp = zeroToNine[destIndex];
 			zeroToNine[destIndex] = zeroToNine[i];

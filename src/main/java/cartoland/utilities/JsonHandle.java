@@ -17,6 +17,7 @@ public class JsonHandle
 	private JsonHandle() {}
 
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile("users.json")); //使用者的語言設定
+	private static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile("command_blocks.json"));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
 	private static final StringBuilder builder = new StringBuilder();
 
@@ -46,9 +47,14 @@ public class JsonHandle
 		file = languageFileMap.get(userLanguage);
 	}
 
-	static String getUsersFileString()
+	static String getFileString(String fileName)
 	{
-		return usersFile.toString();
+		return switch (fileName)
+				{
+					case "users.json" -> usersFile.toString();
+					case "command_blocks.json" -> commandBlocksFile.toString();
+					default -> "{}";
+				};
 	}
 
 	public static String command(long userID, String typeCommandName)
@@ -84,5 +90,55 @@ public class JsonHandle
 		if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找
 			return hasKeyFile.getString(result.substring(1));
 		return result;
+	}
+
+	public static String getKeyContent(long userID, String key)
+	{
+		lastUse(userID);
+		if (file.has(key))
+			return file.getString(key);
+		else if (englishFile.has(key))
+			return englishFile.getString(key);
+		else
+		{
+			String logString = "An error occurred while trying to get " + key + " key.";
+			FileHandle.log(logString);
+			System.err.println(logString);
+			return logString;
+		}
+	}
+
+	public static void addCommandBlocks(long userID, long add)
+	{
+		userIDString = Long.toUnsignedString(userID);
+		if (commandBlocksFile.has(userIDString))
+		{
+			long level = commandBlocksFile.getLong(userIDString);
+			level += add;
+			if (level > 0) //避免溢位
+				commandBlocksFile.put(userIDString, level);
+			else
+				commandBlocksFile.put(userIDString, Long.MAX_VALUE);
+		}
+		else
+			commandBlocksFile.put(userIDString, add);
+	}
+
+	public static void subCommandBlocks(long userID, long sub)
+	{
+		userIDString = Long.toUnsignedString(userID);
+		commandBlocksFile.put(userIDString, commandBlocksFile.getLong(userIDString) - sub);
+	}
+
+	public static long getCommandBlocks(long userID)
+	{
+		String userIDString = Long.toUnsignedString(userID);
+		if (commandBlocksFile.has(userIDString))
+			return commandBlocksFile.getLong(userIDString);
+		else
+		{
+			commandBlocksFile.put(userIDString, 0L);
+			return 0L;
+		}
 	}
 }

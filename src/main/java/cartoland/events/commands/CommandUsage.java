@@ -94,6 +94,8 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("whosyourdaddy", event -> event.reply(userID == IDAndEntities.AC_ID ? "You." : "Alex Cai").queue());
 
 		commands.put("oneatwob", new OneATwoBCommand(this));
+
+		commands.put("lottery", new LotteryCommand(this));
 	}
 
 	/**

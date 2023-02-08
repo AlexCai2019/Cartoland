@@ -154,7 +154,7 @@
 	"cmd.name.spawnpoint": "https://minecraft.fandom.com/wiki/Commands/spawnpoint",
 	"cmd.name.spectate": "https://minecraft.fandom.com/wiki/Commands/spectate",
 	"cmd.name.spreadplayers": "https://minecraft.fandom.com/wiki/Commands/spreadplayers",
-	"cmd.name.stop": "https://minecraft.fandom.com/wiki/Commands/stop",
+	"cmd.name.stop": "```ansi\n\u001B[31mstop```https://minecraft.fandom.com/wiki/Commands/stop",
 	"cmd.name.stopsound": "https://minecraft.fandom.com/wiki/Commands/stopsound",
 	"cmd.name.summon": "https://minecraft.fandom.com/wiki/Commands/summon",
 	"cmd.name.tag": "https://minecraft.fandom.com/wiki/Commands/tag",

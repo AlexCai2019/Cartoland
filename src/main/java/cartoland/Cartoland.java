@@ -5,7 +5,7 @@ import cartoland.events.BotOnline;
 import cartoland.events.ChannelMessage;
 import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
-import cartoland.utilities.Languages;
+import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -74,12 +74,11 @@ public class Cartoland
 				Commands.slash("megumin", "The best anime girl"),
 
 				Commands.slash("shutdown", "Use this to shutdown the bot"),
-				Commands.slash("whosyourdaddy", "Reveal this bot's dad"),
 
 				Commands.slash("oneatwob", "Play 1A2B game")
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false),
 				Commands.slash("lottery", "Play a lottery")
-						.addOption(OptionType.INTEGER, "bet", "The bet amount that you want to offer", false)
+						.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false)
 		).queue();
 
 		jda.awaitReady();

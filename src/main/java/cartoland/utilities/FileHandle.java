@@ -50,12 +50,13 @@ public class FileHandle
 	public static void log(String output)
 	{
 		LocalTime now = LocalTime.now();
-		String nowString = String.format("%02d:%02d:%02d", now.getHour(), now.getMinute(), now.getSecond());
+		//時間 內容
+		String logString = String.format("%02d:%02d:%02d\t%s\n", now.getHour(), now.getMinute(), now.getSecond(), output);
 		try
 		{
 			//一定要事先備好logs資料夾
 			FileWriter logWriter = new FileWriter("logs/" + LocalDate.now(), true);
-			logWriter.write( nowString + '\t' + output + '\n'); //時間 內容 換行
+			logWriter.write(logString);
 			logWriter.close();
 		}
 		catch (IOException exception)

@@ -16,6 +16,8 @@ public class IDAndEntities
 
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
+	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
+	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
 	public static final long AC_ID = 355953951469731842L;
 
 	public static TextChannel botChannel;
@@ -24,4 +26,19 @@ public class IDAndEntities
 	public static User botItself;
 
 	public static Random random = new Random();
+
+	/**
+	 * @since 1.0
+	 * @author Alex Cai
+	 */
+	public static class Languages
+	{
+		private Languages() {}
+
+		public static final String ENGLISH = "en";
+		public static final String TW_MANDARIN = "tw";
+		public static final String TAIWANESE = "ta";
+		public static final String CANTONESE = "hk";
+		public static final String CHINESE = "cn";
+	}
 }

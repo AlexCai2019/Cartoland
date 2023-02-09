@@ -27,11 +27,11 @@ public class JsonHandle
 
 	static
 	{
-		languageFileMap.put(Languages.ENGLISH, englishFile);
-		languageFileMap.put(Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
-		languageFileMap.put(Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
-		languageFileMap.put(Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
-		languageFileMap.put(Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+		languageFileMap.put(IDAndEntities.Languages.ENGLISH, englishFile);
+		languageFileMap.put(IDAndEntities.Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
+		languageFileMap.put(IDAndEntities.Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
+		languageFileMap.put(IDAndEntities.Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
+		languageFileMap.put(IDAndEntities.Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
 	}
 
 	private static void lastUse(long userID)
@@ -42,7 +42,7 @@ public class JsonHandle
 		if (usersFile.has(userIDString))
 			userLanguage = usersFile.getString(userIDString); //獲取使用者設定的語言
 		else //找不到設定的語言
-			usersFile.put(userIDString, userLanguage = Languages.ENGLISH); //放英文進去
+			usersFile.put(userIDString, userLanguage = IDAndEntities.Languages.ENGLISH); //放英文進去
 
 		file = languageFileMap.get(userLanguage);
 	}
@@ -50,11 +50,11 @@ public class JsonHandle
 	static String getFileString(String fileName)
 	{
 		return switch (fileName)
-				{
-					case "users.json" -> usersFile.toString();
-					case "command_blocks.json" -> commandBlocksFile.toString();
-					default -> "{}";
-				};
+		{
+			case "users.json" -> usersFile.toString();
+			case "command_blocks.json" -> commandBlocksFile.toString();
+			default -> "{}";
+		};
 	}
 
 	public static String command(long userID, String typeCommandName)
@@ -62,11 +62,8 @@ public class JsonHandle
 		lastUse(userID);
 		builder.setLength(0);
 		builder.append(file.getString(typeCommandName + ".begin")); //開頭
-		JSONArray dotListArray = file.getJSONArray(typeCommandName + ".list");
+		JSONArray dotListArray = englishFile.getJSONArray(typeCommandName + ".list");
 		dotListArray.forEach(s -> builder.append((String) s).append(' '));
-		//int dotListArrayLength = dotListArray.length();
-		//for (int i = 0; i < dotListArrayLength; i++) //所有.list內的內容
-			//builder.append(dotListArray.getString(i)).append(' ');
 		builder.append(file.getString(typeCommandName + ".end")); //結尾
 		return builder.toString();
 	}
@@ -92,22 +89,6 @@ public class JsonHandle
 		return result;
 	}
 
-	public static String getKeyContent(long userID, String key)
-	{
-		lastUse(userID);
-		if (file.has(key))
-			return file.getString(key);
-		else if (englishFile.has(key))
-			return englishFile.getString(key);
-		else
-		{
-			String logString = "An error occurred while trying to get " + key + " key.";
-			FileHandle.log(logString);
-			System.err.println(logString);
-			return logString;
-		}
-	}
-
 	public static void addCommandBlocks(long userID, long add)
 	{
 		userIDString = Long.toUnsignedString(userID);
@@ -115,10 +96,7 @@ public class JsonHandle
 		{
 			long level = commandBlocksFile.getLong(userIDString);
 			level += add;
-			if (level > 0) //避免溢位
-				commandBlocksFile.put(userIDString, level);
-			else
-				commandBlocksFile.put(userIDString, Long.MAX_VALUE);
+			commandBlocksFile.put(userIDString, level > 0 ? level : Long.MAX_VALUE); //避免溢位
 		}
 		else
 			commandBlocksFile.put(userIDString, add);

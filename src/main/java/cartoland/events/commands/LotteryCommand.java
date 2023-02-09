@@ -25,21 +25,43 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long nowHave = JsonHandle.getCommandBlocks(commandCore.userID);
-		Long betLong = event.getOption("bet", OptionMapping::getAsLong);
+		String betString = event.getOption("bet", OptionMapping::getAsString);
 
-		if (betLong != null)
+		if (betString != null)
 		{
-			long bet = betLong;
-			if (nowHave > bet)
+			long bet;
+
+			if (betString.matches("\\d+"))
+				bet = Long.getLong(betString);
+			else if (betString.matches("\\d+%"))
 			{
-				JsonHandle.subCommandBlocks(commandCore.userID, bet);
+				long percentage = Long.getLong(betString.substring(0, betString.length() - 1));
+				if (percentage <= 100L)
+					bet = nowHave * percentage / 100;
+				else
+				{
+					event.reply("You can't bet " + percentage + "% of your command blocks!").queue();
+					return;
+				}
+			}
+			else
+			{
+				event.reply("Usage: `/lottery [<integer>]` or `/lottery [<percentage>]%`, and don't use negative number.").queue();
+				return;
+			}
+
+			if (nowHave >= bet)
+			{
 				if (IDAndEntities.random.nextBoolean())
 				{
 					JsonHandle.addCommandBlocks(commandCore.userID, bet);
 					event.reply("You win! You now have " + (nowHave + bet) + " command blocks").queue();
 				}
 				else
-					event.reply("You Lose... you now have " + (nowHave - bet) + " command blocks").queue();
+				{
+					JsonHandle.subCommandBlocks(commandCore.userID, bet);
+					event.reply("You lose... You now have " + (nowHave - bet) + " command blocks").queue();
+				}
 			}
 			else
 				event.reply("You don't have enough command blocks! You now have " + nowHave + " command blocks.").queue();

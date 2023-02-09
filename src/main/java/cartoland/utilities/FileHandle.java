@@ -33,10 +33,11 @@ public class FileHandle
 
 	public static void synchronizeFile(String fileName)
 	{
+		String fileContent = JsonHandle.getFileString(fileName);
 		try
 		{
 			FileWriter writer = new FileWriter(fileName); //同步到檔案裡
-			writer.write(JsonHandle.getFileString(fileName));
+			writer.write(fileContent != null ? fileContent : "{}");
 			writer.close();
 		}
 		catch (IOException exception)

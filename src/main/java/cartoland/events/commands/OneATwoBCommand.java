@@ -2,6 +2,7 @@ package cartoland.events.commands;
 
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
+import cartoland.utilities.FileHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ public class OneATwoBCommand implements ICommand
 				event.reply("Start 1A2B game! type `/oneatwob <answer>` to make a guess.").queue();
 				commandCore.games.put(commandCore.userID, new OneATwoBGame());
 			}
+			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /oneatwob.");
 		}
 		else //帶參數
 		{
@@ -73,6 +75,8 @@ public class OneATwoBCommand implements ICommand
 			}
 			else //沒有在玩遊戲 但指令還是帶了引數
 				event.reply("Please run `/oneatwob` without arguments to start the game.").queue();
+
+			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /oneatwob " + argument + ".");
 		}
 	}
 }

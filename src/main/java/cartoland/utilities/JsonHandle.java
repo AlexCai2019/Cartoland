@@ -16,22 +16,21 @@ public class JsonHandle
 {
 	private JsonHandle() {}
 
-	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile("users.json")); //使用者的語言設定
-	private static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile("command_blocks.json"));
+	public static final String USERS_JSON = "users.json";
+	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
+
+	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
+	private static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
 	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
-	private static final JSONObject englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json"));
+	private static JSONObject englishFile; //英文檔案
 	private static String userIDString = null; //將ID轉換成字串
 
 	static
 	{
-		languageFileMap.put(IDAndEntities.Languages.ENGLISH, englishFile);
-		languageFileMap.put(IDAndEntities.Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
-		languageFileMap.put(IDAndEntities.Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
-		languageFileMap.put(IDAndEntities.Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
-		languageFileMap.put(IDAndEntities.Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+		reloadLanguageFiles();
 	}
 
 	private static void lastUse(long userID)
@@ -51,8 +50,8 @@ public class JsonHandle
 	{
 		return switch (fileName)
 		{
-			case "users.json" -> usersFile.toString();
-			case "command_blocks.json" -> commandBlocksFile.toString();
+			case USERS_JSON -> usersFile.toString();
+			case COMMAND_BLOCKS_JSON -> commandBlocksFile.toString();
 			default -> "{}";
 		};
 	}
@@ -89,6 +88,16 @@ public class JsonHandle
 		return result;
 	}
 
+	public static void reloadLanguageFiles()
+	{
+		languageFileMap.put(IDAndEntities.Languages.ENGLISH, englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json")));
+		languageFileMap.put(IDAndEntities.Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
+		languageFileMap.put(IDAndEntities.Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
+		languageFileMap.put(IDAndEntities.Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
+		languageFileMap.put(IDAndEntities.Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+		FileHandle.log("Reload all language json files");
+	}
+
 	public static void addCommandBlocks(long userID, long add)
 	{
 		userIDString = Long.toUnsignedString(userID);
@@ -102,10 +111,10 @@ public class JsonHandle
 			commandBlocksFile.put(userIDString, add);
 	}
 
-	public static void subCommandBlocks(long userID, long sub)
+	public static void setCommandBlocks(long userID, long value)
 	{
 		userIDString = Long.toUnsignedString(userID);
-		commandBlocksFile.put(userIDString, commandBlocksFile.getLong(userIDString) - sub);
+		commandBlocksFile.put(userIDString, value);
 	}
 
 	public static long getCommandBlocks(long userID)

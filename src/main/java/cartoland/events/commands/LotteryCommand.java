@@ -54,24 +54,30 @@ public class LotteryCommand implements ICommand
 			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery " + betString + ".");
 			if (nowHave >= bet)
 			{
+				long afterBet;
+				String result;
 				if (IDAndEntities.random.nextBoolean())
 				{
-					JsonHandle.addCommandBlocks(commandCore.userID, bet);
-					event.reply("You bet" + bet + " command blocks and win! You now have " + (nowHave + bet) + " command blocks").queue();
+					afterBet = nowHave + bet;
+					if (afterBet < 0)
+						afterBet = Long.MAX_VALUE; //避免溢位
+					result = "win!";
 				}
 				else
 				{
-					JsonHandle.subCommandBlocks(commandCore.userID, bet);
-					event.reply("You bet " + bet + " command blocks and lose... You now have " + (nowHave - bet) + " command blocks").queue();
+					afterBet = nowHave - bet;
+					result = "lose...";
 				}
+				JsonHandle.setCommandBlocks(commandCore.userID, afterBet);
+				event.reply("You bet " + bet + " command blocks and " + result + "\nYou now have " + afterBet + " command blocks").queue();
 			}
 			else
-				event.reply("You don't have enough command blocks! You bet " + bet + " command blocks, but you now only have " + nowHave + " command blocks.").queue();
+				event.reply("You don't have enough command blocks!\nYou bet " + bet + " command blocks, but you only have " + nowHave + " command blocks.").queue();
 		}
 		else
 		{
 			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery.");
-			event.reply("You now have " + nowHave + " command blocks.").queue();
+			event.reply("You have " + nowHave + " command blocks.").queue();
 		}
 	}
 }

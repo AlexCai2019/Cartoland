@@ -101,6 +101,18 @@ public class CommandUsage extends ListenerAdapter
 			IDAndEntities.jda.shutdown();
 		});
 
+		//reload
+		commands.put("reload", event ->
+		{
+			if (userID != IDAndEntities.AC_ID) //不是我
+			{
+				event.reply("You can't do that.").queue();
+				return;
+			}
+			event.reply("reloading...").queue();
+			JsonHandle.reloadLanguageFiles();
+		});
+
 		//oneatwob
 		commands.put("oneatwob", new OneATwoBCommand(this));
 
@@ -126,10 +138,10 @@ public class CommandUsage extends ListenerAdapter
 		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument != null) //有參數
 		{
-			FileHandle.log(userName + "(" + userID + ") used /" + event.getName() + " " + argument + ".");
+			FileHandle.log(userName + "(" + userID + ") used /" + event.getName() + " " + argument);
 			return JsonHandle.command(userID, jsonKey, argument);
 		}
-		FileHandle.log(userName + "(" + userID + ") used /" + event.getName() + ".");
+		FileHandle.log(userName + "(" + userID + ") used /" + event.getName());
 		return JsonHandle.command(userID, jsonKey);
 	}
 }

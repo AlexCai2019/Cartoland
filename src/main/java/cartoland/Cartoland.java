@@ -7,7 +7,9 @@ import cartoland.events.PrivateMessage;
 import cartoland.events.commands.CommandUsage;
 import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -73,7 +75,10 @@ public class Cartoland
 											.addChoice("简体中文", Languages.CHINESE)),
 				Commands.slash("megumin", "The best anime girl"),
 
-				Commands.slash("shutdown", "Use this to shutdown the bot"),
+				Commands.slash("shutdown", "Use this to shutdown the bot")
+						.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
+				Commands.slash("reload", "Reload all JSON files")
+						.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
 				Commands.slash("oneatwob", "Play 1A2B game")
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false),

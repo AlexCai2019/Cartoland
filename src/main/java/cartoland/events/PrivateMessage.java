@@ -27,11 +27,13 @@ public class PrivateMessage extends ListenerAdapter
 		{
 			Message message = event.getMessage();
 			String rawMessage = message.getContentRaw();
-			String attachments = "\n" + message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
-			IDAndEntities.undergroundChannel.sendMessage(rawMessage + attachments).queue(); //私訊轉到地下聊天室
+			String attachments = message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
+			if (attachments.length() != 0)
+				rawMessage += "\n" + attachments;
+			IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
 
 			User author = event.getAuthor();
-			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + attachments + "\" in direct message.");
+			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
 		}
 	}
 }

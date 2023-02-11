@@ -46,9 +46,10 @@ public class ChannelMessage extends ListenerAdapter
 		"再吵，就把你丟到亞馬遜上面賣。",
 		"你除了tag機器人外沒別的事情好做嗎？",
 		"有病要去看醫生。",
+		"<:ping:1065915559918719006>",
 		"你凡是有tag我被我記起來的對不對？我一定到現場打你，一定打你！",
-		"老子瘋狗的外號Maps群時期就有啦！",
-		"<:ping:1065915559918719006>"
+		"哪裡來的小孩子，家教差成這樣。",
+		"老子瘋狗的外號Maps群時期就有啦！"
 	};
 	private final MentionType[] botType = { MentionType.USER,MentionType.ROLE };
 
@@ -64,9 +65,9 @@ public class ChannelMessage extends ListenerAdapter
 			Member member = event.getMember();
 			if (member == null || member.getUser().isBot()) //獲取成員失敗 或 傳訊息的是機器人
 				return; //不用執行
+			long userID = member.getIdLong();
 			Message message = event.getMessage();
 			String rawMessage = message.getContentRaw(); //獲取訊息
-			long userID = member.getIdLong();
 			Category category = message.getCategory();
 			if (category == null) //獲取類別失敗
 				return; //不用執行
@@ -83,6 +84,8 @@ public class ChannelMessage extends ListenerAdapter
 
 			if (rawMessage.contains("早安"))
 				channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
+			if (rawMessage.contains("午安"))
+				channel.sendMessage("http://chunting.me/wp-content/uploads/2018/09/IMG_5878.jpg").queue(); //午安長輩圖
 			if (rawMessage.contains("晚安"))
 				channel.sendMessage("那我也要睡啦").queue();
 

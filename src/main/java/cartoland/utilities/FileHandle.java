@@ -9,6 +9,9 @@ import java.time.LocalTime;
 import java.util.Arrays;
 
 /**
+ * A utility that provides every functions that this program need to deal with file input and output. Can not be
+ * initial.
+ *
  * @since 1.0
  * @author Alex Cai
  */
@@ -26,6 +29,7 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
+			System.err.print('\u0007');
 			log(exception);
 			return "{}";
 		}
@@ -42,6 +46,7 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
+			System.err.print('\u0007');
 			log(exception);
 			System.exit(1);
 		}
@@ -62,6 +67,7 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
+			System.err.print('\u0007');
 			System.exit(1);
 		}
 	}

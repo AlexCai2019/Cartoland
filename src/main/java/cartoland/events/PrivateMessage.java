@@ -23,17 +23,19 @@ public class PrivateMessage extends ListenerAdapter
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
-		if (event.isFromType(ChannelType.PRIVATE))
-		{
-			Message message = event.getMessage();
-			String rawMessage = message.getContentRaw();
-			String attachments = message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
-			if (attachments.length() != 0)
-				rawMessage += "\n" + attachments;
-			IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
+		if (!event.isFromType(ChannelType.PRIVATE)) //不是私訊
+			return;
+		User author = event.getAuthor();
+		if (author.isBot()) //是機器人
+			return;
 
-			User author = event.getAuthor();
-			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
-		}
+		Message message = event.getMessage();
+		String rawMessage = message.getContentRaw();
+		String attachments = message.getAttachments().stream().map(Message.Attachment::getUrl).collect(Collectors.joining("\n"));
+		if (attachments.length() != 0)
+			rawMessage += "\n" + attachments;
+		IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
+
+		FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
 	}
 }

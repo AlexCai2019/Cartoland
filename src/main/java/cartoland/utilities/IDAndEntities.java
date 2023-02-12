@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import java.util.Random;
 
 /**
+ * Channel ID, user ID, and entities such as {@link JDA} and {@link TextChannel}. Can not be initial.
+ *
  * @since 1.3
  * @author Alex Cai
  */
@@ -28,6 +30,8 @@ public class IDAndEntities
 	public static Random random = new Random();
 
 	/**
+	 * Language constants. Can not be initial.
+	 *
 	 * @since 1.0
 	 * @author Alex Cai
 	 */

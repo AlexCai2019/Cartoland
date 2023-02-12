@@ -53,7 +53,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("invite", event ->
 		{
 			 event.reply("https://discord.gg/UMYxwHyRNE").queue();
-			 FileHandle.log(userName + "(" + userID + ") used /invite.");
+			 FileHandle.log(userName + "(" + userID + ") used /invite");
 		});
 
 		//help
@@ -96,9 +96,11 @@ public class CommandUsage extends ListenerAdapter
 				event.reply("You can't do that.").queue();
 				return;
 			}
-			event.reply("Shutting down...").queue();
-			IDAndEntities.botChannel.sendMessage( "Cartoland Bot is now offline.").queue();
-			IDAndEntities.jda.shutdown();
+			event.reply("Shutting down...").queue(interactionHook ->
+			{
+				IDAndEntities.botChannel.sendMessage("Cartoland Bot is now offline.").queue();
+				IDAndEntities.jda.shutdown();
+			});
 		});
 
 		//reload
@@ -109,8 +111,7 @@ public class CommandUsage extends ListenerAdapter
 				event.reply("You can't do that.").queue();
 				return;
 			}
-			event.reply("reloading...").queue();
-			JsonHandle.reloadLanguageFiles();
+			event.reply("reloading...").queue(interactionHook -> JsonHandle.reloadLanguageFiles());
 		});
 
 		//oneatwob

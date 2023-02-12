@@ -53,7 +53,7 @@
 	"cmd.name.playsound": "https://minecraft.fandom.com/zh/wiki/命令/playsound?variant=zh-tw/",
 	"cmd.name.publish": "https://minecraft.fandom.com/zh/wiki/命令/publish?variant=zh-tw/",
 	"cmd.name.recipe": "https://minecraft.fandom.com/zh/wiki/命令/recipe?variant=zh-tw/",
-	"cmd.name.reload": "```ansi\n\u001B[32mreload```https://minecraft.fandom.com/zh/wiki/命令/reload?variant=zh-tw/",
+	"cmd.name.reload": "```ansi\n\u001B[31mreload```https://minecraft.fandom.com/zh/wiki/命令/reload?variant=zh-tw/",
 	"cmd.name.save-all": "https://minecraft.fandom.com/zh/wiki/命令/save-all?variant=zh-tw/",
 	"cmd.name.save-off": "https://minecraft.fandom.com/zh/wiki/命令/save-off?variant=zh-tw/",
 	"cmd.name.save-on": "https://minecraft.fandom.com/zh/wiki/命令/save-on?variant=zh-tw/",
@@ -156,5 +156,12 @@
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"lang.begin": "語言設定: `/lang [<代碼>]`\n",
 	"lang.end": "",
-	"lang.fail": "無效的語言設定。"
+	"lang.fail": "無效的語言設定。",
+	"lottery.win": "贏了！",
+	"lottery.lose": "輸了…",
+	"lottery.result": "你賭上 %d 個指令方塊後%s\n你現在有 %d 個指令方塊。",
+	"lottery.wrong_argument": "用法： `/lottery [<整數>]` 或 `/lottery [<百分比>]%`，且不可使用負數。",
+	"lottery.wrong_percent": "你不能賭上 %d%% 的指令方塊！",
+	"lottery.not_enough": "你沒有足夠的指令方塊！\n你想賭上 %d 個指令方塊，但你目前只有 %d 個指令方塊。",
+	"lottery.query": "你目前有 %d 個指令方塊。"
 }

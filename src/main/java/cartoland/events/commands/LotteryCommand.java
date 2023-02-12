@@ -28,56 +28,56 @@ public class LotteryCommand implements ICommand
 		long nowHave = JsonHandle.getCommandBlocks(commandCore.userID);
 		String betString = event.getOption("bet", OptionMapping::getAsString);
 
-		if (betString != null)
+		if (betString == null) //不帶參數
 		{
-			long bet;
+			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery");
+			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.query").formatted(nowHave)).queue();
+			return;
+		}
+		FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery " + betString);
 
-			if (betString.matches("\\d+"))
-				bet = Long.parseLong(betString);
-			else if (betString.matches("\\d+%"))
+		long bet;
+
+		if (betString.matches("\\d+")) //賭數字
+			bet = Long.parseLong(betString);
+		else if (betString.matches("\\d+%")) //賭%數
+		{
+			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
+			if (percentage > 100L) //超過100%
 			{
-				long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
-				if (percentage <= 100L)
-					bet = nowHave * percentage / 100;
-				else
-				{
-					event.reply("You can't bet " + percentage + "% of your command blocks!").queue();
-					return;
-				}
-			}
-			else
-			{
-				event.reply("Usage: `/lottery [<integer>]` or `/lottery [<percentage>]%`, and don't use negative number.").queue();
+				event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
-
-			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery " + betString + ".");
-			if (nowHave >= bet)
-			{
-				long afterBet;
-				String result;
-				if (IDAndEntities.random.nextBoolean())
-				{
-					afterBet = nowHave + bet;
-					if (afterBet < 0)
-						afterBet = Long.MAX_VALUE; //避免溢位
-					result = "win!";
-				}
-				else
-				{
-					afterBet = nowHave - bet;
-					result = "lose...";
-				}
-				JsonHandle.setCommandBlocks(commandCore.userID, afterBet);
-				event.reply("You bet " + bet + " command blocks and " + result + "\nYou now have " + afterBet + " command blocks").queue();
-			}
-			else
-				event.reply("You don't have enough command blocks!\nYou bet " + bet + " command blocks, but you only have " + nowHave + " command blocks.").queue();
+			bet = nowHave * percentage / 100;
 		}
-		else
+		else //都不是
 		{
-			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery.");
-			event.reply("You have " + nowHave + " command blocks.").queue();
+			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.wrong_argument")).queue();
+			return;
 		}
+
+		if (nowHave < bet) //如果現有的比要賭的還少
+		{
+			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.not_enough").formatted(bet, nowHave)).queue();
+			return;
+		}
+
+		long afterBet;
+		String result;
+		if (IDAndEntities.random.nextBoolean()) //賭贏
+		{
+			afterBet = nowHave + bet;
+			if (afterBet < 0)
+				afterBet = Long.MAX_VALUE; //避免溢位
+			result = JsonHandle.getJsonKey(commandCore.userID, "lottery.win");
+		}
+		else //賭輸
+		{
+			afterBet = nowHave - bet;
+			result = JsonHandle.getJsonKey(commandCore.userID, "lottery.lose");
+		}
+		long finalAfterBet = afterBet;
+		event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.result").formatted(bet, result, afterBet))
+				.queue(interactionHook -> JsonHandle.setCommandBlocks(commandCore.userID, finalAfterBet));
 	}
 }

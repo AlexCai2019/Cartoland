@@ -83,8 +83,7 @@ public class OneATwoBGame implements IMiniGame
 
 			if (answer[i] == digitValueOfInput)
 				a++;
-			else
-			if (inAnswer[digitValueOfInput])
+			else if (inAnswer[digitValueOfInput])
 				b++;
 		}
 

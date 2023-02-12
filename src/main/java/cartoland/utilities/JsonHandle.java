@@ -128,4 +128,15 @@ public class JsonHandle
 			return 0L;
 		}
 	}
+
+	public static String getJsonKey(long userID, String key)
+	{
+		lastUse(userID);
+		if (file.has(key))
+			return file.getString(key);
+		else if (englishFile.has(key))
+			return englishFile.getString(key);
+		else
+			return "";
+	}
 }

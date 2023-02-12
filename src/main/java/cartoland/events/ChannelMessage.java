@@ -2,9 +2,9 @@ package cartoland.events;
 
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.MentionType;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -49,48 +49,60 @@ public class ChannelMessage extends ListenerAdapter
 		"<:ping:1065915559918719006>",
 		"你凡是有tag我被我記起來的對不對？我一定到現場打你，一定打你！",
 		"哪裡來的小孩子，家教差成這樣。",
-		"老子瘋狗的外號Maps群時期就有啦！"
+		"老子瘋狗的外號Maps群時期就有啦！",
+		"沒被打過是不是？"
 	};
-	private final MentionType[] botType = { MentionType.USER,MentionType.ROLE };
+	private final String[] megumin =
+	{
+		"☆めぐみん大好き！☆",
+		"☆めぐみんは最高だ！☆",
+		"☆めぐみん俺の嫁！☆"
+	};
+	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
 
 	/**
-	 * When receive a message from any channel that the bot has permission to read.
+	 * The method that inherited from {@link ListenerAdapter}, triggers when receive a message from any
+	 * channel that the bot has permission to read, but only response when the channel is a text channel and
+	 * the user isn't a bot.
+	 *
 	 * @param event Information about the message and its channel and author.
 	 */
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
-		if (event.isFromType(ChannelType.TEXT))
-		{
-			Member member = event.getMember();
-			if (member == null || member.getUser().isBot()) //獲取成員失敗 或 傳訊息的是機器人
-				return; //不用執行
-			long userID = member.getIdLong();
-			Message message = event.getMessage();
-			String rawMessage = message.getContentRaw(); //獲取訊息
-			Category category = message.getCategory();
-			if (category == null) //獲取類別失敗
-				return; //不用執行
-			long categoryID = category.getIdLong();
-			TextChannel channel = (TextChannel) message.getChannel();
-			long channelID = channel.getIdLong();
+		if (!event.isFromType(ChannelType.TEXT)) //不是文字頻道
+			return;
+		User author = event.getAuthor();
+		if (author.isBot()) //傳訊息的是機器人
+			return; //不用執行
 
-			if (rawMessage.contains("megumin") || rawMessage.contains("Megumin") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
-				channel.sendMessage("☆めぐみん大好き！☆").queue();
+		long userID = author.getIdLong();
+		Message message = event.getMessage(); //獲取訊息
+		String rawMessage = message.getContentRaw(); //獲取訊息字串
+		Category category = message.getCategory();
+		if (category == null) //獲取類別失敗
+			return; //不用執行
+		long categoryID = category.getIdLong();
+		TextChannel channel = (TextChannel) message.getChannel();
 
-			if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
-				message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.random.nextInt(replyACMention.length)] : replyMention[IDAndEntities.random.nextInt(replyMention.length)])
-						.mentionRepliedUser(false).queue();
+		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
+			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.random.nextInt(replyACMention.length)] : replyMention[IDAndEntities.random.nextInt(replyMention.length)])
+					.mentionRepliedUser(false).queue();
 
-			if (rawMessage.contains("早安"))
-				channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
-			if (rawMessage.contains("午安"))
-				channel.sendMessage("http://chunting.me/wp-content/uploads/2018/09/IMG_5878.jpg").queue(); //午安長輩圖
-			if (rawMessage.contains("晚安"))
-				channel.sendMessage("那我也要睡啦").queue();
+		if (rawMessage.matches("(?i).*megumin.*") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
+			channel.sendMessage(megumin[IDAndEntities.random.nextInt(megumin.length)]).queue();
 
-			if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID) && channelID != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
-				JsonHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
-		}
+		if (rawMessage.contains("早安"))
+			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
+		if (rawMessage.contains("午安"))
+			channel.sendMessage("http://chunting.me/wp-content/uploads/2018/09/IMG_5878.jpg").queue(); //午安長輩圖
+		if (rawMessage.contains("晚安"))
+			channel.sendMessage("那我也要睡啦").queue();
+
+		if (rawMessage.contains("聰明"))
+			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
+
+		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID) && channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
+			JsonHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
 	}
 }

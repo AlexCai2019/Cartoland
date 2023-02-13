@@ -98,6 +98,8 @@ public class ChannelMessage extends ListenerAdapter
 			channel.sendMessage("http://chunting.me/wp-content/uploads/2018/09/IMG_5878.jpg").queue(); //午安長輩圖
 		if (rawMessage.contains("晚安"))
 			channel.sendMessage("那我也要睡啦").queue();
+		if (rawMessage.contains("安安"))
+			channel.sendMessage("安安你好幾歲住哪").queue();
 
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();

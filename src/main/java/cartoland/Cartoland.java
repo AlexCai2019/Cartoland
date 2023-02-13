@@ -1,9 +1,6 @@
 package cartoland;
 
-import cartoland.events.BotOffline;
-import cartoland.events.BotOnline;
-import cartoland.events.ChannelMessage;
-import cartoland.events.PrivateMessage;
+import cartoland.events.*;
 import cartoland.events.commands.CommandUsage;
 import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
@@ -38,7 +35,8 @@ public class Cartoland
 						new BotOffline(), //當機器人下線的時候
 						new ChannelMessage(), //當有人在群組傳訊息
 						new PrivateMessage(), //當有人傳私訊給機器人
-						new CommandUsage()) //當有人使用指令
+						new CommandUsage(), //當有人使用指令
+						new GetRole()) //有人獲得會員身分組
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
 				.build();
@@ -73,7 +71,11 @@ public class Cartoland
 										.addOption(OptionType.INTEGER, "0", "The [0] of the array", true)
 										.addOption(OptionType.INTEGER, "1", "The [1] of the array", true)
 										.addOption(OptionType.INTEGER, "2", "The [2] of the array", true)
-										.addOption(OptionType.INTEGER, "3", "The [3] of the array", true)),
+										.addOption(OptionType.INTEGER, "3", "The [3] of the array", true),
+								new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
+										.addOptions(new OptionData(OptionType.STRING, "pack_type", "Datapack or Resourcepack", true)
+															.addChoice("Datapack", "d")
+															.addChoice("Resourcepack", "r"))),
 				Commands.slash("lang", "Change language or check current languages")
 						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
 				Commands.slash("language", "Change language or check current languages")

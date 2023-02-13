@@ -100,6 +100,7 @@ public class CommandUsage extends ListenerAdapter
 				event.reply("You can't do that.").queue();
 				return;
 			}
+
 			event.reply("Shutting down...").queue(interactionHook ->
 			{
 				IDAndEntities.botChannel.sendMessage("Cartoland Bot is now offline.").queue();
@@ -115,10 +116,11 @@ public class CommandUsage extends ListenerAdapter
 				event.reply("You can't do that.").queue();
 				return;
 			}
+
 			event.reply("reloading...").queue(interactionHook -> JsonHandle.reloadLanguageFiles());
 		});
 
-		//oneatwob
+		//one_a_two_b
 		commands.put("one_a_two_b", new OneATwoBCommand(this));
 
 		//lottery
@@ -150,9 +152,9 @@ public class CommandUsage extends ListenerAdapter
 	private String minecraftCommandRelated(String jsonKey)
 	{
 		OptionMapping argument = optionsStream.filter(optionMapping -> optionMapping.getName().equals(jsonKey + "_name")).findAny().orElse(null); //獲得參數
-		if (argument != null) //有參數
-			return JsonHandle.command(userID, jsonKey, argument.getAsString());
-		return JsonHandle.command(userID, jsonKey);
+		if (argument == null) //沒有參數
+			return JsonHandle.command(userID, jsonKey);
+		return JsonHandle.command(userID, jsonKey, argument.getAsString());
 	}
 }
 

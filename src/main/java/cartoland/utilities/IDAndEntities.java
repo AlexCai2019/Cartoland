@@ -1,6 +1,8 @@
 package cartoland.utilities;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
@@ -16,15 +18,21 @@ public class IDAndEntities
 {
 	private IDAndEntities() {}
 
+	public static final long CARTOLAND_SERVER_ID = 886936474723950603L; //創聯
+	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
 	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
+	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long AC_ID = 355953951469731842L;
 
+	public static JDA jda;
+	public static Guild cartolandServer;
+	public static TextChannel lobbyChannel;
 	public static TextChannel botChannel;
 	public static TextChannel undergroundChannel;
-	public static JDA jda;
+	public static Role memberRole;
 	public static User botItself;
 
 	public static Random random = new Random();

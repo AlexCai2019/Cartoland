@@ -1,6 +1,5 @@
 package cartoland.events.commands;
 
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -30,11 +29,9 @@ public class LotteryCommand implements ICommand
 
 		if (betString == null) //不帶參數
 		{
-			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery");
 			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.query").formatted(nowHave)).queue();
 			return;
 		}
-		FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /lottery " + betString);
 
 		long bet;
 

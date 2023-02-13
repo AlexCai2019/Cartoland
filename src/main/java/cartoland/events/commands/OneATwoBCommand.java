@@ -2,13 +2,12 @@ package cartoland.events.commands;
 
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
-import cartoland.utilities.FileHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@code OneATwoBCommand} is an execution when user uses /oneatwob command. This can be seen as a frontend of
+ * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This can be seen as a frontend of
  * the 1A2B game. This class implements {@link ICommand} interface, which is for the commands HashMap in
  * {@link CommandUsage}. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
  *
@@ -35,22 +34,18 @@ public class OneATwoBCommand implements ICommand
 		{
 			if (playing == null) //沒有在玩遊戲 開始1A2B
 			{
-				event.reply("Start 1A2B game! type `/oneatwob <answer>` to make a guess.").queue();
+				event.reply("Start 1A2B game! type `/one_a_two_b <answer>` to make a guess.").queue();
 				commandCore.games.put(commandCore.userID, new OneATwoBGame());
 			}
 			else //已經有在玩遊戲
 				event.reply("You are already in " + playing.gameName() + " game.").queue();
-
-			FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /oneatwob");
 			return;
 		}
-
-		FileHandle.log(commandCore.userName + "(" + commandCore.userID + ") used /oneatwob " + argument);
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run `/oneatwob` without arguments to start the game.").queue();
+			event.reply("Please run `/one_a_two_b` without arguments to start the game.").queue();
 			return;
 		}
 

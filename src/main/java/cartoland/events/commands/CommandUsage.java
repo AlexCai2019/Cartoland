@@ -11,7 +11,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
@@ -25,16 +26,23 @@ public class CommandUsage extends ListenerAdapter
 	/**
 	 * The key of this map is the name of a command, and the value is the execution.
 	 */
-	private final Map<String, ICommand> commands = new HashMap<>();
+	private final HashMap<String, ICommand> commands = new HashMap<>();
 	/**
 	 * The key of this map is the name of a game, and the value is the actual game.
 	 */
-	final Map<Long, IMiniGame> games = new HashMap<>();
+	final HashMap<Long, IMiniGame> games = new HashMap<>();
 	/**
 	 * Last user uses slash command.
 	 */
 	long userID;
 	String userName;
+
+	/**
+	 * About this command.
+	 */
+	String commandName;
+	String subCommandName;
+	Stream<OptionMapping> optionsStream;
 
 	/**
 	 * 356 images about Megumin.
@@ -50,33 +58,29 @@ public class CommandUsage extends ListenerAdapter
 
 		//初始化map 放入所有指令
 		//invite
-		commands.put("invite", event ->
-		{
-			 event.reply("https://discord.gg/UMYxwHyRNE").queue();
-			 FileHandle.log(userName + "(" + userID + ") used /invite");
-		});
+		commands.put("invite", event -> event.reply("https://discord.gg/UMYxwHyRNE").queue());
 
 		//help
-		commands.put("help", event -> event.reply(minecraftCommandRelated("help", event)).queue());
+		commands.put("help", event -> event.reply(minecraftCommandRelated("help")).queue());
 
 		//cmd
-		alias = event -> event.reply(minecraftCommandRelated("cmd", event)).queue();
+		alias = event -> event.reply(minecraftCommandRelated("cmd")).queue();
 		commands.put("cmd", alias);
 		commands.put("mcc", alias);
 		commands.put("command", alias);
 
 		//faq
-		alias = event -> event.reply(minecraftCommandRelated("faq", event)).queue();
+		alias = event -> event.reply(minecraftCommandRelated("faq")).queue();
 		commands.put("faq", alias);
 		commands.put("question", alias);
 
 		//dtp
-		alias = event -> event.reply(minecraftCommandRelated("dtp", event)).queue();
+		alias = event -> event.reply(minecraftCommandRelated("dtp")).queue();
 		commands.put("dtp", alias);
 		commands.put("datapack", alias);
 
 		//lang
-		alias = event -> event.reply(minecraftCommandRelated("lang", event)).queue();
+		alias = event -> event.reply(minecraftCommandRelated("lang")).queue();
 		commands.put("lang", alias);
 		commands.put("language", alias);
 
@@ -115,10 +119,13 @@ public class CommandUsage extends ListenerAdapter
 		});
 
 		//oneatwob
-		commands.put("oneatwob", new OneATwoBCommand(this));
+		commands.put("one_a_two_b", new OneATwoBCommand(this));
 
 		//lottery
 		commands.put("lottery", new LotteryCommand(this));
+
+		//tool
+		commands.put("tool", new ToolCommand(this));
 	}
 
 	/**
@@ -131,18 +138,20 @@ public class CommandUsage extends ListenerAdapter
 		User user = event.getUser();
 		userID = user.getIdLong();
 		userName = user.getName();
-		commands.get(event.getName()).commandProcess(event);
+		commandName = event.getName();
+		subCommandName = event.getSubcommandName();
+		optionsStream = event.getOptions().stream();
+		FileHandle.log(userName + "(" + userID + ") used /" + commandName +
+							   (subCommandName != null ? " " + subCommandName + " " : " ") +
+							   optionsStream.map(String::valueOf).collect(Collectors.joining(" ", " ", "")));
+		commands.get(commandName).commandProcess(event);
 	}
 
-	private String minecraftCommandRelated(String jsonKey, @NotNull SlashCommandInteractionEvent event)
+	private String minecraftCommandRelated(String jsonKey)
 	{
-		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
+		OptionMapping argument = optionsStream.filter(optionMapping -> optionMapping.getName().equals(jsonKey + "_name")).findAny().orElse(null); //獲得參數
 		if (argument != null) //有參數
-		{
-			FileHandle.log(userName + "(" + userID + ") used /" + event.getName() + " " + argument);
-			return JsonHandle.command(userID, jsonKey, argument);
-		}
-		FileHandle.log(userName + "(" + userID + ") used /" + event.getName());
+			return JsonHandle.command(userID, jsonKey, argument.getAsString());
 		return JsonHandle.command(userID, jsonKey);
 	}
 }

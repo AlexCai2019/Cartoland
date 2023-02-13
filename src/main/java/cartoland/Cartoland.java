@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import static cartoland.utilities.IDAndEntities.jda;
@@ -64,6 +65,15 @@ public class Cartoland
 						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false),
 				Commands.slash("datapack", "Get help of Minecraft datapack")
 						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false),
+				Commands.slash("tool", "Tools that can help you")
+						.addSubcommands(
+								new SubcommandData("uuid_string", "Get uuid data from raw uuid string")
+										.addOption(OptionType.STRING, "raw_uuid", "The raw uuid that you want to convert", true),
+								new SubcommandData("uuid_array", "Get uuid data from uuid integer array")
+										.addOption(OptionType.INTEGER, "0", "The [0] of the array", true)
+										.addOption(OptionType.INTEGER, "1", "The [1] of the array", true)
+										.addOption(OptionType.INTEGER, "2", "The [2] of the array", true)
+										.addOption(OptionType.INTEGER, "3", "The [3] of the array", true)),
 				Commands.slash("lang", "Change language or check current languages")
 						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
 				Commands.slash("language", "Change language or check current languages")
@@ -80,7 +90,7 @@ public class Cartoland
 				Commands.slash("reload", "Reload all JSON files")
 						.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
-				Commands.slash("oneatwob", "Play 1A2B game")
+				Commands.slash("one_a_two_b", "Play 1A2B game")
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false),
 				Commands.slash("lottery", "Play a lottery")
 						.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false)

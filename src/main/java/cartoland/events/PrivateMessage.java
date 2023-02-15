@@ -26,7 +26,7 @@ public class PrivateMessage extends ListenerAdapter
 		if (!event.isFromType(ChannelType.PRIVATE)) //不是私訊
 			return;
 		User author = event.getAuthor();
-		if (author.isBot()) //是機器人
+		if (author.isBot() || author.isSystem()) //是機器人或系統
 			return;
 
 		Message message = event.getMessage();

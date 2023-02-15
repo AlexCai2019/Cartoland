@@ -105,7 +105,7 @@ public class JsonHandle
 		{
 			long level = commandBlocksFile.getLong(userIDString);
 			level += add;
-			commandBlocksFile.put(userIDString, level > 0 ? level : Long.MAX_VALUE); //避免溢位
+			commandBlocksFile.put(userIDString, level >= 0 ? level : Long.MAX_VALUE); //避免溢位
 		}
 		else
 			commandBlocksFile.put(userIDString, add);

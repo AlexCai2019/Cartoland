@@ -42,7 +42,7 @@ public class OneATwoBGame implements IMiniGame
 	{
 		for (int i = 0, destIndex, temp; i < 9; i++) //到8為止 因為第9項沒必要交換
 		{
-			destIndex = IDAndEntities.random.nextInt(10 - i) + i; //0會得到0~9 1會得到1~9 2會得到2~9
+			destIndex = IDAndEntities.RANDOM.nextInt(10 - i) + i; //0會得到0~9 1會得到1~9 2會得到2~9
 			//交換
 			temp = zeroToNine[destIndex];
 			zeroToNine[destIndex] = zeroToNine[i];

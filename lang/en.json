@@ -7,11 +7,13 @@
 		"cmd",
 		"faq",
 		"dtp",
+		"tool",
 		"lang"
 	],
 	"help.name.cmd": "Syntax: `/cmd [<command>]`",
 	"help.name.faq": "Syntax: `/faq [<question>]`",
 	"help.name.dtp": "Syntax: `/dtp [<datapack feature>]`",
+	"help.name.tool": "Syntax: `/tool (uuid_string|uuid_array|pack_mcmeta) <arguments...>`",
 	"help.name.lang": "Syntax: `/lang [<code>]`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",

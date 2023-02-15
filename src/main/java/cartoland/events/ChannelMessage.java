@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Pattern;
+
 /**
  * {@code ChannelMessage} is a listener that triggers when a user types anything in any channel that the bot can
  * access. This class was registered in {@link cartoland.Cartoland#main}, with the build of JDA.
@@ -58,7 +60,10 @@ public class ChannelMessage extends ListenerAdapter
 		"☆めぐみんは最高だ！☆",
 		"☆めぐみん俺の嫁！☆"
 	};
-	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
+
+	private static final MentionType[] BOT_TYPE = { MentionType.USER, MentionType.ROLE };
+
+	private static final Pattern MEGUMIN = Pattern.compile("(?i).*megumin.*");
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when receive a message from any
@@ -73,7 +78,7 @@ public class ChannelMessage extends ListenerAdapter
 		if (!event.isFromType(ChannelType.TEXT)) //不是文字頻道
 			return;
 		User author = event.getAuthor();
-		if (author.isBot()) //傳訊息的是機器人
+		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統
 			return; //不用執行
 
 		long userID = author.getIdLong();
@@ -85,12 +90,12 @@ public class ChannelMessage extends ListenerAdapter
 		long categoryID = category.getIdLong();
 		TextChannel channel = (TextChannel) message.getChannel();
 
-		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
-			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.random.nextInt(replyACMention.length)] : replyMention[IDAndEntities.random.nextInt(replyMention.length)])
+		if (message.getMentions().isMentioned(IDAndEntities.botItself, BOT_TYPE)) //有人tag機器人
+			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.RANDOM.nextInt(replyACMention.length)] : replyMention[IDAndEntities.RANDOM.nextInt(replyMention.length)])
 					.mentionRepliedUser(false).queue();
 
-		if (rawMessage.matches("(?i).*megumin.*") || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
-			channel.sendMessage(megumin[IDAndEntities.random.nextInt(megumin.length)]).queue();
+		if (MEGUMIN.matcher(rawMessage).matches() || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
+			channel.sendMessage(megumin[IDAndEntities.RANDOM.nextInt(megumin.length)]).queue();
 
 		if (rawMessage.contains("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();

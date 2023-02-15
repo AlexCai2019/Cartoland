@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
@@ -42,7 +41,6 @@ public class CommandUsage extends ListenerAdapter
 	 */
 	String commandName;
 	String subCommandName;
-	Stream<OptionMapping> optionsStream;
 
 	/**
 	 * 356 images about Megumin.
@@ -61,33 +59,33 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("invite", event -> event.reply("https://discord.gg/UMYxwHyRNE").queue());
 
 		//help
-		commands.put("help", event -> event.reply(minecraftCommandRelated("help")).queue());
+		commands.put("help", event -> event.reply(minecraftCommandRelated("help", event)).queue());
 
 		//cmd
-		alias = event -> event.reply(minecraftCommandRelated("cmd")).queue();
+		alias = event -> event.reply(minecraftCommandRelated("cmd", event)).queue();
 		commands.put("cmd", alias);
 		commands.put("mcc", alias);
 		commands.put("command", alias);
 
 		//faq
-		alias = event -> event.reply(minecraftCommandRelated("faq")).queue();
+		alias = event -> event.reply(minecraftCommandRelated("faq", event)).queue();
 		commands.put("faq", alias);
 		commands.put("question", alias);
 
 		//dtp
-		alias = event -> event.reply(minecraftCommandRelated("dtp")).queue();
+		alias = event -> event.reply(minecraftCommandRelated("dtp", event)).queue();
 		commands.put("dtp", alias);
 		commands.put("datapack", alias);
 
 		//lang
-		alias = event -> event.reply(minecraftCommandRelated("lang")).queue();
+		alias = event -> event.reply(minecraftCommandRelated("lang", event)).queue();
 		commands.put("lang", alias);
 		commands.put("language", alias);
 
 		commands.put("megumin", event ->
 		{
-			TA author = twitterAuthors[IDAndEntities.random.nextInt(twitterAuthors.length)];
-			long artwork = author.artworks()[IDAndEntities.random.nextInt(author.artworks().length)];
+			TA author = twitterAuthors[IDAndEntities.RANDOM.nextInt(twitterAuthors.length)];
+			long artwork = author.artworks()[IDAndEntities.RANDOM.nextInt(author.artworks().length)];
 			event.reply("https://twitter.com/" + author.name() + "/status/" + artwork).queue();
 			FileHandle.log(userName + "(" + userID + ") used /megumin.");
 		}); //隨機一張惠惠
@@ -127,11 +125,12 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("lottery", new LotteryCommand(this));
 
 		//tool
-		commands.put("tool", new ToolCommand(this));
+		commands.put("tool", new ToolCommand());
 	}
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when a user uses slash command.
+	 *
 	 * @param event The event that carries information of the user and the command.
 	 */
 	@Override
@@ -142,19 +141,18 @@ public class CommandUsage extends ListenerAdapter
 		userName = user.getName();
 		commandName = event.getName();
 		subCommandName = event.getSubcommandName();
-		optionsStream = event.getOptions().stream();
 		FileHandle.log(userName + "(" + userID + ") used /" + commandName +
 							   (subCommandName != null ? " " + subCommandName + " " : " ") +
-							   optionsStream.map(String::valueOf).collect(Collectors.joining(" ", " ", "")));
+							   event.getOptions().stream().map(OptionMapping::getName).collect(Collectors.joining(" ")));
 		commands.get(commandName).commandProcess(event);
 	}
 
-	private String minecraftCommandRelated(String jsonKey)
+	private String minecraftCommandRelated(String jsonKey, SlashCommandInteractionEvent event)
 	{
-		OptionMapping argument = optionsStream.filter(optionMapping -> optionMapping.getName().equals(jsonKey + "_name")).findAny().orElse(null); //獲得參數
+		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
 			return JsonHandle.command(userID, jsonKey);
-		return JsonHandle.command(userID, jsonKey, argument.getAsString());
+		return JsonHandle.command(userID, jsonKey, argument);
 	}
 }
 

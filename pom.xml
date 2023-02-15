@@ -6,14 +6,33 @@
 
     <groupId>org.cartoland</groupId>
     <artifactId>Cartoland</artifactId>
-    <version>1.0</version>
+    <version>1.4</version>
+
+    <name>Cartoland Bot</name>
+    <description>A Discord bot that belongs to a server: Cartoland</description>
+    <url>https://github.com/AlexCai2019/Cartoland</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://github.com/AlexCai2019/Cartoland/blob/master/LICENSE.md</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Alex Cai</name>
+            <email>alexcai910630@gmail.com</email>
+        </developer>
+    </developers>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/net.dv8tion/JDA -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.2</version>
+            <version>5.0.0-beta.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>

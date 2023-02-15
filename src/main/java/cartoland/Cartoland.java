@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import static cartoland.utilities.IDAndEntities.jda;
 
@@ -37,7 +38,8 @@ public class Cartoland
 						new PrivateMessage(), //當有人傳私訊給機器人
 						new CommandUsage(), //當有人使用指令
 						new GetRole()) //有人獲得會員身分組
-				.enableIntents(GatewayIntent.MESSAGE_CONTENT)
+				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
 				.build();
 
@@ -48,6 +50,7 @@ public class Cartoland
 											.addChoice("cmd", "cmd")
 											.addChoice("faq", "faq")
 											.addChoice("dtp", "dtp")
+											.addChoice("tool", "tool")
 											.addChoice("lang", "lang")),
 				Commands.slash("cmd", "Get help of Minecraft commands")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
@@ -73,9 +76,9 @@ public class Cartoland
 										.addOption(OptionType.INTEGER, "2", "The [2] of the array", true)
 										.addOption(OptionType.INTEGER, "3", "The [3] of the array", true),
 								new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
-										.addOptions(new OptionData(OptionType.STRING, "pack_type", "Datapack or Resourcepack", true)
-															.addChoice("Datapack", "d")
-															.addChoice("Resourcepack", "r"))),
+										.addOptions(new OptionData(OptionType.STRING, "pack_type", "Data pack or Resource pack", true)
+															.addChoice("Data pack", "d")
+															.addChoice("Resource pack", "r"))),
 				Commands.slash("lang", "Change language or check current languages")
 						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
 				Commands.slash("language", "Change language or check current languages")

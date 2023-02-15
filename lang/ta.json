@@ -5,6 +5,7 @@
 	"help.name.cmd": "格式: `/cmd [<指令>]`",
 	"help.name.faq": "格式: `/faq [<問題>]`",
 	"help.name.dtp": "格式: `/dtp [<資料包功能>]`",
+  	"help.name.tool": "格式: `/tool (uuid_string|uuid_array|pack_mcmeta) <引數...>`",
 	"help.name.lang": "格式: `/lang [<代碼>]`",
 	"cmd.begin": "`指令: ",
 	"cmd.end": "`",

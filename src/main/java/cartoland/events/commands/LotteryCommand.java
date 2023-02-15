@@ -25,15 +25,14 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long nowHave = JsonHandle.getCommandBlocks(commandCore.userID);
-		OptionMapping argument = commandCore.optionsStream.filter(optionMapping -> optionMapping.getName().equals("bet")).findAny().orElse(null);
+		String betString = event.getOption("bet", OptionMapping::getAsString);
 
-		if (argument == null) //不帶參數
+		if (betString == null) //不帶參數
 		{
 			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.query").formatted(nowHave)).queue();
 			return;
 		}
 
-		String betString = argument.getAsString();
 		long bet;
 
 		if (betString.matches("\\d+")) //賭數字
@@ -62,7 +61,7 @@ public class LotteryCommand implements ICommand
 
 		long afterBet;
 		String result;
-		if (IDAndEntities.random.nextBoolean()) //賭贏
+		if (IDAndEntities.RANDOM.nextBoolean()) //賭贏
 		{
 			afterBet = nowHave + bet;
 			if (afterBet < 0)

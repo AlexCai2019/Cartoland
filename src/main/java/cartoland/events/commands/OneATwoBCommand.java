@@ -64,7 +64,7 @@ public class OneATwoBCommand implements ICommand
 			default -> argument + " = " + ab / 10 + " A " + ab % 10 + " B";
 		};
 
-		if (ab / 10 == OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
+		if (ab / 10 != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
 		{
 			event.reply(shouldReply).queue();
 			return;
@@ -73,8 +73,8 @@ public class OneATwoBCommand implements ICommand
 		//猜出ANSWER_LENGTH個A 遊戲結束
 		long second = oneATwoB.getTimePassed();
 		event.reply(shouldReply + "\nGame Over, the answer is **" + argument + "**.\n" +
-							"Used Time: " + second / 60 + " minutes " + second % 60 + " seconds.\n" +
-							"Guesses: " + oneATwoB.getGuesses() + " times.").queue();
+							"Used Time: " + second / 60 + " minutes " + second % 60 + " seconds\n" +
+							"Guesses: " + oneATwoB.getGuesses() + " times").queue();
 		commandCore.games.remove(commandCore.userID);
 	}
 }

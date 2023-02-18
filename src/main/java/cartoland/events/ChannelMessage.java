@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,9 +63,13 @@ public class ChannelMessage extends ListenerAdapter
 		"☆めぐみん俺の嫁！☆"
 	};
 
-	private static final MentionType[] BOT_TYPE = { MentionType.USER, MentionType.ROLE };
+	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
 
-	private static final Pattern MEGUMIN = Pattern.compile("(?i).*megumin.*");
+	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*");
+	private final Pattern lolRegex = Pattern.compile("(?i).*lol*}");
+
+	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
+	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when receive a message from any
@@ -71,6 +77,9 @@ public class ChannelMessage extends ListenerAdapter
 	 * the user isn't a bot.
 	 *
 	 * @param event Information about the message and its channel and author.
+	 * @throws InsufficientPermissionException When the bot doesn't have permission to react.
+	 * @since 1.0
+	 * @author Alex Cai
 	 */
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
@@ -90,12 +99,15 @@ public class ChannelMessage extends ListenerAdapter
 		long categoryID = category.getIdLong();
 		TextChannel channel = (TextChannel) message.getChannel();
 
-		if (message.getMentions().isMentioned(IDAndEntities.botItself, BOT_TYPE)) //有人tag機器人
-			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.RANDOM.nextInt(replyACMention.length)] : replyMention[IDAndEntities.RANDOM.nextInt(replyMention.length)])
+		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
+			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.random.nextInt(replyACMention.length)] : replyMention[IDAndEntities.random.nextInt(replyMention.length)])
 					.mentionRepliedUser(false).queue();
 
-		if (MEGUMIN.matcher(rawMessage).matches() || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
-			channel.sendMessage(megumin[IDAndEntities.RANDOM.nextInt(megumin.length)]).queue();
+		if (meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
+			channel.sendMessage(megumin[IDAndEntities.random.nextInt(megumin.length)]).queue();
+
+		if (lolRegex.matcher(rawMessage).matches())
+			channel.sendMessage("LOL").queue();
 
 		if (rawMessage.contains("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
@@ -108,6 +120,13 @@ public class ChannelMessage extends ListenerAdapter
 
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
+		if (rawMessage.contains("賺爛"))
+			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
+
+		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains("learned")) //5%
+			message.addReaction(learned).queue();
+		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains("wow")) //5%
+			message.addReaction(wow).queue();
 
 		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID) && channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
 			JsonHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級

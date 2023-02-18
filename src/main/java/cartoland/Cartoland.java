@@ -6,6 +6,7 @@ import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -37,22 +38,26 @@ public class Cartoland
 						new ChannelMessage(), //當有人在群組傳訊息
 						new PrivateMessage(), //當有人傳私訊給機器人
 						new CommandUsage(), //當有人使用指令
-						new GetRole()) //有人獲得會員身分組
+						new GetRole(), //有人獲得會員身分組
+						new JoinServer()) //有人加入創聯
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
 				.build();
 
 		jda.updateCommands().addCommands(
-				Commands.slash("invite", "Get invite link of Cartoland"),
+				Commands.slash("invite", "Get invite link of Cartoland")
+						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得創世聯邦的邀請連結"),
 				Commands.slash("help", "Get help of bot commands")
 						.addOptions(new OptionData(OptionType.STRING, "help_name", "The command that want check", false)
+											.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "想確認的指令")
 											.addChoice("cmd", "cmd")
 											.addChoice("faq", "faq")
 											.addChoice("dtp", "dtp")
 											.addChoice("tool", "tool")
 											.addChoice("lang", "lang")),
 				Commands.slash("cmd", "Get help of Minecraft commands")
+						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得Minecraft指令的協助")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
 				Commands.slash("mcc", "Get help of Minecraft commands")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),

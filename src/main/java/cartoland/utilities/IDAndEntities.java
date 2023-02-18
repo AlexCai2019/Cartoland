@@ -35,7 +35,7 @@ public class IDAndEntities
 	public static Role memberRole;
 	public static User botItself;
 
-	public static final Random RANDOM = new Random();
+	public static final Random random = new Random();
 
 	/**
 	 * Language constants. Can not be initial.

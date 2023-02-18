@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
@@ -88,6 +89,14 @@ public class JsonHandle
 		return result;
 	}
 
+	public static List<Object> commandList(String typeCommandName)
+	{
+		String jsonKey = typeCommandName + ".list";
+		if (!englishFile.has(jsonKey))
+			return null;
+		return englishFile.getJSONArray(jsonKey).toList();
+	}
+
 	public static void reloadLanguageFiles()
 	{
 		languageFileMap.put(IDAndEntities.Languages.ENGLISH, englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json")));
@@ -122,11 +131,8 @@ public class JsonHandle
 		String userIDString = Long.toUnsignedString(userID);
 		if (commandBlocksFile.has(userIDString))
 			return commandBlocksFile.getLong(userIDString);
-		else
-		{
-			commandBlocksFile.put(userIDString, 0L);
-			return 0L;
-		}
+		commandBlocksFile.put(userIDString, 0L);
+		return 0L;
 	}
 
 	public static String getJsonKey(long userID, String key)

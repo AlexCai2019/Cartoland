@@ -84,8 +84,8 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put("megumin", event ->
 		{
-			TA author = twitterAuthors[IDAndEntities.RANDOM.nextInt(twitterAuthors.length)];
-			long artwork = author.artworks()[IDAndEntities.RANDOM.nextInt(author.artworks().length)];
+			TA author = twitterAuthors[IDAndEntities.random.nextInt(twitterAuthors.length)];
+			long artwork = author.artworks()[IDAndEntities.random.nextInt(author.artworks().length)];
 			event.reply("https://twitter.com/" + author.name() + "/status/" + artwork).queue();
 			FileHandle.log(userName + "(" + userID + ") used /megumin.");
 		}); //隨機一張惠惠
@@ -132,6 +132,8 @@ public class CommandUsage extends ListenerAdapter
 	 * The method that inherited from {@link ListenerAdapter}, triggers when a user uses slash command.
 	 *
 	 * @param event The event that carries information of the user and the command.
+	 * @since 1.0
+	 * @author Alex Cai
 	 */
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
@@ -147,6 +149,16 @@ public class CommandUsage extends ListenerAdapter
 		commands.get(commandName).commandProcess(event);
 	}
 
+	/**
+	 * When it comes to /help, /cmd, /faq, /dtp and /lang that needs to use lang/*.json files, those lambda
+	 * expressions will call this method.
+	 *
+	 * @param jsonKey the command name, only "help", "cmd", "faq", "dtp" and "lang" are allowed.
+	 * @param event The event that carries information of the user and the command.
+	 * @return The content that the bot is going to reply the user.
+	 * @since 1.0
+	 * @author Alex Cai
+	 */
 	private String minecraftCommandRelated(String jsonKey, SlashCommandInteractionEvent event)
 	{
 		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數

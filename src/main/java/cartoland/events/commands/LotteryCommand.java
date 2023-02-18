@@ -61,7 +61,7 @@ public class LotteryCommand implements ICommand
 
 		long afterBet;
 		String result;
-		if (IDAndEntities.RANDOM.nextBoolean()) //賭贏
+		if (IDAndEntities.random.nextBoolean()) //賭贏
 		{
 			afterBet = nowHave + bet;
 			if (afterBet < 0)

@@ -91,10 +91,7 @@ public class JsonHandle
 
 	public static List<Object> commandList(String typeCommandName)
 	{
-		String jsonKey = typeCommandName + ".list";
-		if (!englishFile.has(jsonKey))
-			return null;
-		return englishFile.getJSONArray(jsonKey).toList();
+		return englishFile.getJSONArray(typeCommandName + ".list").toList();
 	}
 
 	public static void reloadLanguageFiles()

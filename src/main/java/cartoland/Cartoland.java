@@ -1,7 +1,8 @@
 package cartoland;
 
 import cartoland.events.*;
-import cartoland.events.commands.CommandUsage;
+import cartoland.events.AutoComplete;
+import cartoland.events.CommandUsage;
 import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
@@ -38,6 +39,7 @@ public class Cartoland
 						new ChannelMessage(), //當有人在群組傳訊息
 						new PrivateMessage(), //當有人傳私訊給機器人
 						new CommandUsage(), //當有人使用指令
+						new AutoComplete(), //當指令需要自動補完
 						new GetRole(), //有人獲得會員身分組
 						new JoinServer()) //有人加入創聯
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)

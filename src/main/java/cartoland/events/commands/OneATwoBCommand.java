@@ -1,5 +1,6 @@
 package cartoland.events.commands;
 
+import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,7 +20,7 @@ public class OneATwoBCommand implements ICommand
 {
 	private final CommandUsage commandCore;
 
-	OneATwoBCommand(CommandUsage commandUsage)
+	public OneATwoBCommand(CommandUsage commandUsage)
 	{
 		commandCore = commandUsage;
 	}
@@ -28,14 +29,15 @@ public class OneATwoBCommand implements ICommand
 	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		String argument = event.getOption("answer", OptionMapping::getAsString);
-		IMiniGame playing = commandCore.games.get(commandCore.userID);
+		long userID = commandCore.getUserID();
+		IMiniGame playing = commandCore.getGames().get(userID);
 
 		if (argument == null) //不帶參數
 		{
 			if (playing == null) //沒有在玩遊戲 開始1A2B
 			{
 				event.reply("Start 1A2B game! type `/one_a_two_b <answer>` to make a guess.").queue();
-				commandCore.games.put(commandCore.userID, new OneATwoBGame());
+				commandCore.getGames().put(userID, new OneATwoBGame());
 			}
 			else //已經有在玩遊戲
 				event.reply("You are already in " + playing.gameName() + " game.").queue();
@@ -75,6 +77,6 @@ public class OneATwoBCommand implements ICommand
 		event.reply(shouldReply + "\nGame Over, the answer is **" + argument + "**.\n" +
 							"Used Time: " + second / 60 + " minutes " + second % 60 + " seconds\n" +
 							"Guesses: " + oneATwoB.getGuesses() + " times").queue();
-		commandCore.games.remove(commandCore.userID);
+		commandCore.getGames().remove(userID);
 	}
 }

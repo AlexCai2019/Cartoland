@@ -1,5 +1,6 @@
 package cartoland.events.commands;
 
+import cartoland.events.CommandUsage;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,7 +17,7 @@ public class LotteryCommand implements ICommand
 {
 	private final CommandUsage commandCore;
 
-	LotteryCommand(CommandUsage commandUsage)
+	public LotteryCommand(CommandUsage commandUsage)
 	{
 		commandCore = commandUsage;
 	}
@@ -24,12 +25,13 @@ public class LotteryCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		long nowHave = JsonHandle.getCommandBlocks(commandCore.userID);
+		long userID = commandCore.getUserID();
+		long nowHave = JsonHandle.getCommandBlocks(userID);
 		String betString = event.getOption("bet", OptionMapping::getAsString);
 
 		if (betString == null) //不帶參數
 		{
-			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.query").formatted(nowHave)).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "lottery.query").formatted(nowHave)).queue();
 			return;
 		}
 
@@ -42,20 +44,20 @@ public class LotteryCommand implements ICommand
 			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
 			if (percentage > 100L) //超過100%
 			{
-				event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.wrong_percent").formatted(percentage)).queue();
+				event.reply(JsonHandle.getJsonKey(userID, "lottery.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
 			bet = nowHave * percentage / 100;
 		}
 		else //都不是
 		{
-			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.wrong_argument")).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "lottery.wrong_argument")).queue();
 			return;
 		}
 
 		if (nowHave < bet) //如果現有的比要賭的還少
 		{
-			event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.not_enough").formatted(bet, nowHave)).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "lottery.not_enough").formatted(bet, nowHave)).queue();
 			return;
 		}
 
@@ -66,15 +68,15 @@ public class LotteryCommand implements ICommand
 			afterBet = nowHave + bet;
 			if (afterBet < 0)
 				afterBet = Long.MAX_VALUE; //避免溢位
-			result = JsonHandle.getJsonKey(commandCore.userID, "lottery.win");
+			result = JsonHandle.getJsonKey(userID, "lottery.win");
 		}
 		else //賭輸
 		{
 			afterBet = nowHave - bet;
-			result = JsonHandle.getJsonKey(commandCore.userID, "lottery.lose");
+			result = JsonHandle.getJsonKey(userID, "lottery.lose");
 		}
 		long finalAfterBet = afterBet;
-		event.reply(JsonHandle.getJsonKey(commandCore.userID, "lottery.result").formatted(bet, result, afterBet))
-				.queue(interactionHook -> JsonHandle.setCommandBlocks(commandCore.userID, finalAfterBet));
+		event.reply(JsonHandle.getJsonKey(userID, "lottery.result").formatted(bet, result, afterBet))
+				.queue(interactionHook -> JsonHandle.setCommandBlocks(userID, finalAfterBet));
 	}
 }

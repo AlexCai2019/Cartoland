@@ -17,7 +17,7 @@ public class ToolCommand implements ICommand
 {
 	private final HashMap<String, ICommand> subCommands = new HashMap<>();
 
-	ToolCommand()
+	public ToolCommand()
 	{
 		subCommands.put("uuid_string", new UUIDStringCommand()); //tool uuid_string
 		subCommands.put("uuid_array", new UUIDArrayCommand()); //tool uuid_array

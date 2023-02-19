@@ -17,13 +17,13 @@ public class GetRole extends ListenerAdapter
 	@Override
 	public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event)
 	{
-		if (event.getRoles().contains(IDAndEntities.memberRole))
-		{
-			String mentionUser = event.getUser().getAsMention();
-			String serverName = IDAndEntities.cartolandServer.getName();
+		if (!event.getRoles().contains(IDAndEntities.memberRole))
+			return;
 
-			IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName +
+		String mentionUser = event.getUser().getAsMention();
+		String serverName = IDAndEntities.cartolandServer.getName();
+
+		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName +
 														   "\n" + mentionUser + ", welcome to " + serverName).queue();
-		}
 	}
 }

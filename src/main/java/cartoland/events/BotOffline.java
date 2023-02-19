@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.FileHandle;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
@@ -26,6 +27,7 @@ public class BotOffline extends ListenerAdapter
 	public void onShutdown(@NotNull ShutdownEvent event)
 	{
 		String logString = "Cartoland Bot is now offline.";
+		IDAndEntities.botChannel.sendMessage(logString).queue();
 		System.out.println(logString);
 		FileHandle.log(logString);
 		FileHandle.synchronizeFile(JsonHandle.USERS_JSON);

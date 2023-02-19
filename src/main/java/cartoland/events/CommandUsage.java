@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -106,8 +107,20 @@ public class CommandUsage extends ListenerAdapter
 
 			event.reply("Shutting down...").queue(interactionHook ->
 			{
-				IDAndEntities.botChannel.sendMessage("Cartoland Bot is now offline.").queue();
 				IDAndEntities.jda.shutdown();
+				try
+				{
+					if (!IDAndEntities.jda.awaitShutdown(Duration.ofSeconds(5)))
+					{
+						IDAndEntities.jda.shutdownNow();
+						IDAndEntities.jda.awaitShutdown();
+					}
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+					FileHandle.log(e);
+				}
 			});
 		});
 

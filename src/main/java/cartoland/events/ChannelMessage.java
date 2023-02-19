@@ -103,7 +103,7 @@ public class ChannelMessage extends ListenerAdapter
 			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[IDAndEntities.random.nextInt(replyACMention.length)] : replyMention[IDAndEntities.random.nextInt(replyMention.length)])
 					.mentionRepliedUser(false).queue();
 
-		if (meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("惠惠") || rawMessage.contains("めぐみん"))
+		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
 			channel.sendMessage(megumin[IDAndEntities.random.nextInt(megumin.length)]).queue();
 
 		if (lolRegex.matcher(rawMessage).matches())

@@ -1,15 +1,16 @@
 package cartoland.events;
 
 import cartoland.utilities.FileHandle;
-import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static cartoland.utilities.IDAndEntities.*;
+
 /**
  * {@code BotOnline} is a listener that triggers when this bot was online. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA. This class helps all the entities (except {@link IDAndEntities#jda}) in
- * {@link IDAndEntities} get their instances.
+ * {@link cartoland.Cartoland#main}, with the build of JDA. This class helps all the entities (except
+ * {@link cartoland.utilities.IDAndEntities#jda}) in {@link cartoland.utilities.IDAndEntities} get their instances.
  *
  * @since 1.0
  * @author Alex Cai
@@ -25,30 +26,34 @@ public class BotOnline extends ListenerAdapter
 	@Override
 	public void onReady(@NotNull ReadyEvent event)
 	{
-		IDAndEntities.cartolandServer = IDAndEntities.jda.getGuildById(IDAndEntities.CARTOLAND_SERVER_ID); //創聯
-		if (IDAndEntities.cartolandServer == null)
+		cartolandServer = jda.getGuildById(CARTOLAND_SERVER_ID); //創聯
+		if (cartolandServer == null)
 			problemOccurred("Can't find Cartoland Server");
 
-		IDAndEntities.lobbyChannel = IDAndEntities.cartolandServer.getTextChannelById(IDAndEntities.LOBBY_CHANNEL_ID); //創聯的大廳頻道
-		if (IDAndEntities.lobbyChannel == null)
+		lobbyChannel = cartolandServer.getTextChannelById(LOBBY_CHANNEL_ID); //創聯的大廳頻道
+		if (lobbyChannel == null)
 			problemOccurred("Can't find Lobby Channel.");
 
-		IDAndEntities.botChannel = IDAndEntities.cartolandServer.getTextChannelById(IDAndEntities.BOT_CHANNEL_ID); //創聯的機器人頻道
-		if (IDAndEntities.botChannel == null)
+		botChannel = cartolandServer.getTextChannelById(BOT_CHANNEL_ID); //創聯的機器人頻道
+		if (botChannel == null)
 			problemOccurred("Can't find Bot Channel.");
 
-		IDAndEntities.undergroundChannel = IDAndEntities.cartolandServer.getTextChannelById(IDAndEntities.UNDERGROUND_CHANNEL_ID); //地下聊天室
-		if (IDAndEntities.undergroundChannel == null)
+		undergroundChannel = cartolandServer.getTextChannelById(UNDERGROUND_CHANNEL_ID); //創聯的地下聊天室
+		if (undergroundChannel == null)
 			problemOccurred("Can't find Underground Channel.");
 
-		IDAndEntities.memberRole = IDAndEntities.cartolandServer.getRoleById(IDAndEntities.MEMBER_ROLE_ID); //會員身分組
-		if (IDAndEntities.memberRole == null)
+		memberRole = cartolandServer.getRoleById(MEMBER_ROLE_ID); //會員身分組
+		if (memberRole == null)
 			problemOccurred("Can't find Member Role.");
 
-		IDAndEntities.botItself = IDAndEntities.jda.getSelfUser();
+		nsfwRole = cartolandServer.getRoleById(NSFW_ROLE_ID); //地下身分組
+		if (nsfwRole == null)
+			problemOccurred("Can't find NSFW Role.");
+
+		botItself = jda.getSelfUser(); //機器人自己
 
 		String logString = "Cartoland Bot is now online.";
-		IDAndEntities.botChannel.sendMessage(logString).queue();
+		botChannel.sendMessage(logString).queue();
 		System.out.println(logString);
 		FileHandle.log(logString);
 	}
@@ -63,6 +68,6 @@ public class BotOnline extends ListenerAdapter
 		System.err.println(logString);
 		System.err.print('\u0007');
 		FileHandle.log(logString);
-		System.exit(1);
+		jda.shutdownNow();
 	}
 }

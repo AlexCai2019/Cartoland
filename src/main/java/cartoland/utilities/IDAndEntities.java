@@ -25,6 +25,7 @@ public class IDAndEntities
 	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
+	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
 	public static final long AC_ID = 355953951469731842L;
 
 	public static JDA jda;
@@ -33,6 +34,7 @@ public class IDAndEntities
 	public static TextChannel botChannel;
 	public static TextChannel undergroundChannel;
 	public static Role memberRole;
+	public static Role nsfwRole;
 	public static User botItself;
 
 	public static final Random random = new Random();

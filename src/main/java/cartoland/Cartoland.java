@@ -1,8 +1,6 @@
 package cartoland;
 
 import cartoland.events.*;
-import cartoland.events.AutoComplete;
-import cartoland.events.CommandUsage;
 import cartoland.utilities.IDAndEntities.Languages;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
@@ -40,8 +38,9 @@ public class Cartoland
 						new PrivateMessage(), //當有人傳私訊給機器人
 						new CommandUsage(), //當有人使用指令
 						new AutoComplete(), //當指令需要自動補完
-						new GetRole(), //有人獲得會員身分組
-						new JoinServer()) //有人加入創聯
+						new ContextMenu(), //當有人使用右鍵功能
+						new GetRole(), //當有人獲得會員身分組
+						new JoinServer()) //當有人加入創聯
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
@@ -49,10 +48,12 @@ public class Cartoland
 
 		jda.updateCommands().addCommands(
 				Commands.slash("invite", "Get invite link of Cartoland")
-						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得創世聯邦的邀請連結"),
+						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
+						.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "获得创世联邦的邀请连结"),
 				Commands.slash("help", "Get help of bot commands")
 						.addOptions(new OptionData(OptionType.STRING, "help_name", "The command that want check", false)
 											.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "想確認的指令")
+											.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "想确认的命令")
 											.addChoice("cmd", "cmd")
 											.addChoice("faq", "faq")
 											.addChoice("dtp", "dtp")
@@ -60,6 +61,7 @@ public class Cartoland
 											.addChoice("lang", "lang")),
 				Commands.slash("cmd", "Get help of Minecraft commands")
 						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得Minecraft指令的協助")
+						.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "获得Minecraft命令的协助")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
 				Commands.slash("mcc", "Get help of Minecraft commands")
 						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
@@ -87,7 +89,12 @@ public class Cartoland
 															.addChoice("Data pack", "d")
 															.addChoice("Resource pack", "r"))),
 				Commands.slash("lang", "Change language or check current languages")
-						.addOption(OptionType.STRING, "lang_name", "The language that user want to change", false),
+						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
+											.addChoice("English", Languages.ENGLISH)
+											.addChoice("台灣正體", Languages.TW_MANDARIN)
+											.addChoice("台語文字", Languages.TAIWANESE)
+											.addChoice("粵語漢字", Languages.CANTONESE)
+											.addChoice("简体中文", Languages.CHINESE)),
 				Commands.slash("language", "Change language or check current languages")
 						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
 											.addChoice("English", Languages.ENGLISH)
@@ -105,7 +112,11 @@ public class Cartoland
 				Commands.slash("one_a_two_b", "Play 1A2B game")
 						.addOption(OptionType.STRING, "answer", "The answer that you think", false),
 				Commands.slash("lottery", "Play a lottery")
-						.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false)
+						.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false),
+
+				Commands.message("Copy context")
+						.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "複製文字")
+						.setNameLocalization(DiscordLocale.CHINESE_CHINA, "复制文本")
 		).queue();
 
 		jda.awaitReady();

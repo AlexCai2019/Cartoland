@@ -146,8 +146,5 @@
 	"dtp.name.worldgen": "&dtp.name.w",
 	"dtp.name.wg": "&dtp.name.w",
 	"dtp.name.w": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/",
-	"dtp.name.oreki20": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/",
-	"lang.begin": "语言设置: `/lang [<代码>]`\n",
-	"lang.end": "",
-	"lang.fail": "无效的语言设置。"
+	"dtp.name.oreki20": "维基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-cn\n生成器： https://misode.github.io/worldgen/"
 }

@@ -1,7 +1,7 @@
 package cartoland.events;
 
+import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
-import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.User;
@@ -66,7 +66,7 @@ public class ChannelMessage extends ListenerAdapter
 	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*");
-	private final Pattern lolRegex = Pattern.compile("(?i).*lol*}");
+	private final Pattern lolRegex = Pattern.compile("(?i).*lol*");
 
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
@@ -122,13 +122,15 @@ public class ChannelMessage extends ListenerAdapter
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
 		if (rawMessage.contains("賺爛"))
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
+		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
+			channel.sendMessage("https://tenor.com/view/f-bi-raid-swat-gif-11500735").queue();
 
-		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains("learned")) //5%
+		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains(":learned:")) //5%
 			message.addReaction(learned).queue();
-		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains("wow")) //5%
+		if (IDAndEntities.random.nextInt(20) == 0 && rawMessage.contains(":wow:")) //5%
 			message.addReaction(wow).queue();
 
 		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID) && channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
-			JsonHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
+			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
 	}
 }

@@ -272,17 +272,6 @@
 	"dtp.name.wg": "&dtp.name.w",
 	"dtp.name.w": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
-	"lang.begin": "Language settings: `/lang [<code>]`\n",
-	"lang.end": "",
-	"lang.fail": "Invalid language setting.",
-	"lang.list":
-	[
-		"English",
-		"台灣正體",
-		"台語文字",
-		"粵語漢字",
-		"简体中文"
-	],
 	"lang.name.en": "Language set to English.",
 	"lang.name.tw": "語言設定為 台灣正體",
 	"lang.name.ta": "話語設定為 台語文字",

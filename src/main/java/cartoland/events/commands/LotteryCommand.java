@@ -1,6 +1,7 @@
 package cartoland.events.commands;
 
 import cartoland.events.CommandUsage;
+import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,7 +27,7 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = commandCore.getUserID();
-		long nowHave = JsonHandle.getCommandBlocks(userID);
+		long nowHave = CommandBlocksHandle.getCommandBlocks(userID);
 		String betString = event.getOption("bet", OptionMapping::getAsString);
 
 		if (betString == null) //不帶參數
@@ -77,6 +78,6 @@ public class LotteryCommand implements ICommand
 		}
 		long finalAfterBet = afterBet;
 		event.reply(JsonHandle.getJsonKey(userID, "lottery.result").formatted(bet, result, afterBet))
-				.queue(interactionHook -> JsonHandle.setCommandBlocks(userID, finalAfterBet));
+				.queue(interactionHook -> CommandBlocksHandle.setCommandBlocks(userID, finalAfterBet));
 	}
 }

@@ -23,6 +23,7 @@ public class JsonHandle
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
 	private static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
+	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
 	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
@@ -91,7 +92,7 @@ public class JsonHandle
 
 	public static List<Object> commandList(String typeCommandName)
 	{
-		return englishFile.getJSONArray(typeCommandName + ".list").toList();
+		return commandListMap.get(typeCommandName + ".list");
 	}
 
 	public static void reloadLanguageFiles()
@@ -101,35 +102,17 @@ public class JsonHandle
 		languageFileMap.put(IDAndEntities.Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
 		languageFileMap.put(IDAndEntities.Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
 		languageFileMap.put(IDAndEntities.Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+
+		commandListMap.put("cmd.list", englishFile.getJSONArray("cmd.list").toList());
+		commandListMap.put("faq.list", englishFile.getJSONArray("faq.list").toList());
+		commandListMap.put("dtp.list", englishFile.getJSONArray("dtp.list").toList());
+
 		FileHandle.log("Reload all language json files");
 	}
 
-	public static void addCommandBlocks(long userID, long add)
+	static HashMap<String, Object> commandBlocksToMap()
 	{
-		userIDString = Long.toUnsignedString(userID);
-		if (commandBlocksFile.has(userIDString))
-		{
-			long level = commandBlocksFile.getLong(userIDString);
-			level += add;
-			commandBlocksFile.put(userIDString, level >= 0 ? level : Long.MAX_VALUE); //避免溢位
-		}
-		else
-			commandBlocksFile.put(userIDString, add);
-	}
-
-	public static void setCommandBlocks(long userID, long value)
-	{
-		userIDString = Long.toUnsignedString(userID);
-		commandBlocksFile.put(userIDString, value);
-	}
-
-	public static long getCommandBlocks(long userID)
-	{
-		String userIDString = Long.toUnsignedString(userID);
-		if (commandBlocksFile.has(userIDString))
-			return commandBlocksFile.getLong(userIDString);
-		commandBlocksFile.put(userIDString, 0L);
-		return 0L;
+		return (HashMap<String, Object>) commandBlocksFile.toMap();
 	}
 
 	public static String getJsonKey(long userID, String key)

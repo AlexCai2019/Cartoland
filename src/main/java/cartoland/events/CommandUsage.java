@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -108,19 +107,7 @@ public class CommandUsage extends ListenerAdapter
 			event.reply("Shutting down...").queue(interactionHook ->
 			{
 				IDAndEntities.jda.shutdown();
-				try
-				{
-					if (!IDAndEntities.jda.awaitShutdown(Duration.ofSeconds(5)))
-					{
-						IDAndEntities.jda.shutdownNow();
-						IDAndEntities.jda.awaitShutdown();
-					}
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-					FileHandle.log(e);
-				}
+				IDAndEntities.botChannel.sendMessage("Cartoland Bot is now offline.").queue();
 			});
 		});
 
@@ -181,7 +168,7 @@ public class CommandUsage extends ListenerAdapter
 	{
 		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
-			return JsonHandle.command(userID, jsonKey);
+			return JsonHandle.command(userID, jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個
 		return JsonHandle.command(userID, jsonKey, argument);
 	}
 }

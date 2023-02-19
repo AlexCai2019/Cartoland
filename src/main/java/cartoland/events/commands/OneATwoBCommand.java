@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
  * the 1A2B game. This class implements {@link ICommand} interface, which is for the commands HashMap in
  * {@link CommandUsage}. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
  *
- * @author Alex Cai
- * @see cartoland.mini_games.OneATwoBGame The backend of the 1A2B game.
  * @since 1.3
+ * @see OneATwoBGame The backend of the 1A2B game.
+ * @author Alex Cai
  */
 public class OneATwoBCommand implements ICommand
 {

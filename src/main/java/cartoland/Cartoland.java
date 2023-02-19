@@ -62,19 +62,19 @@ public class Cartoland
 				Commands.slash("cmd", "Get help of Minecraft commands")
 						.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "獲得Minecraft指令的協助")
 						.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "获得Minecraft命令的协助")
-						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
+						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false, true),
 				Commands.slash("mcc", "Get help of Minecraft commands")
-						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
+						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false, true),
 				Commands.slash("command", "Get help of Minecraft commands")
-						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false),
+						.addOption(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false, true),
 				Commands.slash("faq", "Get help of map making")
-						.addOption(OptionType.STRING, "faq_name", "The question of map making", false),
+						.addOption(OptionType.STRING, "faq_name", "The question of map making", false, true),
 				Commands.slash("question", "Get help of map making")
-						.addOption(OptionType.STRING, "faq_name", "The question of map making", false),
+						.addOption(OptionType.STRING, "faq_name", "The question of map making", false, true),
 				Commands.slash("dtp", "Get help of Minecraft datapack")
-						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false),
+						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false, true),
 				Commands.slash("datapack", "Get help of Minecraft datapack")
-						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false),
+						.addOption(OptionType.STRING, "dtp_name", "The feature of a datapack", false, true),
 				Commands.slash("tool", "Tools that can help you")
 						.addSubcommands(
 								new SubcommandData("uuid_string", "Get uuid data from raw uuid string")
@@ -89,14 +89,14 @@ public class Cartoland
 															.addChoice("Data pack", "d")
 															.addChoice("Resource pack", "r"))),
 				Commands.slash("lang", "Change language or check current languages")
-						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
+						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", true)
 											.addChoice("English", Languages.ENGLISH)
 											.addChoice("台灣正體", Languages.TW_MANDARIN)
 											.addChoice("台語文字", Languages.TAIWANESE)
 											.addChoice("粵語漢字", Languages.CANTONESE)
 											.addChoice("简体中文", Languages.CHINESE)),
 				Commands.slash("language", "Change language or check current languages")
-						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", false)
+						.addOptions(new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", true)
 											.addChoice("English", Languages.ENGLISH)
 											.addChoice("台灣正體", Languages.TW_MANDARIN)
 											.addChoice("台語文字", Languages.TAIWANESE)
@@ -114,9 +114,9 @@ public class Cartoland
 				Commands.slash("lottery", "Play a lottery")
 						.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false),
 
-				Commands.message("Copy context")
-						.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "複製文字")
-						.setNameLocalization(DiscordLocale.CHINESE_CHINA, "复制文本")
+				Commands.message("Raw Text")
+						.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "原始文字")
+						.setNameLocalization(DiscordLocale.CHINESE_CHINA, "原始文本")
 		).queue();
 
 		jda.awaitReady();

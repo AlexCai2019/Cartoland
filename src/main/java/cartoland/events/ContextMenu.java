@@ -4,19 +4,19 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-
+/**
+ * {@code ContextMenu} is a listener that triggers when a user uses right click command. This class was registered
+ * in {@link cartoland.Cartoland#main}, with the build of JDA.
+ *
+ * @since 1.5
+ * @author Alex Cai
+ */
 public class ContextMenu extends ListenerAdapter
 {
 	@Override
 	public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event)
 	{
-		if (event.getName().equals("Copy context"))
-		{
-			Toolkit.getDefaultToolkit().getSystemClipboard()
-					.setContents(new StringSelection(event.getTarget().getContentRaw()), null);
-			event.reply("Copied!").setEphemeral(true).queue();
-		}
+		if (event.getName().equals("Raw Text"))
+			event.reply("```\n" + event.getTarget().getContentRaw() + "```").setEphemeral(true).queue();
 	}
 }

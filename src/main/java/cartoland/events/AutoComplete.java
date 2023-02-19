@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +25,6 @@ public class AutoComplete extends ListenerAdapter
 	{
 		Complete alias;
 
-		commands.put("help", new Complete("help"));
-
 		alias = new Complete("cmd");
 		commands.put("cmd", alias);
 		commands.put("mcc", alias);
@@ -38,10 +37,6 @@ public class AutoComplete extends ListenerAdapter
 		alias = new Complete("dtp");
 		commands.put("dtp", alias);
 		commands.put("datapack", alias);
-
-		alias = new Complete("lang");
-		commands.put("lang", alias);
-		commands.put("language", alias);
 	}
 
 	@Override
@@ -64,12 +59,14 @@ record Complete(String commandName)
 	public void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		if (event.getFocusedOption().getName().equals(commandName + "_name"))
-			event.replyChoices(
-					JsonHandle.commandList(commandName)
-							.stream()
-							.filter(word -> ((String) word).startsWith(event.getFocusedOption().getValue()))
-							.map(word -> new Choice((String) word, (String) word))
-							.collect(Collectors.toList())
-			).queue();
+		{
+			List<Choice> choices = JsonHandle.commandList(commandName)
+					.stream()
+					.filter(word -> ((String) word).startsWith(event.getFocusedOption().getValue()))
+					.map(word -> new Choice((String) word, (String) word))
+					.collect(Collectors.toList());
+
+			event.replyChoices((choices.size() <= 25) ? choices : choices.subList(0, 25)).queue();
+		}
 	}
 }

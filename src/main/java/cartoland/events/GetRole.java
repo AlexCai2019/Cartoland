@@ -23,7 +23,7 @@ public class GetRole extends ListenerAdapter
 		String mentionUser = event.getUser().getAsMention();
 		String serverName = IDAndEntities.cartolandServer.getName();
 
-		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName +
-														   "\n" + mentionUser + ", welcome to " + serverName).queue();
+		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n"
+													   + mentionUser + ", welcome to " + serverName).queue();
 	}
 }

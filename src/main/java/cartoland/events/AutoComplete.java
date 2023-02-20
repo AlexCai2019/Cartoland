@@ -66,9 +66,10 @@ record Complete(String commandName)
 	{
 		if (event.getFocusedOption().getName().equals(commandName + "_name"))
 		{
+			String optionValue = event.getFocusedOption().getValue();
 			List<Choice> choices = JsonHandle.commandList(commandName)
 					.stream()
-					.filter(word -> ((String) word).startsWith(event.getFocusedOption().getValue()))
+					.filter(word -> ((String) word).startsWith(optionValue))
 					.map(word -> new Choice((String) word, (String) word))
 					.collect(Collectors.toList());
 

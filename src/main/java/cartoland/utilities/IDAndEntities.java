@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import java.util.Random;
 
 /**
- * Channel ID, user ID, and entities such as {@link JDA} and {@link TextChannel}. Can not be initial.
+ * {@code IDAndEntities} is a utility class that stores IDs, JDA entities and language constants. For example, this class
+ * has some channel IDs, role IDs, and entities such as {@link JDA} and {@link TextChannel}. A {@link Random} instance is also a part
+ * of this class. Can not be instantiated.
  *
  * @since 1.3
  * @author Alex Cai

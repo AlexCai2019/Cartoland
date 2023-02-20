@@ -24,6 +24,11 @@
         <developer>
             <name>Alex Cai</name>
             <email>alexcai910630@gmail.com</email>
+            <url>https://github.com/AlexCai2019</url>
+            <timezone>8</timezone>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
         </developer>
     </developers>
 

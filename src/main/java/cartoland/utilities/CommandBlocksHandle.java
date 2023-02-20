@@ -6,7 +6,8 @@ import static cartoland.utilities.JsonHandle.commandBlocksFile;
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
  * feature that whatever a user say in some specific channels, the user will gain command blocks as a kind of
  * reward point. This class access a static field {@link JsonHandle#commandBlocksFile} from {@link JsonHandle}, which is
- * where all the command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}.
+ * where all the command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}. Can
+ * not be instantiated.
  *
  * @since 1.5
  * @see JsonHandle
@@ -38,7 +39,7 @@ public class CommandBlocksHandle
 	{
 		String userIDString = Long.toUnsignedString(userID);
 		if (commandBlocksFile.has(userIDString))
-			return (long) commandBlocksFile.get(userIDString);
+			return commandBlocksFile.getLong(userIDString);
 		commandBlocksFile.put(userIDString, 0L);
 		return 0L;
 	}

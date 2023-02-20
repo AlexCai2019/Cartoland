@@ -2,7 +2,8 @@ package cartoland.events.commands;
 
 /**
  * {@code ICommand} is an interface that can be implemented with the actual execution of a slash command. This was
- * used being a value of a {@code HashMap} in {@link cartoland.events.CommandUsage}, which mostly lambdas to implement this interface.
+ * used being a value of a {@code HashMap} in {@link cartoland.events.CommandUsage}, which mostly lambdas to
+ * implement this interface.
  *
  * @since 1.3
  * @author Alex Cai

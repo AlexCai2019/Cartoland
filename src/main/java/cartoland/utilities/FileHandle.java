@@ -9,8 +9,8 @@ import java.time.LocalTime;
 import java.util.Arrays;
 
 /**
- * A utility that provides every functions that this program need to deal with file input and output. Can not be
- * initial.
+ * {@code FileHandle} is a utility class that provides every functions that this program need to deal with file input and
+ * output. Can not be instantiated.
  *
  * @since 1.0
  * @author Alex Cai

@@ -56,7 +56,8 @@ public class ChannelMessage extends ListenerAdapter
 		"你凡是有tag我被我記起來的對不對？我一定到現場打你，一定打你！",
 		"哪裡來的小孩子，家教差成這樣。",
 		"老子瘋狗的外號Maps群時期就有啦！",
-		"沒被打過是不是？"
+		"沒被打過是不是？",
+		"tag機器人是不好的行為，小朋友不要學"
 	};
 	private final String[] megumin =
 	{

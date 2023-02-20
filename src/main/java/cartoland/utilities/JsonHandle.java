@@ -8,7 +8,8 @@ import java.util.List;
 
 /**
  * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
- * at the beginning of process, and provide every information that the outer classes need.
+ * at the beginning of process, and provide every information that the outer classes need. This is the only place
+ * that imports {@link JSONArray} and {@link JSONObject}. Can not be instantiated.
  *
  * @since 1.0
  * @author Alex Cai
@@ -26,9 +27,9 @@ public class JsonHandle
 	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
 	private static final StringBuilder builder = new StringBuilder();
 
-	private static JSONObject file = null; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
+	private static JSONObject file; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
 	private static JSONObject englishFile; //英文檔案
-	private static String userIDString = null; //將ID轉換成字串
+	private static String userIDString; //將ID轉換成字串
 
 	static
 	{

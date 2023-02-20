@@ -9,7 +9,11 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 import java.util.HashMap;
 
 /**
+ * {@code AddCommands} is a utility that holds every commands. The only usage is for {@link cartoland.Cartoland#main}
+ * to get all commands when registering JDA. Can not be instantiated.
+ *
  * @since 1.5
+ * @see cartoland.Cartoland
  * @author Alex Cai
  */
 public class AddCommands
@@ -46,6 +50,8 @@ public class AddCommands
 			Dtp.datapack,
 
 			Commands.slash("tool", "Tools that can help you")
+					.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "能協助你的工具")
+					.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "能协助你的工具")
 					.addSubcommands(
 							new SubcommandData("uuid_string", "Get uuid data from raw uuid string")
 									.addOption(OptionType.STRING, "raw_uuid", "The raw uuid that you want to convert", true, false),
@@ -83,9 +89,17 @@ public class AddCommands
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
 			Commands.slash("one_a_two_b", "Play 1A2B game")
-					.addOption(OptionType.STRING, "answer", "The answer that you think", false, false),
+					.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "玩一場1A2B遊戲")
+					.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "玩一场1A2B游戏")
+					.addOptions(new OptionData(OptionType.STRING, "answer", "The answer that you think", false, false)
+													.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "你認為的答案")
+													.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "你认为的答案")),
 			Commands.slash("lottery", "Play a lottery")
-					.addOption(OptionType.STRING, "bet", "The bet amount that you want to offer", false, false),
+					.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "抽獎")
+					.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "抽奖")
+					.addOptions(new OptionData(OptionType.STRING, "bet", "The bet amount that you want to offer", false, false)
+													.setDescriptionLocalization(DiscordLocale.CHINESE_TAIWAN, "想賭上的數量")
+													.setDescriptionLocalization(DiscordLocale.CHINESE_CHINA, "想赌上的数量")),
 
 			Commands.message("Raw Text")
 					.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "原始文字")
@@ -94,8 +108,17 @@ public class AddCommands
 	}
 }
 
+/**
+ * /cmd, /mcc and /command. Can not be instantiated.
+ *
+ * @since 1.5
+ * @see AddCommands
+ * @author Alex Cai
+ */
 class Cmd
 {
+	private Cmd() {}
+
 	private static final HashMap<DiscordLocale, String> cmdDescriptions = new HashMap<>();
 
 	static
@@ -122,8 +145,17 @@ class Cmd
 			.addOptions(cmdOption);
 }
 
+/**
+ * /faq and /question. Can not be instantiated.
+ *
+ * @since 1.5
+ * @see AddCommands
+ * @author Alex Cai
+ */
 class Faq
 {
+	private Faq() {}
+
 	private static final HashMap<DiscordLocale, String> faqDescriptions = new HashMap<>();
 
 	static
@@ -146,8 +178,17 @@ class Faq
 			.addOptions(faqOption);
 }
 
+/**
+ * /dtp and /datapack. Can not be instantiated.
+ *
+ * @since 1.5
+ * @see AddCommands
+ * @author Alex Cai
+ */
 class Dtp
 {
+	private Dtp() {}
+
 	private static final HashMap<DiscordLocale, String> dtpDescriptions = new HashMap<>();
 
 	static
@@ -170,8 +211,17 @@ class Dtp
 			.addOptions(dtpOption);
 }
 
+/**
+ * /lang and /language. Can not be instantiated.
+ *
+ * @since 1.5
+ * @see AddCommands
+ * @author Alex Cai
+ */
 class Lang
 {
+	private Lang() {}
+
 	private static final HashMap<DiscordLocale, String> langDescriptions = new HashMap<>();
 
 	private static final OptionData langOptions =

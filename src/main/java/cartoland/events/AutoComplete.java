@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 
 /**
  * {@code AutoComplete} is a listener that triggers when a user is typing a command. This class was registered
- * in {@link cartoland.Cartoland#main}, with the build of JDA.
+ * in {@link cartoland.Cartoland#main}, with the build of JDA. It uses {@link #commands} to store every commands that
+ * needs auto complete as keys, and {@link Complete} instances as values.
  *
  * @since 1.5
+ * @see Complete
  * @author Alex Cai
  */
 public class AutoComplete extends ListenerAdapter
@@ -49,13 +51,17 @@ public class AutoComplete extends ListenerAdapter
 }
 
 /**
- * {@code Complete} is a class that process auto complete of typing a slash command.
+ * {@code Complete} is a class that process auto complete of typing a slash command. This class will be initial in the
+ * constructor of {@link AutoComplete}.
  *
  * @since 1.5
+ * @see AutoComplete
  * @author Alex Cai
  */
 record Complete(String commandName)
 {
+	private static final int CHOICES_LIMIT = 25;
+
 	public void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		if (event.getFocusedOption().getName().equals(commandName + "_name"))
@@ -66,7 +72,7 @@ record Complete(String commandName)
 					.map(word -> new Choice((String) word, (String) word))
 					.collect(Collectors.toList());
 
-			event.replyChoices((choices.size() <= 25) ? choices : choices.subList(0, 25)).queue();
+			event.replyChoices((choices.size() <= CHOICES_LIMIT) ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 		}
 	}
 }

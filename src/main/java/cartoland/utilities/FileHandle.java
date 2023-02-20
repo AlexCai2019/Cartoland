@@ -35,15 +35,14 @@ public class FileHandle
 		}
 	}
 
-	public static void synchronizeFile(String fileName)
+	public static void synchronizeFile(String fileName, String content)
 	{
-		String jsonString = JsonHandle.getFileString(fileName);
-		if (jsonString == null)
-			jsonString = "{}";
+		if (content == null)
+			content = "{}";
 		try
 		{
 			FileWriter writer = new FileWriter(fileName); //同步到檔案裡
-			writer.write(jsonString);
+			writer.write(content);
 			writer.close();
 		}
 		catch (IOException exception)

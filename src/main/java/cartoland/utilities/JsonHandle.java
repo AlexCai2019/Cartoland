@@ -21,7 +21,7 @@ public class JsonHandle
 	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
 
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
-	private static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
+	static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
 	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
 	private static final StringBuilder builder = new StringBuilder();
@@ -48,14 +48,10 @@ public class JsonHandle
 		file = languageFileMap.get(userLanguage);
 	}
 
-	static String getFileString(String fileName)
+	public static void synchronizeFiles()
 	{
-		return switch (fileName)
-		{
-			case USERS_JSON -> usersFile.toString();
-			case COMMAND_BLOCKS_JSON -> commandBlocksFile.toString();
-			default -> "{}";
-		};
+		FileHandle.synchronizeFile(JsonHandle.USERS_JSON, usersFile.toString());
+		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON, commandBlocksFile.toString());
 	}
 
 	public static String command(long userID, String typeCommandName)
@@ -108,11 +104,6 @@ public class JsonHandle
 		commandListMap.put("dtp.list", englishFile.getJSONArray("dtp.list").toList());
 
 		FileHandle.log("Reload all language json files");
-	}
-
-	static HashMap<String, Object> commandBlocksToMap()
-	{
-		return (HashMap<String, Object>) commandBlocksFile.toMap();
 	}
 
 	public static String getJsonKey(long userID, String key)

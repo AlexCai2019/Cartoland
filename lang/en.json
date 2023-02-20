@@ -1,7 +1,7 @@
 {
 	"help.begin": "Available commands: `",
 	"help.end": "`",
-	"help.fail": "Invalid ask, please try to use `/help` to check every available commands.",
+	"help.fail": "Invalid ask, please try to use </help:1063884269006635069> to check every available commands.",
 	"help.list":
 	[
 		"cmd",
@@ -10,14 +10,14 @@
 		"tool",
 		"lang"
 	],
-	"help.name.cmd": "Syntax: `/cmd [<command>]`",
-	"help.name.faq": "Syntax: `/faq [<question>]`",
-	"help.name.dtp": "Syntax: `/dtp [<datapack feature>]`",
-	"help.name.tool": "Syntax: `/tool (uuid_string|uuid_array|pack_mcmeta) <arguments...>`",
-	"help.name.lang": "Syntax: `/lang [<code>]`",
+	"help.name.cmd": "Syntax: </cmd:1063884269006635070>` [<command>]`",
+	"help.name.faq": "Syntax: </faq:1063884269006635071>` [<question>]`",
+	"help.name.dtp": "Syntax: </dtp:1063884269006635072>` [<datapack feature>]`",
+	"help.name.tool": "Syntax: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <arguments...>`",
+	"help.name.lang": "Syntax: </lang:1063884269006635074>` <code>`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",
-	"cmd.fail": "Invalid command, please try to use `/cmd` to check every commands.",
+	"cmd.fail": "Invalid command, please try to use </cmd:1063884269006635070> to check every commands.",
 	"cmd.list":
 	[
 		"advancement",
@@ -177,7 +177,7 @@
 	"cmd.name.xp": "```ansi\n\u001B[31mxp \u001B[0m(\u001B[34madd\u001B[0m|\u001B[34mset\u001B[0m) \u001B[36m<targets> \u001B[32m<amount> \u001B[34m[levels|points]\n\u001B[31mxp \u001B[34mquery \u001B[36m<targets> \u001B[34m[levels|points]```https://minecraft.fandom.com/wiki/Commands/xp",
 	"faq.begin": "`Questions: ",
 	"faq.end": "`",
-	"faq.fail": "Invalid question, please try to use `/faq` to check every questions.",
+	"faq.fail": "Invalid question, please try to use </faq:1063884269006635071> to check every questions.",
 	"faq.list":
 	[
 		"aec",
@@ -207,7 +207,7 @@
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`Datapack features: ",
 	"dtp.end": "`",
-	"dtp.fail": "Invalid datapack feature, please try to use `/dtp` to check every datapack features.",
+	"dtp.fail": "Invalid datapack feature, please try to use </dtp:1063884269006635072> to check every datapack features.",
 	"dtp.list":
 	[
 		"advancements",
@@ -280,7 +280,7 @@
   	"lottery.win": "win!",
   	"lottery.lose": "lose..",
   	"lottery.result": "You bet %d command blocks and %s\nYou now have %d command blocks.",
-  	"lottery.wrong_argument": "Usage: `/lottery [<integer>]` or `/lottery [<percentage>]%`, and don't use negative number.",
+  	"lottery.wrong_argument": "Usage: </lottery:1072947886612033666>` [<integer>]` or </lottery:1072947886612033666>` [<percentage>]%`, and don't use negative number.",
   	"lottery.wrong_percent": "You can't bet %d%% of your command blocks!",
   	"lottery.not_enough": "You don't have enough command blocks!\nYou want to bet %d command blocks, but you only have %d command blocks.",
   	"lottery.query": "You have %d command blocks."

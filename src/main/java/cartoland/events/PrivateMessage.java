@@ -15,15 +15,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This
+ * class was registered in {@link cartoland.Cartoland#main}, with the build of JDA.
  *
  * @since 1.0
  * @author Alex Cai
  */
 public class PrivateMessage extends ListenerAdapter
 {
-
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
@@ -54,7 +53,7 @@ public class PrivateMessage extends ListenerAdapter
 		}
 		if (!member.getRoles().contains(IDAndEntities.nsfwRole))
 		{
-			message.reply("You don't have role " + IDAndEntities.nsfwRole.getAsMention() + can_t)
+			message.reply("You don't have role " + IDAndEntities.nsfwRole.getName() + can_t)
 					.mentionRepliedUser(false)
 					.queue();
 			return;

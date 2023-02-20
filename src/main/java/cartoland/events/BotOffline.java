@@ -17,10 +17,13 @@ import org.jetbrains.annotations.NotNull;
 public class BotOffline extends ListenerAdapter
 {
 	/**
-	 * The method that inherited from {@link ListenerAdapter}, log "Cartoland Bot is now offline." to terminal and log file and write JSONObject into users.json and
+	 * The method that inherited from {@link ListenerAdapter}. When the bot go offline normally, it will log
+	 * "Cartoland Bot is now offline." to terminal & log file, and write JSONObject into users.json &
 	 * command_blocks.json.
 	 *
 	 * @param event Information about the shutdown.
+	 * @since 1.0
+	 * @author Alex Cai
 	 */
 	@Override
 	public void onShutdown(@NotNull ShutdownEvent event)
@@ -28,7 +31,6 @@ public class BotOffline extends ListenerAdapter
 		String logString = "Cartoland Bot is now offline.";
 		System.out.println(logString);
 		FileHandle.log(logString);
-		FileHandle.synchronizeFile(JsonHandle.USERS_JSON);
-		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON);
+		JsonHandle.synchronizeFiles();
 	}
 }

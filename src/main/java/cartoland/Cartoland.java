@@ -23,7 +23,7 @@ public class Cartoland
 		if (args.length < 1)
 			return;
 
-		jda = JDABuilder.createDefault(args[0], GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+		jda = JDABuilder.createDefault(args[0])
 				.addEventListeners(
 						new BotOnline(), //當機器人上線的時候
 						new BotOffline(), //當機器人下線的時候
@@ -34,6 +34,7 @@ public class Cartoland
 						new ContextMenu(), //當有人使用右鍵功能
 						new GetRole(), //當有人獲得會員身分組
 						new JoinServer()) //當有人加入創聯
+				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
 				.build();

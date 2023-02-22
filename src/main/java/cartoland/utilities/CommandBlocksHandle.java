@@ -15,7 +15,10 @@ import static cartoland.utilities.JsonHandle.commandBlocksFile;
  */
 public class CommandBlocksHandle
 {
-	private CommandBlocksHandle() {}
+	private CommandBlocksHandle()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	public static void addCommandBlocks(long userID, long add)
 	{

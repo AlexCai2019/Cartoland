@@ -6,19 +6,19 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-import java.util.Random;
-
 /**
  * {@code IDAndEntities} is a utility class that stores IDs, JDA entities and language constants. For example, this class
- * has some channel IDs, role IDs, and entities such as {@link JDA} and {@link TextChannel}. A {@link Random} instance is also a part
- * of this class. Can not be instantiated.
+ * has some channel IDs, role IDs, and entities such as {@link JDA} and {@link TextChannel}. Can not be instantiated.
  *
  * @since 1.3
  * @author Alex Cai
  */
 public class IDAndEntities
 {
-	private IDAndEntities() {}
+	private IDAndEntities()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	public static final long CARTOLAND_SERVER_ID = 886936474723950603L; //創聯
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
@@ -39,8 +39,6 @@ public class IDAndEntities
 	public static Role nsfwRole;
 	public static User botItself;
 
-	public static final Random random = new Random();
-
 	/**
 	 * Language constants. Can not be instantiated.
 	 *
@@ -49,7 +47,10 @@ public class IDAndEntities
 	 */
 	public static class Languages
 	{
-		private Languages() {}
+		private Languages()
+		{
+			throw new AssertionError("Don't use reflection on this!");
+		}
 
 		public static final String ENGLISH = "en";
 		public static final String TW_MANDARIN = "tw";

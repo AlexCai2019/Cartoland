@@ -9,8 +9,8 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 import java.util.HashMap;
 
 /**
- * {@code AddCommands} is a utility that holds every commands. The only usage is for {@link cartoland.Cartoland#main}
- * to get all commands when registering JDA. Can not be instantiated.
+ * {@code AddCommands} is a utility that holds every command. The only usage is for {@link cartoland.Cartoland#main} to
+ * get all commands when registering JDA. Can not be instantiated.
  *
  * @since 1.5
  * @see cartoland.Cartoland
@@ -18,7 +18,10 @@ import java.util.HashMap;
  */
 public class AddCommands
 {
-	private AddCommands() {}
+	private AddCommands()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	public static CommandData[] getCommands()
 	{
@@ -117,7 +120,10 @@ public class AddCommands
  */
 class Cmd
 {
-	private Cmd() {}
+	private Cmd()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	private static final HashMap<DiscordLocale, String> cmdDescriptions = new HashMap<>();
 
@@ -154,7 +160,10 @@ class Cmd
  */
 class Faq
 {
-	private Faq() {}
+	private Faq()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	private static final HashMap<DiscordLocale, String> faqDescriptions = new HashMap<>();
 
@@ -187,8 +196,10 @@ class Faq
  */
 class Dtp
 {
-	private Dtp() {}
-
+	private Dtp()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 	private static final HashMap<DiscordLocale, String> dtpDescriptions = new HashMap<>();
 
 	static
@@ -220,7 +231,10 @@ class Dtp
  */
 class Lang
 {
-	private Lang() {}
+	private Lang()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	private static final HashMap<DiscordLocale, String> langDescriptions = new HashMap<>();
 

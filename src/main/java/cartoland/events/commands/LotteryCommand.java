@@ -2,10 +2,11 @@ package cartoland.events.commands;
 
 import cartoland.events.CommandUsage;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+
+import java.util.Random;
 
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class doesn't have a backend
@@ -17,6 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 public class LotteryCommand implements ICommand
 {
 	private final CommandUsage commandCore;
+	private final Random random = new Random();
 
 	public LotteryCommand(CommandUsage commandUsage)
 	{
@@ -64,7 +66,7 @@ public class LotteryCommand implements ICommand
 
 		long afterBet;
 		String result;
-		if (IDAndEntities.random.nextBoolean()) //賭贏
+		if (random.nextBoolean()) //賭贏
 		{
 			afterBet = nowHave + bet;
 			if (afterBet < 0)

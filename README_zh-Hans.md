@@ -1,4 +1,4 @@
-# Cartoland
+# Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / 简体中文
 属于名为创世联邦的Discord服务器的Cartoland Bot的源代码
 
@@ -16,4 +16,4 @@
 ```
 java -jar Cartoland.jar <令牌>
 ```
-用你自己的机器人的令牌取代 <令牌> 参数。务必确保你有必备的文件夹和文件。
+用你自己的机器人的令牌取代 `<令牌>` 参数。务必确保你有必备的文件夹和文件。

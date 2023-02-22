@@ -14,9 +14,8 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
 import java.util.regex.Pattern;
-
-import static cartoland.utilities.IDAndEntities.random;
 
 /**
  * {@code ChannelMessage} is a listener that triggers when a user types anything in any channel that the bot can
@@ -74,6 +73,8 @@ public class ChannelMessage extends ListenerAdapter
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
 
+	private final Random random = new Random();
+
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when receive a message from any
 	 * channel that the bot has permission to read, but only response when the channel is a text channel and
@@ -128,9 +129,9 @@ public class ChannelMessage extends ListenerAdapter
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
 			channel.sendMessage("https://tenor.com/view/f-bi-raid-swat-gif-11500735").queue();
 
-		if (random.nextInt(20) == 0 && rawMessage.contains("learned")) //5%
+		if (random.nextInt(10) == 0 && rawMessage.contains("learned")) //10%
 			message.addReaction(learned).queue();
-		if (random.nextInt(20) == 0 && rawMessage.contains("wow")) //5%
+		if (random.nextInt(10) == 0 && rawMessage.contains("wow")) //10%
 			message.addReaction(wow).queue();
 
 		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)

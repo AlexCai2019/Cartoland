@@ -17,7 +17,10 @@ import java.util.Arrays;
  */
 public class FileHandle
 {
-	private FileHandle() {}
+	private FileHandle()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)

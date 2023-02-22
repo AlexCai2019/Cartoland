@@ -16,7 +16,10 @@ import java.util.List;
  */
 public class JsonHandle
 {
-	private JsonHandle() {}
+	private JsonHandle()
+	{
+		throw new AssertionError("Don't use reflection on this!");
+	}
 
 	public static final String USERS_JSON = "users.json";
 	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";

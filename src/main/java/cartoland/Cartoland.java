@@ -1,12 +1,12 @@
 package cartoland;
 
 import cartoland.events.*;
+import cartoland.utilities.AddCommands;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
-import static cartoland.utilities.AddCommands.getCommands;
 import static cartoland.utilities.IDAndEntities.jda;
 
 /**
@@ -39,7 +39,7 @@ public class Cartoland
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
 				.build();
 
-		jda.updateCommands().addCommands(getCommands()).queue();
+		jda.updateCommands().addCommands(AddCommands.getCommands()).queue();
 
 		jda.awaitReady();
 	}

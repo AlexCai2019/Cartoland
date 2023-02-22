@@ -1,5 +1,7 @@
 # Cartoland
+#### English / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hans.md)
 The source code of the Cartoland Bot which belongs to a discord server named Cartoland.
+
 Join Cartoland via this link: https://discord.gg/UMYxwHyRNE
 
 ## Required folders and files
@@ -14,4 +16,4 @@ Start this bot via typing the following command in terminal:
 ```
 java -jar Cartoland.jar <token>
 ```
-Replace the <token> argument with your own token of you bot. Make sure you have your required folders and files.
+Replace the <token> argument with your own token of your bot. You must make sure you have required folders and files.

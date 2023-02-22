@@ -42,7 +42,7 @@ public class IDAndEntities
 	public static final Random random = new Random();
 
 	/**
-	 * Language constants. Can not be initial.
+	 * Language constants. Can not be instantiated.
 	 *
 	 * @since 1.0
 	 * @author Alex Cai

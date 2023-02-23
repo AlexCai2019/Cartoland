@@ -19,7 +19,7 @@ public class FileHandle
 {
 	private FileHandle()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	//將JSON讀入進字串

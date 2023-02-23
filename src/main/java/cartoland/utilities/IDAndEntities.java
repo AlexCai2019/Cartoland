@@ -17,7 +17,7 @@ public class IDAndEntities
 {
 	private IDAndEntities()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static final long CARTOLAND_SERVER_ID = 886936474723950603L; //創聯
@@ -39,6 +39,8 @@ public class IDAndEntities
 	public static Role nsfwRole;
 	public static User botItself;
 
+	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
+
 	/**
 	 * Language constants. Can not be instantiated.
 	 *
@@ -49,7 +51,7 @@ public class IDAndEntities
 	{
 		private Languages()
 		{
-			throw new AssertionError("Don't use reflection on this!");
+			throw new AssertionError(YOU_SHALL_NOT_ACCESS);
 		}
 
 		public static final String ENGLISH = "en";

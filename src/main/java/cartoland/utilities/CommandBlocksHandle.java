@@ -17,7 +17,7 @@ public class CommandBlocksHandle
 {
 	private CommandBlocksHandle()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static void addCommandBlocks(long userID, long add)

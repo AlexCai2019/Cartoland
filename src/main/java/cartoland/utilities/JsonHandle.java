@@ -18,7 +18,7 @@ public class JsonHandle
 {
 	private JsonHandle()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static final String USERS_JSON = "users.json";

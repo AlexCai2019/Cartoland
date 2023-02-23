@@ -129,9 +129,9 @@ public class ChannelMessage extends ListenerAdapter
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
 			channel.sendMessage("https://tenor.com/view/f-bi-raid-swat-gif-11500735").queue();
 
-		if (random.nextInt(10) == 0 && rawMessage.contains("learned")) //10%
+		if (random.nextInt(5) == 0 && rawMessage.contains("learned")) //20%
 			message.addReaction(learned).queue();
-		if (random.nextInt(10) == 0 && rawMessage.contains("wow")) //10%
+		if (random.nextInt(5) == 0 && rawMessage.contains("wow")) //20%
 			message.addReaction(wow).queue();
 
 		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)

@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class AutoComplete extends ListenerAdapter
 {
-	private final HashMap<String, Complete> commands = new HashMap<>();
+	private final HashMap<String, Complete> commands = new HashMap<>(); //指令們
 
 	public AutoComplete()
 	{
@@ -66,7 +66,7 @@ record Complete(String commandName)
 	{
 		if (event.getFocusedOption().getName().equals(commandName + "_name"))
 		{
-			String optionValue = event.getFocusedOption().getValue();
+			String optionValue = event.getFocusedOption().getValue(); //獲取目前正在打的選項
 			List<Choice> choices = JsonHandle.commandList(commandName)
 					.stream()
 					.filter(word -> ((String) word).startsWith(optionValue))

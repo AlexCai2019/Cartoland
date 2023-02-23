@@ -20,7 +20,7 @@ public class AddCommands
 {
 	private AddCommands()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static CommandData[] getCommands()
@@ -106,7 +106,11 @@ public class AddCommands
 
 			Commands.message("Raw Text")
 					.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "原始文字")
-					.setNameLocalization(DiscordLocale.CHINESE_CHINA, "原始文本")
+					.setNameLocalization(DiscordLocale.CHINESE_CHINA, "原始文本"),
+
+			Commands.message("Reactions")
+					.setNameLocalization(DiscordLocale.CHINESE_TAIWAN, "反應")
+					.setNameLocalization(DiscordLocale.CHINESE_CHINA, "反应")
 		};
 	}
 }
@@ -122,7 +126,7 @@ class Cmd
 {
 	private Cmd()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final HashMap<DiscordLocale, String> cmdDescriptions = new HashMap<>();
@@ -162,7 +166,7 @@ class Faq
 {
 	private Faq()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final HashMap<DiscordLocale, String> faqDescriptions = new HashMap<>();
@@ -198,7 +202,7 @@ class Dtp
 {
 	private Dtp()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 	private static final HashMap<DiscordLocale, String> dtpDescriptions = new HashMap<>();
 
@@ -233,7 +237,7 @@ class Lang
 {
 	private Lang()
 	{
-		throw new AssertionError("Don't use reflection on this!");
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final HashMap<DiscordLocale, String> langDescriptions = new HashMap<>();

@@ -1,7 +1,7 @@
 # Cartoland Bot
-#### English / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hans.md)
+#### English / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hans.md) / [粵語](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Yue.md)
 
-##Description
+## Description
 The source code of the Cartoland Bot which belongs to a discord server named Cartoland. Join Cartoland via this link: https://discord.gg/UMYxwHyRNE
 
 ## Required folders and files

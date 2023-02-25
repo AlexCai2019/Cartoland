@@ -1,7 +1,7 @@
 # Cartoland Bot
-#### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / 简体中文
+#### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / 简体中文 / [粵語](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Yue.md)
 
-#简介
+## 简介
 属于名为创世联邦的Discord服务器的Cartoland Bot的源代码。通过此连结加入创世联邦：https://discord.gg/UMYxwHyRNE
 
 ## 必备的文件夹和文件

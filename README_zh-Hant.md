@@ -1,8 +1,8 @@
 # Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / 繁體中文 / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hans.md)
-屬於名為創世聯邦的Discord伺服器的Cartoland Bot的原始碼
 
-透過此連結加入創世聯邦：https://discord.gg/UMYxwHyRNE
+#簡介
+屬於名為創世聯邦的Discord伺服器的Cartoland Bot的原始碼。 透過此連結加入創世聯邦：https://discord.gg/UMYxwHyRNE
 
 ## 必備的資料夾和檔案
 為了節省效能，本機器人並沒有檢查必要的資料夾和檔案是否存在。因此，你必須準備好以下的資料夾和檔案，才能讓機器人正常運作：

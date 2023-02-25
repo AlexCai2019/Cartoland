@@ -1,8 +1,8 @@
 # Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [繁體中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_zh-Hant.md) / 简体中文
-属于名为创世联邦的Discord服务器的Cartoland Bot的源代码
 
-通过此连结加入创世联邦：https://discord.gg/UMYxwHyRNE
+#简介
+属于名为创世联邦的Discord服务器的Cartoland Bot的源代码。通过此连结加入创世联邦：https://discord.gg/UMYxwHyRNE
 
 ## 必备的文件夹和文件
 为了节省效能，本机器人并没有检查必要的文件夹和文件是否存在。因此，你必须准备好以下的文件夹和文件，才能让机器人正常运作：

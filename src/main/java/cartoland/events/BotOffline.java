@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import static cartoland.utilities.IDAndEntities.threeAMHandle;
+import static cartoland.utilities.IDAndEntities.threeAMService;
+
 /**
  * {@code BotOffline} is a listener that triggers when this bot went offline normally. It won't trigger if this bot was
  * shutdown by accident, such as killed by ^C. This class was registered in {@link cartoland.Cartoland#main}, with
@@ -28,6 +31,10 @@ public class BotOffline extends ListenerAdapter
 	@Override
 	public void onShutdown(@NotNull ShutdownEvent event)
 	{
+		//https://stackoverflow.com/questions/34202701
+		threeAMHandle.cancel(true);
+		threeAMService.shutdown();
+
 		String logString = "Cartoland Bot is now offline.";
 		System.out.println(logString);
 		FileHandle.log(logString);

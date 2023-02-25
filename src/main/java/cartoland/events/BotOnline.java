@@ -5,6 +5,11 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import static cartoland.utilities.IDAndEntities.*;
 
 /**
@@ -52,6 +57,8 @@ public class BotOnline extends ListenerAdapter
 
 		botItself = jda.getSelfUser(); //機器人自己
 
+		ohBoy3AM();
+
 		String logString = "Cartoland Bot is now online.";
 		botChannel.sendMessage(logString).queue();
 		System.out.println(logString);
@@ -69,5 +76,22 @@ public class BotOnline extends ListenerAdapter
 		System.err.print('\u0007');
 		FileHandle.log(logString);
 		jda.shutdownNow();
+	}
+
+	//https://stackoverflow.com/questions/65984126
+	private void ohBoy3AM()
+	{
+		LocalTime now = LocalTime.now();
+		LocalTime threeAM = now.withHour(3).withMinute(0).withSecond(0);
+
+		if (now.compareTo(threeAM) > 0)
+			threeAM = threeAM.plusHours(24);
+
+		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
+
+		threeAMService = Executors.newScheduledThreadPool(1);
+		threeAMHandle = threeAMService.scheduleAtFixedRate(
+				() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
+				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 }

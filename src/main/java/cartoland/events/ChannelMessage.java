@@ -4,7 +4,6 @@ import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -95,7 +94,7 @@ public class ChannelMessage extends ListenerAdapter
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
-		if (!event.isFromType(ChannelType.TEXT)) //不是文字頻道
+		if (!event.isFromGuild()) //不是伺服器頻道
 			return;
 		User author = event.getAuthor();
 		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統

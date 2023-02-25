@@ -1,16 +1,15 @@
-package cartoland.events.commands;
+package cartoland.commands;
 
 import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This can be seen as a frontend of
- * the 1A2B game. This class implements {@link ICommand} interface, which is for the commands HashMap in
- * {@link CommandUsage}. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
+ * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This class implements
+ * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
+ * of the 1A2B game. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
  *
  * @since 1.3
  * @see OneATwoBGame The backend of the 1A2B game.
@@ -26,7 +25,7 @@ public class OneATwoBCommand implements ICommand
 	}
 
 	@Override
-	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
+	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		String argument = event.getOption("answer", OptionMapping::getAsString);
 		long userID = commandCore.getUserID();
@@ -40,21 +39,21 @@ public class OneATwoBCommand implements ICommand
 				commandCore.getGames().put(userID, new OneATwoBGame());
 			}
 			else //已經有在玩遊戲
-				event.reply("You are already in " + playing.gameName() + " game.").queue();
+				event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
 			return;
 		}
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run `/one_a_two_b` without arguments to start the game.").queue();
+			event.reply("Please run `/one_a_two_b` without arguments to start the game.").setEphemeral(true).queue();
 			return;
 		}
 
 		//已經有在玩遊戲
 		if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 		{
-			event.reply("You are already in " + playing.gameName() + " game.").queue();
+			event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
 			return;
 		}
 
@@ -68,7 +67,7 @@ public class OneATwoBCommand implements ICommand
 
 		if (ab / 10 != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
 		{
-			event.reply(shouldReply).queue();
+			event.reply(shouldReply).setEphemeral(true).queue();
 			return;
 		}
 

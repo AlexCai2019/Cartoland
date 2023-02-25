@@ -3,7 +3,7 @@ package cartoland.events;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -62,15 +62,15 @@ record Complete(String commandName)
 {
 	private static final int CHOICES_LIMIT = 25;
 
-	public void completeProcess(CommandAutoCompleteInteractionEvent event)
+	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		if (event.getFocusedOption().getName().equals(commandName + "_name"))
 		{
 			String optionValue = event.getFocusedOption().getValue(); //獲取目前正在打的選項
-			List<Choice> choices = JsonHandle.commandList(commandName)
+			List<Command.Choice> choices = JsonHandle.commandList(commandName)
 					.stream()
 					.filter(word -> ((String) word).startsWith(optionValue))
-					.map(word -> new Choice((String) word, (String) word))
+					.map(word -> new Command.Choice((String) word, (String) word))
 					.collect(Collectors.toList());
 
 			event.replyChoices((choices.size() <= CHOICES_LIMIT) ? choices : choices.subList(0, CHOICES_LIMIT)).queue();

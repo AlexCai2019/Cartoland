@@ -23,14 +23,8 @@ public class CommandBlocksHandle
 	public static void addCommandBlocks(long userID, long add)
 	{
 		String userIDString = Long.toUnsignedString(userID);
-		if (commandBlocksFile.has(userIDString))
-		{
-			long level = commandBlocksFile.getLong(userIDString);
-			level += add;
-			commandBlocksFile.put(userIDString, level >= 0 ? level : Long.MAX_VALUE); //避免溢位
-		}
-		else
-			commandBlocksFile.put(userIDString, add);
+		commandBlocksFile.put(userIDString, commandBlocksFile.has(userIDString) ?
+				Algorithm.safeAdd(commandBlocksFile.getLong(userIDString), add) : add);
 	}
 
 	public static void setCommandBlocks(long userID, long value)

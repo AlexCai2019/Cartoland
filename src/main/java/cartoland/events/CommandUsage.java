@@ -1,6 +1,6 @@
 package cartoland.events;
 
-import cartoland.events.commands.*;
+import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
@@ -128,6 +128,12 @@ public class CommandUsage extends ListenerAdapter
 
 		//lottery
 		commands.put("lottery", new LotteryCommand(this));
+
+		//transfer
+		commands.put("transfer", new TransferCommand(this));
+
+		//minesweeper
+		commands.put("minesweeper", new MinesweeperCommand(this));
 
 		//tool
 		commands.put("tool", new ToolCommand());

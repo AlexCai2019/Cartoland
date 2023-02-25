@@ -280,8 +280,11 @@
   	"lottery.win": "win!",
   	"lottery.lose": "lose..",
   	"lottery.result": "You bet %d command blocks and %s\nYou now have %d command blocks.",
-  	"lottery.wrong_argument": "Usage: </lottery:1072947886612033666>` [<integer>]` or </lottery:1072947886612033666>` [<percentage>]%`, and don't use negative number.",
   	"lottery.wrong_percent": "You can't bet %d%% of your command blocks!",
+  	"lottery.wrong_argument": "Usage: </lottery:1072947886612033666>` [<integer>]` or </lottery:1072947886612033666>` [<percentage>]%`, and don't use negative number.",
   	"lottery.not_enough": "You don't have enough command blocks!\nYou want to bet %d command blocks, but you only have %d command blocks.",
-  	"lottery.query": "You have %d command blocks."
+  	"lottery.query": "You have %d command blocks.",
+  	"transfer.wrong_percent": "You can't transfer %d%% of your command blocks!",
+  	"transfer.wrong_argument": "Usage: /transfer` <user> <integer>` or /transfer` <user> <percentage>%`, and don't use negative number.",
+  	"transfer.not_enough": "You don't have enough command blocks!\nYou want to transfer %d command blocks, but you only have %d command blocks."
 }

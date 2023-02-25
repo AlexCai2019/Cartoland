@@ -60,4 +60,22 @@ public class IDAndEntities
 		public static final String CANTONESE = "hk";
 		public static final String CHINESE = "cn";
 	}
+
+	/**
+	 * Difficulty constants. Can not be instantiated.
+	 *
+	 * @since 1.5
+	 * @author Alex Cai
+	 */
+	public static class Difficulty
+	{
+		private Difficulty()
+		{
+			throw new AssertionError(YOU_SHALL_NOT_ACCESS);
+		}
+
+		public static final String EASY = "easy";
+		public static final String NORMAL = "normal";
+		public static final String HARD = "hard";
+	}
 }

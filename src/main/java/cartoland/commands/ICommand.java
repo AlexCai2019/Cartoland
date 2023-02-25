@@ -1,4 +1,4 @@
-package cartoland.events.commands;
+package cartoland.commands;
 
 /**
  * {@code ICommand} is an interface that can be implemented with the actual execution of a slash command. This was

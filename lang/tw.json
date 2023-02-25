@@ -159,8 +159,11 @@
 	"lottery.win": "贏了！",
 	"lottery.lose": "輸了…",
 	"lottery.result": "你賭上 %d 個指令方塊後%s\n你現在有 %d 個指令方塊。",
-	"lottery.wrong_argument": "用法： </lottery:1072947886612033666>` [<整數>]` 或 </lottery:1072947886612033666>` [<百分比>]%`，且不可使用負數。",
 	"lottery.wrong_percent": "你不能賭上 %d%% 的指令方塊！",
+  	"lottery.wrong_argument": "用法： </lottery:1072947886612033666>` [<整數>]` 或 </lottery:1072947886612033666>` [<百分比>]%`，且不可使用負數。",
 	"lottery.not_enough": "你沒有足夠的指令方塊！\n你想賭上 %d 個指令方塊，但你目前只有 %d 個指令方塊。",
-	"lottery.query": "你目前有 %d 個指令方塊。"
+	"lottery.query": "你目前有 %d 個指令方塊。",
+  	"transfer.wrong_percent": "你不能轉帳 %d%% 的指令方塊！",
+  	"transfer.wrong_argument": "用法： /transfer` <使用者> <整數>` 或 /transfer` <使用者> <百分比>%`，且不可使用負數。",
+  	"transfer.not_enough": "你沒有足夠的指令方塊！\n你想轉帳 %d 個指令方塊，但你目前只有 %d 個指令方塊。"
 }

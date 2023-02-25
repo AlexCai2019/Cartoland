@@ -3,7 +3,6 @@ package cartoland.events;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -64,8 +63,16 @@ public class ChannelMessage extends ListenerAdapter
 		"☆めぐみんは最高だ！☆",
 		"☆めぐみん俺の嫁！☆"
 	};
+	private final String[] fbi =
+	{
+		"https://tenor.com/view/f-bi-raid-swat-gif-11500735",
+		"https://tenor.com/view/fbi-calling-tom-gif-12699976",
+		"https://tenor.com/view/fbi-swat-busted-police-open-up-gif-16928811",
+		"https://tenor.com/view/fbi-swat-police-entry-attack-gif-16037524",
+		"https://imgur.com/gPlBEMV"
+	};
 
-	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
+	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*");
 	private final Pattern lolRegex = Pattern.compile("(?i).*lol*");
@@ -101,7 +108,7 @@ public class ChannelMessage extends ListenerAdapter
 		if (category == null) //獲取類別失敗
 			return; //不用執行
 		long categoryID = category.getIdLong();
-		TextChannel channel = (TextChannel) message.getChannel();
+		TextChannel channel = message.getChannel().asTextChannel();
 
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[random.nextInt(replyACMention.length)] : replyMention[random.nextInt(replyMention.length)])
@@ -127,7 +134,7 @@ public class ChannelMessage extends ListenerAdapter
 		if (rawMessage.contains("賺爛"))
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
-			channel.sendMessage("https://tenor.com/view/f-bi-raid-swat-gif-11500735").queue();
+			channel.sendMessage(fbi[random.nextInt(fbi.length)]).queue();
 
 		if (random.nextInt(5) == 0 && rawMessage.contains("learned")) //20%
 			message.addReaction(learned).queue();

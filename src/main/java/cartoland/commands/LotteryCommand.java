@@ -1,6 +1,7 @@
-package cartoland.events.commands;
+package cartoland.commands;
 
 import cartoland.events.CommandUsage;
+import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -9,8 +10,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import java.util.Random;
 
 /**
- * {@code LotteryCommand} is an execution when a user uses /lottery command. This class doesn't have a backend
- * class since all the works can be done here.
+ * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
+ * interface, which is for the commands HashMap in {@link CommandUsage}. This class doesn't have a backend class
+ * since all the works can be done here.
  *
  * @since 1.4
  * @author Alex Cai
@@ -68,9 +70,7 @@ public class LotteryCommand implements ICommand
 		String result;
 		if (random.nextBoolean()) //賭贏
 		{
-			afterBet = nowHave + bet;
-			if (afterBet < 0)
-				afterBet = Long.MAX_VALUE; //避免溢位
+			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getJsonKey(userID, "lottery.win");
 		}
 		else //賭輸

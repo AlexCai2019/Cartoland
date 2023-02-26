@@ -54,4 +54,9 @@ public class Algorithm
 			sum = Long.MAX_VALUE; //避免溢位
 		return sum;
 	}
+
+	public static boolean chance(int percent)
+	{
+		return percent > random.nextInt(100);
+	}
 }

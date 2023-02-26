@@ -1,13 +1,11 @@
 package cartoland.events;
 
 import cartoland.utilities.FileHandle;
+import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import static cartoland.utilities.IDAndEntities.threeAMHandle;
-import static cartoland.utilities.IDAndEntities.threeAMService;
 
 /**
  * {@code BotOffline} is a listener that triggers when this bot went offline normally. It won't trigger if this bot was
@@ -32,8 +30,8 @@ public class BotOffline extends ListenerAdapter
 	public void onShutdown(@NotNull ShutdownEvent event)
 	{
 		//https://stackoverflow.com/questions/34202701
-		threeAMHandle.cancel(true);
-		threeAMService.shutdown();
+		IDAndEntities.threeAMHandle.cancel(true);
+		IDAndEntities.threeAMService.shutdown();
 
 		String logString = "Cartoland Bot is now offline.";
 		System.out.println(logString);

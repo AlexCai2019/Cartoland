@@ -7,8 +7,6 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
-import java.util.Random;
-
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link CommandUsage}. This class doesn't have a backend class
@@ -20,7 +18,6 @@ import java.util.Random;
 public class LotteryCommand implements ICommand
 {
 	private final CommandUsage commandCore;
-	private final Random random = new Random();
 
 	public LotteryCommand(CommandUsage commandUsage)
 	{
@@ -68,7 +65,7 @@ public class LotteryCommand implements ICommand
 
 		long afterBet;
 		String result;
-		if (random.nextBoolean()) //賭贏
+		if (Algorithm.chance(50)) //賭贏
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getJsonKey(userID, "lottery.win");
@@ -78,8 +75,12 @@ public class LotteryCommand implements ICommand
 			afterBet = nowHave - bet;
 			result = JsonHandle.getJsonKey(userID, "lottery.lose");
 		}
-		long finalAfterBet = afterBet;
-		event.reply(JsonHandle.getJsonKey(userID, "lottery.result").formatted(bet, result, afterBet))
-				.queue(interactionHook -> CommandBlocksHandle.setCommandBlocks(userID, finalAfterBet));
+
+		String replyMessage = JsonHandle.getJsonKey(userID, "lottery.result").formatted(bet, result, afterBet);
+		if (afterBet == 0)
+			replyMessage += "\n" + JsonHandle.getJsonKey(userID, "lottery.play_with_your_limit");
+
+		final long finalAfterBet = afterBet;
+		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.setCommandBlocks(userID, finalAfterBet));
 	}
 }

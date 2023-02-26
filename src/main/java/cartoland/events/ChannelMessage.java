@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
@@ -110,11 +111,11 @@ public class ChannelMessage extends ListenerAdapter
 		TextChannel channel = message.getChannel().asTextChannel();
 
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
-			message.reply(userID == IDAndEntities.AC_ID ? replyACMention[random.nextInt(replyACMention.length)] : replyMention[random.nextInt(replyMention.length)])
+			message.reply(userID == IDAndEntities.AC_ID ? randomString(replyACMention) : randomString(replyMention))
 					.mentionRepliedUser(false).queue();
 
 		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
-			channel.sendMessage(megumin[random.nextInt(megumin.length)]).queue();
+			channel.sendMessage(randomString(megumin)).queue();
 
 		if (lolRegex.matcher(rawMessage).matches())
 			channel.sendMessage("LOL").queue();
@@ -133,15 +134,20 @@ public class ChannelMessage extends ListenerAdapter
 		if (rawMessage.contains("賺爛"))
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
-			channel.sendMessage(fbi[random.nextInt(fbi.length)]).queue();
+			channel.sendMessage(randomString(fbi)).queue();
 
-		if (random.nextInt(5) == 0 && rawMessage.contains("learned")) //20%
+		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
 			message.addReaction(learned).queue();
-		if (random.nextInt(5) == 0 && rawMessage.contains("wow")) //20%
+		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
 			message.addReaction(wow).queue();
 
 		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)
 				&& channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
 			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
+	}
+
+	private String randomString(String[] strings)
+	{
+		return strings[random.nextInt(strings.length)];
 	}
 }

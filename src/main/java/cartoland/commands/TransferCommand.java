@@ -28,14 +28,25 @@ public class TransferCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = commandCore.getUserID();
+
 		User target = event.getOption("target", OptionMapping::getAsUser);
-		long nowHave = CommandBlocksHandle.getCommandBlocks(userID);
 		if (target == null)
 		{
 			event.reply("Impossible, this is required!").queue();
 			return;
 		}
+		if (target.isBot() || target.isSystem())
+		{
+			event.reply(JsonHandle.getJsonKey(userID, "transfer.wrong_user")).queue();
+			return;
+		}
+
 		long targetID = target.getIdLong();
+		if (userID == targetID)
+		{
+			event.reply(JsonHandle.getJsonKey(userID, "transfer.self_transfer")).queue();
+			return;
+		}
 
 		String transferAmountString = event.getOption("amount", OptionMapping::getAsString);
 		if (transferAmountString == null)
@@ -44,6 +55,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
+		long nowHave = CommandBlocksHandle.getCommandBlocks(userID);
 		long transferAmount;
 		if (transferAmountString.matches("\\d+"))
 			transferAmount = Long.parseLong(transferAmountString);
@@ -69,7 +81,11 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		CommandBlocksHandle.setCommandBlocks(target.getIdLong(), Algorithm.safeAdd(CommandBlocksHandle.getCommandBlocks(targetID), transferAmount));
-		CommandBlocksHandle.setCommandBlocks(userID, nowHave - transferAmount);
+		event.reply(JsonHandle.getJsonKey(userID, "transfer.success").formatted(transferAmount, target.getName()))
+				.queue(interactionHook ->
+				{
+					CommandBlocksHandle.setCommandBlocks(targetID, Algorithm.safeAdd(CommandBlocksHandle.getCommandBlocks(targetID), transferAmount));
+					CommandBlocksHandle.setCommandBlocks(userID, nowHave - transferAmount);
+				});
 	}
 }

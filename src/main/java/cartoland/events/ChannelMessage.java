@@ -141,8 +141,8 @@ public class ChannelMessage extends ListenerAdapter
 		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
 			message.addReaction(wow).queue();
 
-		if ((categoryID == IDAndEntities.GENERAL_CATEGORY_ID || categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)
-				&& channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID) //在一般或技術討論區類別 且不是在機器人專區
+		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
+		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
 			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
 	}
 

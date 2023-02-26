@@ -73,7 +73,7 @@ record Complete(String commandName)
 					.map(word -> new Command.Choice((String) word, (String) word))
 					.collect(Collectors.toList());
 
-			event.replyChoices((choices.size() <= CHOICES_LIMIT) ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
+			event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 		}
 	}
 }

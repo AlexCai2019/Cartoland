@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +35,10 @@ public class BotOnline extends ListenerAdapter
 		if (cartolandServer == null)
 			problemOccurred("Can't find Cartoland Server");
 
+		questionsChannel = cartolandServer.getForumChannelById(QUESTIONS_CHANNEL_ID);
+		if (questionsChannel == null)
+			problemOccurred("Can't find Questions Channel.");
+
 		lobbyChannel = cartolandServer.getTextChannelById(LOBBY_CHANNEL_ID); //創聯的大廳頻道
 		if (lobbyChannel == null)
 			problemOccurred("Can't find Lobby Channel.");
@@ -46,6 +50,14 @@ public class BotOnline extends ListenerAdapter
 		undergroundChannel = cartolandServer.getTextChannelById(UNDERGROUND_CHANNEL_ID); //創聯的地下聊天室
 		if (undergroundChannel == null)
 			problemOccurred("Can't find Underground Channel.");
+
+		resolvedForumTag = questionsChannel.getAvailableTagById(RESOLVED_FORUM_TAG_ID);
+		if (resolvedForumTag == null)
+			problemOccurred("Can't find Resolved Forum Tag");
+
+		unresolvedForumTag = questionsChannel.getAvailableTagById(UNRESOLVED_FORUM_TAG_ID);
+		if (unresolvedForumTag == null)
+			problemOccurred("Can't find Unresolved Forum Tag");
 
 		memberRole = cartolandServer.getRoleById(MEMBER_ROLE_ID); //會員身分組
 		if (memberRole == null)
@@ -69,6 +81,7 @@ public class BotOnline extends ListenerAdapter
 	 * When an error occurred, an entity is null.
 	 *
 	 * @param logString The content that will print to standard error stream and log file.
+	 * @throws NullPointerException always throw
 	 */
 	private void problemOccurred(String logString)
 	{
@@ -76,16 +89,17 @@ public class BotOnline extends ListenerAdapter
 		System.err.print('\u0007');
 		FileHandle.log(logString);
 		jda.shutdownNow();
+		throw new NullPointerException();
 	}
 
 	//https://stackoverflow.com/questions/65984126
 	private void ohBoy3AM()
 	{
-		LocalTime now = LocalTime.now();
-		LocalTime threeAM = now.withHour(3).withMinute(0).withSecond(0);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime threeAM = now.withHour(3).withMinute(0).withSecond(0);
 
 		if (now.compareTo(threeAM) > 0)
-			threeAM = threeAM.plusHours(24);
+			threeAM = threeAM.plusDays(1L);
 
 		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
 

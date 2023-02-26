@@ -33,8 +33,9 @@ public class Cartoland
 						new AutoComplete(), //當指令需要自動補完
 						new ContextMenu(), //當有人使用右鍵功能
 						new GetRole(), //當有人獲得會員身分組
-						new JoinServer()/*, //當有人加入創聯
-						new OpenFormPost()*/) //當有人在Questions論壇發文
+						new JoinServer(), //當有人加入創聯
+						new OpenQuestionsForumPost(), //當有人在Questions論壇發文
+						new QuestionForumMessage()) //當有人在Questions論壇講話
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Use /help to check more information")) //正在玩

@@ -4,9 +4,12 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
@@ -25,21 +28,35 @@ public class IDAndEntities
 	}
 
 	public static final long CARTOLAND_SERVER_ID = 886936474723950603L; //創聯
-	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //問題諮詢
+	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
+	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
+	public static final long PUBLIC_AREA_CATEGORY_ID = 922892242459459657L; //創聯的公眾區域類別
+	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
-	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
-	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
+	public static final long RESOLVED_FORUM_TAG_ID = 1079074167468605490L; //已解決的tag
+	public static final long UNRESOLVED_FORUM_TAG_ID = 1079074098493280347L; //未解決的tag
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
 	public static final long AC_ID = 355953951469731842L;
 
+	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
+	static
+	{
+		commandBlockCategories.add(GENERAL_CATEGORY_ID);
+		commandBlockCategories.add(TECH_TALK_CATEGORY_ID);
+		commandBlockCategories.add(PUBLIC_AREA_CATEGORY_ID);
+	}
+
 	public static JDA jda;
 	public static Guild cartolandServer;
+	public static ForumChannel questionsChannel;
 	public static TextChannel lobbyChannel;
 	public static TextChannel botChannel;
 	public static TextChannel undergroundChannel;
+	public static ForumTag resolvedForumTag;
+	public static ForumTag unresolvedForumTag;
 	public static Role memberRole;
 	public static Role nsfwRole;
 	public static User botItself;

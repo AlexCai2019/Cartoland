@@ -36,6 +36,7 @@ public class BotOffline extends ListenerAdapter
 		String logString = "Cartoland Bot is now offline.";
 		System.out.println(logString);
 		FileHandle.log(logString);
+		FileHandle.closeLog();
 		JsonHandle.synchronizeFiles();
 	}
 }

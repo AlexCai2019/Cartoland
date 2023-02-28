@@ -91,7 +91,8 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("megumin", event ->
 		{
 			TA author = twitterAuthors[random.nextInt(twitterAuthors.length)];
-			long artwork = author.artworks()[random.nextInt(author.artworks().length)];
+			long[] artworks = author.artworks();
+			long artwork = artworks[random.nextInt(artworks.length)];
 			event.reply("https://twitter.com/" + author.name() + "/status/" + artwork).queue();
 		}); //隨機一張惠惠
 

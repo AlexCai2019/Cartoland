@@ -37,7 +37,7 @@ public class OpenQuestionsForumPost extends ListenerAdapter
 							• Mention which Minecraft version you are using and any mods.
 							• Remember to use ✅ to close the post after resolved.
 							""")
-			.setColor(new Color(133, 201, 103))
+			.setColor(new Color(133, 201, 103)) //創聯的綠色
 			.build();
 
 	@Override
@@ -54,8 +54,8 @@ public class OpenQuestionsForumPost extends ListenerAdapter
 		forumPost.sendMessageEmbeds(startEmbed).queue();
 
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
-		tags.remove(IDAndEntities.resolvedForumTag);
-		if (!tags.contains(IDAndEntities.unresolvedForumTag))
+		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
+		if (!tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者自己沒有加unresolved
 		{
 			if (tags.size() == 5) //不可以超過5個tag
 				tags.remove(4);

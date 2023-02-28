@@ -1,7 +1,7 @@
 # Project exclude paths
 /target/
-# Project exclude paths
 /out/
+/megumin/
 /protocol.txt
 /system_analysis.png
-/megumin/
+/resolved.png

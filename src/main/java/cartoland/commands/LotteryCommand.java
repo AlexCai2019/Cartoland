@@ -7,6 +7,8 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+import java.util.regex.Pattern;
+
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link CommandUsage}. This class doesn't have a backend class
@@ -18,6 +20,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 public class LotteryCommand implements ICommand
 {
 	private final CommandUsage commandCore;
+	private final Pattern number = Pattern.compile("\\d+");
+	private final Pattern percent = Pattern.compile("\\d+%");
 
 	public LotteryCommand(CommandUsage commandUsage)
 	{
@@ -39,9 +43,9 @@ public class LotteryCommand implements ICommand
 
 		long bet;
 
-		if (betString.matches("\\d+")) //賭數字
+		if (number.matcher(betString).matches()) //賭數字
 			bet = Long.parseLong(betString);
-		else if (betString.matches("\\d+%")) //賭%數
+		else if (percent.matcher(betString).matches()) //賭%數
 		{
 			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
 			if (percentage > 100L) //超過100%

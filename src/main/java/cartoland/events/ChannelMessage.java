@@ -6,7 +6,7 @@ import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -108,7 +108,7 @@ public class ChannelMessage extends ListenerAdapter
 		if (category == null) //獲取類別失敗
 			return; //不用執行
 		long categoryID = category.getIdLong();
-		TextChannel channel = message.getChannel().asTextChannel();
+		MessageChannel channel = message.getChannel();
 
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(userID == IDAndEntities.AC_ID ? randomString(replyACMention) : randomString(replyMention))

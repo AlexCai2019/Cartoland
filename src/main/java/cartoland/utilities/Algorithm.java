@@ -30,7 +30,7 @@ public class Algorithm
 		int temp;
 		for (int i = 0, destIndex; i < endIndex; i++) //到endIndex為止 因為最後一項項沒必要交換
 		{
-			destIndex = random.nextInt(array.length) + i; //0會得到0~endIndex 1會得到1~endIndex 2會得到2~endIndex
+			destIndex = random.nextInt(array.length - i) + i; //0會得到0~endIndex 1會得到1~endIndex 2會得到2~endIndex
 			//交換
 			temp = array[destIndex];
 			array[destIndex] = array[i];

@@ -30,7 +30,7 @@ public class ToolCommand implements ICommand
 		String subCommandName = event.getSubcommandName();
 		if (subCommandName == null)
 		{
-			event.reply("Impossible, this is required!").queue();
+			event.reply("Invalid input: You must choose a subcommand!").queue();
 			return;
 		}
 
@@ -57,7 +57,7 @@ class UUIDStringCommand implements ICommand
 		String rawUUID = event.getOption("raw_uuid", OptionMapping::getAsString);
 		if (rawUUID == null)
 		{
-			event.reply("Impossible, this is required!").queue();
+			event.reply("Invalid input: `raw_uuid` is required!").queue();
 			return;
 		}
 
@@ -85,7 +85,7 @@ class UUIDStringCommand implements ICommand
 		}
 		else //不是一個合法的UUID字串
 		{
-			event.reply("Please enter a UUID string by right format!").queue();
+			event.reply("Incorrect syntax: please enter the UUID string in the correct format!").queue();
 			return;
 		}
 
@@ -98,7 +98,7 @@ class UUIDStringCommand implements ICommand
 		};
 
 		event.reply("UUID: `" + dash + "`\n" +
-							"UUID(without dash): `" + noDash + "`\n" +
+							"UUID (without dashes): `" + noDash + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -123,7 +123,7 @@ class UUIDArrayCommand implements ICommand
 			uuidArray[i] = event.getOption(String.valueOf(i), OptionMapping::getAsInt);
 			if (uuidArray[i] == null)
 			{
-				event.reply("Impossible, this is required!").queue();
+				event.reply("Invalid input: All four fields are required!").queue();
 				return;
 			}
 		}
@@ -161,7 +161,7 @@ class PackMcmetaCommand implements ICommand
 		String packType = event.getOption("pack_type", OptionMapping::getAsString);
 		if (packType == null)
 		{
-			event.reply("Impossible, this is required!").queue();
+			event.reply("Invalid input: You must specify if you are making a data pack or a resource pack!").queue();
 			return;
 		}
 
@@ -193,7 +193,7 @@ class PackMcmetaCommand implements ICommand
 				```
 				""";
 
-			default -> "You need to choose whether data pack or resource pack.";
+			default -> "You need to choose whether you are making a data pack or a resource pack.";
 		}).queue();
 	}
 }

@@ -32,9 +32,9 @@ public class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
 					.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请连结"),
 
-			Commands.slash("help", "Get help of bot commands")
+			Commands.slash("help", "Get help with bot commands")
 					.addOptions(
-							new OptionData(OptionType.STRING, "help_name", "The command that want check", false, false)
+							new OptionData(OptionType.STRING, "help_name", "The command you want help with", false, false)
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的指令")
 									.setDescriptionLocalization(CHINESE_CHINA, "想确认的命令")
 									.addChoice("cmd", "cmd")
@@ -53,13 +53,13 @@ public class AddCommands
 			Dtp.dtp,
 			Dtp.datapack,
 
-			Commands.slash("tool", "Tools that can help you")
+			Commands.slash("tool", "Various helpful utilities")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "能協助你的工具")
 					.setDescriptionLocalization(CHINESE_CHINA, "能协助你的工具")
 					.addSubcommands(
-							new SubcommandData("uuid_string", "Get uuid data from raw uuid string")
-									.addOption(OptionType.STRING, "raw_uuid", "The raw uuid that you want to convert", true, false),
-							new SubcommandData("uuid_array", "Get uuid data from uuid integer array")
+							new SubcommandData("uuid_string", "Get UUID data from raw UUID string")
+									.addOption(OptionType.STRING, "raw_uuid", "The raw UUID that you want to convert", true, false),
+							new SubcommandData("uuid_array", "Get UUID data from UUID integer array")
 									.addOptions(
 											new OptionData(OptionType.INTEGER, "0", "The [0] of the array", true, false)
 													.setDescriptionLocalization(CHINESE_TAIWAN, "陣列的第[0]項")
@@ -75,7 +75,7 @@ public class AddCommands
 													.setDescriptionLocalization(CHINESE_CHINA, "数组的第[3]项")),
 							new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
 									.addOptions(
-											new OptionData(OptionType.STRING, "pack_type", "Data pack or Resource pack", true, false)
+											new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
 													.addChoice("Data pack", "d")
 													.addChoice("Resource pack", "r"))),
 
@@ -84,24 +84,24 @@ public class AddCommands
 
 			Commands.slash("quote", "Display content from a message link")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
-					.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息连结的内容")
-					.addOptions(new OptionData(OptionType.STRING, "link", "The link of the message", true, false)
+					.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息链接的内容")
+					.addOptions(new OptionData(OptionType.STRING, "link", "The link to the message", true, false)
 										.setNameLocalization(CHINESE_TAIWAN, "連結")
-										.setNameLocalization(CHINESE_CHINA, "连结")
+										.setNameLocalization(CHINESE_CHINA, "链接")
 										.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
-										.setDescriptionLocalization(CHINESE_CHINA, "信息的连结")),
+										.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
 
 			Commands.slash("megumin", "The best anime girl")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 					.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")
 					.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
 
-			Commands.slash("shutdown", "Use this to shutdown the bot")
+			Commands.slash("shutdown", "Use this to shut down the bot")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 			Commands.slash("reload", "Reload all JSON files")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
-			Commands.slash("one_a_two_b", "Play 1A2B game")
+			Commands.slash("one_a_two_b", "Play a game of 1A2B")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
 					.addOptions(
@@ -110,11 +110,11 @@ public class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "答案")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
 									.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
-			Commands.slash("lottery", "Play a lottery")
+			Commands.slash("lottery", "Play the lottery game")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 					.setDescriptionLocalization(CHINESE_CHINA, "抽奖")
 					.addOptions(
-							new OptionData(OptionType.STRING, "bet", "The amount of your command blocks that you want to bet", false, false)
+							new OptionData(OptionType.STRING, "bet", "The amount of your command blocks you want to bet", false, false)
 									.setNameLocalization(CHINESE_TAIWAN, "賭注")
 									.setNameLocalization(CHINESE_CHINA, "賭注")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想賭上的數量")
@@ -123,12 +123,12 @@ public class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 					.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")
 					.addOptions(
-							new OptionData(OptionType.USER, "target", "The user that you want to transfer to", true, false)
+							new OptionData(OptionType.USER, "target", "The user you want to transfer to", true, false)
 									.setNameLocalization(CHINESE_TAIWAN, "目標")
 									.setNameLocalization(CHINESE_CHINA, "目标")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想轉帳的目標")
 									.setDescriptionLocalization(CHINESE_CHINA, "想转帐的目标"),
-							new OptionData(OptionType.STRING, "amount", "The amount of command blocks that you want to transfer", true, false)
+							new OptionData(OptionType.STRING, "amount", "The amount of command blocks you want to transfer", true, false)
 									.setNameLocalization(CHINESE_TAIWAN, "數量")
 									.setNameLocalization(CHINESE_CHINA, "数量")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想轉帳的數量")
@@ -195,15 +195,15 @@ class Cmd
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft指令的名字")
 					.setDescriptionLocalization(CHINESE_CHINA, "Minecraft命令的名字");
 
-	static final SlashCommandData cmd = Commands.slash("cmd", "Get help of Minecraft commands")
+	static final SlashCommandData cmd = Commands.slash("cmd", "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 
-	static final SlashCommandData mcc = Commands.slash("mcc", "Get help of Minecraft commands")
+	static final SlashCommandData mcc = Commands.slash("mcc", "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 
-	static final SlashCommandData command = Commands.slash("command", "Get help of Minecraft commands")
+	static final SlashCommandData command = Commands.slash("command", "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 }
@@ -231,17 +231,17 @@ class Faq
 	}
 
 	private static final OptionData faqOption =
-			new OptionData(OptionType.STRING, "faq_name", "The question of map making", false, true)
+			new OptionData(OptionType.STRING, "faq_name", "A question about mapmaking.", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "問題")
 					.setNameLocalization(CHINESE_CHINA, "问题")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "地圖製作的問題")
 					.setDescriptionLocalization(CHINESE_CHINA, "地图制作的问题");
 
-	static final SlashCommandData faq = Commands.slash("faq", "Get help of map making")
+	static final SlashCommandData faq = Commands.slash("faq", "Find answers to mapmaking questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 
-	static final SlashCommandData question = Commands.slash("question", "Get help of map making")
+	static final SlashCommandData question = Commands.slash("question", "Find answers to mapmaking questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 }
@@ -269,17 +269,17 @@ class Dtp
 	}
 
 	private static final OptionData dtpOption =
-			new OptionData(OptionType.STRING, "dtp_name", "The feature of a datapack", false, true)
+			new OptionData(OptionType.STRING, "dtp_name", "Minecraft datapack features", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "資料包功能")
 					.setNameLocalization(CHINESE_CHINA, "数据包功能")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft資料包的功能")
 					.setDescriptionLocalization(CHINESE_CHINA, "Minecraft数据包的功能");
 
-	static final SlashCommandData dtp = Commands.slash("dtp", "Get help of Minecraft datapack")
+	static final SlashCommandData dtp = Commands.slash("dtp", "Get help with Minecraft datapack features")
 			.setDescriptionLocalizations(dtpDescriptions)
 			.addOptions(dtpOption);
 
-	static final SlashCommandData datapack = Commands.slash("datapack", "Get help of Minecraft datapack")
+	static final SlashCommandData datapack = Commands.slash("datapack", "Get help with Minecraft datapack features")
 			.setDescriptionLocalizations(dtpDescriptions)
 			.addOptions(dtpOption);
 }
@@ -307,7 +307,7 @@ class Lang
 	}
 
 	private static final OptionData langOptions =
-			new OptionData(OptionType.STRING, "lang_name", "The language that user want to change", true, false)
+			new OptionData(OptionType.STRING, "lang_name", "The language you want to switch to", true, false)
 					.setNameLocalization(CHINESE_TAIWAN, "語言名字")
 					.setNameLocalization(CHINESE_CHINA, "语言名字")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "要切換的語言")

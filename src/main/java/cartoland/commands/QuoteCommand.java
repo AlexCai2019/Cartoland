@@ -28,13 +28,13 @@ public class QuoteCommand implements ICommand
 		String link = event.getOption("link", OptionMapping::getAsString);
 		if (link == null)
 		{
-			event.reply("Impossible, this is required!").queue();
+			event.reply("Invalid input: `link` is a required field!").queue();
 			return;
 		}
 
 		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結
 		{
-			event.reply("Please input a valid server message link.").queue();
+			event.reply("Invalid input: Please input a valid server message link.").queue();
 			return;
 		}
 
@@ -44,21 +44,21 @@ public class QuoteCommand implements ICommand
 		long guildID = Long.parseLong(numbersInLink[0]);
 		if (guildID != IDAndEntities.CARTOLAND_SERVER_ID) //不在創聯
 		{
-			event.reply("You can't paste links that are not from Cartoland!").queue();
+			event.reply("Invalid input: You can't paste links that are not from Cartoland!").queue();
 			return;
 		}
 
 		Guild linkGuild = IDAndEntities.jda.getGuildById(guildID);
 		if (linkGuild == null)
 		{
-			event.reply("Impossible, this is the ID of Cartoland!").queue();
+			event.reply("Invalid input: This is Cartoland's own ID.").queue();
 			return;
 		}
 
 		MessageChannel linkChannel = linkGuild.getChannelById(MessageChannel.class, numbersInLink[1]);
 		if (linkChannel == null)
 		{
-			event.reply("The channel might be deleted or I don't have permission to access.").queue();
+			event.reply("Error: The channel might be deleted, or I don't have permission to access it.").queue();
 			return;
 		}
 
@@ -81,6 +81,6 @@ public class QuoteCommand implements ICommand
 
 			event.replyEmbeds(embedBuilder.build()).queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
-				event.reply("The message might be deleted or I don't have permission to access.").queue()));
+				event.reply("Error: The message might be deleted, or I don't have permission to access it.").queue()));
 	}
 }

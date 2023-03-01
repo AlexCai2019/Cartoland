@@ -126,7 +126,7 @@ public class CommandUsage extends ListenerAdapter
 				return;
 			}
 
-			event.reply("reloading...").queue(interactionHook -> JsonHandle.reloadLanguageFiles());
+			event.reply("Reloading...").queue(interactionHook -> JsonHandle.reloadLanguageFiles());
 		});
 
 		//one_a_two_b

@@ -35,33 +35,33 @@ public class OneATwoBCommand implements ICommand
 		{
 			if (playing == null) //沒有在玩遊戲 開始1A2B
 			{
-				event.reply("Start 1A2B game! type `/one_a_two_b <answer>` to make a guess.").queue();
+				event.reply("Started a game of 1A2B! Type `/one_a_two_b <answer>` to make a guess.").queue();
 				commandCore.getGames().put(userID, new OneATwoBGame());
 			}
 			else //已經有在玩遊戲
-				event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
+				event.reply("You are already in a " + playing.gameName() + " game.").setEphemeral(true).queue();
 			return;
 		}
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run `/one_a_two_b` without arguments to start the game.").setEphemeral(true).queue();
+			event.reply("Please run `/one_a_two_b` without any arguments to start a new game.").setEphemeral(true).queue();
 			return;
 		}
 
 		//已經有在玩遊戲
 		if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 		{
-			event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
+			event.reply("You are already playing a " + playing.gameName() + " game.").setEphemeral(true).queue();
 			return;
 		}
 
 		int ab = oneATwoB.calculateAAndB(argument);
 		String shouldReply = switch (ab)
 		{
-			case OneATwoBGame.ErrorCode.INVALID -> "Not a valid answer, please enter " + OneATwoBGame.ANSWER_LENGTH + " integers.";
-			case OneATwoBGame.ErrorCode.NOT_UNIQUE -> "Please enter " + OneATwoBGame.ANSWER_LENGTH + " unique integers.";
+			case OneATwoBGame.ErrorCode.INVALID -> "Invalid guess: please enter a " + OneATwoBGame.ANSWER_LENGTH + "-digit integer.";
+			case OneATwoBGame.ErrorCode.NOT_UNIQUE -> "Invalid guess: please enter " + OneATwoBGame.ANSWER_LENGTH + " unique digits.";
 			default -> argument + " = " + ab / 10 + " A " + ab % 10 + " B";
 		};
 
@@ -73,8 +73,8 @@ public class OneATwoBCommand implements ICommand
 
 		//猜出ANSWER_LENGTH個A 遊戲結束
 		long second = oneATwoB.getTimePassed();
-		event.reply(shouldReply + "\nGame Over, the answer is **" + argument + "**.\n" +
-							"Used Time: " + second / 60 + " minutes " + second % 60 + " seconds\n" +
+		event.reply(shouldReply + "\nGame over! The answer is **" + argument + "**.\n" +
+							"Time elapsed: " + second / 60 + " minutes, " + second % 60 + " seconds\n" +
 							"Guesses: " + oneATwoB.getGuesses() + " times").queue();
 		commandCore.getGames().remove(userID);
 	}

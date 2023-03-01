@@ -1,7 +1,7 @@
 {
 	"help.begin": "Available commands: `",
 	"help.end": "`",
-	"help.fail": "Invalid ask, please try to use </help:1063884269006635069> to check every available commands.",
+	"help.fail": "Invalid query. Please do </help:1063884269006635069> for a list of available commands.",
 	"help.list":
 	[
 		"cmd",
@@ -17,7 +17,7 @@
 	"help.name.lang": "Syntax: </lang:1063884269006635074>` <code>`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",
-	"cmd.fail": "Invalid command, please try to use </cmd:1063884269006635070> to check every commands.",
+	"cmd.fail": "Invalid command. Please do </cmd:1063884269006635070> for a list of valid commands.",
 	"cmd.list":
 	[
 		"advancement",
@@ -175,9 +175,9 @@
 	"cmd.name.whitelist": "https://minecraft.fandom.com/wiki/Commands/whitelist",
 	"cmd.name.worldborder": "https://minecraft.fandom.com/wiki/Commands/worldborder",
 	"cmd.name.xp": "```ansi\n\u001B[31mxp \u001B[0m(\u001B[34madd\u001B[0m|\u001B[34mset\u001B[0m) \u001B[36m<targets> \u001B[32m<amount> \u001B[0m[\u001B[34mlevels\u001B[0m|\u001B[34mpoints\u001B[0m]\n\u001B[31mxp \u001B[34mquery \u001B[36m<targets> \u001B[0m[\u001B[34mlevels\u001B[0m|\u001B[34mpoints\u001B[0m]\n```<https://minecraft.fandom.com/wiki/Commands/xp>",
-	"faq.begin": "`Questions: ",
+	"faq.begin": "`Frequently asked questions: ",
 	"faq.end": "`",
-	"faq.fail": "Invalid question, please try to use </faq:1063884269006635071> to check every questions.",
+	"faq.fail": "No FAQ found by that topic. Please do </faq:1063884269006635071> for a list of FAQ topics.",
 	"faq.list":
 	[
 		"aec",
@@ -191,23 +191,23 @@
 		"slots",
 		"standsvsclouds"
 	],
-	"faq.name.aec": "Area Effect Cloud is an entity that is invisible, no gravity and almost no hitbox. It was used as a marker entity from 1.9 to 1.16. After 1.17, Area Effect Cloud was replaced by Marker, but still can be use as floating text.\nCommand: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<Name>\"',CustomNameVisible:true}`\n<https://minecraft.fandom.com/wiki/Lingering_Potion#Area_Effect_Cloud>",
+	"faq.name.aec": "An **Area Effect Cloud** is an invisible entity with no gravity, no model and almost no hitbox. It was frequently used as marker entity from 1.9 to 1.16; it was made redundant by the introduction of Marker from 1.17 onwards. Despite this, Area Effect Clouds remain popular for displaying floating text (aka \"holograms\"), and they also come with a built-in self-destruction timer.\nSample command: `/summon area_effect_cloud ~ ~ ~ {Duration:2147483647,CustomName:'\"<Name>\"',CustomNameVisible:true}`\n<https://minecraft.fandom.com/wiki/Lingering_Potion#Area_Effect_Cloud>\n",
 	"faq.name.area_effect_cloud": "&faq.name.aec",
 	"faq.name.customui": "https://www.youtube.com/watch?v=EL2X6ppZSCQ",
-	"faq.name.datapack": "A datapack can be create by putting a data folder and a pack.mcmeta file into a folder\nDatapack structure:\n```📄pack.mcmeta\n🖼️pack.png\n📂data\n  📂namespace\n    📁advancements\n    📁chat_type\n    📁datapacks\n    📁dimension\n    📁dimension_type\n    📁functions\n    📁loot_tables\n    📁predicates\n    📁recipes\n    📁structures\n    📂tags\n      📁blocks\n      📁entity_types\n      📁fluids\n      📁functions\n      📁game_events\n      📁items\n      📂worldgen\n        📁biome\n        📁configured_structure_feature\n    📂worldgen\n      📁biome\n      📁configured_carver\n      📁configured_feature\n      📁density_function\n      📁flat_level_generator_preset\n      📁noise\n      📁noise_settings\n      📁structure\n      📁structure_set\n      📁world_preset\n      📁placed_feature\n      📁configured_structure_feature\n      📁configured_surface_builder\n      📁processor_list\n      📁template_pool\n```<https://minecraft.fandom.com/wiki/Tutorials/Creating_a_data_pack>",
+	"faq.name.datapack": "A datapack is created by placing a \"data\" folder and a \"pack.mcmeta\" file into the same folder.\nDatapack structure:\n```📄pack.mcmeta\n🖼️pack.png\n📂data\n  📂namespace\n    📁advancements\n    📁chat_type\n    📁datapacks\n    📁dimension\n    📁dimension_type\n    📁functions\n    📁loot_tables\n    📁predicates\n    📁recipes\n    📁structures\n    📂tags\n      📁blocks\n      📁entity_types\n      📁fluids\n      📁functions\n      📁game_events\n      📁items\n      📂worldgen\n        📁biome\n        📁configured_structure_feature\n    📂worldgen\n      📁biome\n      📁configured_carver\n      📁configured_feature\n      📁density_function\n      📁flat_level_generator_preset\n      📁noise\n      📁noise_settings\n      📁structure\n      📁structure_set\n      📁world_preset\n      📁placed_feature\n      📁configured_structure_feature\n      📁configured_surface_builder\n      📁processor_list\n      📁template_pool\n```<https://minecraft.fandom.com/wiki/Tutorials/Creating_a_data_pack>",
 	"faq.name.format": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Colors.png\nhttps://static.wikia.nocookie.net/minecraft_zh_gamepedia/images/7/7e/Minecraft_Formatting.gif",
-	"faq.name.log": "`latest.log` is a text document that exist in `.minecraft/logs` folder, it logs the game, including outputs of commands, chat history and error output when loading a datapack.",
+	"faq.name.log": "`latest.log` is a text document found in the `.minecraft/logs` folder. It logs various game information starting from the last time you launched the game, including command outputs, chat history and datapack error outputs.",
 	"faq.name.logs": "&faq.name.log",
-	"faq.name.marker": "Marker is an entity that only exist in server side, it was born for command, can store any nby through `{data}` NBT.\nMarker can't have `{Passengers}` NBT, won't show CustomName even `{CustomNameVisible}` is set to true.\nCommand: `/summon marker ~ ~ ~ {data:{YourNBTHere:\"\"}}`\nhttps://minecraft.fandom.com/wiki/Marker",
+	"faq.name.marker": "A **Marker** is an invisible entity that only exists on the server side, introduced in 1.17 specifically to be used by commands and in mapmaking. It can store any arbitrary NBT data in its unique `{data}` NBT tag.\nMarkers cannot have the `{Passengers}` NBT, and it will not display CustomName even `{CustomNameVisible}` is set to true.\nSample command: `/summon marker ~ ~ ~ {data:{YourNBTHere:\"\"}}`\nhttps://minecraft.fandom.com/wiki/Marker",
 	"faq.name.optimize": "https://www.youtube.com/watch?v=YFZenjaiN6Y",
-	"faq.name.save": "```📁advancements <-- Advancements that every players have unlocked\n\n📂data\n  📄chunks.dat <-- Force loaded chunks\n  📄map_<id>.dat <-- The <id>th map in the world, starts with 0\n  📄raids.dat <-- Raids in overworld dimension that are happening\n  📄scoreboard.dat <-- Scoreboards and teams\n\n📁datapacks <-- Put your datapacks here\n\n📂DIM1 <-- The end dimension\n  📂data\n    📄raids_end.dat <-- Raids in the end dimension that are happening\n  📁entities <-- Entities in the end dimension.\n  📁poi <-- Points of interest in the end dimension\n  📁region <-- Every chunks in the end dimension\n\n📂DIM-1 <-- The nether dimension\n  📂data\n    📄raids_nether.dat <-- Raids in the nether dimension that are happening\n  📁entities <-- Entities in the nether dimension\n  📁poi <-- Points of interest in the nether dimension\n  📁region <-- Every chunks in the nether dimension\n\n📁entities <-- Entities in overworld dimension\n\n📁playerdata <-- NBT tag of every players\n\n📁poi <-- Points of interest in overworld dimension\n\n📁region <-- Blocks of every chunks in overworld dimension\n\n📁stats <-- Statistics of every players\n\n🖼️icon.png <-- The icon that shows on the saves menu\n\n📄level.dat <-- Everything of the world, including the name, version, game rules, border size, weather etc.```<https://minecraft.fandom.com/wiki/Java_Edition_level_format>",
+	"faq.name.save": "The contents of a typical world folder (found in `.minecraft/saves`) is as follows:```📁advancements <-- Advancement progress of each player, one file per player\n\n📂data\n  📄chunks.dat <-- Forceloaded chunks\n  📄map_<id>.dat <-- The <id>th map in the world, starting with 0\n  📄raids.dat <-- Ongoing raids in the overworld dimension\n  📄scoreboard.dat <-- Scoreboards and teams\n\n📁datapacks <-- Put your datapacks here\n\n📂DIM1 <-- Data about the End dimension\n  📂data\n    📄raids_end.dat <-- Ongoing raids in the End\n  📁entities <-- Entities in the End\n  📁poi <-- Points of interest in the End\n  📁region <-- All blocks in the End, one file per chunk\n\n📂DIM-1 <-- Data about the Nether dimension\n  📂data\n    📄raids_nether.dat <-- Ongoing raids in the Nether\n  📁entities <-- Entities in the Nether\n  📁poi <-- Points of interest in the Nether\n  📁region <-- All chunks in the Nether, one file per chunk\n\n📁entities <-- Entities in the Overworld\n\n📁playerdata <-- NBT tags of all players, one file per player\n\n📁poi <-- Points of interest in the Overworld\n\n📁region <-- All blocks in the Overworld, one file per chunk\n\n📁stats <-- Statistics of all players\n\n🖼️icon.png <-- The icon that displays in the world selection menu\n\n📄level.dat <-- Everything else about the world, including world name, version, game rules, border size, weather etc.```<https://minecraft.fandom.com/wiki/Java_Edition_level_format>",
   	"faq.name.saves": "&faq.name.save",
 	"faq.name.slot": "&faq.name.slots",
 	"faq.name.slots": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b2/Items_slot_number.png",
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`Datapack features: ",
 	"dtp.end": "`",
-	"dtp.fail": "Invalid datapack feature, please try to use </dtp:1063884269006635072> to check every datapack features.",
+	"dtp.fail": "Invalid datapack feature. Please do </dtp:1063884269006635072> for a list of all datapack features.",
 	"dtp.list":
 	[
 		"advancements",
@@ -231,7 +231,7 @@
 	"dtp.name.d": "Wiki: https://minecraft.fandom.com/wiki/Custom_dimension\nGenerator: https://misode.github.io/dimension/",
 	"dtp.name.dimension_type": "&dtp.name.dt",
 	"dtp.name.dimensiontype": "&dtp.name.dt",
-	"dtp.name.dt": "Wiki： https://minecraft.fandom.com/wiki/Custom_dimension#Dimension_type\nGenerator: https://misode.github.io/dimension-type/",
+	"dtp.name.dt": "Wiki: https://minecraft.fandom.com/wiki/Custom_dimension#Dimension_type\nGenerator: https://misode.github.io/dimension-type/",
 	"dtp.name.functions": "&dtp.name.f",
 	"dtp.name.function": "&dtp.name.f",
 	"dtp.name.func": "&dtp.name.f",
@@ -277,18 +277,18 @@
 	"lang.name.ta": "話語設定為 台語文字",
 	"lang.name.hk": "語言設定為 粵語漢字",
 	"lang.name.cn": "语言设置为 简体中文",
-	"lottery.win": "win!",
-	"lottery.lose": "lose..",
-	"lottery.play_with_your_limit": "Play with your limit.",
+	"lottery.win": "won!",
+	"lottery.lose": "lost.",
+	"lottery.play_with_your_limit": "You've gone and busted, my good man.",
 	"lottery.result": "You bet %d command blocks and %s\nYou now have %d command blocks.",
 	"lottery.wrong_percent": "You can't bet %d%% of your command blocks!",
-	"lottery.wrong_argument": "Usage: </lottery:1072947886612033666>` [<integer>]` or </lottery:1072947886612033666>` [<percentage>]%`, and don't use negative number.",
-	"lottery.not_enough": "You don't have enough command blocks!\nYou want to bet %d command blocks, but you only have %d command blocks.",
+	"lottery.wrong_argument": "Usage: </lottery:1072947886612033666>` [<integer>]` or </lottery:1072947886612033666>` [<percentage>]%`. Numbers must not be negative.",
+	"lottery.not_enough": "You don't have enough command blocks!\nYou are trying to bet %d command blocks, but you only have %d command blocks.",
 	"lottery.query": "You have %d command blocks.",
 	"transfer.success": "You transferred %d command blocks to %s.\nYou now have %d command blocks.",
 	"transfer.self_transfer": "You can't transfer command blocks to yourself!",
 	"transfer.wrong_user": "You can't transfer command blocks to this user!",
 	"transfer.wrong_percent": "You can't transfer %d%% of your command blocks!",
-	"transfer.wrong_argument": "Usage: /transfer` <user> <integer>` or /transfer` <user> <percentage>%`, and don't use negative number.",
-	"transfer.not_enough": "You don't have enough command blocks!\nYou want to transfer %d command blocks, but you only have %d command blocks."
+	"transfer.wrong_argument": "Usage: /transfer` <user> <integer>` or /transfer` <user> <percentage>%`. Numbers must not be negative.",
+	"transfer.not_enough": "You don't have enough command blocks!\nYou are trying to transfer %d command blocks, but you only have %d command blocks."
 }

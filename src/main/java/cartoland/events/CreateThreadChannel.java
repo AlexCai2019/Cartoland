@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code OpenQuestionsForumPost} is a listener that triggers when a user create a forum post. This class was
+ * {@code CreateThreadChannel} is a listener that triggers when a user create a forum post. This class was
  * registered in {@link cartoland.Cartoland#main}, with the build of JDA.
  *
  * @since 1.5
  * @author Alex Cai
  */
-public class OpenQuestionsForumPost extends ListenerAdapter
+public class CreateThreadChannel extends ListenerAdapter
 {
 	private final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", null)
@@ -46,14 +46,17 @@ public class OpenQuestionsForumPost extends ListenerAdapter
 		if (!event.getChannelType().isThread())
 			return;
 
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
-		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID)
+		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
+		threadChannel.join().queue();
+
+		//這以下是關於問題論壇
+		if (threadChannel.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID)
 			return;
 
-		forumPost.addThreadMember(IDAndEntities.botItself).queue();
-		forumPost.sendMessageEmbeds(startEmbed).queue();
+		threadChannel.join().queue();
+		threadChannel.sendMessageEmbeds(startEmbed).queue();
 
-		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
+		List<ForumTag> tags = new ArrayList<>(threadChannel.getAppliedTags());
 		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
 		if (!tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者自己沒有加unresolved
 		{
@@ -61,6 +64,6 @@ public class OpenQuestionsForumPost extends ListenerAdapter
 				tags.remove(4);
 			tags.add(IDAndEntities.unresolvedForumTag);
 		}
-		forumPost.getManager().setAppliedTags(tags).queue();
+		threadChannel.getManager().setAppliedTags(tags).queue();
 	}
 }

@@ -110,6 +110,20 @@ public class ChannelMessage extends ListenerAdapter
 		long categoryID = category.getIdLong();
 		MessageChannel channel = message.getChannel();
 
+		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
+			message.addReaction(learned).queue();
+		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
+			message.addReaction(wow).queue();
+
+		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
+		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
+			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length() + 1); //說話加等級 +1當作加上\0
+
+
+		//以下是有關機器人說話的部分
+		if (categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)
+			return; //不在技術討論類別說話
+
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(userID == IDAndEntities.AC_ID ? randomString(replyACMention) : randomString(replyMention))
 					.mentionRepliedUser(false).queue();
@@ -135,15 +149,6 @@ public class ChannelMessage extends ListenerAdapter
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
 			channel.sendMessage(randomString(fbi)).queue();
-
-		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
-			message.addReaction(learned).queue();
-		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
-			message.addReaction(wow).queue();
-
-		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
-		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
-			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length()); //說話加等級
 	}
 
 	private String randomString(String[] strings)

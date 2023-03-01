@@ -82,6 +82,15 @@ public class AddCommands
 			Lang.lang,
 			Lang.language,
 
+			Commands.slash("quote", "Display content from a message link")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
+					.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息连结的内容")
+					.addOptions(new OptionData(OptionType.STRING, "link", "The link of the message", true, false)
+										.setNameLocalization(CHINESE_TAIWAN, "連結")
+										.setNameLocalization(CHINESE_CHINA, "连结")
+										.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
+										.setDescriptionLocalization(CHINESE_CHINA, "信息的连结")),
+
 			Commands.slash("megumin", "The best anime girl")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 					.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")

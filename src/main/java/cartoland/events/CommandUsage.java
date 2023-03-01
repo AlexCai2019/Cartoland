@@ -83,10 +83,15 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("dtp", alias);
 		commands.put("datapack", alias);
 
+		//tool
+		commands.put("tool", new ToolCommand());
+
 		//lang
 		alias = event -> event.reply(minecraftCommandRelated("lang", event)).queue();
 		commands.put("lang", alias);
 		commands.put("language", alias);
+
+		commands.put("quote", new QuoteCommand());
 
 		commands.put("megumin", event ->
 		{
@@ -135,9 +140,6 @@ public class CommandUsage extends ListenerAdapter
 
 		//minesweeper
 		commands.put("minesweeper", new MinesweeperCommand(this));
-
-		//tool
-		commands.put("tool", new ToolCommand());
 	}
 
 	/**

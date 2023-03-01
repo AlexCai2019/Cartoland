@@ -107,7 +107,7 @@ public class JsonHandle
 		commandListMap.put("faq.list", englishFile.getJSONArray("faq.list").toList());
 		commandListMap.put("dtp.list", englishFile.getJSONArray("dtp.list").toList());
 
-		FileHandle.log("Reload all language json files");
+		//FileHandle.log("Reload all language json files");
 	}
 
 	public static String getJsonKey(long userID, String key)

@@ -1,4 +1,6 @@
-<div style="width:100%;height:90px;background-image:url(https://cdn.discordapp.com/attachments/889200718886608966/1080592685473218621/image.png);background-size:cover;margin-bottom:12px;"></div>
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/889200718886608966/1080592685473218621/image.png" alt="banner">
+</p>
 
 # Cartoland Bot
 #### English / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / [粵語漢字](https://github.com/AlexCai2019/Cartoland/blob/master/README_hk.md) / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_cn.md)

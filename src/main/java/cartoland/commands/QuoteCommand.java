@@ -28,7 +28,7 @@ public class QuoteCommand implements ICommand
 		String link = event.getOption("link", OptionMapping::getAsString);
 		if (link == null)
 		{
-			event.reply("Invalid input: `link` is a required field!").queue();
+			event.reply("Impossible, this is required!").queue();
 			return;
 		}
 
@@ -51,7 +51,7 @@ public class QuoteCommand implements ICommand
 		Guild linkGuild = IDAndEntities.jda.getGuildById(guildID);
 		if (linkGuild == null)
 		{
-			event.reply("Invalid input: This is Cartoland's own ID.").queue();
+			event.reply("Impossible, this is the ID of Cartoland!").queue();
 			return;
 		}
 

@@ -30,7 +30,7 @@ public class ToolCommand implements ICommand
 		String subCommandName = event.getSubcommandName();
 		if (subCommandName == null)
 		{
-			event.reply("Invalid input: You must choose a subcommand!").queue();
+			event.reply("Impossible, this is required!").queue();
 			return;
 		}
 
@@ -57,7 +57,7 @@ class UUIDStringCommand implements ICommand
 		String rawUUID = event.getOption("raw_uuid", OptionMapping::getAsString);
 		if (rawUUID == null)
 		{
-			event.reply("Invalid input: `raw_uuid` is required!").queue();
+			event.reply("Impossible, this is required!").queue();
 			return;
 		}
 
@@ -123,7 +123,7 @@ class UUIDArrayCommand implements ICommand
 			uuidArray[i] = event.getOption(String.valueOf(i), OptionMapping::getAsInt);
 			if (uuidArray[i] == null)
 			{
-				event.reply("Invalid input: All four fields are required!").queue();
+				event.reply("Impossible, this is required!").queue();
 				return;
 			}
 		}
@@ -161,7 +161,7 @@ class PackMcmetaCommand implements ICommand
 		String packType = event.getOption("pack_type", OptionMapping::getAsString);
 		if (packType == null)
 		{
-			event.reply("Invalid input: You must specify if you are making a data pack or a resource pack!").queue();
+			event.reply("Impossible, this is required!").queue();
 			return;
 		}
 

@@ -38,7 +38,7 @@ public class Cartoland
 						new QuestionForumMessage()) //當有人在Questions論壇講話
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
-				.setActivity(Activity.playing("Use /help to check more information")) //正在玩
+				.setActivity(Activity.playing("Do /help for more information")) //正在玩
 				.build();
 
 		jda.updateCommands().addCommands(AddCommands.getCommands()).queue(); //添加指令 裡面的程式簡直是一團亂 能跑就行

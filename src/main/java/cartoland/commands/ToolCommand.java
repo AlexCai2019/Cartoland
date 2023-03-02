@@ -85,7 +85,7 @@ class UUIDStringCommand implements ICommand
 		}
 		else //不是一個合法的UUID字串
 		{
-			event.reply("Please enter a UUID string by right format!").queue();
+			event.reply("Incorrect syntax: please enter the UUID string in the correct format!").queue();
 			return;
 		}
 
@@ -98,7 +98,7 @@ class UUIDStringCommand implements ICommand
 		};
 
 		event.reply("UUID: `" + dash + "`\n" +
-							"UUID(without dash): `" + noDash + "`\n" +
+							"UUID (without dashes): `" + noDash + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -193,7 +193,7 @@ class PackMcmetaCommand implements ICommand
 				```
 				""";
 
-			default -> "You need to choose whether data pack or resource pack.";
+			default -> "You need to choose whether you are making a data pack or a resource pack.";
 		}).queue();
 	}
 }

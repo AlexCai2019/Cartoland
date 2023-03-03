@@ -6,7 +6,7 @@
 
     <groupId>org.cartoland</groupId>
     <artifactId>Cartoland</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
 
     <name>Cartoland Bot</name>
     <description>A Discord bot that belongs to a server: Cartoland</description>
@@ -34,16 +34,18 @@
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/net.dv8tion/JDA -->
+        <!-- https://github.com/DV8FromTheWorld/JDA -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.4</version>
+            <version>5.0.0-beta.5</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <!-- https://github.com/stleary/JSON-java -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20220924</version>
+            <version>20230227</version>
         </dependency>
     </dependencies>
 

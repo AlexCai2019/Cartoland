@@ -139,7 +139,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("transfer", new TransferCommand(this));
 
 		//minesweeper
-		commands.put("minesweeper", new MinesweeperCommand(this));
+		//commands.put("minesweeper", new MinesweeperCommand(this));
 	}
 
 	/**

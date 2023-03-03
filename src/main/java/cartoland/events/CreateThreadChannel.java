@@ -29,13 +29,13 @@ public class CreateThreadChannel extends ListenerAdapter
 														
 							• 請清楚說明你想做什麼，並想要什麼結果
 							• 請提及你正在使用的Minecraft版本，以及是否正在使用任何模組
-							• 討論完成後，使用✅表情符號關閉貼文
+							• 討論完成後，使用`:resolved:` <:resolved:1081082902785314921>表情符號關閉貼文
 														
 							-=Guidelines=-
 							       
 							• Ask your question straight and clearly, tell us what you are trying to do.
 							• Mention which Minecraft version you are using and any mods.
-							• Remember to use ✅ to close the post after resolved.
+							• Remember to use `:resolved:` <:resolved:1081082902785314921> to close the post after resolved.
 							""")
 			.setColor(new Color(133, 201, 103)) //創聯的綠色
 			.build();

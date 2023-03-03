@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ public class PrivateMessage extends ListenerAdapter
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
-		if (!event.isFromType(ChannelType.PRIVATE)) //不是私訊
+		if (event.isFromGuild()) //不是私訊
 			return;
 
 		User author = event.getAuthor();

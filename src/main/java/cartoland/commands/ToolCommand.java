@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 /**
  * {@code ToolCommand} is an execution when a user uses /tool command. This class doesn't handle sub command, but
@@ -51,6 +52,11 @@ public class ToolCommand implements ICommand
  */
 class UUIDStringCommand implements ICommand
 {
+	//59c1027b-5559-4e6a-91e4-2b8b949656ce
+	private final Pattern dashRegex = Pattern.compile("[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}");
+	//59c1027b55594e6a91e42b8b949656ce
+	private final Pattern noDashRegex = Pattern.compile("[0-9A-Fa-f]{32}");
+
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -62,16 +68,14 @@ class UUIDStringCommand implements ICommand
 		}
 
 		String[] uuidStrings;
-		String dash = rawUUID;
-		String noDash = rawUUID;
+		String dash = rawUUID, noDash = rawUUID;
 
-		//59c1027b-5559-4e6a-91e4-2b8b949656ce
-		if (rawUUID.matches("[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"))
+		if (dashRegex.matcher(rawUUID).matches())
 		{
 			uuidStrings = rawUUID.split("-");
 			noDash = String.join("", uuidStrings);
 		}
-		else if (rawUUID.matches("[0-9A-Fa-f]{32}")) //59c1027b55594e6a91e42b8b949656ce
+		else if (noDashRegex.matcher(rawUUID).matches())
 		{
 			uuidStrings = new String[]
 			{
@@ -131,13 +135,13 @@ class UUIDArrayCommand implements ICommand
 		//因為四個UUID是必填項 所以不須偵測是否存在 直接進程式
 		String[] uuidStrings = new String[5];
 		String temp;
-		uuidStrings[0] = Integer.toHexString(uuidArray[0]);
-		temp = Integer.toHexString(uuidArray[1]);
+		uuidStrings[0] = String.format("%08x", uuidArray[0]);
+		temp = String.format("%08x", uuidArray[1]);
 		uuidStrings[1] = temp.substring(0, 4);
 		uuidStrings[2] = temp.substring(4);
-		temp = Integer.toHexString(uuidArray[2]);
+		temp = String.format("%08x", uuidArray[2]);
 		uuidStrings[3] = temp.substring(0, 4);
-		uuidStrings[4] = temp.substring(4) + Integer.toHexString(uuidArray[3]);
+		uuidStrings[4] = temp.substring(4) + String.format("%08x", uuidArray[3]);
 
 		event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
 							"UUID(without dash): `" + String.join("", uuidStrings) + "`\n" +

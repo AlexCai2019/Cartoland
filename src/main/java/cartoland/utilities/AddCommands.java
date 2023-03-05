@@ -91,6 +91,15 @@ public class AddCommands
 										.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
 										.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
 
+			Commands.slash("youtuber", "Send a link of a YouTube video creator channel")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
+					.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
+					.addOptions(new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", true, true)
+										.setNameLocalization(CHINESE_TAIWAN, "名字")
+										.setNameLocalization(CHINESE_CHINA, "名字")
+										.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
+										.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")),
+
 			Commands.slash("megumin", "The best anime girl")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 					.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")

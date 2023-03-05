@@ -2,7 +2,6 @@ package cartoland.events;
 
 import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
@@ -93,6 +91,12 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put("quote", new QuoteCommand());
 
+		commands.put("youtuber", event ->
+		{
+			String youtubeChannel = event.getOption("youtuber_name", OptionMapping::getAsString);
+			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : "I don't know this YouTuber").queue();
+		});
+
 		commands.put("megumin", event ->
 		{
 			TA author = twitterAuthors[random.nextInt(twitterAuthors.length)];
@@ -154,13 +158,9 @@ public class CommandUsage extends ListenerAdapter
 	{
 		User user = event.getUser();
 		userID = user.getIdLong();
-		String commandName = event.getName();
-		String subCommandName = event.getSubcommandName();
-		FileHandle.log(user.getName() + "(" + userID + ") used /" + commandName +
-							   (subCommandName != null ? " " + subCommandName + " " : " ") +
-							   event.getOptions().stream().map(OptionMapping::getName).collect(Collectors.joining(" ")));
-		if (commands.containsKey(commandName))
-			commands.get(commandName).commandProcess(event);
+		ICommand commandExecution = commands.get(event.getName());
+		if (commandExecution != null)
+			commandExecution.commandProcess(event);
 	}
 
 	/**

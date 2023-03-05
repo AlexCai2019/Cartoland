@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 /**
@@ -63,9 +62,6 @@ public class QuoteCommand implements ICommand
 		linkChannel.retrieveMessageById(numbersInLink[2]).queue(linkMessage ->
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
-
-			AtomicLong privateChannelID = new AtomicLong();
-			linkAuthor.openPrivateChannel().queue(privateChannel -> privateChannelID.set(privateChannel.getIdLong()));
 
 			EmbedBuilder embedBuilder = new EmbedBuilder()
 					.setAuthor(linkAuthor.getAsTag(), linkAuthor.getAvatarUrl(), linkAuthor.getAvatarUrl())

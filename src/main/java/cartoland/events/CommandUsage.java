@@ -91,10 +91,11 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put("quote", new QuoteCommand());
 
+		String youtubers = String.join(" ", IDAndEntities.youtubers.keySet());
 		commands.put("youtuber", event ->
 		{
 			String youtubeChannel = event.getOption("youtuber_name", OptionMapping::getAsString);
-			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : "I don't know this YouTuber").queue();
+			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : youtubers).queue();
 		});
 
 		commands.put("megumin", event ->

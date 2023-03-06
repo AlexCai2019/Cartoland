@@ -22,6 +22,8 @@ public class ToolCommand implements ICommand
 	{
 		subCommands.put("uuid_string", new UUIDStringCommand()); //tool uuid_string
 		subCommands.put("uuid_array", new UUIDArrayCommand()); //tool uuid_array
+		subCommands.put("color_rgb", new ColorRGB()); //tool color_rgb
+		subCommands.put("color_integer", new ColorInteger()); //tool color_rgb
 		subCommands.put("pack_mcmeta", new PackMcmetaCommand()); //tool pack_mcmeta
 	}
 
@@ -146,6 +148,107 @@ class UUIDArrayCommand implements ICommand
 		event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
 							"UUID(without dash): `" + String.join("", uuidStrings) + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
+	}
+}
+
+/**
+ * @since 1.6
+ * @author Alex Cai
+ */
+class ColorRGB implements ICommand
+{
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		Integer[] colors =
+		{
+			event.getOption("red", OptionMapping::getAsInt),
+			event.getOption("green", OptionMapping::getAsInt),
+			event.getOption("blue", OptionMapping::getAsInt)
+		};
+
+		int rgb = 0;
+		int offset = 65536; //16 * 16 * 16 * 16
+
+		for (Integer color : colors)
+		{
+			/*
+			if (color == null)
+			{
+				event.reply("Impossible, this is required!").queue();
+				return;
+			}
+			*/
+
+			if (color < 0 || color > 255)
+			{
+				event.reply("You can't input an integer that is not in the range from 0 to 255!").queue();
+				return;
+			}
+
+			rgb += color * offset; //舉例 如果是#0D18F7 那麼紅色就是13 然後乘上65536 綠色是24乘上256 藍色是247乘上1 結果是858359
+			offset >>= 8; //offset /= 256;
+		}
+
+		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
+							"RGB(Decimal): `" + rgb + "`\n" +
+							"RGB(Hexadecimal): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
+	}
+}
+
+/**
+ * @since 1.6
+ * @author Alex Cai
+ */
+class ColorInteger implements ICommand
+{
+	private final Pattern decimalRegex = Pattern.compile("\\d{1,8}"); //最高16777215 最低0
+	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6}"); //必須像#FFFFFF那樣
+
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		String rgbString = event.getOption("rgb", OptionMapping::getAsString);
+		if (rgbString == null)
+		{
+			event.reply("Impossible, this is required!").queue();
+			return;
+		}
+
+		int rgb;
+		if (decimalRegex.matcher(rgbString).matches())
+		{
+			rgb = Integer.parseInt(rgbString);
+			if (rgb > 0xFFFFFF) //16777215
+				rgb = 0xFFFFFF;
+		}
+		else if (hexadecimalRegex.matcher(rgbString).matches())
+			rgb = Integer.parseInt(rgbString, 16);
+		else
+		{
+			if (rgbString.length() < 2 || rgbString.charAt(0) != '#') //不是#FFFFFF這樣開頭帶一個#的形式
+			{
+				event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
+				return;
+			}
+
+			String hexPart = rgbString.substring(1); //去掉開頭的#
+			if (hexadecimalRegex.matcher(hexPart).matches()) //雖然以#開頭 但還是符合
+				rgb = Integer.parseInt(hexPart, 16);
+			else
+			{
+				event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
+				return;
+			}
+		}
+
+		//{ rgb / 65536, rgb / 256 % 256, rgb % 256 }
+		//假設是16777215 除以65536就會變成255, 16777215 除以256後取除以256的餘數也是255, 取除以256的餘數也是255
+		int[] colors = { rgb >> 16, (rgb >> 16) & 255, rgb & 255 };
+
+		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
+							"RGB(Decimal): `" + rgb + "`\n" +
+							"RGB(Hexadecimal): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
 	}
 }
 

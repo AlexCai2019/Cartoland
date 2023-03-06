@@ -37,11 +37,13 @@ public class AddCommands
 							new OptionData(OptionType.STRING, "help_name", "The command you want help with", false, false)
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的指令")
 									.setDescriptionLocalization(CHINESE_CHINA, "想确认的命令")
+									.addChoice("invite", "invite")
 									.addChoice("cmd", "cmd")
 									.addChoice("faq", "faq")
 									.addChoice("dtp", "dtp")
 									.addChoice("tool", "tool")
-									.addChoice("lang", "lang")),
+									.addChoice("lang", "lang")
+									.addChoice("quote", "quote")),
 
 			Cmd.cmd,
 			Cmd.mcc,
@@ -58,8 +60,12 @@ public class AddCommands
 					.setDescriptionLocalization(CHINESE_CHINA, "能协助你的工具")
 					.addSubcommands(
 							new SubcommandData("uuid_string", "Get UUID data from raw UUID string")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "從UUID字串獲得UUID資料")
+									.setDescriptionLocalization(CHINESE_CHINA, "从UUID字符串获得UUID数据")
 									.addOption(OptionType.STRING, "raw_uuid", "The raw UUID that you want to convert", true, false),
 							new SubcommandData("uuid_array", "Get UUID data from UUID integer array")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "從uuid整數陣列獲得uuid資料")
+									.setDescriptionLocalization(CHINESE_CHINA, "从uuid整数数组获得uuid数据")
 									.addOptions(
 											new OptionData(OptionType.INTEGER, "0", "The [0] of the array", true, false)
 													.setDescriptionLocalization(CHINESE_TAIWAN, "陣列的第[0]項")
@@ -73,6 +79,32 @@ public class AddCommands
 											new OptionData(OptionType.INTEGER, "3", "The [3] of the array", true, false)
 													.setDescriptionLocalization(CHINESE_TAIWAN, "陣列的第[3]項")
 													.setDescriptionLocalization(CHINESE_CHINA, "数组的第[3]项")),
+							new SubcommandData("color_rgb", "Get color data from RGB array")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB陣列獲得顏色資料")
+									.setDescriptionLocalization(CHINESE_CHINA, "从RGB数组获得颜色数据")
+									.addOptions(
+											new OptionData(OptionType.INTEGER, "red", "Red (0 ~ 255)", true, false)
+													.setNameLocalization(CHINESE_TAIWAN, "紅")
+													.setNameLocalization(CHINESE_CHINA, "红")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "紅 (0 ~ 255)")
+													.setDescriptionLocalization(CHINESE_CHINA, "红 (0 ~ 255)"),
+											new OptionData(OptionType.INTEGER, "green", "Green (0 ~ 255)", true, false)
+													.setNameLocalization(CHINESE_TAIWAN, "綠")
+													.setNameLocalization(CHINESE_CHINA, "绿")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "綠 (0 ~ 255)")
+													.setDescriptionLocalization(CHINESE_CHINA, "绿 (0 ~ 255)"),
+											new OptionData(OptionType.INTEGER, "blue", "Blue (0 ~ 255)", true, false)
+													.setNameLocalization(CHINESE_TAIWAN, "藍")
+													.setNameLocalization(CHINESE_CHINA, "蓝")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "藍 (0 ~ 255)")
+													.setDescriptionLocalization(CHINESE_CHINA, "蓝 (0 ~ 255)")),
+							new SubcommandData("color_integer", "Get color data from RGB integer")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
+									.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
+									.addOptions(
+											new OptionData(OptionType.STRING, "rgb", "RGB integer, must be decimal or hexadecimal", true, false)
+													.setDescriptionLocalization(CHINESE_TAIWAN, "RGB整數，必須是十進位或十六進位")
+													.setDescriptionLocalization(CHINESE_CHINA, "RGB整数，必须是十进制或十六进制")),
 							new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
 									.addOptions(
 											new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
@@ -94,7 +126,7 @@ public class AddCommands
 			Commands.slash("youtuber", "Send a link of a YouTube video creator channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
 					.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
-					.addOptions(new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", true, true)
+					.addOptions(new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", false, true)
 										.setNameLocalization(CHINESE_TAIWAN, "名字")
 										.setNameLocalization(CHINESE_CHINA, "名字")
 										.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
@@ -144,6 +176,7 @@ public class AddCommands
 									.setDescriptionLocalization(CHINESE_CHINA, "想转帐的数量")),
 
 				//TODO: finish cartoland.commands.MinesweeperCommand
+				//TODO: stop being lazy
 			/*Commands.slash("minesweeper", "Play a minesweeper game")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場踩地雷")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场扫雷")
@@ -240,17 +273,17 @@ class Faq
 	}
 
 	private static final OptionData faqOption =
-			new OptionData(OptionType.STRING, "faq_name", "A question about mapmaking.", false, true)
+			new OptionData(OptionType.STRING, "faq_name", "A question about map making.", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "問題")
 					.setNameLocalization(CHINESE_CHINA, "问题")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "地圖製作的問題")
 					.setDescriptionLocalization(CHINESE_CHINA, "地图制作的问题");
 
-	static final SlashCommandData faq = Commands.slash("faq", "Find answers to mapmaking questions")
+	static final SlashCommandData faq = Commands.slash("faq", "Find answers to map making questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 
-	static final SlashCommandData question = Commands.slash("question", "Find answers to mapmaking questions")
+	static final SlashCommandData question = Commands.slash("question", "Find answers to map making questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 }

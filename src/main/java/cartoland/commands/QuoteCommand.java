@@ -67,7 +67,7 @@ public class QuoteCommand implements ICommand
 					.setAuthor(linkAuthor.getAsTag(), linkAuthor.getAvatarUrl(), linkAuthor.getAvatarUrl())
 					.appendDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
-					.setFooter(linkChannel.getName()); //訊息的發送頻道
+					.setFooter(linkChannel.getName(), null); //訊息的發送頻道
 
 			//選擇連結訊息內的第一張圖片作為embed的圖片
 			//不用add field 沒必要那麼麻煩

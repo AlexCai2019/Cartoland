@@ -4,12 +4,15 @@
 	"help.fail": "Invalid query. Please do </help:1063884269006635069> for a list of available commands.",
 	"help.list":
 	[
+		"invite",
 		"cmd",
 		"faq",
 		"dtp",
 		"tool",
-		"lang"
+		"lang",
+		"quote"
 	],
+	"help.name.invite": "Syntax: </invite:1063884269006635068>``",
 	"help.name.cmd": "Syntax: </cmd:1063884269006635070>` [<command>]`",
 	"help.name.faq": "Syntax: </faq:1063884269006635071>` [<question>]`",
 	"help.name.dtp": "Syntax: </dtp:1063884269006635072>` [<datapack feature>]`",
@@ -223,6 +226,7 @@
 		"tags",
 		"worldgen"
 	],
+	"dtp.name.advancements": "&dtp.name.a",
 	"dtp.name.advancement": "&dtp.name.a",
 	"dtp.name.adv": "&dtp.name.a",
 	"dtp.name.a": "Wiki: https://minecraft.fandom.com/wiki/Advancement/JSON_format\nGenerator: https://misode.github.io/advancement/",
@@ -279,7 +283,7 @@
 	"lang.name.cn": "语言设置为 简体中文",
 	"quote.jump_message": "Jump to message",
 	"lottery.win": "won!",
-	"lottery.lose": "lost.",
+	"lottery.lose": "lost...",
 	"lottery.play_with_your_limit": "You've gone and busted, my good man.",
 	"lottery.result": "You bet %d command blocks and %s\nYou now have %d command blocks.",
 	"lottery.wrong_percent": "You can't bet %d%% of your command blocks!",

@@ -69,7 +69,7 @@ public class BotOnline extends ListenerAdapter
 
 		botItself = jda.getSelfUser(); //機器人自己
 
-		ohBoy3AM();
+		ohBoy3AM(); //好棒 三點了
 
 		String logString = "Cartoland Bot is now online.";
 		botChannel.sendMessage(logString).queue();

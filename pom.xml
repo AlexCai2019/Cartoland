@@ -32,6 +32,21 @@
         </developer>
     </developers>
 
+    <contributors>
+        <contributor>
+            <name>champsing</name>
+            <url>https://github.com/champsing</url>
+        </contributor>
+        <contributor>
+            <name>Mango Jelly Pudding</name>
+            <url>https://github.com/EvanHsieh0415</url>
+        </contributor>
+        <contributor>
+            <name>Hexakon</name>
+            <url>https://github.com/Hexakon</url>
+        </contributor>
+    </contributors>
+
     <dependencies>
         <!-- https://mvnrepository.com/artifact/net.dv8tion/JDA -->
         <!-- https://github.com/DV8FromTheWorld/JDA -->
@@ -46,6 +61,13 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20230227</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

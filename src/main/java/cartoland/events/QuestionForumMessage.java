@@ -1,6 +1,7 @@
 package cartoland.events;
 
 import cartoland.utilities.IDAndEntities;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
@@ -35,6 +36,7 @@ public class QuestionForumMessage extends ListenerAdapter
 		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 
+		//以下是問題論壇的部分
 		User author = event.getAuthor();
 		if (author.isBot() || author.isSystem()) //是機器人或系統
 			return;
@@ -42,13 +44,15 @@ public class QuestionForumMessage extends ListenerAdapter
 		List<ForumTag> tags = forumPost.getAppliedTags();
 		if (!forumPost.isArchived()) //開啟著的
 		{
-			if (event.getMessage().getContentRaw().equals(resolvedFormat))
-			{
-				tags = new ArrayList<>(tags);
-				tags.remove(IDAndEntities.unresolvedForumTag);
-				tags.add(IDAndEntities.resolvedForumTag);
-				forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
-			}
+			Message message = event.getMessage();
+			if (!message.getContentRaw().equals(resolvedFormat))
+				return;
+
+			message.addReaction(resolved).queue();
+			tags = new ArrayList<>(tags);
+			tags.remove(IDAndEntities.unresolvedForumTag);
+			tags.add(IDAndEntities.resolvedForumTag);
+			forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 		}
 		else //已關閉的
 		{

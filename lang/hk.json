@@ -104,6 +104,7 @@
 	"dtp.begin": "`資料包功能: ",
 	"dtp.end": "`",
 	"dtp.fail": "無效嘅資料包功能，請嘗試用</dtp:1063884269006635072>查看所有資料包功能。",
+	"dtp.name.advancements": "&dtp.name.a",
 	"dtp.name.advancement": "&dtp.name.a",
 	"dtp.name.adv": "&dtp.name.a",
 	"dtp.name.a": "維基： https://minecraft.fandom.com/zh/wiki/进度/JSON格式?variant=zh-hk\n生成器： https://misode.github.io/advancement/",

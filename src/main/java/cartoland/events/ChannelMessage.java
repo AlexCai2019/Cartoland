@@ -121,8 +121,8 @@ public class ChannelMessage extends ListenerAdapter
 
 
 		//以下是有關機器人說話的部分
-		if (categoryID == IDAndEntities.TECH_TALK_CATEGORY_ID)
-			return; //不在技術討論類別說話
+		if (!IDAndEntities.canTalkCategories.contains(categoryID))
+			return; //只在特定類別說話
 
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 			message.reply(userID == IDAndEntities.AC_ID ? randomString(replyACMention) : randomString(replyMention))

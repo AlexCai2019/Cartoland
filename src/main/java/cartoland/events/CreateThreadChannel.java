@@ -23,7 +23,7 @@ import java.util.List;
 public class CreateThreadChannel extends ListenerAdapter
 {
 	private final MessageEmbed startEmbed = new EmbedBuilder()
-			.setTitle("**-=發問指南=-**", null)
+			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.setDescription("""
 							-=發問指南=-
 														
@@ -47,13 +47,12 @@ public class CreateThreadChannel extends ListenerAdapter
 			return;
 
 		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
-		threadChannel.join().queue();
+		threadChannel.join().queue(); //加入討論串
 
 		//這以下是關於問題論壇
 		if (threadChannel.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID)
 			return;
 
-		threadChannel.join().queue();
 		threadChannel.sendMessageEmbeds(startEmbed).queue();
 
 		List<ForumTag> tags = new ArrayList<>(threadChannel.getAppliedTags());

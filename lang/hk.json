@@ -162,7 +162,7 @@
 	"lottery.wrong_argument": "用法： </lottery:1072947886612033666>` [<整數>]` 或 </lottery:1072947886612033666>` [<百分比>]%`，且不可使用負數。",
 	"lottery.not_enough": "你無足夠嘅指令方塊！\n你想賭上 %d 個指令方塊，但你目前只有 %d 個指令方塊。",
 	"lottery.query": "你目前有 %d 個指令方塊。",
-	"transfer.success": "你轉咗 %d 個指令方塊畀 %s",
+	"transfer.success": "你轉咗 %d 個指令方塊畀 %s。\n你如今仲有 %d 個指令方塊。",
 	"transfer.self_transfer": "你唔可以轉帳給畀自己！",
 	"transfer.wrong_user": "你唔可以轉帳畀呢位使用者！",
 	"transfer.wrong_percent": "你唔可以轉帳 %d%% 嘅指令方塊！",

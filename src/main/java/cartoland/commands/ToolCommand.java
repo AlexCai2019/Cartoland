@@ -203,7 +203,8 @@ class ColorRGB implements ICommand
 class ColorInteger implements ICommand
 {
 	private final Pattern decimalRegex = Pattern.compile("\\d{1,8}"); //最高16777215 最低0
-	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6}"); //必須像#FFFFFF那樣
+	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6}"); //FFFFFF
+	private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{6}"); //#FFFFFF
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -224,22 +225,12 @@ class ColorInteger implements ICommand
 		}
 		else if (hexadecimalRegex.matcher(rgbString).matches())
 			rgb = Integer.parseInt(rgbString, 16);
+		else if (leadingSharpHexadecimalRegex.matcher(rgbString).matches())
+			rgb = Integer.parseInt(rgbString.substring(1), 16); //像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 		else
 		{
-			if (rgbString.length() < 2 || rgbString.charAt(0) != '#') //不是#FFFFFF這樣開頭帶一個#的形式
-			{
-				event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
-				return;
-			}
-
-			String hexPart = rgbString.substring(1); //去掉開頭的#
-			if (hexadecimalRegex.matcher(hexPart).matches()) //雖然以#開頭 但還是符合
-				rgb = Integer.parseInt(hexPart, 16);
-			else
-			{
-				event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
-				return;
-			}
+			event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
+			return;
 		}
 
 		//{ rgb / 65536, rgb / 256 % 256, rgb % 256 }

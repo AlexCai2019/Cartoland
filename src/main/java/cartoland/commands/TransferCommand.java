@@ -81,11 +81,12 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		event.reply(JsonHandle.getJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsMention()))
+		long afterHave = nowHave - transferAmount;
+		event.reply(JsonHandle.getJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsMention(), afterHave))
 				.queue(interactionHook ->
 				{
 					CommandBlocksHandle.setCommandBlocks(targetID, Algorithm.safeAdd(CommandBlocksHandle.getCommandBlocks(targetID), transferAmount));
-					CommandBlocksHandle.setCommandBlocks(userID, nowHave - transferAmount);
+					CommandBlocksHandle.setCommandBlocks(userID, afterHave);
 				});
 	}
 }

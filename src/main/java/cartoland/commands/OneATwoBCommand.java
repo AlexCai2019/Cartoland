@@ -28,7 +28,7 @@ public class OneATwoBCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		String argument = event.getOption("answer", OptionMapping::getAsString);
-		long userID = commandCore.getUserID();
+		long userID = event.getUser().getIdLong();
 		IMiniGame playing = commandCore.getGames().get(userID);
 
 		if (argument == null) //不帶參數

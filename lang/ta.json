@@ -157,7 +157,7 @@
 	"lottery.wrong_percent": "你袂使賭上 %d%% 的指令四方體！",
 	"lottery.wrong_argument": "用法： </lottery:1072947886612033666>` [<整數>]` 或 </lottery:1072947886612033666>` [<百分比>]%`，且毋通使用負數。",
 	"lottery.not_enough": "你無夠額的指令四方體！\n你欲賭上 %d 個指令四方體，但你現此時獨獨有 %d 個指令四方體。",
-	"lottery.query": "你現此時有 %d 個指令四方體。",
+	"lottery.query": "%s 現此時有 %d 個指令四方體。",
 	"transfer.success": "你轉了 %d 個指令四方體給 %s。\n你現此時有 %d 個指令四方體。",
 	"transfer.self_transfer": "你袂使轉數予家己！",
 	"transfer.wrong_user": "你袂使轉數予這位使用者！",

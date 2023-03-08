@@ -117,7 +117,7 @@ public class ChannelMessage extends ListenerAdapter
 
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
 		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
-			CommandBlocksHandle.addCommandBlocks(userID, rawMessage.length() + 1); //說話加等級 +1當作加上\0
+			CommandBlocksHandle.add(userID, rawMessage.length() + 1); //說話加等級 +1當作加上\0
 
 
 		//以下是有關機器人說話的部分

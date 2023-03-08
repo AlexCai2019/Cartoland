@@ -29,7 +29,7 @@ public class MinesweeperCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		IMiniGame playing = commandCore.getGames().get(commandCore.getUserID());
+		IMiniGame playing = commandCore.getGames().get(event.getUser().getIdLong());
 		if (playing != null)
 		{
 			event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();

@@ -152,6 +152,9 @@ class UUIDArrayCommand implements ICommand
 }
 
 /**
+ * {@code ColorRGB} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code /tool color_rgb}.
+ *
  * @since 1.6
  * @author Alex Cai
  */
@@ -172,13 +175,11 @@ class ColorRGB implements ICommand
 
 		for (Integer color : colors)
 		{
-			/*
 			if (color == null)
 			{
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
-			*/
 
 			if (color < 0 || color > 255)
 			{
@@ -197,6 +198,9 @@ class ColorRGB implements ICommand
 }
 
 /**
+ * {@code ColorInteger} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code /tool color_integer}.
+ *
  * @since 1.6
  * @author Alex Cai
  */

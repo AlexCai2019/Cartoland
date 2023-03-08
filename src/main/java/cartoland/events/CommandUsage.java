@@ -4,7 +4,6 @@ import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -33,15 +32,6 @@ public class CommandUsage extends ListenerAdapter
 	public HashMap<Long, IMiniGame> getGames()
 	{
 		return games;
-	}
-
-	/**
-	 * Last user uses slash command.
-	 */
-	private long userID;
-	public long getUserID()
-	{
-		return userID;
 	}
 
 	/**
@@ -109,7 +99,7 @@ public class CommandUsage extends ListenerAdapter
 		//shutdown
 		commands.put("shutdown", event ->
 		{
-			if (userID != IDAndEntities.AC_ID) //不是我
+			if (event.getUser().getIdLong() != IDAndEntities.AC_ID) //不是我
 			{
 				event.reply("You can't do that.").queue();
 				return;
@@ -125,7 +115,7 @@ public class CommandUsage extends ListenerAdapter
 		//reload
 		commands.put("reload", event ->
 		{
-			if (userID != IDAndEntities.AC_ID) //不是我
+			if (event.getIdLong() != IDAndEntities.AC_ID) //不是我
 			{
 				event.reply("You can't do that.").queue();
 				return;
@@ -138,10 +128,10 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("one_a_two_b", new OneATwoBCommand(this));
 
 		//lottery
-		commands.put("lottery", new LotteryCommand(this));
+		commands.put("lottery", new LotteryCommand());
 
 		//transfer
-		commands.put("transfer", new TransferCommand(this));
+		commands.put("transfer", new TransferCommand());
 
 		//minesweeper
 		//commands.put("minesweeper", new MinesweeperCommand(this));
@@ -157,8 +147,6 @@ public class CommandUsage extends ListenerAdapter
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
 	{
-		User user = event.getUser();
-		userID = user.getIdLong();
 		ICommand commandExecution = commands.get(event.getName());
 		if (commandExecution != null)
 			commandExecution.commandProcess(event);
@@ -178,8 +166,8 @@ public class CommandUsage extends ListenerAdapter
 	{
 		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
-			return JsonHandle.command(userID, jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
-		return JsonHandle.command(userID, jsonKey, argument);
+			return JsonHandle.command(event.getIdLong(), jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
+		return JsonHandle.command(event.getIdLong(), jsonKey, argument);
 	}
 }
 

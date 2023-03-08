@@ -17,17 +17,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
  */
 public class TransferCommand implements ICommand
 {
-	private final CommandUsage commandCore;
-
-	public TransferCommand(CommandUsage commandUsage)
-	{
-		commandCore = commandUsage;
-	}
-
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		long userID = commandCore.getUserID();
+		long userID = event.getUser().getIdLong();
 
 		User target = event.getOption("target", OptionMapping::getAsUser);
 		if (target == null)
@@ -55,7 +48,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		long nowHave = CommandBlocksHandle.getCommandBlocks(userID);
+		long nowHave = CommandBlocksHandle.get(userID);
 		long transferAmount;
 		if (transferAmountString.matches("\\d+"))
 			transferAmount = Long.parseLong(transferAmountString);
@@ -85,8 +78,8 @@ public class TransferCommand implements ICommand
 		event.reply(JsonHandle.getJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsMention(), afterHave))
 				.queue(interactionHook ->
 				{
-					CommandBlocksHandle.setCommandBlocks(targetID, Algorithm.safeAdd(CommandBlocksHandle.getCommandBlocks(targetID), transferAmount));
-					CommandBlocksHandle.setCommandBlocks(userID, afterHave);
+					CommandBlocksHandle.set(targetID, Algorithm.safeAdd(CommandBlocksHandle.get(targetID), transferAmount));
+					CommandBlocksHandle.set(userID, afterHave);
 				});
 	}
 }

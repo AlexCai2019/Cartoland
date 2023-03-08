@@ -154,12 +154,34 @@ public class AddCommands
 			Commands.slash("lottery", "Play the lottery game")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 					.setDescriptionLocalization(CHINESE_CHINA, "抽奖")
-					.addOptions(
-							new OptionData(OptionType.STRING, "bet", "The amount of your command blocks you want to bet", false, false)
-									.setNameLocalization(CHINESE_TAIWAN, "賭注")
-									.setNameLocalization(CHINESE_CHINA, "賭注")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "想賭上的數量")
-									.setDescriptionLocalization(CHINESE_CHINA, "想赌上的数量")),
+					.addSubcommands(
+							new SubcommandData("get", "Gets the amount of command blocks the user owns")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "獲得使用者擁有的指令方塊數量")
+									.setDescriptionLocalization(CHINESE_CHINA, "获得用户拥有的命令方块数量")
+									.addOptions(
+											new OptionData(OptionType.USER, "target", "The user that you want to check", false, false)
+													.setNameLocalization(CHINESE_TAIWAN, "目標")
+													.setNameLocalization(CHINESE_CHINA, "目标")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的使用者")
+													.setDescriptionLocalization(CHINESE_CHINA, "想确认的用户")),
+							new SubcommandData("bet", "Bet some command blocks")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "賭上一些指令方塊")
+									.setDescriptionLocalization(CHINESE_CHINA, "赌上一些命令方块")
+									.addOptions(
+											new OptionData(OptionType.STRING, "bet", "The amount of your command blocks you want to bet", true, false)
+													.setNameLocalization(CHINESE_TAIWAN, "賭注")
+													.setNameLocalization(CHINESE_CHINA, "賭注")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "想賭上的數量")
+													.setDescriptionLocalization(CHINESE_CHINA, "想赌上的数量")),
+							new SubcommandData("ranking", "Rank all users")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "獲得所有使用者們的排行")
+									.setDescriptionLocalization(CHINESE_CHINA, "获得所有用户们的排行")
+									.addOptions(
+											new OptionData(OptionType.INTEGER, "page", "The page of the ranking list", false, false)
+													.setNameLocalization(CHINESE_TAIWAN, "頁數")
+													.setNameLocalization(CHINESE_CHINA, "页数")
+													.setDescriptionLocalization(CHINESE_TAIWAN, "排名清單的頁數")
+													.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数"))),
 			Commands.slash("transfer", "Transfer your command blocks")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 					.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")

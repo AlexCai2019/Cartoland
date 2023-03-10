@@ -53,14 +53,14 @@ public class CreateThreadChannel extends ListenerAdapter
 		if (threadChannel.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID)
 			return;
 
-		threadChannel.sendMessageEmbeds(startEmbed).queue();
+		threadChannel.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 
 		List<ForumTag> tags = new ArrayList<>(threadChannel.getAppliedTags());
 		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
 		if (!tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者自己沒有加unresolved
 		{
 			if (tags.size() == 5) //不可以超過5個tag
-				tags.remove(4);
+				tags.remove(4); //移除最後一個 空出位置給unresolved
 			tags.add(IDAndEntities.unresolvedForumTag);
 		}
 		threadChannel.getManager().setAppliedTags(tags).queue();

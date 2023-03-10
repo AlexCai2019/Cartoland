@@ -4,6 +4,7 @@ import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,12 +87,14 @@ class JsonBasedComplete extends GenericComplete
 		super(commandName);
 	}
 
+	@Override
 	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
-		if (!event.getFocusedOption().getName().equals(commandName + "_name"))
+		AutoCompleteQuery focusedOption = event.getFocusedOption();
+		if (!focusedOption.getName().equals(commandName + "_name"))
 			return;
 
-		String optionValue = event.getFocusedOption().getValue(); //獲取目前正在打的選項
+		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
 		List<Command.Choice> choices = JsonHandle.commandList(commandName)
 				.stream()
 				.filter(word -> ((String) word).startsWith(optionValue))

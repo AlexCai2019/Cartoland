@@ -2,7 +2,9 @@ package cartoland.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.utils.FileUpload;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -267,11 +269,10 @@ class PackMcmetaCommand implements ICommand
 			return;
 		}
 
-		event.reply(switch (packType.charAt(0))
+		event.replyFiles(FileUpload.fromData(switch (packType.charAt(0))
 		{
 			case 'd' ->
         		"""
-				```json
 				{
 					"pack":
 					{
@@ -279,12 +280,10 @@ class PackMcmetaCommand implements ICommand
 						"description": "Your description here"
 					}
 				}
-				```
-				""";
+				""".getBytes(StandardCharsets.UTF_8);
 
 			case 'r' ->
     			"""
-				```json
 				{
 					"pack":
 					{
@@ -292,10 +291,10 @@ class PackMcmetaCommand implements ICommand
 						"description": "Your description here"
 					}
 				}
-				```
-				""";
+				""".getBytes(StandardCharsets.UTF_8);
 
-			default -> "You need to choose whether you are making a data pack or a resource pack.";
-		}).queue();
+			default ->
+					"You need to choose whether you are making a data pack or a resource pack.".getBytes(StandardCharsets.UTF_8);
+		}, "pack.mcmeta")).queue();
 	}
 }

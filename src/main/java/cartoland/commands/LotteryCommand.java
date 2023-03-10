@@ -73,6 +73,7 @@ class Bet implements ICommand
 {
 	private final Pattern number = Pattern.compile("\\d+");
 	private final Pattern percent = Pattern.compile("\\d+%");
+	private static final long MAXIMUM = 1000000L;
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -104,6 +105,12 @@ class Bet implements ICommand
 		else //都不是
 		{
 			event.reply(JsonHandle.getJsonKey(userID, "lottery.wrong_argument")).queue();
+			return;
+		}
+
+		if (bet > MAXIMUM)
+		{
+			event.reply(JsonHandle.getJsonKey(userID, "lottery.too_much").formatted(bet, MAXIMUM)).queue();
 			return;
 		}
 
@@ -142,7 +149,6 @@ class Bet implements ICommand
 class Ranking implements ICommand
 {
 	private final StringBuilder rankBuilder = new StringBuilder();
-	private final List<UserNameAndBlocks> forSort = new ArrayList<>();
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -150,18 +156,42 @@ class Ranking implements ICommand
 		Integer pageBox = event.getOption("page", OptionMapping::getAsInt);
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
-		//假設總共只有27位使用者 但是卻填了第4頁 那麼30 > 27
-		if ((page - 1) * 10 > CommandBlocksHandle.length()) //超出範圍
-			page = CommandBlocksHandle.length() / 10 + 1; //同上例子 就改成顯示第3頁
+		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
+		final int maxPage = (CommandBlocksHandle.length() - 1) / 10 + 1;
+		if (page > maxPage) //超出範圍
+			page = maxPage; //同上例子 就改成顯示第3頁
 		final int finalPage = page; //lambda要用
 
 		User user = event.getUser(); //這次事件的使用者
-		String userName = user.getAsTag();
-		JsonHandle.setUserName(user.getIdLong(), userName);
+		String userName = user.getAsTag(); //這次事件使用者的名字
+		JsonHandle.setUserName(user.getId(), userName); //更新他的名字 這裡獲得的是字串型的ID 和本程式的慣例不同
 
-		event.deferReply().queue(interactionHook ->
+		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
-			loadMapToList();
+			final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
+			CommandBlocksHandle.getMap().forEach((userID, blocks) -> //走訪所有的ID和方塊對 注意ID是字串 與慣例不同
+			{
+				String userNameFromJSON = JsonHandle.getUserName(userID); //透過ID從JSON資料庫內獲得的名字
+				forSort.add(new UserNameAndBlocks(userNameFromJSON, ((Number) blocks).longValue())); //新增一對名字和方塊數量
+			});
+
+			forSort.sort((user1, user2) -> //排序
+			{
+				 return Long.compare(user2.blocks(), user1.blocks()); //方塊較多的在前面 方塊較少的在後面
+			});
+
+			//page 從1開始
+			int startElement = (finalPage - 1) * 10; //開始的那個元素
+			int endElement = startElement + 10; //結束的那個元素
+			if (endElement > forSort.size()) //結束的那個元素比list總長還長
+				endElement = forSort.size();
+
+			List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
+
+			int longestNameLength = ranking.stream()
+					.map(rankingUser -> rankingUser.userName().length())
+					.max(Integer::compare)
+					.orElse(20); //找出名字最長的那個人的字數 找不到的話就用20代替
 
 			long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
 
@@ -174,46 +204,25 @@ class Ranking implements ICommand
 					.append(blocks)
 					.append(" command blocks.\n\n");
 
-			forSort.sort((user1, user2) -> //排序
-			{
-				 return Long.compare(user2.blocks(), user1.blocks()); //方塊較多的在前面 方塊較少的在後面
-			});
-
-			//page 從1開始
-			int startElement = (finalPage - 1) * 10; //開始的那個元素
-			int endElement = startElement + 10; //結束的那個元素
-			if (endElement > forSort.size()) //結束的那個元素比list總長還長
-				endElement = forSort.size();
-			List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement);
-
 			for (int i = 0, add = finalPage * 10 - 9; i < ranking.size(); i++) //add = (finalPage - 1) * 10 + 1
 			{
 				UserNameAndBlocks rank = ranking.get(i);
 				rankBuilder.append("[\u001B[36m")
 						.append(String.format("%03d", add + i))
 						.append("\u001B[0m]\t")
-						.append(rank.userName())
-						.append(": \u001B[36m")
+						.append(String.format("%-" + longestNameLength + "s", rank.userName() + ':'))
+						.append(" \u001B[36m")
 						.append(rank.blocks())
 						.append("\u001B[0m\n");
 			}
 
-			rankBuilder.append("\nPage ")
+			rankBuilder.append("\n--------------------\nPage ")
 					.append(finalPage)
+					.append(" / ")
+					.append(maxPage)
 					.append("\n```");
 
 			interactionHook.sendMessage(rankBuilder.toString()).queue();
-		});
-	}
-
-	void loadMapToList()
-	{
-		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
-		{
-			String userName = JsonHandle.getUserName(userID);
-			UserNameAndBlocks getUserNameAndBlocks = new UserNameAndBlocks(userName, ((Number) blocks).longValue());
-			if (!forSort.contains(getUserNameAndBlocks))
-				forSort.add(getUserNameAndBlocks);
 		});
 	}
 }

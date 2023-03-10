@@ -45,13 +45,13 @@ public class QuestionForumMessage extends ListenerAdapter
 		if (!forumPost.isArchived()) //開啟著的
 		{
 			Message message = event.getMessage();
-			if (!message.getContentRaw().equals(resolvedFormat))
+			if (!message.getContentRaw().equals(resolvedFormat)) //不是:resolved:表情符號
 				return;
 
-			message.addReaction(resolved).queue();
+			message.addReaction(resolved).queue(); //機器人會加:resolved:
 			tags = new ArrayList<>(tags);
-			tags.remove(IDAndEntities.unresolvedForumTag);
-			tags.add(IDAndEntities.resolvedForumTag);
+			tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
+			tags.add(IDAndEntities.resolvedForumTag); //新增resolved
 			forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 		}
 		else //已關閉的
@@ -79,10 +79,10 @@ public class QuestionForumMessage extends ListenerAdapter
 		if (forumPost.isArchived()) //關閉著的
 			return;
 
-		forumPost.retrieveMessageById(event.getMessageId()).queue(message -> message.addReaction(resolved).queue());
+		forumPost.retrieveMessageById(event.getMessageId()).queue(message -> message.addReaction(resolved).queue()); //機器人會加:resolved:
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
-		tags.remove(IDAndEntities.unresolvedForumTag);
-		tags.add(IDAndEntities.resolvedForumTag);
+		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
+		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 	}
 }

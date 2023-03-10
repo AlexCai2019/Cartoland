@@ -5,7 +5,7 @@
 	"help.name.cmd": "格式: </cmd:1063884269006635070>` [<命令>]`",
 	"help.name.faq": "格式: </faq:1063884269006635071>` [<问题>]`",
 	"help.name.dtp": "格式: </dtp:1063884269006635072>` [<数据包功能>]`",
-	"help.name.tool": "格式: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <参数...>`",
+	"help.name.tool": "格式: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool color_rgb:1074390327407947867> </tool color_integer:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <参数...>`",
 	"help.name.lang": "格式: </lang:1063884269006635074>` <代码>`",
 	"cmd.begin": "`命令: ",
 	"cmd.end": "`",
@@ -156,12 +156,12 @@
 	"lottery.play_with_your_limit": "小赌怡情，大赌伤身。",
 	"lottery.result": "你赌上 %d 个命令方块后%s\n你现在有 %d 个命令方块。",
 	"lottery.wrong_percent": "你不能赌上 %d%% 的命令方块！",
-	"lottery.wrong_argument": "用法： </lottery:1072947886612033666>` [<整数>]` 或 </lottery:1072947886612033666>` [<百分比>]%`，且不可使用负数。",
+	"lottery.wrong_argument": "用法： </lottery bet:1072947886612033666>` <整数>` 或 </lottery bet:1072947886612033666>` <百分比>%`，且不可使用负数。",
 	"lottery.not_enough": "你没有足够的命令方块！\n你想赌上 %d 个命令方块，但你目前只有 %d 个命令方块。",
 	"transfer.success": "你转了 %d 个命令方块给 %s。\n你现在有 %d 个命令方块。",
 	"transfer.self_transfer": "你不能转帐给自己！",
 	"transfer.wrong_user": "你不能转帐给这名用户！",
 	"transfer.wrong_percent": "你不能转帐 %d%% 的命令方块！",
-	"transfer.wrong_argument": "用法： /transfer` <用户> <整数>` 或 /transfer` <用户> <百分比>%`，且不可使用负数。",
+	"transfer.wrong_argument": "用法： </transfer:1079058062582759534>` <用户> <整数>` 或 </transfer:1079058062582759534>` <用户> <百分比>%`，且不可使用负数。",
 	"transfer.not_enough": "你没有足够的命令方块！\n你想转帐 %d 个命令方块，但你目前只有 %d 个命令方块。"
 }

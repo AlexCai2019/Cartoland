@@ -1,10 +1,5 @@
 package cartoland.utilities;
 
-import net.dv8tion.jda.api.entities.User;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static cartoland.utilities.JsonHandle.commandBlocksFile;
 
 /**
@@ -58,40 +53,8 @@ public class CommandBlocksHandle
 		return commandBlocksFile.length();
 	}
 
-	public static List<userAndBlocks> ranking()
+	public static java.util.Map<String, Object> getMap()
 	{
-		List<userAndBlocks> sorted = new ArrayList<>(commandBlocksFile.length());
-
-		commandBlocksFile.toMap().forEach((userID, blocks) ->
-		{
-			User user = IDAndEntities.jda.getUserById(userID);
-			if (user == null)
-				IDAndEntities.jda.retrieveUserById(userID).queue(
-						user1 -> sorted.add(new userAndBlocks(user1, ((Number) blocks).longValue())),
-						throwable -> sorted.add(new userAndBlocks(IDAndEntities.botItself, 0L)));
-			else
-				sorted.add(new userAndBlocks(user, ((Number) blocks).longValue()));
-		});
-
-		try
-		{
-			Thread.sleep(1000L); //等待retrieveUserById獲取好所有玩家
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-			System.out.print('\u0007');
-			FileHandle.log(e);
-			System.exit(1);
-		}
-
-		sorted.sort((user1, user2) ->
-		{
-			return Long.compare(user2.blocks, user1.blocks); //方塊較多的在前面 方塊較少的在後面
-		});
-
-		return sorted;
+		return commandBlocksFile.toMap();
 	}
-
-	public record userAndBlocks(User user, long blocks) {}
 }

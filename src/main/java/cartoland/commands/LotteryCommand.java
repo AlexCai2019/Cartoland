@@ -1,19 +1,22 @@
 package cartoland.commands;
 
-import cartoland.events.CommandUsage;
-import cartoland.utilities.*;
+import cartoland.utilities.Algorithm;
+import cartoland.utilities.CommandBlocksHandle;
+import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
- * interface, which is for the commands HashMap in {@link CommandUsage}. This class doesn't have a backend class
- * since all the works can be done here.
+ * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
+ * have a backend class since all the works can be done here.
  *
  * @since 1.4
  * @author Alex Cai
@@ -138,6 +141,9 @@ class Bet implements ICommand
  */
 class Ranking implements ICommand
 {
+	private final StringBuilder rankBuilder = new StringBuilder();
+	private final List<UserNameAndBlocks> forSort = new ArrayList<>();
+
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -147,42 +153,69 @@ class Ranking implements ICommand
 		//假設總共只有27位使用者 但是卻填了第4頁 那麼30 > 27
 		if ((page - 1) * 10 > CommandBlocksHandle.length()) //超出範圍
 			page = CommandBlocksHandle.length() / 10 + 1; //同上例子 就改成顯示第3頁
+		final int finalPage = page; //lambda要用
 
-		List<CommandBlocksHandle.userAndBlocks> ranking = CommandBlocksHandle.ranking();
-		long blocks = CommandBlocksHandle.get(event.getUser().getIdLong());
+		User user = event.getUser(); //這次事件的使用者
+		String userName = user.getAsTag();
+		JsonHandle.setUserName(user.getIdLong(), userName);
 
-		StringBuilder rankBuilder = new StringBuilder()
-				.append("```ansi\nCommand blocks in ")
-				.append(IDAndEntities.cartolandServer.getName())
-				.append("\n--------------------\nYou are rank #")
-				.append(ranking.indexOf(new CommandBlocksHandle.userAndBlocks(event.getUser(), blocks)) + 1)
-				.append(", with ")
-				.append(blocks)
-				.append(" command blocks.\n");
-
-		//page 從1開始
-		int startElement = (page - 1) * 10; //開始的那個元素
-		int endElement = startElement + 10; //結束的那個元素
-		if (endElement > ranking.size()) //結束的那個元素比list總長還長
-			endElement = ranking.size();
-		ranking = ranking.subList(startElement, endElement);
-
-		for (int i = 0; i < ranking.size(); i++)
+		event.deferReply().queue(interactionHook ->
 		{
-			CommandBlocksHandle.userAndBlocks rank = ranking.get(i);
-			rankBuilder.append("[\u001B[36m")
-					.append(page + i)
-					.append("\u001B[0m]\t")
-					.append(rank.user().getAsTag())
-					.append(": \u001B[36m")
-					.append(rank.blocks())
-					.append("\u001B[0m\n");
-		}
+			loadMapToList();
 
-		rankBuilder.append("\nPage ")
-				.append(page)
-				.append("\n```");
+			long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
 
-		event.reply(rankBuilder.toString()).queue();
+			rankBuilder.setLength(0);
+			rankBuilder.append("```ansi\nCommand blocks in ")
+					.append(IDAndEntities.cartolandServer.getName())
+					.append("\n--------------------\nYou are rank #")
+					.append(forSort.indexOf(new UserNameAndBlocks(userName, blocks)) + 1)
+					.append(", with ")
+					.append(blocks)
+					.append(" command blocks.\n\n");
+
+			forSort.sort((user1, user2) -> //排序
+			{
+				 return Long.compare(user2.blocks(), user1.blocks()); //方塊較多的在前面 方塊較少的在後面
+			});
+
+			//page 從1開始
+			int startElement = (finalPage - 1) * 10; //開始的那個元素
+			int endElement = startElement + 10; //結束的那個元素
+			if (endElement > forSort.size()) //結束的那個元素比list總長還長
+				endElement = forSort.size();
+			List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement);
+
+			for (int i = 0, add = finalPage * 10 - 9; i < ranking.size(); i++) //add = (finalPage - 1) * 10 + 1
+			{
+				UserNameAndBlocks rank = ranking.get(i);
+				rankBuilder.append("[\u001B[36m")
+						.append(String.format("%03d", add + i))
+						.append("\u001B[0m]\t")
+						.append(rank.userName())
+						.append(": \u001B[36m")
+						.append(rank.blocks())
+						.append("\u001B[0m\n");
+			}
+
+			rankBuilder.append("\nPage ")
+					.append(finalPage)
+					.append("\n```");
+
+			interactionHook.sendMessage(rankBuilder.toString()).queue();
+		});
+	}
+
+	void loadMapToList()
+	{
+		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
+		{
+			String userName = JsonHandle.getUserName(userID);
+			UserNameAndBlocks getUserNameAndBlocks = new UserNameAndBlocks(userName, ((Number) blocks).longValue());
+			if (!forSort.contains(getUserNameAndBlocks))
+				forSort.add(getUserNameAndBlocks);
+		});
 	}
 }
+
+record UserNameAndBlocks(String userName, long blocks) {}

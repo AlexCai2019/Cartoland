@@ -166,8 +166,8 @@ public class CommandUsage extends ListenerAdapter
 	{
 		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
-			return JsonHandle.command(event.getIdLong(), jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
-		return JsonHandle.command(event.getIdLong(), jsonKey, argument);
+			return JsonHandle.command(event.getUser().getIdLong(), jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
+		return JsonHandle.command(event.getUser().getIdLong(), jsonKey, argument);
 	}
 }
 

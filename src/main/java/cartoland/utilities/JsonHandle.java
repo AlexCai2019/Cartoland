@@ -23,11 +23,9 @@ public class JsonHandle
 
 	public static final String USERS_JSON = "users.json";
 	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
-	public static final String NAME_FILE_JSON = "name.json";
 
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
 	static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
-	private static final JSONObject nameFile = new JSONObject(FileHandle.buildJsonStringFromFile(NAME_FILE_JSON));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
 	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
 	private static final StringBuilder builder = new StringBuilder();
@@ -58,7 +56,6 @@ public class JsonHandle
 	{
 		FileHandle.synchronizeFile(JsonHandle.USERS_JSON, usersFile.toString());
 		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON, commandBlocksFile.toString());
-		FileHandle.synchronizeFile(JsonHandle.NAME_FILE_JSON, nameFile.toString());
 	}
 
 	public static String command(long userID, String typeCommandName)
@@ -122,19 +119,5 @@ public class JsonHandle
 			return englishFile.getString(key);
 		else
 			return "";
-	}
-
-	public static String getUserName(String userID)
-	{
-		if (nameFile.has(userID)) //資料庫內已有這人
-			return nameFile.getString(userID); //回傳
-
-		IDAndEntities.jda.retrieveUserById(userID).queue(user -> setUserName(userID, user.getAsTag()));
-		return userID; //沒有這人就回傳ID
-	}
-
-	public static void setUserName(String userID, String userName)
-	{
-		nameFile.put(userID, userName);
 	}
 }

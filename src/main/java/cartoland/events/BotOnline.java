@@ -1,6 +1,8 @@
 package cartoland.events;
 
+import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.FileHandle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +73,8 @@ public class BotOnline extends ListenerAdapter
 
 		ohBoy3AM(); //好棒 三點了
 
+		initialIDAndName(); //初始化idAndName
+
 		String logString = "Cartoland Bot is now online.";
 		botChannel.sendMessage(logString).queue();
 		System.out.println(logString);
@@ -104,8 +108,35 @@ public class BotOnline extends ListenerAdapter
 		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
 
 		threeAMService = Executors.newScheduledThreadPool(1);
-		threeAMHandle = threeAMService.scheduleAtFixedRate(
-				() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
-				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		threeAMHandle = threeAMService.scheduleAtFixedRate(() ->
+		{
+			undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue();
+			updateIDAndName(); //每天凌晨三點更新名字 以免有人改名
+		},
+		secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+	}
+
+	private void initialIDAndName()
+	{
+		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
+		{
+			User user = jda.getUserById(userID);
+			if (user != null)
+				idAndNames.put(userID, user.getAsTag());
+			else
+				jda.retrieveUserById(userID).queue(getUser -> idAndNames.put(userID, getUser.getAsTag()));
+		});
+	}
+
+	private void updateIDAndName()
+	{
+		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
+		{
+			 User user = jda.getUserById(userID);
+			 if (user != null)
+				 idAndNames.replace(userID, user.getAsTag());
+			 else
+				 jda.retrieveUserById(userID).queue(getUser -> idAndNames.replace(userID, getUser.getAsTag()));
+		});
 	}
 }

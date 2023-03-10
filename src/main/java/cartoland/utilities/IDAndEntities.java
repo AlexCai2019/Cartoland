@@ -46,6 +46,7 @@ public class IDAndEntities
 	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
 	public static final List<Long> canTalkCategories = new ArrayList<>(3);
 	public static final HashMap<String, String> youtubers = new HashMap<>();
+	public static final HashMap<String, String> idAndNames = new HashMap<>(); //ID為key 名字為value 注意和以long為ID的慣例不同
 
 	static
 	{

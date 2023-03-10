@@ -164,15 +164,16 @@ class Ranking implements ICommand
 
 		User user = event.getUser(); //這次事件的使用者
 		String userName = user.getAsTag(); //這次事件使用者的名字
-		JsonHandle.setUserName(user.getId(), userName); //更新他的名字 這裡獲得的是字串型的ID 和本程式的慣例不同
+		IDAndEntities.idAndNames.replace(user.getId(), userName); //更新他的名字 這裡獲得的是字串型的ID 和本程式的慣例不同
 
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
 			final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 			CommandBlocksHandle.getMap().forEach((userID, blocks) -> //走訪所有的ID和方塊對 注意ID是字串 與慣例不同
 			{
-				String userNameFromJSON = JsonHandle.getUserName(userID); //透過ID從JSON資料庫內獲得的名字
-				forSort.add(new UserNameAndBlocks(userNameFromJSON, ((Number) blocks).longValue())); //新增一對名字和方塊數量
+				String userNameFromMap = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得的名字
+				if (userNameFromMap != null)
+					forSort.add(new UserNameAndBlocks(userNameFromMap, ((Number) blocks).longValue())); //新增一對名字和方塊數量
 			});
 
 			forSort.sort((user1, user2) -> //排序
@@ -187,11 +188,6 @@ class Ranking implements ICommand
 				endElement = forSort.size();
 
 			List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-
-			int longestNameLength = ranking.stream()
-					.map(rankingUser -> rankingUser.userName().length())
-					.max(Integer::compare)
-					.orElse(20); //找出名字最長的那個人的字數 找不到的話就用20代替
 
 			long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
 
@@ -210,8 +206,8 @@ class Ranking implements ICommand
 				rankBuilder.append("[\u001B[36m")
 						.append(String.format("%03d", add + i))
 						.append("\u001B[0m]\t")
-						.append(String.format("%-" + longestNameLength + "s", rank.userName() + ':'))
-						.append(" \u001B[36m")
+						.append(rank.userName())
+						.append(": \u001B[36m")
 						.append(rank.blocks())
 						.append("\u001B[0m\n");
 			}

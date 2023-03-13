@@ -35,7 +35,8 @@ public class Cartoland
 						new GetRole(), //當有人獲得會員身分組
 						new JoinServer(), //當有人加入創聯
 						new CreateThreadChannel(), //當有人在Questions論壇發文
-						new QuestionForumMessage()) //當有人在Questions論壇講話
+						new QuestionForumMessage(), //當有人在Questions論壇講話
+						new UserChangeName()) //當有人改名(不是暱稱)
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Do /help for more information")) //正在玩

@@ -15,6 +15,8 @@ import static cartoland.utilities.JsonHandle.commandBlocksFile;
  */
 public class CommandBlocksHandle
 {
+	public static boolean changed = true;
+
 	private CommandBlocksHandle()
 	{
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
@@ -29,6 +31,7 @@ public class CommandBlocksHandle
 	 */
 	public static void add(long userID, long add)
 	{
+		changed = true;
 		String userIDString = Long.toUnsignedString(userID);
 		commandBlocksFile.put(userIDString, commandBlocksFile.has(userIDString) ?
 				Algorithm.safeAdd(commandBlocksFile.getLong(userIDString), add) : add);
@@ -36,6 +39,7 @@ public class CommandBlocksHandle
 
 	public static void set(long userID, long value)
 	{
+		changed = true;
 		commandBlocksFile.put(Long.toUnsignedString(userID), value);
 	}
 

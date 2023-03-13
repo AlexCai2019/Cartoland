@@ -32,6 +32,7 @@ public class IDAndEntities
 	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
 	public static final long PUBLIC_AREA_CATEGORY_ID = 922892242459459657L; //創聯的公眾區域類別
+	public static final long SHOWCASE_CATEGORY_ID = 892127357878554634L; //創聯的創作展示類別
 	public static final long DANGEROUS_CATEGORY_ID = 919696732613378078L; //創聯的地下類別
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
@@ -46,13 +47,14 @@ public class IDAndEntities
 	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
 	public static final List<Long> canTalkCategories = new ArrayList<>(3);
 	public static final HashMap<String, String> youtubers = new HashMap<>();
-	public static final HashMap<String, String> idAndNames = new HashMap<>(); //ID為key 名字為value 注意和以long為ID的慣例不同
+	public static final HashMap<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
 
 	static
 	{
 		commandBlockCategories.add(GENERAL_CATEGORY_ID);
 		commandBlockCategories.add(TECH_TALK_CATEGORY_ID);
 		commandBlockCategories.add(PUBLIC_AREA_CATEGORY_ID);
+		commandBlockCategories.add(SHOWCASE_CATEGORY_ID);
 
 		canTalkCategories.add(GENERAL_CATEGORY_ID);
 		canTalkCategories.add(PUBLIC_AREA_CATEGORY_ID);

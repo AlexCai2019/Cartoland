@@ -108,35 +108,22 @@ public class BotOnline extends ListenerAdapter
 		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
 
 		threeAMService = Executors.newScheduledThreadPool(1);
-		threeAMHandle = threeAMService.scheduleAtFixedRate(() ->
-		{
-			undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue();
-			updateIDAndName(); //每天凌晨三點更新名字 以免有人改名
-		},
-		secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		threeAMHandle = threeAMService.scheduleAtFixedRate(
+				() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
+				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void initialIDAndName()
 	{
-		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
+		CommandBlocksHandle.getMap().forEach((userIDString, blocks) ->
 		{
+			long userID = Long.parseLong(userIDString);
 			User user = jda.getUserById(userID);
 			if (user != null)
 				idAndNames.put(userID, user.getAsTag());
 			else
 				jda.retrieveUserById(userID).queue(getUser -> idAndNames.put(userID, getUser.getAsTag()));
 		});
-	}
-
-	private void updateIDAndName()
-	{
-		CommandBlocksHandle.getMap().forEach((userID, blocks) ->
-		{
-			 User user = jda.getUserById(userID);
-			 if (user != null)
-				 idAndNames.replace(userID, user.getAsTag());
-			 else
-				 jda.retrieveUserById(userID).queue(getUser -> idAndNames.replace(userID, getUser.getAsTag()));
-		});
+		CommandBlocksHandle.changed = true;
 	}
 }

@@ -8,9 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -38,10 +36,14 @@ public class LotteryCommand implements ICommand
 		ICommand subCommand = subCommands.get(event.getSubcommandName());
 		if (subCommand != null)
 			subCommand.commandProcess(event);
+		else
+			event.reply("Impossible, this is required!").queue();
 	}
 }
 
 /**
+ * {@code Get} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery get}.
+ *
  * @since 1.6
  * @author Alex Cai
  */
@@ -66,6 +68,8 @@ class Get implements ICommand
 }
 
 /**
+ * {@code Bet} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery bet}.
+ *
  * @since 1.6
  * @author Alex Cai
  */
@@ -73,6 +77,7 @@ class Bet implements ICommand
 {
 	private final Pattern number = Pattern.compile("\\d+");
 	private final Pattern percent = Pattern.compile("\\d+%");
+	private final Random random = new Random();
 	private static final long MAXIMUM = 1000000L;
 
 	@Override
@@ -122,7 +127,7 @@ class Bet implements ICommand
 
 		long afterBet;
 		String result;
-		if (Algorithm.chance(50)) //賭贏
+		if (random.nextBoolean()) //賭贏 雖然可用Algorithm.chance(50) 且統計上也的確是50% 但因為體感怪怪的 所以還是改用random.nextBoolean()
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getJsonKey(userID, "lottery.win");
@@ -143,12 +148,15 @@ class Bet implements ICommand
 }
 
 /**
+ * {@code Ranking} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery ranking}.
+ *
  * @since 1.6
  * @author Alex Cai
  */
 class Ranking implements ICommand
 {
 	private final StringBuilder rankBuilder = new StringBuilder();
+	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -157,21 +165,26 @@ class Ranking implements ICommand
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
 		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
-		final int maxPage = (CommandBlocksHandle.length() - 1) / 10 + 1;
+		int maxPage = (CommandBlocksHandle.length() - 1) / 10 + 1;
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
-		final int finalPage = page; //lambda要用
 
 		User user = event.getUser(); //這次事件的使用者
-		String userName = user.getAsTag(); //這次事件使用者的名字
-		IDAndEntities.idAndNames.replace(user.getId(), userName); //更新他的名字 這裡獲得的是字串型的ID 和本程式的慣例不同
 
+		if (!CommandBlocksHandle.changed) //距離上一次排序 沒有任何變動
+		{
+			buildReplyString(user, page, maxPage);
+			event.reply(rankBuilder.toString()).queue();
+			return;
+		}
+
+		final int finalPage = page; //lambda要用
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
-			final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
-			CommandBlocksHandle.getMap().forEach((userID, blocks) -> //走訪所有的ID和方塊對 注意ID是字串 與慣例不同
+			forSort.clear(); //清除forSort
+			CommandBlocksHandle.getMap().forEach((userIDString, blocks) -> //走訪所有的ID和方塊對
 			{
-				String userNameFromMap = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得的名字
+				String userNameFromMap = IDAndEntities.idAndNames.get(Long.parseLong(userIDString)); //透過ID從JSON資料庫內獲得的名字
 				if (userNameFromMap != null)
 					forSort.add(new UserNameAndBlocks(userNameFromMap, ((Number) blocks).longValue())); //新增一對名字和方塊數量
 			});
@@ -181,46 +194,65 @@ class Ranking implements ICommand
 				 return Long.compare(user2.blocks(), user1.blocks()); //方塊較多的在前面 方塊較少的在後面
 			});
 
-			//page 從1開始
-			int startElement = (finalPage - 1) * 10; //開始的那個元素
-			int endElement = startElement + 10; //結束的那個元素
-			if (endElement > forSort.size()) //結束的那個元素比list總長還長
-				endElement = forSort.size();
-
-			List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-
-			long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
-
-			rankBuilder.setLength(0);
-			rankBuilder.append("```ansi\nCommand blocks in ")
-					.append(IDAndEntities.cartolandServer.getName())
-					.append("\n--------------------\nYou are rank #")
-					.append(forSort.indexOf(new UserNameAndBlocks(userName, blocks)) + 1)
-					.append(", with ")
-					.append(blocks)
-					.append(" command blocks.\n\n");
-
-			for (int i = 0, add = finalPage * 10 - 9; i < ranking.size(); i++) //add = (finalPage - 1) * 10 + 1
-			{
-				UserNameAndBlocks rank = ranking.get(i);
-				rankBuilder.append("[\u001B[36m")
-						.append(String.format("%03d", add + i))
-						.append("\u001B[0m]\t")
-						.append(rank.userName())
-						.append(": \u001B[36m")
-						.append(rank.blocks())
-						.append("\u001B[0m\n");
-			}
-
-			rankBuilder.append("\n--------------------\nPage ")
-					.append(finalPage)
-					.append(" / ")
-					.append(maxPage)
-					.append("\n```");
-
+			CommandBlocksHandle.changed = false; //已經排序過了
+			buildReplyString(user, finalPage, maxPage);
 			interactionHook.sendMessage(rankBuilder.toString()).queue();
 		});
 	}
+
+	private void buildReplyString(User user, int page, int maxPage)
+	{
+		//page 從1開始
+		int startElement = (page - 1) * 10; //開始的那個元素
+		int endElement = startElement + 10; //結束的那個元素
+		if (endElement > forSort.size()) //結束的那個元素比list總長還長
+			endElement = forSort.size();
+
+		List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
+		long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
+
+		rankBuilder.setLength(0);
+		rankBuilder.append("```ansi\nCommand blocks in ")
+				.append(IDAndEntities.cartolandServer.getName())
+				.append("\n--------------------\nYou are rank #")
+				.append(forSort.indexOf(new UserNameAndBlocks(user.getAsTag(), blocks)) + 1)
+				.append(", with ")
+				.append(blocks)
+				.append(" command blocks.\n\n");
+
+		for (int i = 0, add = page * 10 - 9; i < ranking.size(); i++) //add = (finalPage - 1) * 10 + 1
+		{
+			UserNameAndBlocks rank = ranking.get(i);
+			rankBuilder.append("[\u001B[36m")
+					.append(String.format("%03d", add + i))
+					.append("\u001B[0m]\t")
+					.append(rank.userName())
+					.append(": \u001B[36m")
+					.append(rank.blocks())
+					.append("\u001B[0m\n");
+		}
+
+		rankBuilder.append("\n--------------------\nPage ")
+				.append(page)
+				.append(" / ")
+				.append(maxPage)
+				.append("\n```");
+	}
 }
 
-record UserNameAndBlocks(String userName, long blocks) {}
+record UserNameAndBlocks(String userName, long blocks)
+{
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o)
+			return true;
+		return o instanceof UserNameAndBlocks that && userName.equals(that.userName);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(userName, blocks);
+	}
+}

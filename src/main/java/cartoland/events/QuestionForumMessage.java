@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -15,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code QuestionForumMessage} is a listener that triggers when a user types anything or add reaction in any post
- * in Questions forum channel. This class was registered in {@link cartoland.Cartoland#main}, with the build of
- * JDA.
+ * {@code QuestionForumMessage} is a listener that triggers when a user types anything, add any reaction, or change
+ * the archive value in any post in Questions forum channel. This class was registered in {@link cartoland.Cartoland#main},
+ * with the build of JDA.
  *
  * @since 1.5
  * @author Alex Cai
@@ -42,25 +43,15 @@ public class QuestionForumMessage extends ListenerAdapter
 			return;
 
 		List<ForumTag> tags = forumPost.getAppliedTags();
-		if (!forumPost.isArchived()) //開啟著的
-		{
-			Message message = event.getMessage();
-			if (!message.getContentRaw().equals(resolvedFormat)) //不是:resolved:表情符號
-				return;
+		Message message = event.getMessage();
+		if (!message.getContentRaw().equals(resolvedFormat)) //不是:resolved:表情符號
+			return;
 
-			message.addReaction(resolved).queue(); //機器人會加:resolved:
-			tags = new ArrayList<>(tags);
-			tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
-			tags.add(IDAndEntities.resolvedForumTag); //新增resolved
-			forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
-		}
-		else //已關閉的
-		{
-			tags = new ArrayList<>(tags);
-			tags.remove(IDAndEntities.resolvedForumTag);
-			tags.add(IDAndEntities.unresolvedForumTag);
-			forumPost.getManager().setAppliedTags(tags).queue(); //打開貼文
-		}
+		message.addReaction(resolved).queue(); //機器人會加:resolved:
+		tags = new ArrayList<>(tags);
+		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
+		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
+		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 	}
 
 	@Override
@@ -79,10 +70,29 @@ public class QuestionForumMessage extends ListenerAdapter
 		if (forumPost.isArchived()) //關閉著的
 			return;
 
-		forumPost.retrieveMessageById(event.getMessageId()).queue(message -> message.addReaction(resolved).queue()); //機器人會加:resolved:
+		forumPost.retrieveMessageById(event.getMessageIdLong()).queue(message -> message.addReaction(resolved).queue()); //機器人會加:resolved:
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
 		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
+	}
+
+	@Override
+	public void onChannelUpdateArchived(@NotNull ChannelUpdateArchivedEvent event)
+	{
+		if (!event.getChannelType().isThread())
+			return;
+
+		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
+			return;
+
+		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
+			return;
+
+		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
+		tags.remove(IDAndEntities.resolvedForumTag); //移除resolved
+		tags.add(IDAndEntities.unresolvedForumTag); //新增unresolved
+		forumPost.getManager().setAppliedTags(tags).queue(); //開啟貼文
 	}
 }

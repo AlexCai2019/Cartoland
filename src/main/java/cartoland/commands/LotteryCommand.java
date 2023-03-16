@@ -240,14 +240,18 @@ class Ranking implements ICommand
 	}
 }
 
+/**
+ * {@code UserNameAndBlocks} has a String userName and long blocks.
+ *
+ * @since 1.6
+ * @author Alex Cai
+ */
 record UserNameAndBlocks(String userName, long blocks)
 {
 	@Override
 	public boolean equals(Object o)
 	{
-		if (this == o)
-			return true;
-		return o instanceof UserNameAndBlocks that && userName.equals(that.userName);
+		return (this == o) || (o instanceof UserNameAndBlocks that && userName.equals(that.userName));
 	}
 
 	@Override

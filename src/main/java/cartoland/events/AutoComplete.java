@@ -56,8 +56,9 @@ public class AutoComplete extends ListenerAdapter
 }
 
 /**
- * {@code Complete} is a class that process auto complete of typing a slash command. This class will be initial in the
- * constructor of {@link AutoComplete}.
+ * {@code GenericComplete} is a parent class that has subclasses that can process auto complete of typing a slash
+ * command. The subclasses of this class will be initial in the constructor of {@link AutoComplete}, which is
+ * {@link AutoComplete#AutoComplete()}.
  *
  * @since 1.5
  * @see AutoComplete
@@ -77,6 +78,9 @@ abstract class GenericComplete
 }
 
 /**
+ * {@code JsonBasedComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
+ * /cmd, /faq, /dtp and their alias. This class use {@link JsonHandle#commandList} to get this information.
+ *
  * @since 1.6
  * @author Alex Cai
  */
@@ -105,6 +109,13 @@ class JsonBasedComplete extends GenericComplete
 	}
 }
 
+/**
+ * {@code YouTuberComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
+ * /youtuber. This class use {@link IDAndEntities#youtubers} to get every YouTubers and their channel ID.
+ *
+ * @since 1.6
+ * @author Alex Cai
+ */
 class YouTuberComplete extends GenericComplete
 {
 	YouTuberComplete()

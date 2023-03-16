@@ -110,9 +110,9 @@ public class ChannelMessage extends ListenerAdapter
 		long categoryID = category.getIdLong();
 		MessageChannel channel = message.getChannel();
 
-		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
+		if (Algorithm.chance(20, random) && rawMessage.contains("learned")) //20%
 			message.addReaction(learned).queue();
-		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
+		if (Algorithm.chance(20, random) && rawMessage.contains("wow")) //20%
 			message.addReaction(wow).queue();
 
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區

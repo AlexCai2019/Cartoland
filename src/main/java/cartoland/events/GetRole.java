@@ -1,6 +1,7 @@
 package cartoland.events;
 
 import cartoland.utilities.IDAndEntities;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GetRole extends ListenerAdapter
 {
+	private final Emoji wave = Emoji.fromUnicode("👋");
+
 	@Override
 	public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event)
 	{
@@ -23,7 +26,7 @@ public class GetRole extends ListenerAdapter
 		String mentionUser = event.getUser().getAsMention();
 		String serverName = IDAndEntities.cartolandServer.getName();
 
-		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n"
-													   + mentionUser + ", welcome to " + serverName).queue();
+		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" +
+													   mentionUser + ", welcome to " + serverName).queue(message -> message.addReaction(wave).queue());
 	}
 }

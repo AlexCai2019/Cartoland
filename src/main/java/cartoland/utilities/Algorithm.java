@@ -55,7 +55,7 @@ public class Algorithm
 		return sum;
 	}
 
-	public static boolean chance(int percent)
+	public static boolean chance(int percent, Random random)
 	{
 		return percent > random.nextInt(100);
 	}

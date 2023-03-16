@@ -3,7 +3,6 @@ package cartoland.commands;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -42,24 +41,19 @@ public class QuoteCommand implements ICommand
 			return;
 		}
 
-		String linkSubString = link.substring(29);
+		String linkSubString = link.substring(("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length());
 		String[] numbersInLink = linkSubString.split("/");
 
-		Guild linkGuild = IDAndEntities.jda.getGuildById(numbersInLink[0]);
-		if (linkGuild == null)
-		{
-			event.reply("Impossible, this is the ID of Cartoland!").queue();
-			return;
-		}
-
-		MessageChannel linkChannel = linkGuild.getChannelById(MessageChannel.class, numbersInLink[1]);
+		//從創聯中取得頻道 注意ID是String 與慣例的long不同
+		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, numbersInLink[0]);
 		if (linkChannel == null)
 		{
 			event.reply("Error: The channel might be deleted, or I don't have permission to access it.").queue();
 			return;
 		}
 
-		linkChannel.retrieveMessageById(numbersInLink[2]).queue(linkMessage ->
+		//從頻道中取得訊息 注意ID是String 與慣例的long不同
+		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
 

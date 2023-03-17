@@ -24,6 +24,8 @@ public class AddCommands
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
+	//這裡真的很亂
+	//沒有十足的信心 不要編輯這裡的程式碼
 	public static CommandData[] getCommands()
 	{
 		return new CommandData[]
@@ -108,8 +110,8 @@ public class AddCommands
 							new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
 									.addOptions(
 											new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
-													.addChoice("Data pack", "d")
-													.addChoice("Resource pack", "r"))),
+													.addChoice("Data Pack", "d")
+													.addChoice("Resource Pack", "r"))),
 
 			Lang.lang,
 			Lang.language,
@@ -199,6 +201,7 @@ public class AddCommands
 
 				//TODO: finish cartoland.commands.MinesweeperCommand
 				//TODO: stop being lazy
+				//TODO: I didn't finish it on ver 1.6. Yes, very sad. Anyway...
 			/*Commands.slash("minesweeper", "Play a minesweeper game")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場踩地雷")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场扫雷")

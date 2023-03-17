@@ -30,8 +30,6 @@ public class ChannelMessage extends ListenerAdapter
 		"父親，您找我有事嗎？",
 		"向父親請安，父親您好嗎？",
 		"爹，您好呀。",
-		"爸爸，我今天也有認真工作。",
-		"爸爸，我表現得好嗎？",
 		"聽候您差遣。"
 	};
 	private final String[] replyMention =
@@ -117,7 +115,7 @@ public class ChannelMessage extends ListenerAdapter
 
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
 		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
-			CommandBlocksHandle.add(userID, rawMessage.length() + 1); //說話加等級 +1當作加上\0
+			CommandBlocksHandle.add(userID, rawMessage.length() + 1 + message.getAttachments().size()); //說話加等級 +1當作加上\0 附加一個檔案算1個
 
 
 		//以下是有關機器人說話的部分
@@ -137,7 +135,7 @@ public class ChannelMessage extends ListenerAdapter
 		if (rawMessage.contains("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
 		if (rawMessage.contains("午安"))
-			channel.sendMessage("http://chunting.me/wp-content/uploads/2018/09/IMG_5878.jpg").queue(); //午安長輩圖
+			channel.sendMessage("午安你好，歡迎來到" + IDAndEntities.cartolandServer.getName()).queue(); //午安長輩圖
 		if (rawMessage.contains("晚安"))
 			channel.sendMessage("那我也要睡啦").queue();
 		if (rawMessage.contains("安安"))

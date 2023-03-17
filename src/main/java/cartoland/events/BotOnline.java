@@ -2,14 +2,21 @@ package cartoland.events;
 
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.FileHandle;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.Executors;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static cartoland.utilities.IDAndEntities.*;
@@ -73,6 +80,8 @@ public class BotOnline extends ListenerAdapter
 
 		ohBoy3AM(); //好棒 三點了
 
+		idleFormPost12PM(); //中午十二點時處理未解決的論壇貼文
+
 		initialIDAndName(); //初始化idAndName
 
 		String logString = "Cartoland Bot is now online.";
@@ -107,23 +116,62 @@ public class BotOnline extends ListenerAdapter
 
 		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
 
-		threeAMService = Executors.newScheduledThreadPool(1);
-		threeAMHandle = threeAMService.scheduleAtFixedRate(
+		threeAMTask = scheduleExecutor.scheduleAtFixedRate(
 				() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
 				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
+	private final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
+
+	private void idleFormPost12PM()
+	{
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime twelvePM = now.withHour(12).withMinute(0).withSecond(0);
+
+		if (now.compareTo(twelvePM) > 0)
+			twelvePM = twelvePM.plusDays(1L);
+
+		long secondsUntil12PM = Duration.between(now, twelvePM).getSeconds();
+
+		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels().forEach(forumPost ->
+		{
+			if (forumPost.isArchived())
+				return;
+
+			forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
+			{
+				Member messageCreatorMember = lastMessage.getMember();
+				if (messageCreatorMember == null)
+					return;
+				User messageCreatorUser = messageCreatorMember.getUser();
+				if (messageCreatorUser.isBot() || messageCreatorUser.isSystem())
+					return;
+
+				OffsetDateTime lastMessageCreateTime = lastMessage.getTimeCreated();
+				long hoursFromNowToLastMessage = Duration.between(lastMessageCreateTime, OffsetDateTime.now()).toHours();
+				if (hoursFromNowToLastMessage < 24)
+					return;
+
+				Member owner = forumPost.getOwner();
+				if (owner == null)
+					return;
+
+				String mentionOwner = owner.getAsMention();
+				forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:`表情符號關閉貼文。\n" +
+											  "如果還沒解決，可以嘗試在問題中加入更多資訊。")
+						.queue(message -> message.addReaction(reminder_ribbon).queue());
+			});
+
+		}), secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+	}
+
 	private void initialIDAndName()
 	{
-		CommandBlocksHandle.getMap().forEach((userIDString, blocks) ->
-		{
-			long userID = Long.parseLong(userIDString);
-			User user = jda.getUserById(userID);
-			if (user != null)
-				idAndNames.put(userID, user.getAsTag());
-			else
-				jda.retrieveUserById(userID).queue(getUser -> idAndNames.put(userID, getUser.getAsTag()));
-		});
+		Map<String, Object> commandBlockMap = CommandBlocksHandle.getMap();
+		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockMap.size());
+		commandBlockMap.forEach((userIDString, blocks) -> retrieve.add(jda.retrieveUserById(userIDString)));
+		if (retrieve.size() > 0)
+			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getAsTag())));
 		CommandBlocksHandle.changed = true;
 	}
 }

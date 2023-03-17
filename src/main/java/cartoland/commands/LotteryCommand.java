@@ -1,9 +1,6 @@
 package cartoland.commands;
 
-import cartoland.utilities.Algorithm;
-import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.IDAndEntities;
-import cartoland.utilities.JsonHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -78,6 +75,8 @@ class Bet implements ICommand
 	private final Pattern number = Pattern.compile("\\d+");
 	private final Pattern percent = Pattern.compile("\\d+%");
 	private final Random random = new Random();
+	private int win = 0;
+	private int lose = 0;
 	private static final long MAXIMUM = 1000000L;
 
 	@Override
@@ -127,15 +126,17 @@ class Bet implements ICommand
 
 		long afterBet;
 		String result;
-		if (random.nextBoolean()) //賭贏 雖然可用Algorithm.chance(50) 且統計上也的確是50% 但因為體感怪怪的 所以還是改用random.nextBoolean()
+		if (Algorithm.chance(50, random)) //賭贏 可用random.nextBoolean()
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getJsonKey(userID, "lottery.win");
+			win++;
 		}
 		else //賭輸
 		{
 			afterBet = nowHave - bet;
 			result = JsonHandle.getJsonKey(userID, "lottery.lose");
+			lose++;
 		}
 
 		String replyMessage = JsonHandle.getJsonKey(userID, "lottery.result").formatted(bet, result, afterBet);
@@ -144,6 +145,8 @@ class Bet implements ICommand
 
 		final long finalAfterBet = afterBet;
 		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, finalAfterBet));
+
+		FileHandle.log(win + " / " + lose);
 	}
 }
 
@@ -155,7 +158,6 @@ class Bet implements ICommand
  */
 class Ranking implements ICommand
 {
-	private final StringBuilder rankBuilder = new StringBuilder();
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 
 	@Override
@@ -173,8 +175,7 @@ class Ranking implements ICommand
 
 		if (!CommandBlocksHandle.changed) //距離上一次排序 沒有任何變動
 		{
-			buildReplyString(user, page, maxPage);
-			event.reply(rankBuilder.toString()).queue();
+			event.reply(replyString(user, page, maxPage)).queue();
 			return;
 		}
 
@@ -195,12 +196,13 @@ class Ranking implements ICommand
 			});
 
 			CommandBlocksHandle.changed = false; //已經排序過了
-			buildReplyString(user, finalPage, maxPage);
-			interactionHook.sendMessage(rankBuilder.toString()).queue();
+			interactionHook.sendMessage(replyString(user, finalPage, maxPage)).queue();
 		});
 	}
 
-	private void buildReplyString(User user, int page, int maxPage)
+	private final StringBuilder rankBuilder = new StringBuilder();
+
+	private String replyString(User user, int page, int maxPage)
 	{
 		//page 從1開始
 		int startElement = (page - 1) * 10; //開始的那個元素
@@ -220,7 +222,7 @@ class Ranking implements ICommand
 				.append(blocks)
 				.append(" command blocks.\n\n");
 
-		for (int i = 0, add = page * 10 - 9; i < ranking.size(); i++) //add = (finalPage - 1) * 10 + 1
+		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
 		{
 			UserNameAndBlocks rank = ranking.get(i);
 			rankBuilder.append("[\u001B[36m")
@@ -237,6 +239,8 @@ class Ranking implements ICommand
 				.append(" / ")
 				.append(maxPage)
 				.append("\n```");
+
+		return rankBuilder.toString();
 	}
 }
 

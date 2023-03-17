@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
@@ -81,8 +82,9 @@ public class IDAndEntities
 
 	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
 
-	public static ScheduledExecutorService threeAMService;
-	public static ScheduledFuture<?> threeAMHandle;
+	public static ScheduledExecutorService scheduleExecutor = Executors.newScheduledThreadPool(2);
+	public static ScheduledFuture<?> threeAMTask;
+	public static ScheduledFuture<?> twelvePMTask;
 
 	/**
 	 * Language constants. Can not be instantiated.

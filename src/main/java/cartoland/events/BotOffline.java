@@ -30,8 +30,9 @@ public class BotOffline extends ListenerAdapter
 	public void onShutdown(@NotNull ShutdownEvent event)
 	{
 		//https://stackoverflow.com/questions/34202701
-		IDAndEntities.threeAMHandle.cancel(true);
-		IDAndEntities.threeAMService.shutdown();
+		IDAndEntities.threeAMTask.cancel(true);
+		IDAndEntities.twelvePMTask.cancel(true);
+		IDAndEntities.scheduleExecutor.shutdown();
 
 		String logString = "Cartoland Bot is now offline.";
 		System.out.println(logString);

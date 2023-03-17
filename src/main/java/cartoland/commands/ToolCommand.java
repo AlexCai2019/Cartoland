@@ -2,9 +2,7 @@ package cartoland.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.utils.FileUpload;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -173,7 +171,7 @@ class ColorRGB implements ICommand
 		};
 
 		int rgb = 0;
-		int offset = 65536; //16 * 16 * 16 * 16
+		int offset = 0b1_0000_0000_0000_0000; //16 * 16 * 16 * 16
 
 		for (Integer color : colors)
 		{
@@ -190,7 +188,7 @@ class ColorRGB implements ICommand
 			}
 
 			rgb += color * offset; //舉例 如果是#0D18F7 那麼紅色就是13 然後乘上65536 綠色是24乘上256 藍色是247乘上1 結果是858359
-			offset >>= 8; //offset /= 256;
+			offset >>= 8; //offset /= 256;  offset原是(Binary)1,0000,0000,0000,0000 每次右位移8 就等於刪掉了最右邊8個0
 		}
 
 		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
@@ -269,10 +267,12 @@ class PackMcmetaCommand implements ICommand
 			return;
 		}
 
-		event.replyFiles(FileUpload.fromData(switch (packType.charAt(0))
+
+		event.reply(switch (packType.charAt(0))
 		{
 			case 'd' ->
         		"""
+				```json
 				{
 					"pack":
 					{
@@ -280,10 +280,12 @@ class PackMcmetaCommand implements ICommand
 						"description": "Your description here"
 					}
 				}
-				""".getBytes(StandardCharsets.UTF_8);
+				```
+				""";
 
 			case 'r' ->
     			"""
+				```json
 				{
 					"pack":
 					{
@@ -291,10 +293,10 @@ class PackMcmetaCommand implements ICommand
 						"description": "Your description here"
 					}
 				}
-				""".getBytes(StandardCharsets.UTF_8);
+				```
+				""";
 
-			default ->
-					"You need to choose whether you are making a data pack or a resource pack.".getBytes(StandardCharsets.UTF_8);
-		}, "pack.mcmeta")).queue();
+			default -> "You need to choose whether you are making a datapack or a resourcepack.";
+		}).queue();
 	}
 }

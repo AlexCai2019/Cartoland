@@ -2,8 +2,10 @@ package cartoland.events;
 
 import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
+import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -147,7 +149,10 @@ public class CommandUsage extends ListenerAdapter
 	@Override
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
 	{
-		ICommand commandExecution = commands.get(event.getName());
+		String commandName = event.getName();
+		User user = event.getUser();
+		FileHandle.log(user.getAsTag() + "(" + user.getIdLong() + ") used /" + commandName);
+		ICommand commandExecution = commands.get(commandName);
 		if (commandExecution != null)
 			commandExecution.commandProcess(event);
 	}
@@ -156,18 +161,18 @@ public class CommandUsage extends ListenerAdapter
 	 * When it comes to /help, /cmd, /faq, /dtp and /lang that needs to use lang/*.json files, those lambda
 	 * expressions will call this method.
 	 *
-	 * @param jsonKey the command name, only "help", "cmd", "faq", "dtp" and "lang" are allowed.
+	 * @param commandName the command name, only "help", "cmd", "faq", "dtp" and "lang" are allowed.
 	 * @param event The event that carries information of the user and the command.
 	 * @return The content that the bot is going to reply the user.
 	 * @since 1.0
 	 * @author Alex Cai
 	 */
-	private String minecraftCommandRelated(String jsonKey, SlashCommandInteractionEvent event)
+	private String minecraftCommandRelated(String commandName, SlashCommandInteractionEvent event)
 	{
-		String argument = event.getOption(jsonKey + "_name", OptionMapping::getAsString); //獲得參數
+		String argument = event.getOption(commandName + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
-			return JsonHandle.command(event.getUser().getIdLong(), jsonKey); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
-		return JsonHandle.command(event.getUser().getIdLong(), jsonKey, argument);
+			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
+		return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);
 	}
 }
 

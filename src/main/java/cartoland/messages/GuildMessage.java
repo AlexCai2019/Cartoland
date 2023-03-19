@@ -1,29 +1,26 @@
-package cartoland.events;
+package cartoland.messages;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
- * {@code ChannelMessage} is a listener that triggers when a user types anything in any channel that the bot can
- * access. This class was registered in {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@code GuildMessage} is a listener that triggers when a user types anything in any channel that the bot can access.
+ * This class is in an array in {@link cartoland.events.MessageEvent}.
  *
  * @since 1.0
  * @author Alex Cai
  */
-public class ChannelMessage extends ListenerAdapter
+public class GuildMessage implements IMessage
 {
 	private final String[] replyACMention =
 	{
@@ -81,7 +78,7 @@ public class ChannelMessage extends ListenerAdapter
 	private final Random random = new Random();
 
 	/**
-	 * The method that inherited from {@link ListenerAdapter}, triggers when receive a message from any
+	 * The method that implements from {@link IMessage}, triggers when receive a message from any
 	 * channel that the bot has permission to read, but only response when the channel is a text channel and
 	 * the user isn't a bot.
 	 *
@@ -91,15 +88,9 @@ public class ChannelMessage extends ListenerAdapter
 	 * @author Alex Cai
 	 */
 	@Override
-	public void onMessageReceived(@NotNull MessageReceivedEvent event)
+	public void messageProcess(MessageReceivedEvent event)
 	{
-		if (!event.isFromGuild()) //不是伺服器頻道
-			return;
-		User author = event.getAuthor();
-		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統
-			return; //不用執行
-
-		long userID = author.getIdLong();
+		long userID = event.getAuthor().getIdLong();
 		Message message = event.getMessage(); //獲取訊息
 		String rawMessage = message.getContentRaw(); //獲取訊息字串
 		Category category = message.getCategory();

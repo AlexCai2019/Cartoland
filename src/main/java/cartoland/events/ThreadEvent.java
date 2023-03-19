@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
+import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@code CreateThreadChannel} is a listener that triggers when a user create a forum post. This class was
- * registered in {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@code ThreadEvent} is a listener that triggers when a user create a thread or a thread archived. For now, this only
+ * affect Question forum post. This class was registered in {@link cartoland.Cartoland#main}, with the build of
+ * JDA.
  *
  * @since 1.5
  * @author Alex Cai
  */
-public class CreateThreadChannel extends ListenerAdapter
+public class ThreadEvent extends ListenerAdapter
 {
 	private final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
@@ -57,12 +59,34 @@ public class CreateThreadChannel extends ListenerAdapter
 
 		List<ForumTag> tags = new ArrayList<>(threadChannel.getAppliedTags());
 		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
-		if (!tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者自己沒有加unresolved
+		if (tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者有加unresolved
 		{
-			if (tags.size() == 5) //不可以超過5個tag
-				tags.remove(4); //移除最後一個 空出位置給unresolved
-			tags.add(IDAndEntities.unresolvedForumTag);
+			threadChannel.getManager().setAppliedTags(tags).queue(); //直接送出
+			return;
 		}
+
+		if (tags.size() == 5) //不可以超過5個tag
+			tags.remove(4); //移除最後一個 空出位置給unresolved
+		tags.add(IDAndEntities.unresolvedForumTag);
 		threadChannel.getManager().setAppliedTags(tags).queue();
+	}
+
+	@Override
+	public void onChannelUpdateArchived(@NotNull ChannelUpdateArchivedEvent event)
+	{
+		if (!event.getChannelType().isThread())
+			return;
+
+		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
+			return;
+
+		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
+			return;
+
+		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
+		tags.remove(IDAndEntities.resolvedForumTag); //移除resolved
+		tags.add(IDAndEntities.unresolvedForumTag); //新增unresolved
+		forumPost.getManager().setAppliedTags(tags).queue(); //開啟貼文
 	}
 }

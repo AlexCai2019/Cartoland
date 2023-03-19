@@ -113,7 +113,7 @@ public class FileHandle
 		}
 	}
 
-	public static void log(Exception exception)
+	public static void log(Throwable exception)
 	{
 		StackTraceElement[] exceptionMessage = exception.getStackTrace();
 		String logString = Arrays.stream(exceptionMessage)

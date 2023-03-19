@@ -1,4 +1,4 @@
-package cartoland.events;
+package cartoland.messages;
 
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
@@ -7,32 +7,24 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This
- * class was registered in {@link cartoland.Cartoland#main}, with the build of JDA.
+ * class is in an array in {@link cartoland.events.MessageEvent}.
  *
  * @since 1.0
  * @author Alex Cai
  */
-public class PrivateMessage extends ListenerAdapter
+public class PrivateMessage implements IMessage
 {
 	@Override
-	public void onMessageReceived(@NotNull MessageReceivedEvent event)
+	public void messageProcess(MessageReceivedEvent event)
 	{
-		if (event.isFromGuild()) //不是私訊
-			return;
-
-		User author = event.getAuthor();
-		if (author.isBot() || author.isSystem()) //是機器人或系統
-			return;
-
 		Message message = event.getMessage();
+		User author = event.getAuthor();
 
 		Member member = IDAndEntities.cartolandServer.getMemberById(author.getIdLong());
 		String can_t = ", hence you can't send message to the NSFW channel.";

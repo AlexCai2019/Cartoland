@@ -2,9 +2,8 @@ package cartoland.events;
 
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.FileHandle;
-import net.dv8tion.jda.api.entities.Member;
+import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,8 +119,6 @@ public class BotOnline extends ListenerAdapter
 				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
-	private final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
-
 	private void idleFormPost12PM()
 	{
 		LocalDateTime now = LocalDateTime.now();
@@ -135,31 +131,8 @@ public class BotOnline extends ListenerAdapter
 
 		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels().forEach(forumPost ->
 		{
-			if (forumPost.isArchived())
-				return;
-
-			forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
-			{
-				Member messageCreatorMember = lastMessage.getMember();
-				if (messageCreatorMember == null)
-					return;
-				User messageCreatorUser = messageCreatorMember.getUser();
-				if (messageCreatorUser.isBot() || messageCreatorUser.isSystem())
-					return;
-
-				if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < 24L)
-					return;
-
-				Member owner = forumPost.getOwner();
-				if (owner == null)
-					return;
-
-				String mentionOwner = owner.getAsMention();
-				forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:`表情符號關閉貼文。\n" +
-											  "如果還沒解決，可以嘗試在問題中加入更多資訊。")
-						.queue(message -> message.addReaction(reminder_ribbon).queue());
-			});
-
+			if (QuestionForumHandle.forumPostShouldIdle(forumPost))
+				QuestionForumHandle.idleForumPost(forumPost);
 		}), secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 

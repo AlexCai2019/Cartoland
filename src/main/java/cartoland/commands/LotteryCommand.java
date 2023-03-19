@@ -190,10 +190,8 @@ class Ranking implements ICommand
 					forSort.add(new UserNameAndBlocks(userNameFromMap, ((Number) blocks).longValue())); //新增一對名字和方塊數量
 			});
 
-			forSort.sort((user1, user2) -> //排序
-			{
-				 return Long.compare(user2.blocks(), user1.blocks()); //方塊較多的在前面 方塊較少的在後面
-			});
+			//排序
+			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
 
 			CommandBlocksHandle.changed = false; //已經排序過了
 			interactionHook.sendMessage(replyString(user, finalPage, maxPage)).queue();

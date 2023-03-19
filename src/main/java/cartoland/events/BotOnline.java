@@ -147,9 +147,7 @@ public class BotOnline extends ListenerAdapter
 				if (messageCreatorUser.isBot() || messageCreatorUser.isSystem())
 					return;
 
-				OffsetDateTime lastMessageCreateTime = lastMessage.getTimeCreated();
-				long hoursFromNowToLastMessage = Duration.between(lastMessageCreateTime, OffsetDateTime.now()).toHours();
-				if (hoursFromNowToLastMessage < 24)
+				if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < 24L)
 					return;
 
 				Member owner = forumPost.getOwner();

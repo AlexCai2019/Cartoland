@@ -44,8 +44,8 @@ public class QuoteCommand implements ICommand
 		String linkSubString = link.substring(("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length());
 		String[] numbersInLink = linkSubString.split("/");
 
-		//從創聯中取得頻道 注意ID是String 與慣例的long不同
-		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, numbersInLink[0]);
+		//從創聯中取得頻道
+		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 		if (linkChannel == null)
 		{
 			event.reply("Error: The channel might be deleted, or I don't have permission to access it.").queue();
@@ -58,7 +58,7 @@ public class QuoteCommand implements ICommand
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
 
 			EmbedBuilder embedBuilder = new EmbedBuilder()
-					.setAuthor(linkAuthor.getAsTag(), linkAuthor.getAvatarUrl(), linkAuthor.getAvatarUrl())
+					.setAuthor(linkAuthor.getAsTag(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
 					.appendDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道

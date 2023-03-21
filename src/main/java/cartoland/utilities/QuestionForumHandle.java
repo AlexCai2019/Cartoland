@@ -20,8 +20,8 @@ public class QuestionForumHandle
 {
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
 	public static final String resolvedFormat = resolved.getFormatted();
-	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
-	private static final String reminder_ribbonFormat = reminder_ribbon.getFormatted();
+	//private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
+	//private static final String reminder_ribbonFormat = reminder_ribbon.getFormatted();
 
 	private QuestionForumHandle()
 	{
@@ -34,17 +34,17 @@ public class QuestionForumHandle
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
 
 		//移除🎗️
-		forumPost.retrieveParentMessage().queue(message ->
-		{
-			if (message.getReactions().stream().anyMatch(messageReaction -> messageReaction.getEmoji().getFormatted().equals(reminder_ribbonFormat)))
-				message.removeReaction(reminder_ribbon, IDAndEntities.botItself).queue();
-		},
-		throwable ->
-		{
-			throwable.printStackTrace();
-			System.err.print('\u0007');
-			FileHandle.log(throwable);
-		});
+		//UnsupportedOperationException
+//		forumPost.retrieveParentMessage().queue(message ->
+//		{
+//			if (message.getReactions().stream().anyMatch(messageReaction -> messageReaction.getEmoji().getFormatted().equals(reminder_ribbonFormat)))
+//				message.removeReaction(reminder_ribbon, IDAndEntities.botItself).queue();
+//		}, throwable ->
+//		{
+//			throwable.printStackTrace();
+//			System.err.print('\u0007');
+//			FileHandle.log(throwable);
+//		});
 
 		tags = new ArrayList<>(tags);
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
@@ -91,11 +91,12 @@ public class QuestionForumHandle
 									  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
 									  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` emoji.\n" +
 									  "If it didn't, try offer more information of question.").queue();
-		forumPost.retrieveParentMessage().queue(message -> message.addReaction(reminder_ribbon).queue(), throwable ->
-		{
-			throwable.printStackTrace();
-			System.err.print('\u0007');
-			FileHandle.log(throwable);
-		});
+		//UnsupportedOperationException
+//		forumPost.retrieveParentMessage().queue(message -> message.addReaction(reminder_ribbon).queue(), throwable ->
+//		{
+//			throwable.printStackTrace();
+//			System.err.print('\u0007');
+//			FileHandle.log(throwable);
+//		});
 	}
 }

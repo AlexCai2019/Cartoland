@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 public class QuoteCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
+	private final int subStringStart = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -41,8 +42,7 @@ public class QuoteCommand implements ICommand
 			return;
 		}
 
-		String linkSubString = link.substring(("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length());
-		String[] numbersInLink = linkSubString.split("/");
+		String[] numbersInLink = link.substring(subStringStart).split("/");
 
 		//從創聯中取得頻道
 		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));

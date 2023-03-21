@@ -2,7 +2,6 @@ package cartoland.messages;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -12,6 +11,8 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 
 import java.util.Random;
 import java.util.regex.Pattern;
+
+import static cartoland.utilities.IDAndEntities.*;
 
 /**
  * {@code GuildMessage} is a listener that triggers when a user types anything in any channel that the bot can access.
@@ -28,6 +29,12 @@ public class GuildMessage implements IMessage
 		"向父親請安，父親您好嗎？",
 		"爹，您好呀。",
 		"聽候您差遣。"
+	};
+	private final String[] replyMegaMention =
+	{
+		"臣向陛下請安",
+		"陛下萬福金安",
+		"陛下今日可好？"
 	};
 	private final String[] replyMention =
 	{
@@ -69,8 +76,8 @@ public class GuildMessage implements IMessage
 
 	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
 
-	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*");
-	private final Pattern lolRegex = Pattern.compile("(?i).*lol*");
+	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
+	private final Pattern lolRegex = Pattern.compile("(?i).*lol*"); //containsIgnoreCase
 
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
@@ -105,17 +112,27 @@ public class GuildMessage implements IMessage
 			message.addReaction(wow).queue();
 
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
-		if (channel.getIdLong() != IDAndEntities.BOT_CHANNEL_ID && IDAndEntities.commandBlockCategories.contains(categoryID))
+		if (channel.getIdLong() != BOT_CHANNEL_ID && commandBlockCategories.contains(categoryID))
 			CommandBlocksHandle.add(userID, rawMessage.length() + 1 + message.getAttachments().size()); //說話加等級 +1當作加上\0 附加一個檔案算1個
 
 
 		//以下是有關機器人說話的部分
-		if (!IDAndEntities.canTalkCategories.contains(categoryID))
+		if (!canTalkCategories.contains(categoryID))
 			return; //只在特定類別說話
 
-		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
-			message.reply(userID == IDAndEntities.AC_ID ? randomString(replyACMention) : randomString(replyMention))
-					.mentionRepliedUser(false).queue();
+		if (message.getMentions().isMentioned(botItself, botType)) //有人tag機器人
+		{
+			String replyString;
+
+			if (userID == AC_ID)
+				replyString = randomString(replyACMention);
+			else if (userID == MEGA_ID)
+				replyString = randomString(replyMegaMention);
+			else
+				replyString = randomString(replyMention);
+
+			message.reply(replyString).mentionRepliedUser(false).queue();
+		}
 
 		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
 			channel.sendMessage(randomString(megumin)).queue();
@@ -126,7 +143,7 @@ public class GuildMessage implements IMessage
 		if (rawMessage.contains("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
 		if (rawMessage.contains("午安"))
-			channel.sendMessage("午安你好，歡迎來到" + IDAndEntities.cartolandServer.getName()).queue(); //午安長輩圖
+			channel.sendMessage("午安你好，歡迎來到" + cartolandServer.getName()).queue(); //午安長輩圖
 		if (rawMessage.contains("晚安"))
 			channel.sendMessage("那我也要睡啦").queue();
 		if (rawMessage.contains("安安"))

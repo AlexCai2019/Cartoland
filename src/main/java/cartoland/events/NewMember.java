@@ -29,7 +29,7 @@ public class NewMember extends ListenerAdapter
 		if (user.isBot() || user.isSystem() || !user.hasPrivateChannel())
 			return;
 
-		user.openPrivateChannel().flatMap(privateChannel ->
+		user.openPrivateChannel().queue(privateChannel ->
 		{
 			  String userName = user.getName();
 			  String serverName = IDAndEntities.cartolandServer.getName();
@@ -37,8 +37,7 @@ public class NewMember extends ListenerAdapter
 												 "記得先詳閱 <#973898745777377330> 內的訊息，並遵守一切公告規則。\n" +
 												 userName + ", welcome to " + serverName + ".\n" +
 												 "Please read messages in <#973898745777377330>, and follow all rules.").queue();
-			  return null;
-		}).queue();
+		});
 	}
 
 	@Override

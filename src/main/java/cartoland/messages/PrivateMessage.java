@@ -31,22 +31,19 @@ public class PrivateMessage implements IMessage
 		if (member == null)
 		{
 			message.reply("You are not a member of " + IDAndEntities.cartolandServer.getName() + can_t)
-					.mentionRepliedUser(false)
-					.queue();
+					.mentionRepliedUser(false).queue();
 			return;
 		}
 		if (member.isTimedOut())
 		{
 			message.reply("You are timed out from " + IDAndEntities.cartolandServer.getName() + can_t)
-					.mentionRepliedUser(false)
-					.queue();
+					.mentionRepliedUser(false).queue();
 			return;
 		}
 		if (!member.getRoles().contains(IDAndEntities.nsfwRole))
 		{
 			message.reply("You don't have role " + IDAndEntities.nsfwRole.getName() + can_t)
-					.mentionRepliedUser(false)
-					.queue();
+					.mentionRepliedUser(false).queue();
 			return;
 		}
 

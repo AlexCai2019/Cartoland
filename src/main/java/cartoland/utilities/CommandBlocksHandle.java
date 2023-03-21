@@ -1,13 +1,13 @@
 package cartoland.utilities;
 
-import static cartoland.utilities.JsonHandle.commandBlocksFile;
+import java.util.HashMap;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
  * feature that whatever a user say in some specific channels, the user will gain command blocks as a kind of
- * reward point. This class access a static field {@link JsonHandle#commandBlocksFile} from {@link JsonHandle}, which is
- * where all the command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}. Can
- * not be instantiated.
+ * reward point. This class open a static field {@link #commandBlocksMap} for {@link JsonHandle}, which is where all the
+ * command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}. Can not be
+ * instantiated.
  *
  * @since 1.5
  * @see JsonHandle
@@ -17,9 +17,16 @@ public class CommandBlocksHandle
 {
 	public static boolean changed = true;
 
+	static HashMap<Long, Long> commandBlocksMap;
+
 	private CommandBlocksHandle()
 	{
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+	}
+
+	static
+	{
+		 JsonHandle.buildCommandBlocksMap();
 	}
 
 	/**
@@ -32,33 +39,42 @@ public class CommandBlocksHandle
 	public static void add(long userID, long add)
 	{
 		changed = true;
-		String userIDString = Long.toUnsignedString(userID);
-		commandBlocksFile.put(userIDString, commandBlocksFile.has(userIDString) ?
-				Algorithm.safeAdd(commandBlocksFile.getLong(userIDString), add) : add);
+		Long nowHave = commandBlocksMap.get(userID);
+		if (nowHave == null)
+			nowHave = 0L;
+		commandBlocksMap.put(userID,  Algorithm.safeAdd(nowHave, add));
 	}
 
 	public static void set(long userID, long value)
 	{
 		changed = true;
-		commandBlocksFile.put(Long.toUnsignedString(userID), value);
+		commandBlocksMap.put(userID, value);
 	}
 
 	public static long get(long userID)
 	{
-		String userIDString = Long.toUnsignedString(userID);
-		if (commandBlocksFile.has(userIDString))
-			return commandBlocksFile.getLong(userIDString);
-		commandBlocksFile.put(userIDString, 0L);
-		return 0L;
+		return commandBlocksMap.computeIfAbsent(userID, nowHave -> 0L);
 	}
 
-	public static int length()
+	public static int size()
 	{
-		return commandBlocksFile.length();
+		return commandBlocksMap.size();
 	}
 
-	public static java.util.Map<String, Object> getMap()
+	public static HashMap<Long, Long> getMap()
 	{
-		return commandBlocksFile.toMap();
+		return commandBlocksMap;
+	}
+
+	public static void synchronizeFile()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append('{');
+		commandBlocksMap.forEach((userID, blocks) -> builder.append('\"').append(userID).append("\":").append(blocks).append(','));
+		if (builder.length() > 1)
+			builder.setCharAt(builder.length() - 1, '}');
+		else
+			builder.append('}');
+		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON, builder.toString());
 	}
 }

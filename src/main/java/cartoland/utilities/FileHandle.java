@@ -58,7 +58,7 @@ public class FileHandle
 		}
 	}
 
-	public static void synchronizeFile(String fileName, String content)
+	static void synchronizeFile(String fileName, String content)
 	{
 		if (content == null)
 			content = "{}";
@@ -86,8 +86,8 @@ public class FileHandle
 			lastDateHasLog = today;
 			try
 			{
-				//一定要事先備好logs資料夾
 				logger.close();
+				//一定要事先備好logs資料夾
 				logger = new FileWriter("logs/" + today, true);
 			}
 			catch (IOException exception)

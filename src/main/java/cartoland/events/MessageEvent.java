@@ -46,10 +46,10 @@ public class MessageEvent extends ListenerAdapter
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;
 
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
-		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
-			return;
-
-		messageEvents[QUESTION_FORUM_MESSAGE].messageProcess(event); //問題論壇訊息
+		if (event.getChannel()
+				.asThreadChannel()
+				.getParentChannel()
+				.getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID) //是在問題論壇
+			messageEvents[QUESTION_FORUM_MESSAGE].messageProcess(event); //問題論壇訊息
 	}
 }

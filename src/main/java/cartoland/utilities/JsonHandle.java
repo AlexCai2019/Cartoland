@@ -25,7 +25,6 @@ public class JsonHandle
 	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
 
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
-	static final JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
 	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
 	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
 	private static final StringBuilder builder = new StringBuilder();
@@ -52,36 +51,42 @@ public class JsonHandle
 		file = languageFileMap.get(userLanguage);
 	}
 
-	public static void synchronizeFiles()
+	static void buildCommandBlocksMap()
 	{
-		FileHandle.synchronizeFile(JsonHandle.USERS_JSON, usersFile.toString());
-		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON, commandBlocksFile.toString());
+		CommandBlocksHandle.commandBlocksMap = new HashMap<>();
+		JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
+		commandBlocksFile.keySet().forEach(userIDString -> CommandBlocksHandle.commandBlocksMap.put(Long.parseLong(userIDString), commandBlocksFile.getLong(userIDString)));
 	}
 
-	public static String command(long userID, String typeCommandName)
+	public static void synchronizeFile()
+	{
+		FileHandle.synchronizeFile(USERS_JSON, usersFile.toString());
+	}
+
+	public static String command(long userID, String commandName)
 	{
 		lastUse(userID);
 		builder.setLength(0);
-		builder.append(file.getString(typeCommandName + ".begin")); //開頭
-		JSONArray dotListArray = englishFile.getJSONArray(typeCommandName + ".list");
+		builder.append(file.getString(commandName + ".begin")); //開頭
+		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
 		dotListArray.forEach(s -> builder.append((String) s).append(' '));
-		builder.append(file.getString(typeCommandName + ".end")); //結尾
+		builder.append(file.getString(commandName + ".end")); //結尾
 		return builder.toString();
 	}
 
-	public static String command(long userID, String typeCommandName, String argument)
+	public static String command(long userID, String commandName, String argument)
 	{
 		lastUse(userID);
-		String jsonKey = typeCommandName + ".name." + argument;
+		String jsonKey = commandName + ".name." + argument;
 		JSONObject hasKeyFile;
 		if (file.has(jsonKey)) //如果有這個key
 			hasKeyFile = file;
 		else if (englishFile.has(jsonKey)) //預設使用英文
 			hasKeyFile = englishFile;
 		else
-			return file.getString(typeCommandName + ".fail");
+			return file.getString(commandName + ".fail");
 
-		if (typeCommandName.equals("lang"))
+		if (commandName.equals("lang"))
 			usersFile.put(userIDString, argument);
 
 		String result = hasKeyFile.getString(jsonKey); //要獲得的字串
@@ -90,9 +95,9 @@ public class JsonHandle
 		return result;
 	}
 
-	public static List<Object> commandList(String typeCommandName)
+	public static List<Object> commandList(String commandName)
 	{
-		return commandListMap.get(typeCommandName + ".list");
+		return commandListMap.get(commandName + ".list");
 	}
 
 	public static void reloadLanguageFiles()

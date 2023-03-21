@@ -4,6 +4,7 @@ import cartoland.utilities.Algorithm;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.regex.Pattern;
 
 /**
  * {@code OneATwoBGame} is the backend of the 1A2B game, it can process the entire game with all fields and methods.
@@ -17,7 +18,7 @@ import java.time.Instant;
 public class OneATwoBGame implements IMiniGame
 {
 	public static final int ANSWER_LENGTH = 4;
-	private static final String digitsRegex = "\\d".repeat(ANSWER_LENGTH); //ANSWER_LENGTH個數字
+	private final Pattern digitsRegex = Pattern.compile("\\d{" + ANSWER_LENGTH + "}"); //ANSWER_LENGTH個數字
 
 	private final int[] answer = new int[ANSWER_LENGTH];
 	private final int[] zeroToNine = { 0,1,2,3,4,5,6,7,8,9 };
@@ -56,7 +57,7 @@ public class OneATwoBGame implements IMiniGame
 	public int calculateAAndB(String input)
 	{
 		guesses++;
-		if (input == null || !input.matches(digitsRegex)) //不是ANSWER_LENGTH個數字
+		if (input == null || !digitsRegex.matcher(input).matches()) //不是ANSWER_LENGTH個數字
 			return ErrorCode.INVALID;
 
 		restoreZeroToNine();
@@ -66,8 +67,8 @@ public class OneATwoBGame implements IMiniGame
 			digitValueOfInput = Character.getNumericValue(input.charAt(i));
 			if (zeroToNine[digitValueOfInput] == -1) //遇過這個數字了
 				return ErrorCode.NOT_UNIQUE;
-			else
-				zeroToNine[digitValueOfInput] = -1;
+
+			zeroToNine[digitValueOfInput] = -1;
 
 			if (answer[i] == digitValueOfInput)
 				a++;

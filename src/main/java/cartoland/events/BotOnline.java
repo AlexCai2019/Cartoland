@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static cartoland.utilities.IDAndEntities.*;
@@ -82,8 +82,8 @@ public class BotOnline extends ListenerAdapter
 
 		initialIDAndName(); //初始化idAndName
 
-		String logString = "Cartoland Bot is now online.";
-		botChannel.sendMessage(logString).queue();
+		botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);
 	}
@@ -138,9 +138,9 @@ public class BotOnline extends ListenerAdapter
 
 	private void initialIDAndName()
 	{
-		Map<String, Object> commandBlockMap = CommandBlocksHandle.getMap();
+		HashMap<Long, Long> commandBlockMap = CommandBlocksHandle.getMap();
 		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockMap.size());
-		commandBlockMap.forEach((userIDString, blocks) -> retrieve.add(jda.retrieveUserById(userIDString)));
+		commandBlockMap.keySet().forEach(userID -> retrieve.add(jda.retrieveUserById(userID)));
 		if (retrieve.size() > 0)
 			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getAsTag())));
 		CommandBlocksHandle.changed = true;

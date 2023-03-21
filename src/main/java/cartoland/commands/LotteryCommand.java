@@ -167,7 +167,7 @@ class Ranking implements ICommand
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
 		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
-		int maxPage = (CommandBlocksHandle.length() - 1) / 10 + 1;
+		int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
 
@@ -183,11 +183,11 @@ class Ranking implements ICommand
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
 			forSort.clear(); //清除forSort
-			CommandBlocksHandle.getMap().forEach((userIDString, blocks) -> //走訪所有的ID和方塊對
+			CommandBlocksHandle.getMap().forEach((userID, blocks) -> //走訪所有的ID和方塊對
 			{
-				String userNameFromMap = IDAndEntities.idAndNames.get(Long.parseLong(userIDString)); //透過ID從JSON資料庫內獲得的名字
+				String userNameFromMap = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得的名字
 				if (userNameFromMap != null)
-					forSort.add(new UserNameAndBlocks(userNameFromMap, ((Number) blocks).longValue())); //新增一對名字和方塊數量
+					forSort.add(new UserNameAndBlocks(userNameFromMap, blocks)); //新增一對名字和方塊數量
 			});
 
 			//排序

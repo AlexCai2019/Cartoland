@@ -44,6 +44,7 @@ public class IDAndEntities
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
 	public static final long AC_ID = 355953951469731842L;
+	public static final long MEGA_ID = 412943154317361152L;
 
 	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
 	public static final List<Long> canTalkCategories = new ArrayList<>(3);

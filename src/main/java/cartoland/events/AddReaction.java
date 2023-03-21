@@ -30,6 +30,6 @@ public class AddReaction extends ListenerAdapter
 		if (forumPost.isArchived()) //關閉著的
 			return;
 
-		QuestionForumHandle.archiveForumPost(forumPost, event.retrieveMessage().complete());
+		event.retrieveMessage().queue(message -> QuestionForumHandle.archiveForumPost(forumPost, message));
 	}
 }

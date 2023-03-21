@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
@@ -34,10 +35,12 @@ public class BotOffline extends ListenerAdapter
 		IDAndEntities.twelvePMTask.cancel(true);
 		IDAndEntities.scheduleExecutor.shutdown();
 
-		String logString = "Cartoland Bot is now offline.";
+		String logString = "offline";
 		System.out.println(logString);
 		FileHandle.log(logString);
 		FileHandle.closeLog();
-		JsonHandle.synchronizeFiles();
+
+		JsonHandle.synchronizeFile();
+		CommandBlocksHandle.synchronizeFile();
 	}
 }

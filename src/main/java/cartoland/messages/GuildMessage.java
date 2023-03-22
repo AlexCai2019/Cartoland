@@ -84,6 +84,12 @@ public class GuildMessage implements IMessage
 
 	private final Random random = new Random();
 
+	@Override
+	public boolean messageCondition(MessageReceivedEvent event)
+	{
+		return event.isFromGuild();
+	}
+
 	/**
 	 * The method that implements from {@link IMessage}, triggers when receive a message from any
 	 * channel that the bot has permission to read, but only response when the channel is a text channel and

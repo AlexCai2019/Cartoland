@@ -3,7 +3,7 @@ package cartoland.utilities;
 import java.util.Random;
 
 /**
- * {@code Algorithm} is a class that provides functions that helps calculate.
+ * {@code Algorithm} is a class that provides functions that helps calculate. Can not be instantiated.
  *
  * @since 1.5
  * @author Alex Cai

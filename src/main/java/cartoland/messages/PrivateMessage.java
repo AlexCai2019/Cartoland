@@ -21,6 +21,12 @@ import java.util.stream.Collectors;
 public class PrivateMessage implements IMessage
 {
 	@Override
+	public boolean messageCondition(MessageReceivedEvent event)
+	{
+		return !event.isFromGuild();
+	}
+
+	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		Message message = event.getMessage();
@@ -53,6 +59,6 @@ public class PrivateMessage implements IMessage
 			rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
 
 		IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
-		FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
+		FileHandle.log(author.getAsTag() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
 	}
 }

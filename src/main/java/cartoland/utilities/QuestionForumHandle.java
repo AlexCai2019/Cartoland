@@ -20,8 +20,7 @@ public class QuestionForumHandle
 {
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
 	public static final String resolvedFormat = resolved.getFormatted();
-	//private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
-	//private static final String reminder_ribbonFormat = reminder_ribbon.getFormatted();
+	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
 
 	private QuestionForumHandle()
 	{
@@ -30,23 +29,10 @@ public class QuestionForumHandle
 
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
-		List<ForumTag> tags = forumPost.getAppliedTags();
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
+		firstMessageReminderRibbon(forumPost, false); //移除🎗️
 
-		//移除🎗️
-		//UnsupportedOperationException
-//		forumPost.retrieveParentMessage().queue(message ->
-//		{
-//			if (message.getReactions().stream().anyMatch(messageReaction -> messageReaction.getEmoji().getFormatted().equals(reminder_ribbonFormat)))
-//				message.removeReaction(reminder_ribbon, IDAndEntities.botItself).queue();
-//		}, throwable ->
-//		{
-//			throwable.printStackTrace();
-//			System.err.print('\u0007');
-//			FileHandle.log(throwable);
-//		});
-
-		tags = new ArrayList<>(tags);
+		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
 		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
@@ -91,12 +77,28 @@ public class QuestionForumHandle
 									  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
 									  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` emoji.\n" +
 									  "If it didn't, try offer more information of question.").queue();
-		//UnsupportedOperationException
-//		forumPost.retrieveParentMessage().queue(message -> message.addReaction(reminder_ribbon).queue(), throwable ->
-//		{
-//			throwable.printStackTrace();
-//			System.err.print('\u0007');
-//			FileHandle.log(throwable);
-//		});
+
+		//增加🎗️
+		firstMessageReminderRibbon(forumPost, true);
+	}
+
+	private static void firstMessageReminderRibbon(ThreadChannel forumPost, boolean isAdd)
+	{
+		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
+		{
+			if (messages.size() < 1)
+				return;
+
+			Message message = messages.get(0);
+			if (isAdd)
+				message.addReaction(reminder_ribbon).queue();
+			else if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
+				message.removeReaction(reminder_ribbon).queue();
+		}, throwable ->
+		{
+			throwable.printStackTrace();
+			System.err.print('\u0007');
+			FileHandle.log(throwable);
+		});
 	}
 }

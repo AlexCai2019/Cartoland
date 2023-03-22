@@ -1,9 +1,10 @@
 package cartoland.events;
 
-import cartoland.messages.*;
-import cartoland.utilities.IDAndEntities;
+import cartoland.messages.GuildMessage;
+import cartoland.messages.IMessage;
+import cartoland.messages.PrivateMessage;
+import cartoland.messages.QuestionForumMessage;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +25,6 @@ public class MessageEvent extends ListenerAdapter
 		new QuestionForumMessage()
 	};
 
-	private static final int GUILD_MESSAGE = 0;
-	private static final int PRIVATE_MESSAGE = 1;
-	private static final int QUESTION_FORUM_MESSAGE = 2;
-
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event)
 	{
@@ -35,21 +32,8 @@ public class MessageEvent extends ListenerAdapter
 		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統
 			return; //不用執行
 
-		if (!event.isFromGuild()) //不是來自群組 那肯定是來自私訊了
-		{
-			messageEvents[PRIVATE_MESSAGE].messageProcess(event);
-			return;
-		}
-
-		messageEvents[GUILD_MESSAGE].messageProcess(event); //群組訊息
-
-		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
-			return;
-
-		if (event.getChannel()
-				.asThreadChannel()
-				.getParentChannel()
-				.getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID) //是在問題論壇
-			messageEvents[QUESTION_FORUM_MESSAGE].messageProcess(event); //問題論壇訊息
+		for (IMessage messageEvent : messageEvents)
+			if (messageEvent.messageCondition(event)) //讓類別自己檢測是否通過
+				messageEvent.messageProcess(event); //執行訊息事件
 	}
 }

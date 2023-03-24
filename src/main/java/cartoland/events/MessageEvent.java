@@ -1,9 +1,6 @@
 package cartoland.events;
 
-import cartoland.messages.GuildMessage;
-import cartoland.messages.IMessage;
-import cartoland.messages.PrivateMessage;
-import cartoland.messages.QuestionForumMessage;
+import cartoland.messages.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

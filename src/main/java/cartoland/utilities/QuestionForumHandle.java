@@ -60,7 +60,8 @@ public class QuestionForumHandle
 				return;
 			}
 
-			result[0] = Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() >= 24L;
+			long hours = Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours();
+			result[0] = hours >= 24L;
 		});
 
 		return result[0];
@@ -69,10 +70,7 @@ public class QuestionForumHandle
 	public static void idleForumPost(ThreadChannel forumPost)
 	{
 		Member owner = forumPost.getOwner();
-		if (owner == null)
-			return;
-
-		String mentionOwner = owner.getAsMention();
+		String mentionOwner = owner != null ? owner.getAsMention() : "<@" + IDAndEntities.AC_ID + ">";
 		forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:`表情符號關閉貼文。\n" +
 									  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
 									  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` emoji.\n" +

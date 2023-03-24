@@ -161,6 +161,7 @@
 	"dtp.name.wg": "&dtp.name.w",
 	"dtp.name.w": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
+	"tool.uuid_string.invalid_string": "請輸入正確格式的UUID字串！",
 	"quote.jump_message": "跳至訊息",
 	"lottery.invalid_get": "你不能查看這名使用者的指令方塊！",
 	"lottery.query": "%s 目前有 %d 個指令方塊。",

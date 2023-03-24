@@ -124,5 +124,6 @@ public class JsonHandle
 			return englishFile.getString(key);
 		else
 			return "";
+		//return file.has(key) ? file.getString(key) : englishFile.has(key) ? englishFile.getString(key) : "";
 	}
 }

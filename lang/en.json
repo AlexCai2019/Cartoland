@@ -283,6 +283,7 @@
 	"dtp.name.wg": "&dtp.name.w",
 	"dtp.name.w": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "Wiki: https://minecraft.fandom.com/wiki/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
+	"tool.uuid_string.invalid_string": "Incorrect syntax: please enter the UUID string in the correct format!",
 	"lang.name.en": "Language set to English.",
 	"lang.name.tw": "語言設定為 台灣正體",
 	"lang.name.ta": "話語設定為 台語文字",

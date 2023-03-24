@@ -1,5 +1,6 @@
 package cartoland.commands;
 
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -91,7 +92,7 @@ class UUIDStringCommand implements ICommand
 		}
 		else //不是一個合法的UUID字串
 		{
-			event.reply("Incorrect syntax: please enter the UUID string in the correct format!").queue();
+			event.reply(JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
 			return;
 		}
 
@@ -239,7 +240,7 @@ class ColorInteger implements ICommand
 
 		//{ rgb / 65536, rgb / 256 % 256, rgb % 256 }
 		//假設是16777215 除以65536就會變成255, 16777215 除以256後取除以256的餘數也是255, 取除以256的餘數也是255
-		int[] colors = { rgb >> 16, (rgb >> 16) & 255, rgb & 255 };
+		int[] colors = { rgb >> 16, (rgb >> 8) & 255, rgb & 255 };
 
 		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
 							"RGB(Decimal): `" + rgb + "`\n" +

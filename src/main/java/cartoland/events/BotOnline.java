@@ -103,37 +103,36 @@ public class BotOnline extends ListenerAdapter
 		throw new NullPointerException();
 	}
 
+	private long secondsUntil(int hour)
+	{
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0);
+
+		if (now.compareTo(untilTime) > 0)
+			untilTime = untilTime.plusDays(1L);
+
+		return Duration.between(now, untilTime).getSeconds();
+	}
+
 	//https://stackoverflow.com/questions/65984126
 	private void ohBoy3AM()
 	{
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime threeAM = now.withHour(3).withMinute(0).withSecond(0);
-
-		if (now.compareTo(threeAM) > 0)
-			threeAM = threeAM.plusDays(1L);
-
-		long secondsUntil3AM = Duration.between(now, threeAM).getSeconds();
+		long secondsUntil3AM = secondsUntil(3);
 
 		threeAMTask = scheduleExecutor.scheduleAtFixedRate(
-				() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
-				secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+			() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
+			secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void idleFormPost12PM()
 	{
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime twelvePM = now.withHour(12).withMinute(0).withSecond(0);
+		long secondsUntil12PM = secondsUntil(12);
 
-		if (now.compareTo(twelvePM) > 0)
-			twelvePM = twelvePM.plusDays(1L);
-
-		long secondsUntil12PM = Duration.between(now, twelvePM).getSeconds();
-
-		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels().forEach(forumPost ->
-		{
-			if (QuestionForumHandle.forumPostShouldIdle(forumPost))
-				QuestionForumHandle.idleForumPost(forumPost);
-		}), secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels()
+				.stream()
+				.filter(QuestionForumHandle::forumPostShouldIdle)
+				.forEach(QuestionForumHandle::idleForumPost),
+			secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void initialIDAndName()

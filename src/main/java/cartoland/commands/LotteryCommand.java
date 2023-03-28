@@ -74,7 +74,6 @@ class Bet implements ICommand
 {
 	private final Pattern number = Pattern.compile("\\d+");
 	private final Pattern percent = Pattern.compile("\\d+%");
-	private final Random random = new Random();
 	private int win = 0;
 	private int lose = 0;
 	private static final long MAXIMUM = 1000000L;
@@ -126,7 +125,7 @@ class Bet implements ICommand
 
 		long afterBet;
 		String result;
-		if (Algorithm.chance(50, random)) //賭贏 可用random.nextBoolean()
+		if (Algorithm.chance(50)) //賭贏 可用random.nextBoolean()
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getJsonKey(userID, "lottery.win");
@@ -252,8 +251,8 @@ record UserNameAndBlocks(String userName, long blocks)
 {
 	@Override
 	public boolean equals(Object o)
-	{
-		return (this == o) || (o instanceof UserNameAndBlocks that && userName.equals(that.userName));
+	{ //不需要this == o 因為幾乎不會碰到這樣的情況
+		return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
 	}
 
 	@Override

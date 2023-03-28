@@ -105,7 +105,7 @@ class UUIDStringCommand implements ICommand
 		};
 
 		event.reply("UUID: `" + dash + "`\n" +
-							"UUID (without dashes): `" + noDash + "`\n" +
+							"UUID (" + JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -147,7 +147,7 @@ class UUIDArrayCommand implements ICommand
 		uuidStrings[4] = temp.substring(4) + String.format("%08x", uuidArray[3]);
 
 		event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
-							"UUID(without dash): `" + String.join("", uuidStrings) + "`\n" +
+							"UUID(" + JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -172,8 +172,9 @@ class ColorRGB implements ICommand
 		};
 
 		int rgb = 0;
-		int offset = 0b1_0000_0000_0000_0000; //16 * 16 * 16 * 16
+		int offset = 0x10000; //16 * 16 * 16 * 16
 
+		long userID = event.getUser().getIdLong();
 		for (Integer color : colors)
 		{
 			if (color == null)
@@ -184,7 +185,7 @@ class ColorRGB implements ICommand
 
 			if (color < 0 || color > 255)
 			{
-				event.reply("You can't input an integer that is not in the range from 0 to 255!").queue();
+				event.reply(JsonHandle.getJsonKey(userID, "tool.color_rgb.wrong_range")).queue();
 				return;
 			}
 
@@ -193,8 +194,8 @@ class ColorRGB implements ICommand
 		}
 
 		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
-							"RGB(Decimal): `" + rgb + "`\n" +
-							"RGB(Hexadecimal): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
+							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_rgb.decimal") + "): `" + rgb + "`\n" +
+							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_rgb.hexadecimal") + "): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
 	}
 }
 
@@ -221,6 +222,7 @@ class ColorInteger implements ICommand
 			return;
 		}
 
+		long userID = event.getUser().getIdLong();
 		int rgb;
 		if (decimalRegex.matcher(rgbString).matches())
 		{
@@ -234,7 +236,7 @@ class ColorInteger implements ICommand
 			rgb = Integer.parseInt(rgbString.substring(1), 16); //像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 		else
 		{
-			event.reply("Please use /tool color_integer <decimal integer>, /tool color_integer <hexadecimal integer> or /tool color_integer #<hexadecimal integer>").queue();
+			event.reply(JsonHandle.getJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
 			return;
 		}
 
@@ -243,8 +245,8 @@ class ColorInteger implements ICommand
 		int[] colors = { rgb >> 16, (rgb >> 8) & 255, rgb & 255 };
 
 		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
-							"RGB(Decimal): `" + rgb + "`\n" +
-							"RGB(Hexadecimal): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
+							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgb + "`\n" +
+							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
 	}
 }
 

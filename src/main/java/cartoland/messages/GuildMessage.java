@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 
-import java.util.Random;
 import java.util.regex.Pattern;
 
 import static cartoland.utilities.IDAndEntities.*;
@@ -82,8 +81,6 @@ public class GuildMessage implements IMessage
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
 
-	private final Random random = new Random();
-
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -112,9 +109,9 @@ public class GuildMessage implements IMessage
 		long categoryID = category.getIdLong();
 		MessageChannel channel = message.getChannel();
 
-		if (Algorithm.chance(20, random) && rawMessage.contains("learned")) //20%
+		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
 			message.addReaction(learned).queue();
-		if (Algorithm.chance(20, random) && rawMessage.contains("wow")) //20%
+		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
 			message.addReaction(wow).queue();
 
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
@@ -131,17 +128,17 @@ public class GuildMessage implements IMessage
 			String replyString;
 
 			if (userID == AC_ID)
-				replyString = randomString(replyACMention);
+				replyString = Algorithm.randomElement(replyACMention);
 			else if (userID == MEGA_ID)
-				replyString = randomString(replyMegaMention);
+				replyString = Algorithm.randomElement(replyMegaMention);
 			else
-				replyString = randomString(replyMention);
+				replyString = Algorithm.randomElement(replyMention);
 
 			message.reply(replyString).mentionRepliedUser(false).queue();
 		}
 
 		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
-			channel.sendMessage(randomString(megumin)).queue();
+			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
 
 		if (lolRegex.matcher(rawMessage).matches())
 			channel.sendMessage("LOL").queue();
@@ -160,11 +157,6 @@ public class GuildMessage implements IMessage
 		if (rawMessage.contains("賺爛"))
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
-			channel.sendMessage(randomString(fbi)).queue();
-	}
-
-	private String randomString(String[] strings)
-	{
-		return strings[random.nextInt(strings.length)];
+			channel.sendMessage(Algorithm.randomElement(fbi)).queue();
 	}
 }

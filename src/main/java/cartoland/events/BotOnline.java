@@ -128,10 +128,7 @@ public class BotOnline extends ListenerAdapter
 	{
 		long secondsUntil12PM = secondsUntil(12);
 
-		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels()
-				.stream()
-				.filter(QuestionForumHandle::forumPostShouldIdle)
-				.forEach(QuestionForumHandle::idleForumPost),
+		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::idleForumPost),
 			secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 

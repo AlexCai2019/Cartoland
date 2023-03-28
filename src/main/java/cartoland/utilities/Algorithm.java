@@ -1,7 +1,5 @@
 package cartoland.utilities;
 
-import java.util.Random;
-
 /**
  * {@code Algorithm} is a class that provides functions that helps calculate. Can not be instantiated.
  *
@@ -15,7 +13,7 @@ public class Algorithm
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Random random = new Random();
+	private static final java.util.Random random = new java.util.Random();
 
 	/**
 	 * Shuffle an array.
@@ -55,8 +53,18 @@ public class Algorithm
 		return sum;
 	}
 
-	public static boolean chance(int percent, Random random)
+	public static boolean chance(int percent)
 	{
 		return percent > random.nextInt(100);
+	}
+
+	public static <T> T randomElement(T[] array)
+	{
+		return array[random.nextInt(array.length)];
+	}
+
+	public static long randomElement(long[] array)
+	{
+		return array[random.nextInt(array.length)];
 	}
 }

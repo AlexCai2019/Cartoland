@@ -3,6 +3,8 @@ package cartoland.commands;
 import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
+import cartoland.utilities.CommandBlocksHandle;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -35,33 +37,33 @@ public class OneATwoBCommand implements ICommand
 		{
 			if (playing == null) //沒有在玩遊戲 開始1A2B
 			{
-				event.reply("Started a game of 1A2B! Type `/one_a_two_b <answer>` to make a guess.").queue();
+				event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.start")).queue();
 				commandCore.getGames().put(userID, new OneATwoBGame());
 			}
 			else //已經有在玩遊戲
-				event.reply("You are already in a " + playing.gameName() + " game.").setEphemeral(true).queue();
+				event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 			return;
 		}
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run `/one_a_two_b` without any arguments to start a new game.").setEphemeral(true).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.too_much_arguments")).setEphemeral(true).queue();
 			return;
 		}
 
 		//已經有在玩遊戲
 		if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 		{
-			event.reply("You are already playing a " + playing.gameName() + " game.").setEphemeral(true).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 			return;
 		}
 
 		int ab = oneATwoB.calculateAAndB(argument);
 		String shouldReply = switch (ab)
 		{
-			case OneATwoBGame.ErrorCode.INVALID -> "Invalid guess: please enter a " + OneATwoBGame.ANSWER_LENGTH + "-digit integer.";
-			case OneATwoBGame.ErrorCode.NOT_UNIQUE -> "Invalid guess: please enter " + OneATwoBGame.ANSWER_LENGTH + " unique digits.";
+			case OneATwoBGame.ErrorCode.INVALID -> JsonHandle.getJsonKey(userID, "one_a_two_b.invalid").formatted(OneATwoBGame.ANSWER_LENGTH);
+			case OneATwoBGame.ErrorCode.NOT_UNIQUE -> JsonHandle.getJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH);
 			default -> argument + " = " + ab / 10 + " A " + ab % 10 + " B";
 		};
 
@@ -73,9 +75,19 @@ public class OneATwoBCommand implements ICommand
 
 		//猜出ANSWER_LENGTH個A 遊戲結束
 		long second = oneATwoB.getTimePassed();
-		event.reply(shouldReply + "\nGame over! The answer is **" + argument + "**.\n" +
-							"Time elapsed: " + second / 60 + " minutes, " + second % 60 + " seconds\n" +
-							"Guesses: " + oneATwoB.getGuesses() + " times").queue();
+		int guesses = oneATwoB.getGuesses();
+		String replyString = JsonHandle.getJsonKey(userID, "one_a_two_b.game_over").formatted(shouldReply, argument, second / 60, second % 60, guesses);
+
+		final int maxMinute = 2;
+		final int maxGuesses = 7;
+		if (second < maxMinute * 60L && guesses < maxGuesses)
+		{
+			final int reward = 100;
+			replyString += JsonHandle.getJsonKey(userID, "one_a_two_b.reward").formatted(maxMinute, maxGuesses, reward);
+			CommandBlocksHandle.add(userID, reward);
+		}
+
+		event.reply(replyString).queue();
 		commandCore.getGames().remove(userID);
 	}
 }

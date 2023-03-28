@@ -150,6 +150,7 @@
 	"dtp.name.wg": "&dtp.name.w",
 	"dtp.name.w": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
+	"quote.jump_message": "跳到訊息",
 	"lottery.query": "%s 現此時有 %d 個指令四方體。",
 	"lottery.win": "贏了！",
 	"lottery.lose": "輸了…",

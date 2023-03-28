@@ -1,6 +1,5 @@
 package cartoland.utilities;
 
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -38,46 +37,29 @@ public class QuestionForumHandle
 		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 	}
 
-	public static boolean forumPostShouldIdle(ThreadChannel forumPost)
-	{
-		if (forumPost.isArchived())
-			return false;
-
-		final boolean[] result = { false }; //lambda 要用
-		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
-		{
-			Member messageCreatorMember = lastMessage.getMember();
-			if (messageCreatorMember == null)
-			{
-				result[0] = false;
-				return;
-			}
-
-			User messageCreatorUser = messageCreatorMember.getUser();
-			if (messageCreatorUser.isBot() || messageCreatorUser.isSystem())
-			{
-				result[0] = false;
-				return;
-			}
-
-			long hours = Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours();
-			result[0] = hours >= 24L;
-		});
-
-		return result[0];
-	}
-
 	public static void idleForumPost(ThreadChannel forumPost)
 	{
-		Member owner = forumPost.getOwner();
-		String mentionOwner = owner != null ? owner.getAsMention() : "<@" + IDAndEntities.AC_ID + ">";
-		forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:`表情符號關閉貼文。\n" +
-									  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
-									  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` emoji.\n" +
-									  "If it didn't, try offer more information of question.").queue();
+		if (forumPost.isArchived() || forumPost.isLocked())
+			return;
 
-		//增加🎗️
-		firstMessageReminderRibbon(forumPost, true);
+		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
+		{
+			User author = lastMessage.getAuthor();
+			if (author.isBot() || author.isSystem())
+				return;
+
+			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < 24L)
+				return;
+
+			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
+			forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:`表情符號關閉貼文。\n" +
+										  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
+										  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` emoji.\n" +
+										  "If it didn't, try offer more information of question.").queue();
+
+			//增加🎗️
+			firstMessageReminderRibbon(forumPost, true);
+		});
 	}
 
 	private static void firstMessageReminderRibbon(ThreadChannel forumPost, boolean isAdd)

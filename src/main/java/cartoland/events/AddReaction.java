@@ -17,7 +17,7 @@ public class AddReaction extends ListenerAdapter
 	@Override
 	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event)
 	{
-		if (!event.getReaction().getEmoji().getFormatted().equals(QuestionForumHandle.resolvedFormat)) //不是resolved
+		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
 			return;
 		User user = event.getUser();
 		if (user == null || user.isBot() || user.isSystem()) //是機器人或系統

@@ -1,8 +1,10 @@
 package cartoland.utilities;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
@@ -18,7 +20,7 @@ import java.util.List;
 public class QuestionForumHandle
 {
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
-	public static final String resolvedFormat = resolved.getFormatted();
+	private static final String resolvedFormat = resolved.getFormatted();
 	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
 
 	private QuestionForumHandle()
@@ -26,15 +28,43 @@ public class QuestionForumHandle
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
+	public static boolean typedResolved(Object withReaction)
+	{
+		if (withReaction instanceof Message message)
+			return message.getContentRaw().equals(resolvedFormat);
+		else if (withReaction instanceof MessageReaction reaction)
+			return reaction.getEmoji().equals(resolved);
+		else
+			return false;
+	}
+
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
+		ThreadChannelManager manager = forumPost.getManager();
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
-		firstMessageReminderRibbon(forumPost, false); //移除🎗️
-
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
 		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
-		forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
+		manager.setAppliedTags(tags).queue();
+
+		//移除🎗️ 並關閉貼文
+		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
+		{
+			if (messages.size() > 0)
+			{
+				Message message = messages.get(0);
+				if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
+					message.removeReaction(reminder_ribbon).queue();
+			}
+
+			manager.setArchived(true).queue(); //關閉貼文
+
+		}, throwable ->
+		{
+			throwable.printStackTrace();
+			System.err.print('\u0007');
+			FileHandle.log(throwable);
+		});
 	}
 
 	public static void idleForumPost(ThreadChannel forumPost)
@@ -58,27 +88,16 @@ public class QuestionForumHandle
 										  "If it didn't, try offer more information of question.").queue();
 
 			//增加🎗️
-			firstMessageReminderRibbon(forumPost, true);
-		});
-	}
-
-	private static void firstMessageReminderRibbon(ThreadChannel forumPost, boolean isAdd)
-	{
-		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
-		{
-			if (messages.size() < 1)
-				return;
-
-			Message message = messages.get(0);
-			if (isAdd)
-				message.addReaction(reminder_ribbon).queue();
-			else if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
-				message.removeReaction(reminder_ribbon).queue();
-		}, throwable ->
-		{
-			throwable.printStackTrace();
-			System.err.print('\u0007');
-			FileHandle.log(throwable);
+			forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
+			{
+				if (messages.size() > 0)
+					messages.get(0).addReaction(reminder_ribbon).queue();
+			}, throwable ->
+			{
+				throwable.printStackTrace();
+				System.err.print('\u0007');
+				FileHandle.log(throwable);
+			});
 		});
 	}
 }

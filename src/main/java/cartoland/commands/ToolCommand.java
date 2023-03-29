@@ -31,16 +31,7 @@ public class ToolCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String subCommandName = event.getSubcommandName();
-		if (subCommandName == null)
-		{
-			event.reply("Impossible, this is required!").queue();
-			return;
-		}
-
-		ICommand subCommandExecution = subCommands.get(subCommandName);
-		if (subCommandExecution != null)
-			subCommandExecution.commandProcess(event);
+		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
 }
 

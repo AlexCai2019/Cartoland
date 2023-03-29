@@ -19,6 +19,7 @@ public class MessageEvent extends ListenerAdapter
 	{
 		new GuildMessage(),
 		new PrivateMessage(),
+		new BotCanTalkChannelMessage(),
 		new QuestionForumMessage()
 	};
 

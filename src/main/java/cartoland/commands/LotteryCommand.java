@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class LotteryCommand implements ICommand
 {
-	private final HashMap<String, ICommand> subCommands = new HashMap<>();
+	private final Map<String, ICommand> subCommands = new HashMap<>();
 
 	public LotteryCommand()
 	{
@@ -68,8 +68,8 @@ class Get implements ICommand
  */
 class Bet implements ICommand
 {
-	private final Pattern number = Pattern.compile("\\d+");
-	private final Pattern percent = Pattern.compile("\\d+%");
+	private final Pattern numberRegex = Pattern.compile("\\d+");
+	private final Pattern percentRegex = Pattern.compile("\\d+%");
 	private int win = 0;
 	private int lose = 0;
 	private static final long MAXIMUM = 1000000L;
@@ -89,9 +89,9 @@ class Bet implements ICommand
 
 		long bet;
 
-		if (number.matcher(betString).matches()) //賭數字
+		if (numberRegex.matcher(betString).matches()) //賭數字
 			bet = Long.parseLong(betString);
-		else if (percent.matcher(betString).matches()) //賭%數
+		else if (percentRegex.matcher(betString).matches()) //賭%數
 		{
 			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
 			if (percentage > 100L) //超過100%
@@ -178,11 +178,11 @@ class Ranking implements ICommand
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
 			forSort.clear(); //清除forSort
-			CommandBlocksHandle.getMap().forEach((userID, blocks) -> //走訪所有的ID和方塊對
+			CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
 			{
-				String userNameFromMap = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得的名字
-				if (userNameFromMap != null)
-					forSort.add(new UserNameAndBlocks(userNameFromMap, blocks)); //新增一對名字和方塊數量
+				String userName = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得名字
+				if (userName != null)
+					forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
 			});
 
 			//排序

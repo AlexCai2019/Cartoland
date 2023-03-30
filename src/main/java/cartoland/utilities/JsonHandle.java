@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
@@ -25,8 +26,8 @@ public class JsonHandle
 	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
 
 	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
-	private static final HashMap<String, JSONObject> languageFileMap = new HashMap<>();
-	private static final HashMap<String, List<Object>> commandListMap = new HashMap<>(); //讓commandList()方便呼叫
+	private static final Map<String, JSONObject> languageFileMap = new HashMap<>();
+	private static final Map<String, List<Object>> commandListMap = new HashMap<>();
 	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
@@ -51,11 +52,13 @@ public class JsonHandle
 		file = languageFileMap.get(userLanguage);
 	}
 
-	static void buildCommandBlocksMap()
+	static Map<Long, Long> buildCommandBlocksMap()
 	{
-		CommandBlocksHandle.commandBlocksMap = new HashMap<>();
+		Map<Long, Long> map = new HashMap<>();
 		JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
-		commandBlocksFile.keySet().forEach(userIDString -> CommandBlocksHandle.commandBlocksMap.put(Long.parseLong(userIDString), commandBlocksFile.getLong(userIDString)));
+		//commandBlocksFile.toMap().forEach((s, o) -> map.put(Long.parseLong(s), ((Number) o).longValue()));
+		commandBlocksFile.keySet().forEach(userIDString -> map.put(Long.parseLong(userIDString), commandBlocksFile.optLong(userIDString)));
+		return map;
 	}
 
 	public static void synchronizeFile()

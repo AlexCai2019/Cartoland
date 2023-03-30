@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -48,8 +49,8 @@ public class IDAndEntities
 
 	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
 	public static final List<Long> canTalkCategories = new ArrayList<>(3);
-	public static final HashMap<String, String> youtubers = new HashMap<>();
-	public static final HashMap<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
+	public static final Map<String, String> youtubers = new HashMap<>();
+	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
 
 	static
 	{

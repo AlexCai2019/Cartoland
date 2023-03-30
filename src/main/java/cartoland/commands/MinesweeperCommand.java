@@ -3,6 +3,7 @@ package cartoland.commands;
 import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.MinesweeperGame;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -23,7 +24,7 @@ public class MinesweeperCommand implements ICommand
 
 	public MinesweeperCommand(CommandUsage commandUsage)
 	{
-		this.commandCore = commandUsage;
+		commandCore = commandUsage;
 	}
 
 	@Override
@@ -48,6 +49,11 @@ public class MinesweeperCommand implements ICommand
 			reply = reply.addActionRow(buttonRow(map[rowIndex], rowIndex));
 
 		reply.queue();
+	}
+
+	public void pressed(User user, int x, int y)
+	{
+		;
 	}
 
 	private Button[] buttonRow(byte[] mapRow, int rowIndex)

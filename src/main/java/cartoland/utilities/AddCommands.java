@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.*;
 import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@code AddCommands} is a utility that holds every command. The only usage is for {@link cartoland.Cartoland#main} to
@@ -146,7 +147,7 @@ public class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
 				.addOptions(
-						new OptionData(OptionType.STRING, "answer", "The answer that you think", false, false)
+						new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
 								.setNameLocalization(CHINESE_TAIWAN, "答案")
 								.setNameLocalization(CHINESE_CHINA, "答案")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
@@ -249,7 +250,7 @@ class Cmd
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final HashMap<DiscordLocale, String> cmdDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> cmdDescriptions = new HashMap<>();
 
 	static
 	{
@@ -291,7 +292,7 @@ class Faq
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final HashMap<DiscordLocale, String> faqDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> faqDescriptions = new HashMap<>();
 
 	static
 	{
@@ -329,7 +330,7 @@ class Dtp
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final HashMap<DiscordLocale, String> dtpDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> dtpDescriptions = new HashMap<>();
 
 	static
 	{
@@ -367,7 +368,7 @@ class Lang
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final HashMap<DiscordLocale, String> langDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> langDescriptions = new HashMap<>();
 
 	static
 	{

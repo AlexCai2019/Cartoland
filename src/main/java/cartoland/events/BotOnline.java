@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static cartoland.utilities.IDAndEntities.*;
@@ -30,8 +30,8 @@ import static cartoland.utilities.IDAndEntities.*;
 public class BotOnline extends ListenerAdapter
 {
 	/**
-	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will send
-	 * online message to bot channel.
+	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will initialize
+	 * entities in {@link cartoland.utilities.IDAndEntities} and send online message to bot channel.
 	 *
 	 * @param event The event that carries information.
 	 */
@@ -117,26 +117,23 @@ public class BotOnline extends ListenerAdapter
 	//https://stackoverflow.com/questions/65984126
 	private void ohBoy3AM()
 	{
-		long secondsUntil3AM = secondsUntil(3);
-
 		threeAMTask = scheduleExecutor.scheduleAtFixedRate(
 			() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
-			secondsUntil3AM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+			secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void idleFormPost12PM()
 	{
-		long secondsUntil12PM = secondsUntil(12);
-
-		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::idleForumPost),
-			secondsUntil12PM, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(
+			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::idleForumPost),
+			secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void initialIDAndName()
 	{
-		HashMap<Long, Long> commandBlockMap = CommandBlocksHandle.getMap();
-		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockMap.size());
-		commandBlockMap.keySet().forEach(userID -> retrieve.add(jda.retrieveUserById(userID)));
+		Set<Long> commandBlockUsers = CommandBlocksHandle.getKeySet();
+		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockUsers.size());
+		commandBlockUsers.forEach(userID -> retrieve.add(jda.retrieveUserById(userID)));
 		if (retrieve.size() > 0)
 			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getAsTag())));
 		CommandBlocksHandle.changed = true;

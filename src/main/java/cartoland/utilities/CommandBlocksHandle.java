@@ -1,6 +1,7 @@
 package cartoland.utilities;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
@@ -17,16 +18,11 @@ public class CommandBlocksHandle
 {
 	public static boolean changed = true;
 
-	static HashMap<Long, Long> commandBlocksMap;
+	static Map<Long, Long> commandBlocksMap = JsonHandle.buildCommandBlocksMap();
 
 	private CommandBlocksHandle()
 	{
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
-	}
-
-	static
-	{
-		 JsonHandle.buildCommandBlocksMap();
 	}
 
 	/**
@@ -61,9 +57,9 @@ public class CommandBlocksHandle
 		return commandBlocksMap.size();
 	}
 
-	public static HashMap<Long, Long> getMap()
+	public static Set<Long> getKeySet()
 	{
-		return commandBlocksMap;
+		return commandBlocksMap.keySet();
 	}
 
 	public static void synchronizeFile()

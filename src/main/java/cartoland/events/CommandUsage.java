@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
@@ -26,12 +27,12 @@ public class CommandUsage extends ListenerAdapter
 	/**
 	 * The key of this map is the name of a command, and the value is the execution.
 	 */
-	private final HashMap<String, ICommand> commands = new HashMap<>();
+	private final Map<String, ICommand> commands = new HashMap<>();
 	/**
 	 * The key of this map is the name of a game, and the value is the actual game.
 	 */
-	private final HashMap<Long, IMiniGame> games = new HashMap<>();
-	public HashMap<Long, IMiniGame> getGames()
+	private final Map<Long, IMiniGame> games = new HashMap<>();
+	public Map<Long, IMiniGame> getGames()
 	{
 		return games;
 	}
@@ -113,7 +114,7 @@ public class CommandUsage extends ListenerAdapter
 		//reload
 		commands.put("reload", event ->
 		{
-			if (event.getIdLong() != IDAndEntities.AC_ID) //不是我
+			if (event.getUser().getIdLong() != IDAndEntities.AC_ID) //不是我
 			{
 				event.reply("You can't do that.").queue();
 				return;
@@ -132,7 +133,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("transfer", new TransferCommand());
 
 		//minesweeper
-		//commands.put("minesweeper", new MinesweeperCommand(this));
+		//commands.put("minesweeper", m);
 	}
 
 	/**
@@ -170,6 +171,28 @@ public class CommandUsage extends ListenerAdapter
 			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
 		return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);
 	}
+
+	/*
+	private final Pattern minesweeperButtonRegex = Pattern.compile("\\d \\d");
+	private final MinesweeperCommand m = new MinesweeperCommand(this);
+
+	@Override
+	public void onButtonInteraction(@NotNull ButtonInteractionEvent event)
+	{
+		String buttonID = event.getComponentId();
+		if (minesweeperButtonRegex.matcher(buttonID).matches())
+		{
+			User user = event.getUser();
+			IMiniGame playing = games.get(user.getIdLong());
+			if (!(playing instanceof MinesweeperGame))
+				return;
+
+			int x = buttonID.charAt(0) - '0';
+			int y = buttonID.charAt(2) - '0';
+			m.pressed(user, x, y);
+		}
+	}
+	*/
 }
 
 /**

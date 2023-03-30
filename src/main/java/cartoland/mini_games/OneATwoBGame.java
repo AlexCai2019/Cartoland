@@ -4,7 +4,7 @@ import cartoland.utilities.Algorithm;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
 /**
  * {@code OneATwoBGame} is the backend of the 1A2B game, it can process the entire game with all fields and methods.
@@ -18,18 +18,24 @@ import java.util.regex.Pattern;
 public class OneATwoBGame implements IMiniGame
 {
 	public static final int ANSWER_LENGTH = 4;
-	private final Pattern digitsRegex = Pattern.compile("\\d{" + ANSWER_LENGTH + "}"); //ANSWER_LENGTH個數字
 
 	private final int[] answer = new int[ANSWER_LENGTH];
-	private final int[] zeroToNine = { 0,1,2,3,4,5,6,7,8,9 };
+	private final boolean[] metBefore = new boolean[10];
 	private final boolean[] inAnswer = { false,false,false,false,false,false,false,false,false,false };
 	private final Instant begin;
 	private int guesses = 0;
 
 	public OneATwoBGame()
 	{
+		int[] zeroToNine = { 0,1,2,3,4,5,6,7,8,9 };
 		Algorithm.shuffle(zeroToNine); //洗牌0 ~ 9
-		generateAnswer(); //產生答案
+
+		for (int i = 0; i < ANSWER_LENGTH; i++) //產生答案
+		{
+			answer[i] = zeroToNine[i];
+			inAnswer[answer[i]] = true;
+		}
+
 		begin = Instant.now();
 	}
 
@@ -39,60 +45,40 @@ public class OneATwoBGame implements IMiniGame
 		return "1A2B";
 	}
 
-	private void generateAnswer()
-	{
-		for (int i = 0; i < ANSWER_LENGTH; i++)
-		{
-			answer[i] = zeroToNine[i];
-			inAnswer[answer[i]] = true;
-		}
-	}
+	private final int[] ab = new int[2];
 
-	private void restoreZeroToNine()
-	{
-		for (int i = 0; i < 10; i++)
-			zeroToNine[i] = i;
-	}
-
-	public int calculateAAndB(String input)
+	public int[] calculateAAndB(int input)
 	{
 		guesses++;
-		if (input == null || !digitsRegex.matcher(input).matches()) //不是ANSWER_LENGTH個數字
-			return ErrorCode.INVALID;
+		ab[0] = ab[1] = 0;
+		Arrays.fill(metBefore, false);
 
-		restoreZeroToNine();
-		int a = 0, b = 0;
-		for (int i = 0, digitValueOfInput; i < ANSWER_LENGTH; i++)
+		for (int i = ANSWER_LENGTH - 1, digit; i >= 0; i--) //從後面檢測回來
 		{
-			digitValueOfInput = Character.getNumericValue(input.charAt(i));
-			if (zeroToNine[digitValueOfInput] == -1) //遇過這個數字了
-				return ErrorCode.NOT_UNIQUE;
+			digit = input % 10;
+			if (metBefore[digit]) //遇過這個數字了
+				return null;
 
-			zeroToNine[digitValueOfInput] = -1;
+			metBefore[digit] = true;
 
-			if (answer[i] == digitValueOfInput)
-				a++;
-			else if (inAnswer[digitValueOfInput])
-				b++;
+			if (answer[i] == digit)
+				ab[0]++;
+			else if (inAnswer[digit])
+				ab[1]++;
+
+			input /= 10;
 		}
 
-		return a * 10 + b;
+		return ab;
 	}
-
+	//計時結束
 	public long getTimePassed()
 	{
-		Instant end = Instant.now(); //計時結束
-		return Duration.between(begin, end).toSeconds();
+		return Duration.between(begin, Instant.now()).toSeconds();
 	}
 
 	public int getGuesses()
 	{
 		return guesses;
-	}
-
-	public static class ErrorCode
-	{
-		public static final int INVALID = -1;
-		public static final int NOT_UNIQUE = -2;
 	}
 }

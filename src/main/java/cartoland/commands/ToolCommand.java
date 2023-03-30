@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class ToolCommand implements ICommand
 {
-	private final HashMap<String, ICommand> subCommands = new HashMap<>();
+	private final Map<String, ICommand> subCommands = new HashMap<>();
 
 	public ToolCommand()
 	{

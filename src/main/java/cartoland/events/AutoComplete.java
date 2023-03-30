@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class AutoComplete extends ListenerAdapter
 {
-	private final HashMap<String, GenericComplete> commands = new HashMap<>(); //指令們
+	private final Map<String, GenericComplete> commands = new HashMap<>(); //指令們
 
 	public AutoComplete()
 	{

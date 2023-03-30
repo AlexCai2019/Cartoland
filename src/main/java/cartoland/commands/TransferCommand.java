@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+import java.util.regex.Pattern;
+
 /**
  * {@code TransferCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link CommandUsage}.
@@ -17,6 +19,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
  */
 public class TransferCommand implements ICommand
 {
+	private final Pattern numberRegex = Pattern.compile("\\d+");
+	private final Pattern percentRegex = Pattern.compile("\\d+%");
+
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -50,9 +55,9 @@ public class TransferCommand implements ICommand
 
 		long nowHave = CommandBlocksHandle.get(userID);
 		long transferAmount;
-		if (transferAmountString.matches("\\d+"))
+		if (numberRegex.matcher(transferAmountString).matches())
 			transferAmount = Long.parseLong(transferAmountString);
-		else if (transferAmountString.matches("\\d+%"))
+		else if (percentRegex.matcher(transferAmountString).matches())
 		{
 			long percentage = Long.parseLong(transferAmountString.substring(0, transferAmountString.length() - 1));
 			if (percentage > 100L) //超過100%

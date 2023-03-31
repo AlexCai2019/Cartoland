@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code TransferCommand} is an execution when a user uses /minesweeper command. This class implements
@@ -28,7 +29,7 @@ public class MinesweeperCommand implements ICommand
 	}
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		IMiniGame playing = commandCore.getGames().get(event.getUser().getIdLong());
 		if (playing != null)

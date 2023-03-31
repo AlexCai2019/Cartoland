@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * {@code AutoComplete} is a listener that triggers when a user is typing a command. This class was registered
@@ -93,7 +92,7 @@ class JsonBasedComplete extends GenericComplete
 	}
 
 	@Override
-	void completeProcess(CommandAutoCompleteInteractionEvent event)
+	void completeProcess(@NotNull CommandAutoCompleteInteractionEvent event)
 	{
 		AutoCompleteQuery focusedOption = event.getFocusedOption();
 		if (!focusedOption.getName().equals(commandName + "_name"))
@@ -102,9 +101,10 @@ class JsonBasedComplete extends GenericComplete
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
 		List<Command.Choice> choices = JsonHandle.commandList(commandName)
 				.stream()
-				.filter(word -> ((String) word).startsWith(optionValue))
-				.map(word -> new Command.Choice((String) word, (String) word))
-				.collect(Collectors.toList());
+				.map(o -> (String) o)
+				.filter(word -> word.startsWith(optionValue))
+				.map(word -> new Command.Choice(word, word))
+				.toList();
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 	}
@@ -125,7 +125,7 @@ class YouTuberComplete extends GenericComplete
 	}
 
 	@Override
-	void completeProcess(CommandAutoCompleteInteractionEvent event)
+	void completeProcess(@NotNull CommandAutoCompleteInteractionEvent event)
 	{
 		String optionValue = event.getFocusedOption().getValue();
 		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);

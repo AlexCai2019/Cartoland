@@ -3,6 +3,7 @@ package cartoland.commands;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class ToolCommand implements ICommand
 	}
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
@@ -53,7 +54,7 @@ class UUIDStringCommand implements ICommand
 	private final Pattern noDashRegex = Pattern.compile("[0-9A-Fa-f]{32}");
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		String rawUUID = event.getOption("raw_uuid", OptionMapping::getAsString);
 		if (rawUUID == null)
@@ -114,7 +115,7 @@ class UUIDStringCommand implements ICommand
 class UUIDArrayCommand implements ICommand
 {
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		Integer[] uuidArray = new Integer[4];
 		for (int i = 0; i < 4; i++)
@@ -154,7 +155,7 @@ class UUIDArrayCommand implements ICommand
 class ColorRGB implements ICommand
 {
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		Integer[] colors =
 		{
@@ -205,7 +206,7 @@ class ColorInteger implements ICommand
 	private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{6}"); //#FFFFFF
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		String rgbString = event.getOption("rgb", OptionMapping::getAsString);
 		if (rgbString == null)
@@ -253,7 +254,7 @@ class ColorInteger implements ICommand
 class PackMcmetaCommand implements ICommand
 {
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		String packType = event.getOption("pack_type", OptionMapping::getAsString);
 		if (packType == null)

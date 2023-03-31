@@ -1,5 +1,8 @@
 package cartoland.utilities;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,7 +46,7 @@ public class FileHandle
 	}
 
 	//將JSON讀入進字串
-	static String buildJsonStringFromFile(String fileName)
+	static String buildJsonStringFromFile(@NotNull String fileName)
 	{
 		try
 		{
@@ -58,7 +61,7 @@ public class FileHandle
 		}
 	}
 
-	static void synchronizeFile(String fileName, String content)
+	static void synchronizeFile(@NotNull String fileName, @Nullable String content)
 	{
 		if (content == null)
 			content = "{}";
@@ -78,15 +81,16 @@ public class FileHandle
 		}
 	}
 
-	public static void log(String output)
+	public static void log(@NotNull String output)
 	{
 		LocalDate today = LocalDate.now(); //今天
 		if (!today.isEqual(lastDateHasLog)) //如果今天跟上次有寫log的日期不同
 		{
+			Algorithm.updateSeed(); //在換日時更新種子
 			lastDateHasLog = today;
 			try
 			{
-				logger.close();
+				closeLog0();
 				//一定要事先備好logs資料夾
 				logger = new FileWriter("logs/" + today, true);
 			}
@@ -113,7 +117,7 @@ public class FileHandle
 		}
 	}
 
-	public static void log(Throwable exception)
+	public static void log(@NotNull Throwable exception)
 	{
 		StackTraceElement[] exceptionMessage = exception.getStackTrace();
 		String logString = Arrays.stream(exceptionMessage)
@@ -122,11 +126,16 @@ public class FileHandle
 		log(logString);
 	}
 
+	private static void closeLog0() throws IOException
+	{
+		logger.close();
+	}
+
 	public static void closeLog()
 	{
 		try
 		{
-			logger.close();
+			closeLog0();
 		}
 		catch (IOException exception)
 		{

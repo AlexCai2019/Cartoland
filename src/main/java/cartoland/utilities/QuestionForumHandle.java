@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Duration;
@@ -48,7 +49,7 @@ public class QuestionForumHandle
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public static void createForumPost(ThreadChannel forumPost)
+	public static void createForumPost(@NotNull ThreadChannel forumPost)
 	{
 		forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 
@@ -66,7 +67,7 @@ public class QuestionForumHandle
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
 
-	public static boolean typedResolved(Object withReaction)
+	public static boolean typedResolved(@NotNull Object withReaction)
 	{
 		if (withReaction instanceof Message message)
 			return message.getContentRaw().equals(resolvedFormat);
@@ -76,7 +77,7 @@ public class QuestionForumHandle
 			return false;
 	}
 
-	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
+	public static void archiveForumPost(@NotNull ThreadChannel forumPost, @NotNull Message eventMessage)
 	{
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
@@ -103,7 +104,7 @@ public class QuestionForumHandle
 		});
 	}
 
-	public static void idleForumPost(ThreadChannel forumPost)
+	public static void idleForumPost(@NotNull ThreadChannel forumPost)
 	{
 		if (forumPost.isArchived() || forumPost.isLocked())
 			return;

@@ -4,6 +4,7 @@ import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -28,7 +29,7 @@ public class LotteryCommand implements ICommand
 	}
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
@@ -43,7 +44,7 @@ public class LotteryCommand implements ICommand
 class Get implements ICommand
 {
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		User user = event.getUser();
 		User target = event.getOption("target", OptionMapping::getAsUser);
@@ -75,7 +76,7 @@ class Bet implements ICommand
 	private static final long MAXIMUM = 1000000L;
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		long userID = event.getUser().getIdLong();
 		long nowHave = CommandBlocksHandle.get(userID);
@@ -156,7 +157,7 @@ class Ranking implements ICommand
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 
 	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
 	{
 		Integer pageBox = event.getOption("page", OptionMapping::getAsInt);
 		int page = pageBox != null ? pageBox : 1; //page從1開始
@@ -195,6 +196,7 @@ class Ranking implements ICommand
 
 	private final StringBuilder rankBuilder = new StringBuilder();
 
+	@NotNull
 	private String replyString(User user, int page, int maxPage)
 	{
 		//page 從1開始

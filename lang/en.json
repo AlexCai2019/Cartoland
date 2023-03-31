@@ -302,7 +302,7 @@
 	"one_a_two_b.playing_another_game": "You are already in a %s game.",
 	"one_a_two_b.too_much_arguments": "Please run </one_a_two_b:1074401556113403914> without any arguments to start a new game.",
 	"one_a_two_b.not_unique": "Invalid guess: please enter %d unique digits.",
-	"one_a_two_b.game_over": "%s\nGame over! The answer is **%s**.\nTime elapsed: %d minutes, %d seconds\nGuesses: %d times",
+	"one_a_two_b.game_over": "%s\nGame over! The answer is **%03d**.\nTime elapsed: %d minutes, %d seconds\nGuesses: %d times",
 	"one_a_two_b.reward": "\nYou solved this in %d minutes and %d guesses, rewarded %d command blocks.",
 	"lottery.get.invalid_get": "You can't get amount of command blocks this user has!",
 	"lottery.get.query": "%s has %d command blocks.",

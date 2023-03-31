@@ -1,5 +1,9 @@
 package cartoland.utilities;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
+
 /**
  * {@code Algorithm} is a class that provides functions that helps calculate. Can not be instantiated.
  *
@@ -13,7 +17,12 @@ public class Algorithm
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final java.util.Random random = new java.util.Random();
+	private static final Random random = new Random();
+
+	static void updateSeed()
+	{
+		random.setSeed(System.currentTimeMillis());
+	}
 
 	/**
 	 * Shuffle an array.
@@ -22,7 +31,7 @@ public class Algorithm
 	 * @since 1.5
 	 * @author Alex Cai
 	 */
-	public static void shuffle(int[] array)
+	public static void shuffle(@NotNull int[] array)
 	{
 		int endIndex = array.length - 1;
 		int temp;
@@ -58,12 +67,12 @@ public class Algorithm
 		return percent > random.nextInt(100);
 	}
 
-	public static <T> T randomElement(T[] array)
+	public static <T> T randomElement(@NotNull T[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}
 
-	public static long randomElement(long[] array)
+	public static long randomElement(@NotNull long[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}

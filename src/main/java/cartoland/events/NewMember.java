@@ -23,8 +23,6 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event)
 	{
-		if (event.getGuild().getIdLong() != IDAndEntities.CARTOLAND_SERVER_ID)
-			return;
 		User user = event.getUser();
 		if (user.isBot() || user.isSystem() || !user.hasPrivateChannel())
 			return;
@@ -34,9 +32,9 @@ public class NewMember extends ListenerAdapter
 			  String userName = user.getName();
 			  String serverName = IDAndEntities.cartolandServer.getName();
 			  privateChannel.sendMessage("歡迎你，" + userName + "，來到 " + serverName + "\n" +
-												 "記得先詳閱 <#973898745777377330> 內的訊息，並遵守一切公告規則。\n" +
+												 "記得先詳閱 <#" + IDAndEntities.READ_ME_CHANNEL_ID + "> 內的訊息，並遵守一切公告規則。\n" +
 												 userName + ", welcome to " + serverName + ".\n" +
-												 "Please read messages in <#973898745777377330>, and follow all rules.").queue();
+												 "Please read messages in <#" + IDAndEntities.READ_ME_CHANNEL_ID + ">, and follow all rules.").queue();
 		});
 	}
 

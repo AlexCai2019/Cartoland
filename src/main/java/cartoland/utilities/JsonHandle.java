@@ -1,5 +1,6 @@
 package cartoland.utilities;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -52,6 +53,7 @@ public class JsonHandle
 		file = languageFileMap.get(userLanguage);
 	}
 
+	@NotNull
 	static Map<Long, Long> buildCommandBlocksMap()
 	{
 		Map<Long, Long> map = new HashMap<>();
@@ -66,18 +68,21 @@ public class JsonHandle
 		FileHandle.synchronizeFile(USERS_JSON, usersFile.toString());
 	}
 
-	public static String command(long userID, String commandName)
+	@NotNull
+	public static String command(long userID, @NotNull String commandName)
 	{
 		lastUse(userID);
 		builder.setLength(0);
 		builder.append(file.getString(commandName + ".begin")); //開頭
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
 		dotListArray.forEach(s -> builder.append((String) s).append(' '));
+		builder.deleteCharAt(builder.length() - 1);
 		builder.append(file.getString(commandName + ".end")); //結尾
 		return builder.toString();
 	}
 
-	public static String command(long userID, String commandName, String argument)
+	@NotNull
+	public static String command(long userID, @NotNull String commandName, @NotNull String argument)
 	{
 		lastUse(userID);
 		String jsonKey = commandName + ".name." + argument;
@@ -98,7 +103,8 @@ public class JsonHandle
 		return result;
 	}
 
-	public static List<Object> commandList(String commandName)
+	@NotNull
+	public static List<Object> commandList(@NotNull String commandName)
 	{
 		return commandListMap.get(commandName + ".list");
 	}

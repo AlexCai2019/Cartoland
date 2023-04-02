@@ -48,7 +48,7 @@ public class IDAndEntities
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
 
-	public static final List<Long> commandBlockCategories = new ArrayList<>(3);
+	public static final List<Long> commandBlockCategories = new ArrayList<>(4);
 	public static final List<Long> canTalkCategories = new ArrayList<>(3);
 	public static final Map<String, String> youtubers = new HashMap<>();
 	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value

@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @since 2.0
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class AddReaction extends ListenerAdapter
 {
 	@Override
-	public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event)
+	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
 		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
 			return;

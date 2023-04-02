@@ -7,7 +7,6 @@ import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This class implements
@@ -31,7 +30,7 @@ public class OneATwoBCommand implements ICommand
 	}
 
 	@Override
-	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
+	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		Integer argument = event.getOption("answer", OptionMapping::getAsInt);
 		long userID = event.getUser().getIdLong();

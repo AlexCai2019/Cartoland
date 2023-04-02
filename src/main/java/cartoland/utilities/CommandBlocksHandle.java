@@ -1,8 +1,5 @@
 package cartoland.utilities;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -60,8 +57,6 @@ public class CommandBlocksHandle
 		return commandBlocksMap.size();
 	}
 
-	@NotNull
-	@Contract(pure = true)
 	public static Set<Long> getKeySet()
 	{
 		return commandBlocksMap.keySet();

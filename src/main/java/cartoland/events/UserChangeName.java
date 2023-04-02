@@ -5,7 +5,6 @@ import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code UserChangeName} is a listener that triggers when a user changed his/her name. This class was registered in
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class UserChangeName extends ListenerAdapter
 {
 	@Override
-	public void onUserUpdateName(@NotNull UserUpdateNameEvent event)
+	public void onUserUpdateName(UserUpdateNameEvent event)
 	{
 		User user = event.getUser();
 		IDAndEntities.idAndNames.replace(user.getIdLong(), user.getAsTag());

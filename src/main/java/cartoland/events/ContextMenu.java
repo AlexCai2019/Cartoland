@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class ContextMenu extends ListenerAdapter
 {
 	@Override
-	public void onMessageContextInteraction(@NotNull MessageContextInteractionEvent event)
+	public void onMessageContextInteraction(MessageContextInteractionEvent event)
 	{
 		User user = event.getUser();
 		String eventName = event.getName();

@@ -7,7 +7,6 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -24,7 +23,7 @@ public class TransferCommand implements ICommand
 	private final Pattern percentRegex = Pattern.compile("\\d+%");
 
 	@Override
-	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
+	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = event.getUser().getIdLong();
 

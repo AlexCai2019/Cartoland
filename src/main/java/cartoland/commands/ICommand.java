@@ -1,7 +1,5 @@
 package cartoland.commands;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * {@code ICommand} is an interface that can be implemented with the actual execution of a slash command. This was
  * used being a value of a {@code HashMap} in {@link cartoland.events.CommandUsage}, which mostly lambdas to
@@ -19,5 +17,5 @@ public interface ICommand
 	 * @since 1.3
 	 * @author Alex Cai
 	 */
-	void commandProcess(@NotNull net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent event); //指令
+	void commandProcess(net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent event); //指令
 }

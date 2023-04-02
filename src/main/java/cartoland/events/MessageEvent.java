@@ -4,7 +4,6 @@ import cartoland.messages.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@code MessageEvent} is a listener that triggers when a user types anything. This class was registered in
@@ -24,7 +23,7 @@ public class MessageEvent extends ListenerAdapter
 	};
 
 	@Override
-	public void onMessageReceived(@NotNull MessageReceivedEvent event)
+	public void onMessageReceived(MessageReceivedEvent event)
 	{
 		User author = event.getAuthor();
 		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統

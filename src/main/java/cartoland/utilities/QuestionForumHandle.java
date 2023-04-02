@@ -8,13 +8,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @since 2.0
@@ -42,14 +42,31 @@ public class QuestionForumHandle
 							""".formatted(resolvedFormat, resolvedFormat))
 			.setColor(new Color(133, 201, 103, 255)) //創聯的綠色
 			.build();
-
+	private static final List<Long> idledForumPosts;
 
 	private QuestionForumHandle()
 	{
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public static void createForumPost(@NotNull ThreadChannel forumPost)
+	static
+	{
+		Object list = FileHandle.deserializeObject(FileHandle.IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
+
+		//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
+		if (list instanceof ArrayList)
+			idledForumPosts = ((List<?>) list).stream().map(element -> (Long)element).collect(Collectors.toList());
+		else
+			idledForumPosts = new ArrayList<>();
+
+	}
+
+	public static void serializeIdlesList()
+	{
+		FileHandle.serializeObject(idledForumPosts);
+	}
+
+	public static void createForumPost(ThreadChannel forumPost)
 	{
 		forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 
@@ -67,7 +84,7 @@ public class QuestionForumHandle
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
 
-	public static boolean typedResolved(@NotNull Object withReaction)
+	public static boolean typedResolved(Object withReaction)
 	{
 		if (withReaction instanceof Message message)
 			return message.getContentRaw().equals(resolvedFormat);
@@ -77,12 +94,13 @@ public class QuestionForumHandle
 			return false;
 	}
 
-	public static void archiveForumPost(@NotNull ThreadChannel forumPost, @NotNull Message eventMessage)
+	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
 		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
+		idledForumPosts.remove(forumPost.getIdLong());
 
 		//移除🎗️ 並關閉貼文
 		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
@@ -96,15 +114,10 @@ public class QuestionForumHandle
 
 			forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
 
-		}, throwable ->
-		{
-			throwable.printStackTrace();
-			System.err.print('\u0007');
-			FileHandle.log(throwable);
 		});
 	}
 
-	public static void idleForumPost(@NotNull ThreadChannel forumPost)
+	public static void idleForumPost(ThreadChannel forumPost)
 	{
 		if (forumPost.isArchived() || forumPost.isLocked())
 			return;
@@ -124,16 +137,13 @@ public class QuestionForumHandle
 										  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` "+ resolvedFormat +" emoji.\n" +
 										  "If it didn't, try offer more information of question.").queue();
 
+			idledForumPosts.add(forumPost.getIdLong());
+
 			//增加🎗️
 			forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
 			{
 				if (messages.size() > 0)
 					messages.get(0).addReaction(reminder_ribbon).queue();
-			}, throwable ->
-			{
-				throwable.printStackTrace();
-				System.err.print('\u0007');
-				FileHandle.log(throwable);
 			});
 		});
 	}

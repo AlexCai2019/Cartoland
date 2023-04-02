@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -28,7 +27,7 @@ public class QuoteCommand implements ICommand
 	private final int subStringStart = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
 
 	@Override
-	public void commandProcess(@NotNull SlashCommandInteractionEvent event)
+	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		String link = event.getOption("link", OptionMapping::getAsString);
 		if (link == null)

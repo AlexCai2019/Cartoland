@@ -1,10 +1,6 @@
 package cartoland.utilities;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -28,6 +24,7 @@ public class FileHandle
 
 	private static LocalDate lastDateHasLog; //上一次有寫log的日期
 	private static FileWriter logger;
+	static final String IDLED_FORUM_CHANNELS_LIST_FILE_NAME = "idled_forum_channels_list.ser";
 
 	static
 	{
@@ -41,12 +38,12 @@ public class FileHandle
 		{
 			exception.printStackTrace();
 			System.err.print('\u0007');
-			System.exit(1);
+			IDAndEntities.jda.shutdownNow();
 		}
 	}
 
 	//將JSON讀入進字串
-	static String buildJsonStringFromFile(@NotNull String fileName)
+	static String buildJsonStringFromFile(String fileName)
 	{
 		try
 		{
@@ -61,7 +58,7 @@ public class FileHandle
 		}
 	}
 
-	static void synchronizeFile(@NotNull String fileName, @Nullable String content)
+	static void synchronizeFile(String fileName, String content)
 	{
 		if (content == null)
 			content = "{}";
@@ -77,11 +74,56 @@ public class FileHandle
 			exception.printStackTrace();
 			System.err.print('\u0007');
 			log(exception);
-			System.exit(1);
+			IDAndEntities.jda.shutdownNow();
 		}
 	}
 
-	public static void log(@NotNull String output)
+	@SuppressWarnings("SameParameterValue")
+	static void serializeObject(Object object)
+	{
+		try
+		{
+			FileOutputStream fileStream = new FileOutputStream(IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
+			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+			objectStream.writeObject(object);
+			objectStream.flush();
+			objectStream.close();
+			fileStream.close();
+		}
+		catch (IOException exception)
+		{
+			exception.printStackTrace();
+			System.err.print('\u0007');
+			log(exception);
+			IDAndEntities.jda.shutdownNow();
+		}
+	}
+
+	@SuppressWarnings("SameParameterValue")
+	static Object deserializeObject(String fileName)
+	{
+		Object object = null;
+
+		try
+		{
+			FileInputStream fileStream = new FileInputStream(fileName);
+			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
+			object = objectStream.readObject();
+			objectStream.close();
+			fileStream.close();
+		}
+		catch (IOException | ClassNotFoundException exception)
+		{
+			exception.printStackTrace();
+			System.err.print('\u0007');
+			log(exception);
+			IDAndEntities.jda.shutdownNow();
+		}
+
+		return object;
+	}
+
+	public static void log(String output)
 	{
 		LocalDate today = LocalDate.now(); //今天
 		if (!today.isEqual(lastDateHasLog)) //如果今天跟上次有寫log的日期不同
@@ -98,7 +140,7 @@ public class FileHandle
 			{
 				exception.printStackTrace();
 				System.err.print('\u0007');
-				System.exit(1);
+				IDAndEntities.jda.shutdownNow();
 			}
 		}
 
@@ -113,17 +155,15 @@ public class FileHandle
 		{
 			exception.printStackTrace();
 			System.err.print('\u0007');
-			System.exit(1);
+			IDAndEntities.jda.shutdownNow();
 		}
 	}
 
-	public static void log(@NotNull Throwable exception)
+	public static void log(Exception exception)
 	{
-		StackTraceElement[] exceptionMessage = exception.getStackTrace();
-		String logString = Arrays.stream(exceptionMessage)
-				.map(StackTraceElement::toString)
-				.collect(Collectors.joining("\n"));
-		log(logString);
+		log(Arrays.stream(exception.getStackTrace())
+					.map(StackTraceElement::toString)
+					.collect(Collectors.joining("\n")));
 	}
 
 	private static void closeLog0() throws IOException
@@ -141,7 +181,7 @@ public class FileHandle
 		{
 			exception.printStackTrace();
 			System.err.print('\u0007');
-			System.exit(1);
+			IDAndEntities.jda.shutdownNow();
 		}
 	}
 }

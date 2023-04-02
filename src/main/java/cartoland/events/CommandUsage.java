@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,10 +89,7 @@ public class CommandUsage extends ListenerAdapter
 		});
 
 		commands.put("megumin", event ->
-		{
-			TA author = Algorithm.randomElement(twitterAuthors);
-			event.reply("https://twitter.com/" + author.name() + "/status/" + Algorithm.randomElement(author.artworks())).queue();
-		}); //隨機一張惠惠
+				event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
 
 		//shutdown
 		commands.put("shutdown", event ->
@@ -144,7 +140,7 @@ public class CommandUsage extends ListenerAdapter
 	 * @author Alex Cai
 	 */
 	@Override
-	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event)
+	public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
 	{
 		String commandName = event.getName();
 		User user = event.getUser();
@@ -201,4 +197,10 @@ public class CommandUsage extends ListenerAdapter
  * @since 1.3
  * @author Alex Cai
  */
-record TA(String name, long... artworks) {}
+record TA(String name, long... artworks)
+{
+	public String getRandomURL()
+	{
+		return "https://twitter.com/" + name + "/status/" + Algorithm.randomElement(artworks);
+	}
+}

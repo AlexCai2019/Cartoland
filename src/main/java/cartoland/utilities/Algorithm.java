@@ -1,7 +1,5 @@
 package cartoland.utilities;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
 
 /**
@@ -31,7 +29,7 @@ public class Algorithm
 	 * @since 1.5
 	 * @author Alex Cai
 	 */
-	public static void shuffle(@NotNull int[] array)
+	public static void shuffle(int[] array)
 	{
 		int endIndex = array.length - 1;
 		int temp;
@@ -67,12 +65,12 @@ public class Algorithm
 		return percent > random.nextInt(100);
 	}
 
-	public static <T> T randomElement(@NotNull T[] array)
+	public static <T> T randomElement(T[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}
 
-	public static long randomElement(@NotNull long[] array)
+	public static long randomElement(long[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}

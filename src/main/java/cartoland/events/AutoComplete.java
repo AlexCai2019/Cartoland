@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public class AutoComplete extends ListenerAdapter
 	}
 
 	@Override
-	public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event)
+	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event)
 	{
 		GenericComplete complete = commands.get(event.getName());
 		if (complete != null)
@@ -92,7 +91,7 @@ class JsonBasedComplete extends GenericComplete
 	}
 
 	@Override
-	void completeProcess(@NotNull CommandAutoCompleteInteractionEvent event)
+	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		AutoCompleteQuery focusedOption = event.getFocusedOption();
 		if (!focusedOption.getName().equals(commandName + "_name"))
@@ -125,7 +124,7 @@ class YouTuberComplete extends GenericComplete
 	}
 
 	@Override
-	void completeProcess(@NotNull CommandAutoCompleteInteractionEvent event)
+	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		String optionValue = event.getFocusedOption().getValue();
 		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);

@@ -1,5 +1,6 @@
 package cartoland.messages;
 
+
 /**
  * {@code IMessage} is an interface that deals with message event. Subclasses store in an array which is a field of
  * {@link cartoland.events.MessageEvent}. This class can't be instantiated via lambda.

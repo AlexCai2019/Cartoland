@@ -100,21 +100,11 @@ public class QuestionForumHandle
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
 		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
+		forumPost.getManager().setAppliedTags(tags).queue();
 		idledForumPosts.remove(forumPost.getIdLong());
 
 		//移除🎗️ 並關閉貼文
-		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
-		{
-			if (messages.size() > 0)
-			{
-				Message message = messages.get(0);
-				if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
-					message.removeReaction(reminder_ribbon).queue();
-			}
-
-			forumPost.getManager().setAppliedTags(tags).setArchived(true).queue(); //關閉貼文
-
-		});
+		unIdleForumPost(forumPost, true);
 	}
 
 	public static void idleForumPost(ThreadChannel forumPost)
@@ -146,5 +136,31 @@ public class QuestionForumHandle
 					messages.get(0).addReaction(reminder_ribbon).queue();
 			});
 		});
+	}
+
+	public static void unIdleForumPost(ThreadChannel forumPost, boolean archive)
+	{
+		if (forumPost.isArchived() || forumPost.isLocked())
+			return;
+
+		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
+		{
+			if (messages.size() > 0)
+			{
+				Message message = messages.get(0);
+				if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
+					message.removeReaction(reminder_ribbon).queue();
+			}
+
+			idledForumPosts.remove(forumPost.getIdLong());
+
+			if (archive)
+				forumPost.getManager().setArchived(true).queue(); //關閉貼文
+		});
+	}
+
+	public static boolean isIdled(ThreadChannel forumPost)
+	{
+		return idledForumPosts.contains(forumPost.getIdLong());
 	}
 }

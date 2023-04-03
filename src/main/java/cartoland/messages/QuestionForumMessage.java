@@ -3,6 +3,7 @@ package cartoland.messages;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -27,7 +28,11 @@ public class QuestionForumMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		Message message = event.getMessage();
+		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		if (QuestionForumHandle.isIdled(forumPost))
+			QuestionForumHandle.unIdleForumPost(forumPost, false);
+
 		if (QuestionForumHandle.typedResolved(message)) //是:resolved:表情符號
-			QuestionForumHandle.archiveForumPost(event.getChannel().asThreadChannel(), message);
+			QuestionForumHandle.archiveForumPost(forumPost, message);
 	}
 }

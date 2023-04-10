@@ -154,6 +154,7 @@ class Bet implements ICommand
 class Ranking implements ICommand
 {
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
+	private String lastReply = ""; //上一次回覆過的字串
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -170,7 +171,7 @@ class Ranking implements ICommand
 
 		if (!CommandBlocksHandle.changed) //距離上一次排序 沒有任何變動
 		{
-			event.reply(replyString(user, page, maxPage)).queue();
+			event.reply(lastReply).queue();
 			return;
 		}
 
@@ -189,7 +190,7 @@ class Ranking implements ICommand
 			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
 
 			CommandBlocksHandle.changed = false; //已經排序過了
-			interactionHook.sendMessage(replyString(user, finalPage, maxPage)).queue();
+			interactionHook.sendMessage(lastReply = replyString(user, finalPage, maxPage)).queue();
 		});
 	}
 

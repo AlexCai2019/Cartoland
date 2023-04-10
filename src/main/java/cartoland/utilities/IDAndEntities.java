@@ -8,13 +8,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * {@code IDAndEntities} is a utility class that stores IDs, JDA entities and language constants. For example, this class
@@ -48,22 +43,11 @@ public class IDAndEntities
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
 
-	public static final List<Long> commandBlockCategories = new ArrayList<>(4);
-	public static final List<Long> canTalkCategories = new ArrayList<>(3);
 	public static final Map<String, String> youtubers = new HashMap<>();
 	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
 
 	static
 	{
-		commandBlockCategories.add(GENERAL_CATEGORY_ID);
-		commandBlockCategories.add(TECH_TALK_CATEGORY_ID);
-		commandBlockCategories.add(PUBLIC_AREA_CATEGORY_ID);
-		commandBlockCategories.add(SHOWCASE_CATEGORY_ID);
-
-		canTalkCategories.add(GENERAL_CATEGORY_ID);
-		canTalkCategories.add(PUBLIC_AREA_CATEGORY_ID);
-		canTalkCategories.add(DANGEROUS_CATEGORY_ID);
-
 		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
 		youtubers.put("惡靈oreki", "@oreki20");
 		youtubers.put("收音機", "@radio0529");
@@ -84,10 +68,6 @@ public class IDAndEntities
 	public static User botItself;
 
 	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
-
-	public static ScheduledExecutorService scheduleExecutor = new ScheduledThreadPoolExecutor(2);
-	public static ScheduledFuture<?> threeAMTask;
-	public static ScheduledFuture<?> twelvePMTask;
 
 	/**
 	 * Language constants. Can not be instantiated.

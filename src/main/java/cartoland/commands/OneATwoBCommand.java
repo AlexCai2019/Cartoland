@@ -66,7 +66,7 @@ public class OneATwoBCommand implements ICommand
 		int[] ab = oneATwoB.calculateAAndB(answer); //如果是null 代表答案不是獨一無二的數字
 		if (ab == null)
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH)).queue();
+			event.reply(JsonHandle.getJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH)).setEphemeral(true).queue();
 			return;
 		}
 

@@ -1,10 +1,9 @@
 package cartoland.events;
 
-import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.FileHandle;
-import cartoland.utilities.QuestionForumHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
@@ -15,25 +14,36 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static cartoland.utilities.IDAndEntities.*;
 
 /**
- * {@code BotOnline} is a listener that triggers when this bot was online. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA. This class helps all the entities (except
- * {@link cartoland.utilities.IDAndEntities#jda}) in {@link cartoland.utilities.IDAndEntities} get their instances.
+ * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
+ * trigger if this bot was shutdown by accident, such as killed by ^C, server shutdown, etc. This class was
+ * registered in {@link cartoland.Cartoland#main}, with the build of JDA. The {@link #onReady} method helps all the entities
+ * (except {@link IDAndEntities#jda}) in {@link IDAndEntities} get their instances, and the {@link #onShutdown}
+ * method help synchronize JSONObjects and their files.
  *
  * @since 1.0
  * @author Alex Cai
  */
-public class BotOnline extends ListenerAdapter
+public class BotOnlineOffline extends ListenerAdapter
 {
+	private final ScheduledExecutorService scheduleExecutor = new ScheduledThreadPoolExecutor(2);
+	private ScheduledFuture<?> threeAMTask;
+	private ScheduledFuture<?> twelvePMTask;
+
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will initialize
-	 * entities in {@link cartoland.utilities.IDAndEntities} and send online message to bot channel.
+	 * entities in {@link IDAndEntities}, start schedule events and send online message to bot channel.
 	 *
 	 * @param event The event that carries information.
+	 * @since 1.0
+	 * @author Alex Cai
 	 */
 	@Override
 	public void onReady(@NotNull ReadyEvent event)
@@ -78,7 +88,7 @@ public class BotOnline extends ListenerAdapter
 
 		ohBoy3AM(); //好棒 三點了
 
-		idleFormPost12PM(); //中午十二點時處理未解決的論壇貼文
+		idleFormPost12PM(); //中午十二點時處理並提醒未解決的論壇貼文
 
 		initialIDAndName(); //初始化idAndName
 
@@ -86,6 +96,33 @@ public class BotOnline extends ListenerAdapter
 		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);
+	}
+
+	/**
+	 * The method that inherited from {@link ListenerAdapter}. When the bot go offline normally, it will shut
+	 * down scheduled events, log "offline" to terminal & log file, serialize idle forum posts and write
+	 * JSONObject into users.json & command_blocks.json.
+	 *
+	 * @param event Information about the shutdown.
+	 * @since 1.0
+	 * @author Alex Cai
+	 */
+	@Override
+	public void onShutdown(@NotNull ShutdownEvent event)
+	{
+		//https://stackoverflow.com/questions/34202701
+		threeAMTask.cancel(true);
+		twelvePMTask.cancel(true);
+		scheduleExecutor.shutdown();
+
+		JsonHandle.synchronizeFile();
+		CommandBlocksHandle.synchronizeFile();
+		QuestionForumHandle.serializeIdlesList();
+
+		String logString = "offline";
+		System.out.println(logString);
+		FileHandle.log(logString);
+		FileHandle.closeLog();
 	}
 
 	/**

@@ -25,8 +25,7 @@ public class Cartoland
 
 		jda = JDABuilder.createDefault(args[0])
 				.addEventListeners(
-						new BotOnline(), //當機器人上線的時候
-						new BotOffline(), //當機器人下線的時候
+						new BotOnlineOffline(), //當機器人上下線的時候
 						new MessageEvent(), //當有任何訊息
 						new AddReaction(),
 						new CommandUsage(), //當有人使用指令

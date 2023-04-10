@@ -9,11 +9,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
-import java.awt.Color;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +26,7 @@ public class QuestionForumHandle
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
 	private static final String resolvedFormat = resolved.getFormatted();
 	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
+	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
 	private static final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.setDescription("""
@@ -40,9 +42,9 @@ public class QuestionForumHandle
 							• Mention which Minecraft version you are using and any mods.
 							• Remember to use `:resolved:` %s to close the post after resolved.
 							""".formatted(resolvedFormat, resolvedFormat))
-			.setColor(new Color(133, 201, 103, 255)) //創聯的綠色
+			.setColor(CARTOLAND_GREEN) //創聯的綠色
 			.build();
-	private static final List<Long> idledForumPosts;
+	private static final Set<Long> idledForumPosts;
 
 	private QuestionForumHandle()
 	{
@@ -51,13 +53,16 @@ public class QuestionForumHandle
 
 	static
 	{
-		Object list = FileHandle.deserializeObject(FileHandle.IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
+		Object object = FileHandle.deserializeObject(FileHandle.IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
 
 		//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-		if (list instanceof ArrayList)
-			idledForumPosts = ((List<?>) list).stream().map(element -> (Long)element).collect(Collectors.toList());
+		if (object instanceof Set<?> set)
+			idledForumPosts = set.stream()
+					.filter(Long.class::isInstance)
+					.map(element -> (Long)element)
+					.collect(Collectors.toSet());
 		else
-			idledForumPosts = new ArrayList<>();
+			idledForumPosts = new HashSet<>();
 
 	}
 

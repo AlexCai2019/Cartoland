@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -71,15 +73,23 @@ public class BotCanTalkChannelMessage implements IMessage
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 	private final Pattern lolRegex = Pattern.compile("(?i).*lol*"); //containsIgnoreCase
 
+	private final List<Long> canTalkCategories = new ArrayList<>(3);
+
+	public BotCanTalkChannelMessage()
+	{
+		canTalkCategories.add(IDAndEntities.GENERAL_CATEGORY_ID);
+		canTalkCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
+		canTalkCategories.add(IDAndEntities.DANGEROUS_CATEGORY_ID);
+	}
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
 		if (!event.isFromGuild())
 			return true; //是私訊
 		Category category = event.getMessage().getCategory();
-		if (category == null) //獲取類別失敗
-			return false; //不用執行
-		return IDAndEntities.canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
+		//獲取類別失敗就不執行後面那個
+		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
 	}
 
 	@Override

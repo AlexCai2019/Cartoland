@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -71,9 +71,9 @@ public class BotCanTalkChannelMessage implements IMessage
 	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
-	private final Pattern lolRegex = Pattern.compile("(?i).*lol*"); //containsIgnoreCase
+	private final Pattern lolRegex = Pattern.compile("(?i).*lol.*"); //containsIgnoreCase
 
-	private final List<Long> canTalkCategories = new ArrayList<>(3);
+	private final Set<Long> canTalkCategories = new HashSet<>(3);
 
 	public BotCanTalkChannelMessage()
 	{

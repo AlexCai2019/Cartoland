@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static cartoland.utilities.IDAndEntities.*;
@@ -33,7 +33,7 @@ import static cartoland.utilities.IDAndEntities.*;
  */
 public class BotOnlineOffline extends ListenerAdapter
 {
-	private final ScheduledExecutorService scheduleExecutor = new ScheduledThreadPoolExecutor(2);
+	private final ScheduledExecutorService scheduleExecutor = Executors.newScheduledThreadPool(2);
 	private ScheduledFuture<?> threeAMTask;
 	private ScheduledFuture<?> twelvePMTask;
 
@@ -162,7 +162,7 @@ public class BotOnlineOffline extends ListenerAdapter
 	private void idleFormPost12PM()
 	{
 		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(
-			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::idleForumPost),
+			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::tryIdleForumPost),
 			secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 

@@ -5,7 +5,7 @@
 	"help.name.cmd": "格式: </cmd:1063884269006635070>` [<命令>]`",
 	"help.name.faq": "格式: </faq:1063884269006635071>` [<问题>]`",
 	"help.name.dtp": "格式: </dtp:1063884269006635072>` [<数据包功能>]`",
-	"help.name.tool": "格式: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool color_rgb:1074390327407947867> </tool color_integer:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <参数...>`",
+	"help.name.tool": "格式: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool color_rgba:1074390327407947867> </tool color_integer:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <参数...>`",
 	"help.name.lang": "格式: </lang:1063884269006635074>` <代码>`",
 	"cmd.begin": "`命令: ",
 	"cmd.end": "`",

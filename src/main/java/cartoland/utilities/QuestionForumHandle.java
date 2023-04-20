@@ -27,6 +27,8 @@ public class QuestionForumHandle
 	private static final String resolvedFormat = resolved.getFormatted();
 	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
 	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
+	private static final int MAX_TAG = 5;
+	private static final long LAST_MESSAGE_HOUR = 48L;
 	private static final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.setDescription("""
@@ -44,6 +46,13 @@ public class QuestionForumHandle
 							""".formatted(resolvedFormat, resolvedFormat))
 			.setColor(CARTOLAND_GREEN) //創聯的綠色
 			.build();
+	private static final String remindMessage =
+    		"""
+			%%s，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` %s 表情符號關閉貼文。
+			如果還沒解決，可以嘗試在問題中加入更多資訊。
+			%%s, did your question got a solution? If it did, remember to close this post using `:resolved:` %s emoji.
+			If it didn't, try offer more information of question.
+			""".formatted(resolvedFormat, resolvedFormat);
 	private static final Set<Long> idledForumPosts;
 
 	private QuestionForumHandle()
@@ -83,8 +92,8 @@ public class QuestionForumHandle
 			return;
 		}
 
-		if (tags.size() == 5) //不可以超過5個tag
-			tags.remove(4); //移除最後一個 空出位置給unresolved
+		if (tags.size() >= MAX_TAG) //不可以超過MAX_TAG個tag
+			tags.remove(MAX_TAG - 1); //移除最後一個 空出位置給unresolved
 		tags.add(IDAndEntities.unresolvedForumTag);
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
@@ -112,7 +121,7 @@ public class QuestionForumHandle
 		unIdleForumPost(forumPost, true);
 	}
 
-	public static void idleForumPost(ThreadChannel forumPost)
+	public static void tryIdleForumPost(ThreadChannel forumPost)
 	{
 		if (forumPost.isArchived() || forumPost.isLocked())
 			return;
@@ -123,14 +132,11 @@ public class QuestionForumHandle
 			if (author.isBot() || author.isSystem())
 				return;
 
-			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < 24L)
+			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < LAST_MESSAGE_HOUR) //LAST_MESSAGE_HOUR小時內有人發言
 				return;
 
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
-			forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` "+ resolvedFormat +" 表情符號關閉貼文。\n" +
-										  "如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
-										  mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` "+ resolvedFormat +" emoji.\n" +
-										  "If it didn't, try offer more information of question.").queue();
+			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue();
 
 			idledForumPosts.add(forumPost.getIdLong());
 

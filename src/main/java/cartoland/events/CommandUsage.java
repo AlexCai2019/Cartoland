@@ -102,8 +102,8 @@ public class CommandUsage extends ListenerAdapter
 
 			event.reply("Shutting down...").queue(interactionHook ->
 			{
-				IDAndEntities.jda.shutdown();
-				IDAndEntities.botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue();
+				//IDAndEntities.botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue();
+				IDAndEntities.jda.shutdownNow();
 			});
 		});
 

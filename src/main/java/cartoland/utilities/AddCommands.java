@@ -80,9 +80,9 @@ public class AddCommands
 										new OptionData(OptionType.INTEGER, "3", "The [3] of the array", true, false)
 												.setDescriptionLocalization(CHINESE_TAIWAN, "陣列的第[3]項")
 												.setDescriptionLocalization(CHINESE_CHINA, "数组的第[3]项")),
-						new SubcommandData("color_rgb", "Get color data from RGB array")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB陣列獲得顏色資料")
-								.setDescriptionLocalization(CHINESE_CHINA, "从RGB数组获得颜色数据")
+						new SubcommandData("color_rgba", "Get color data from RGBA array")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGBA陣列獲得顏色資料")
+								.setDescriptionLocalization(CHINESE_CHINA, "从RGBA数组获得颜色数据")
 								.addOptions(
 										new OptionData(OptionType.INTEGER, "red", "Red (0 ~ 255)", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "紅")
@@ -98,14 +98,19 @@ public class AddCommands
 												.setNameLocalization(CHINESE_TAIWAN, "藍")
 												.setNameLocalization(CHINESE_CHINA, "蓝")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "藍 (0 ~ 255)")
-												.setDescriptionLocalization(CHINESE_CHINA, "蓝 (0 ~ 255)")),
+												.setDescriptionLocalization(CHINESE_CHINA, "蓝 (0 ~ 255)"),
+										new OptionData(OptionType.INTEGER, "alpha", "Alpha (0 ~ 255)", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "不透明度")
+												.setNameLocalization(CHINESE_CHINA, "不透明度")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "不透明度 (0 ~ 255)")
+												.setDescriptionLocalization(CHINESE_CHINA, "不透明度 (0 ~ 255)")),
 						new SubcommandData("color_integer", "Get color data from RGB integer")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
 								.addOptions(
-										new OptionData(OptionType.STRING, "rgb", "RGB integer, must be decimal or hexadecimal", true, false)
-												.setDescriptionLocalization(CHINESE_TAIWAN, "RGB整數，必須是十進位或十六進位")
-												.setDescriptionLocalization(CHINESE_CHINA, "RGB整数，必须是十进制或十六进制")),
+										new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
+												.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
+												.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
 						new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
 								.addOptions(
 										new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)

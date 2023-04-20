@@ -24,7 +24,7 @@ public class ToolCommand implements ICommand
 	{
 		subCommands.put("uuid_string", new UUIDStringCommand()); //tool uuid_string
 		subCommands.put("uuid_array", new UUIDArrayCommand()); //tool uuid_array
-		subCommands.put("color_rgb", new ColorRGB()); //tool color_rgb
+		subCommands.put("color_rgba", new ColorRGBA()); //tool color_rgba
 		subCommands.put("color_integer", new ColorInteger()); //tool color_rgb
 		subCommands.put("pack_mcmeta", new PackMcmetaCommand()); //tool pack_mcmeta
 	}
@@ -145,49 +145,60 @@ class UUIDArrayCommand implements ICommand
 }
 
 /**
- * {@code ColorRGB} is a class that handles one of the sub commands of {@code /tool} command, which is
- * {@code /tool color_rgb}.
+ * {@code ColorRGBA} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code /tool color_rgba}.
  *
  * @since 1.6
  * @author Alex Cai
  */
-class ColorRGB implements ICommand
+class ColorRGBA implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		Integer[] colors =
-		{
-			event.getOption("red", OptionMapping::getAsInt),
-			event.getOption("green", OptionMapping::getAsInt),
-			event.getOption("blue", OptionMapping::getAsInt)
-		};
+		Integer[] rgbaColors = new Integer[4];
+		Integer[] argbColors = new Integer[4];
 
-		int rgb = 0;
-		int offset = 0x10000; //16 * 16 * 16 * 16
+		rgbaColors[0] = argbColors[1] = event.getOption("red", OptionMapping::getAsInt);
+		rgbaColors[1] = argbColors[2] = event.getOption("green", OptionMapping::getAsInt);
+		rgbaColors[2] = argbColors[3] = event.getOption("blue", OptionMapping::getAsInt);
+		rgbaColors[3] = argbColors[0] = event.getOption("alpha", OptionMapping::getAsInt);
+
+		int rgba = 0, argb = 0;
 
 		long userID = event.getUser().getIdLong();
-		for (Integer color : colors)
+		for (int i = 0, offset = 24; i < 4; i++)
 		{
-			if (color == null)
+			if (rgbaColors[i] == null || argbColors[i] == null)
 			{
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
 
-			if (color < 0 || color > 255)
+			if (notInRange(rgbaColors[i]) || notInRange(argbColors[i]))
 			{
-				event.reply(JsonHandle.getJsonKey(userID, "tool.color_rgb.wrong_range")).queue();
+				event.reply(JsonHandle.getJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
 				return;
 			}
 
-			rgb += color * offset; //舉例 如果是#0D18F7 那麼紅色就是13 然後乘上65536 綠色是24乘上256 藍色是247乘上1 結果是858359
-			offset >>= 8; //offset /= 256;  offset原是(Binary)1,0000,0000,0000,0000 每次右位移8 就等於刪掉了最右邊8個0
+			rgba += rgbaColors[i] << offset; //舉例 如果是#0D18F70C 那麼紅色就是13 然後往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是
+			argb += argbColors[i] << offset;
+			offset -= 8; //offset原是24 每次減8後 下次推的時候就是推16 然後推8 最後推0
 		}
 
-		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
-							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_rgb.decimal") + "): `" + rgb + "`\n" +
-							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_rgb.hexadecimal") + "): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
+		String decimal = JsonHandle.getJsonKey(userID, "tool.color_rgba.decimal");
+		String hexadecimal = JsonHandle.getJsonKey(userID, "tool.color_rgba.hexadecimal");
+		event.reply("RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
+							"RGBA(" + decimal + "): `" + rgba + "`\n" +
+							"RGBA(" + hexadecimal + "): `#" + String.format("%08X` `#%08x", rgba, rgba) + "`\n" +
+							"ARGB: `" + Arrays.toString(argbColors) + "`\n" +
+							"ARGB(" + decimal + "): `" + argb + "`\n" +
+							"ARGB(" + hexadecimal + "): `#" + String.format("%08X` `#%08x`", argb, argb)).queue();
+	}
+
+	private boolean notInRange(int color)
+	{
+		return color < 0 || color > 255;
 	}
 }
 
@@ -200,14 +211,14 @@ class ColorRGB implements ICommand
  */
 class ColorInteger implements ICommand
 {
-	private final Pattern decimalRegex = Pattern.compile("\\d{1,8}"); //最高16777215 最低0
-	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6}"); //FFFFFF
-	private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{6}"); //#FFFFFF
+	private final Pattern decimalRegex = Pattern.compile("\\d{1,10}"); //最高4294967295 最低0
+	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{8}"); //FFFFFFFF
+	private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{8}"); //#FFFFFFFF
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String rgbString = event.getOption("rgb", OptionMapping::getAsString);
+		String rgbString = event.getOption("rgba_or_argb", OptionMapping::getAsString);
 		if (rgbString == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -215,30 +226,32 @@ class ColorInteger implements ICommand
 		}
 
 		long userID = event.getUser().getIdLong();
-		int rgb;
+		long rgba;
 		if (decimalRegex.matcher(rgbString).matches())
 		{
-			rgb = Integer.parseInt(rgbString);
-			if (rgb > 0xFFFFFF) //16777215
-				rgb = 0xFFFFFF;
+			rgba = Long.parseLong(rgbString);
+			if (rgba > 0xFFFFFFFFL)
+				rgba = 0xFFFFFFFFL;
 		}
 		else if (hexadecimalRegex.matcher(rgbString).matches())
-			rgb = Integer.parseInt(rgbString, 16);
+			rgba = Integer.parseInt(rgbString, 16);
 		else if (leadingSharpHexadecimalRegex.matcher(rgbString).matches())
-			rgb = Integer.parseInt(rgbString.substring(1), 16); //像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
+			rgba = Integer.parseInt(rgbString.substring(1), 16); //像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 		else
 		{
 			event.reply(JsonHandle.getJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
 			return;
 		}
 
-		//{ rgb / 65536, rgb / 256 % 256, rgb % 256 }
+		//{ rgba / 65536 % 256, rgba / 256 % 256, rgba % 256 }
 		//假設是16777215 除以65536就會變成255, 16777215 除以256後取除以256的餘數也是255, 取除以256的餘數也是255
-		int[] colors = { rgb >> 16, (rgb >> 8) & 255, rgb & 255 };
+		long[] rgbaColors = { rgba >> 24, (rgba >> 16) & 255, (rgba >> 8) & 255, rgba & 255 };
+		long[] argbColors = { rgbaColors[3],rgbaColors[0],rgbaColors[1],rgbaColors[2] };
 
-		event.reply("RGB: `" + Arrays.toString(colors) + "`\n" +
-							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgb + "`\n" +
-							"RGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%06X` `#%6x`", rgb, rgb)).queue();
+		event.reply("RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
+							"ARGB: `" + Arrays.toString(argbColors) + "`\n" +
+							"RGBA / ARGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
+							"RGBA / ARGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
 	}
 }
 

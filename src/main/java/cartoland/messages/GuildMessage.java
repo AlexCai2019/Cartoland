@@ -9,8 +9,8 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@code GuildMessage} is a listener that triggers when a user types anything in any channel that the bot can access.
@@ -24,7 +24,7 @@ public class GuildMessage implements IMessage
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
 	private final Emoji worship_a = Emoji.fromCustom("worship_a", 935135593527128104L, true);
-	private final List<Long> commandBlockCategories = new ArrayList<>(4);
+	private final Set<Long> commandBlockCategories = new HashSet<>(4);
 
 	public GuildMessage()
 	{

@@ -84,7 +84,7 @@ class UUIDStringCommand implements ICommand
 		}
 		else //不是一個合法的UUID字串
 		{
-			event.reply(JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
 			return;
 		}
 
@@ -97,7 +97,7 @@ class UUIDStringCommand implements ICommand
 		};
 
 		event.reply("UUID: `" + dash + "`\n" +
-							"UUID (" + JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
+							"UUID (" + JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -139,7 +139,7 @@ class UUIDArrayCommand implements ICommand
 		uuidStrings[4] = temp.substring(4) + String.format("%08x", uuidArray[3]);
 
 		event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
-							"UUID(" + JsonHandle.getJsonKey(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
+							"UUID(" + JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
 							"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 	}
 }
@@ -177,7 +177,7 @@ class ColorRGBA implements ICommand
 
 			if (notInRange(rgbaColors[i]) || notInRange(argbColors[i]))
 			{
-				event.reply(JsonHandle.getJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
 				return;
 			}
 
@@ -186,8 +186,8 @@ class ColorRGBA implements ICommand
 			offset -= 8; //offset原是24 每次減8後 下次推的時候就是推16 然後推8 最後推0
 		}
 
-		String decimal = JsonHandle.getJsonKey(userID, "tool.color_rgba.decimal");
-		String hexadecimal = JsonHandle.getJsonKey(userID, "tool.color_rgba.hexadecimal");
+		String decimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.decimal");
+		String hexadecimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.hexadecimal");
 		event.reply("RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
 							"RGBA(" + decimal + "): `" + rgba + "`\n" +
 							"RGBA(" + hexadecimal + "): `#" + String.format("%08X` `#%08x", rgba, rgba) + "`\n" +
@@ -239,7 +239,7 @@ class ColorInteger implements ICommand
 			rgba = Integer.parseInt(rgbString.substring(1), 16); //像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 		else
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
 			return;
 		}
 
@@ -250,8 +250,8 @@ class ColorInteger implements ICommand
 
 		event.reply("RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
 							"ARGB: `" + Arrays.toString(argbColors) + "`\n" +
-							"RGBA / ARGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
-							"RGBA / ARGB(" + JsonHandle.getJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
+							"RGBA / ARGB(" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
+							"RGBA / ARGB(" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
 	}
 }
 

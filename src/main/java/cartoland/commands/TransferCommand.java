@@ -35,14 +35,14 @@ public class TransferCommand implements ICommand
 		}
 		if (target.isBot() || target.isSystem())
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "transfer.wrong_user")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_user")).queue();
 			return;
 		}
 
 		long targetID = target.getIdLong();
 		if (userID == targetID)
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "transfer.self_transfer")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.self_transfer")).queue();
 			return;
 		}
 
@@ -62,25 +62,25 @@ public class TransferCommand implements ICommand
 			long percentage = Long.parseLong(transferAmountString.substring(0, transferAmountString.length() - 1));
 			if (percentage > 100L) //超過100%
 			{
-				event.reply(JsonHandle.getJsonKey(userID, "transfer.wrong_percent").formatted(percentage)).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
 			transferAmount = nowHave * percentage / 100;
 		}
 		else
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "transfer.wrong_argument")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
 			return;
 		}
 
 		if (nowHave < transferAmount)
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "transfer.not_enough").formatted(transferAmount, nowHave)).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.not_enough").formatted(transferAmount, nowHave)).queue();
 			return;
 		}
 
 		long afterHave = nowHave - transferAmount;
-		event.reply(JsonHandle.getJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsTag(), afterHave))
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsTag(), afterHave))
 				.queue(interactionHook ->
 				{
 					CommandBlocksHandle.set(targetID, Algorithm.safeAdd(CommandBlocksHandle.get(targetID), transferAmount));

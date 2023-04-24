@@ -24,7 +24,6 @@ public class FileHandle
 
 	private static LocalDate lastDateHasLog; //上一次有寫log的日期
 	private static FileWriter logger;
-	static final String IDLED_FORUM_CHANNELS_LIST_FILE_NAME = "idled_forum_channels_list.ser";
 
 	static
 	{
@@ -58,32 +57,11 @@ public class FileHandle
 		}
 	}
 
-	static void synchronizeFile(String fileName, String content)
-	{
-		if (content == null)
-			content = "{}";
-
-		try
-		{
-			FileWriter writer = new FileWriter(fileName); //同步到檔案裡
-			writer.write(content);
-			writer.close();
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			System.err.print('\u0007');
-			log(exception);
-			IDAndEntities.jda.shutdownNow();
-		}
-	}
-
-	@SuppressWarnings("SameParameterValue")
-	static void serializeObject(Object object)
+	static void serialize(String fileName, Serializable object)
 	{
 		try
 		{
-			FileOutputStream fileStream = new FileOutputStream(IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
+			FileOutputStream fileStream = new FileOutputStream(fileName);
 			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
 			objectStream.writeObject(object);
 			objectStream.flush();
@@ -99,8 +77,7 @@ public class FileHandle
 		}
 	}
 
-	@SuppressWarnings("SameParameterValue")
-	static Object deserializeObject(String fileName)
+	static Object deserialize(String fileName)
 	{
 		Object object = null;
 

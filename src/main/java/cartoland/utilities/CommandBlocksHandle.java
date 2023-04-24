@@ -1,5 +1,6 @@
 package cartoland.utilities;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,13 +17,19 @@ import java.util.Set;
  */
 public class CommandBlocksHandle
 {
-	public static boolean changed = true;
-
-	static Map<Long, Long> commandBlocksMap = JsonHandle.buildCommandBlocksMap();
-
 	private CommandBlocksHandle()
 	{
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+	}
+
+	public static boolean changed = true;
+	private static final String COMMAND_BLOCKS_FILE_NAME = "command_blocks.ser";
+	private static final Map<Long, Long> commandBlocksMap;
+
+	static
+	{
+		//會有unchecked assignment的警告 but I did it anyway
+		commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
 	}
 
 	/**
@@ -62,15 +69,8 @@ public class CommandBlocksHandle
 		return commandBlocksMap.keySet();
 	}
 
-	public static void synchronizeFile()
+	public static void serializeCommandBlocksMap()
 	{
-		StringBuilder builder = new StringBuilder();
-		builder.append('{');
-		commandBlocksMap.forEach((userID, blocks) -> builder.append('\"').append(userID).append("\":").append(blocks).append(','));
-		if (builder.length() > 1)
-			builder.setCharAt(builder.length() - 1, '}');
-		else
-			builder.append('}');
-		FileHandle.synchronizeFile(JsonHandle.COMMAND_BLOCKS_JSON, builder.toString());
+		FileHandle.serialize(COMMAND_BLOCKS_FILE_NAME, (HashMap<Long, Long>) commandBlocksMap);
 	}
 }

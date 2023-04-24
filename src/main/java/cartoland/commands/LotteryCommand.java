@@ -51,11 +51,11 @@ class Get implements ICommand
 			target = user;
 		else if (target.isBot() || target.isSystem())
 		{
-			event.reply(JsonHandle.getJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
 			return;
 		}
 
-		event.reply(JsonHandle.getJsonKey(user.getIdLong(), "lottery.get.query")
+		event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
 							.formatted(target.getAsTag(), CommandBlocksHandle.get(target.getIdLong()))).queue();
 	}
 }
@@ -96,26 +96,26 @@ class Bet implements ICommand
 			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
 			if (percentage > 100L) //超過100%
 			{
-				event.reply(JsonHandle.getJsonKey(userID, "lottery.bet.wrong_percent").formatted(percentage)).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
 			bet = nowHave * percentage / 100;
 		}
 		else //都不是
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "lottery.bet.wrong_argument")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).queue();
 			return;
 		}
 
 		if (bet > MAXIMUM)
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).queue();
 			return;
 		}
 
 		if (nowHave < bet) //如果現有的比要賭的還少
 		{
-			event.reply(JsonHandle.getJsonKey(userID, "lottery.bet.not_enough").formatted(bet, nowHave)).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.not_enough").formatted(bet, nowHave)).queue();
 			return;
 		}
 
@@ -124,19 +124,19 @@ class Bet implements ICommand
 		if (Algorithm.chance(50)) //賭贏 可用random.nextBoolean()
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
-			result = JsonHandle.getJsonKey(userID, "lottery.bet.win");
+			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
 			win++;
 		}
 		else //賭輸
 		{
 			afterBet = nowHave - bet;
-			result = JsonHandle.getJsonKey(userID, "lottery.bet.lose");
+			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.lose");
 			lose++;
 		}
 
-		String replyMessage = JsonHandle.getJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet);
+		String replyMessage = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet);
 		if (afterBet == 0)
-			replyMessage += "\n" + JsonHandle.getJsonKey(userID, "lottery.bet.play_with_your_limit");
+			replyMessage += "\n" + JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit");
 
 		final long finalAfterBet = afterBet;
 		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, finalAfterBet));

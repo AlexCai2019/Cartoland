@@ -4,7 +4,6 @@ import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.FileHandle;
-import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,6 +12,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static cartoland.utilities.IDAndEntities.*;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
@@ -81,11 +82,11 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put("quote", new QuoteCommand());
 
-		String youtubers = String.join(" ", IDAndEntities.youtubers.keySet());
+		String youtubersString = String.join(" ", youtubers.keySet());
 		commands.put("youtuber", event ->
 		{
 			String youtubeChannel = event.getOption("youtuber_name", OptionMapping::getAsString);
-			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : youtubers).queue();
+			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : youtubersString).queue();
 		});
 
 		commands.put("megumin", event ->
@@ -94,7 +95,7 @@ public class CommandUsage extends ListenerAdapter
 		//shutdown
 		commands.put("shutdown", event ->
 		{
-			if (event.getUser().getIdLong() != IDAndEntities.AC_ID) //不是我
+			if (event.getUser().getIdLong() != AC_ID) //不是我
 			{
 				event.reply("You can't do that.").queue();
 				return;
@@ -102,15 +103,15 @@ public class CommandUsage extends ListenerAdapter
 
 			event.reply("Shutting down...").queue(interactionHook ->
 			{
-				//IDAndEntities.botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue();
-				IDAndEntities.jda.shutdownNow();
+				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue();
+				jda.shutdown();
 			});
 		});
 
 		//reload
 		commands.put("reload", event ->
 		{
-			if (event.getUser().getIdLong() != IDAndEntities.AC_ID) //不是我
+			if (event.getUser().getIdLong() != AC_ID) //不是我
 			{
 				event.reply("You can't do that.").queue();
 				return;

@@ -65,7 +65,7 @@ public class Algorithm
 		return percent > random.nextInt(100);
 	}
 
-	public static <T> T randomElement(T[] array)
+	public static<T> T randomElement(T[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}

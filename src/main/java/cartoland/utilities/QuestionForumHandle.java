@@ -11,10 +11,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,7 +50,9 @@ public class QuestionForumHandle
 			%%s, did your question got a solution? If it did, remember to close this post using `:resolved:` %s emoji.
 			If it didn't, try offer more information of question.
 			""".formatted(resolvedFormat, resolvedFormat);
+
 	private static final Set<Long> idledForumPosts;
+	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "idled_questions.ser";
 
 	private QuestionForumHandle()
 	{
@@ -62,22 +61,17 @@ public class QuestionForumHandle
 
 	static
 	{
-		Object object = FileHandle.deserializeObject(FileHandle.IDLED_FORUM_CHANNELS_LIST_FILE_NAME);
-
 		//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-		if (object instanceof Set<?> set)
-			idledForumPosts = set.stream()
+		idledForumPosts = (FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof Set<?> set) ?
+				set.stream()
 					.filter(Long.class::isInstance)
 					.map(element -> (Long)element)
-					.collect(Collectors.toSet());
-		else
-			idledForumPosts = new HashSet<>();
-
+					.collect(Collectors.toSet()) : new HashSet<>();
 	}
 
-	public static void serializeIdlesList()
+	public static void serializeIdlesSet()
 	{
-		FileHandle.serializeObject(idledForumPosts);
+		FileHandle.serialize(IDLED_QUESTIONS_SET_FILE_NAME, (HashSet<Long>) idledForumPosts);
 	}
 
 	public static void createForumPost(ThreadChannel forumPost)

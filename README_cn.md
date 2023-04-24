@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/889200718886608966/1080592685473218621/image.png" alt="banner">
+</p>
+
 # Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / [粵語漢字](https://github.com/AlexCai2019/Cartoland/blob/master/README_hk.md) / 简体中文
 
@@ -8,8 +12,9 @@
 为了节省效能，本机器人并没有检查必要的文件夹和文件是否存在。因此，你必须准备好以下的文件夹和文件，才能让机器人正常运作：
 - 📁`lang/`，以及本项目的 `lang/` 文件夹内的所有 `.json` 文件。
 - 📁`logs/`
-- 📄`users.json`，以及一对大括号作为内容。
-- 📄`command_blocks.json`，以及一对大括号作为内容。
+- 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
+- 📄`command_blocks.ser`，从一个键和值皆为`Long`的`HashMap`序列化而来。
+- 📄`idled_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
 
 ## 激活
 通过在终端输入以下的命令激活机器人：

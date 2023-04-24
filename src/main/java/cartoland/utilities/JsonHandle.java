@@ -22,48 +22,32 @@ public class JsonHandle
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public static final String USERS_JSON = "users.json";
-	public static final String COMMAND_BLOCKS_JSON = "command_blocks.json";
+	private static final String USERS_FILE_NAME = "users.ser";
 
-	private static final JSONObject usersFile = new JSONObject(FileHandle.buildJsonStringFromFile(USERS_JSON)); //使用者的語言設定
-	private static final Map<String, JSONObject> languageFileMap = new HashMap<>();
-	private static final Map<String, List<Object>> commandListMap = new HashMap<>();
+	private static final Map<Long, String> users; //使用者的語言設定 id為key en, tw 等等的語言字串為value
+	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(); //語言字串為key 語言檔案為value
+	private static final Map<String, List<Object>> commandListMap = new HashMap<>(); //cmd.list等等為key 語言檔案對應的JSONArray為value
 	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
 	private static JSONObject englishFile; //英文檔案
-	private static String userIDString; //將ID轉換成字串
 
 	static
 	{
 		reloadLanguageFiles();
+		users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 	}
 
 	private static void lastUse(long userID)
 	{
-		userIDString = Long.toUnsignedString(userID);
-		String userLanguage;
-
-		if (usersFile.has(userIDString))
-			userLanguage = usersFile.getString(userIDString); //獲取使用者設定的語言
-		else //找不到設定的語言
-			usersFile.put(userIDString, userLanguage = IDAndEntities.Languages.ENGLISH); //放英文進去
-
-		file = languageFileMap.get(userLanguage);
+		//獲取使用者設定的語言
+		//找不到設定的語言就放英文進去
+		file = languageFileMap.get(users.computeIfAbsent(userID, k -> IDAndEntities.Languages.ENGLISH));
 	}
 
-	static Map<Long, Long> buildCommandBlocksMap()
+	public static void serializeUsersMap()
 	{
-		Map<Long, Long> map = new HashMap<>();
-		JSONObject commandBlocksFile = new JSONObject(FileHandle.buildJsonStringFromFile(COMMAND_BLOCKS_JSON));
-		//commandBlocksFile.toMap().forEach((s, o) -> map.put(Long.parseLong(s), ((Number) o).longValue()));
-		commandBlocksFile.keySet().forEach(userIDString -> map.put(Long.parseLong(userIDString), commandBlocksFile.optLong(userIDString)));
-		return map;
-	}
-
-	public static void synchronizeFile()
-	{
-		FileHandle.synchronizeFile(USERS_JSON, usersFile.toString());
+		FileHandle.serialize(USERS_FILE_NAME, (HashMap<Long, String>) users);
 	}
 
 	public static String command(long userID, String commandName)
@@ -80,23 +64,13 @@ public class JsonHandle
 
 	public static String command(long userID, String commandName, String argument)
 	{
-		lastUse(userID);
-		String jsonKey = commandName + ".name." + argument;
-		JSONObject hasKeyFile;
-		if (file.has(jsonKey)) //如果有這個key
-			hasKeyFile = file;
-		else if (englishFile.has(jsonKey)) //預設使用英文
-			hasKeyFile = englishFile;
-		else
-			return file.getString(commandName + ".fail");
-
 		if (commandName.equals("lang"))
-			usersFile.put(userIDString, argument);
+			users.put(userID, argument);
 
-		String result = hasKeyFile.getString(jsonKey); //要獲得的字串
-		if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找
-			return hasKeyFile.getString(result.substring(1));
-		return result;
+		String result = getStringFromJsonKey(userID, commandName + ".name." + argument);
+
+		//空字串代表獲取失敗
+		return result.isEmpty() ? file.getString(commandName + ".fail") : result;
 	}
 
 	public static List<Object> commandList(String commandName)
@@ -119,15 +93,18 @@ public class JsonHandle
 		//FileHandle.log("Reload all language json files");
 	}
 
-	public static String getJsonKey(long userID, String key)
+	public static String getStringFromJsonKey(long userID, String key)
 	{
 		lastUse(userID);
-		if (file.has(key))
-			return file.getString(key);
-		else if (englishFile.has(key))
-			return englishFile.getString(key);
+		String result; //要獲得的字串
+		if (file.has(key)) //如果有這個key
+			result = file.getString(key);
+		else if (englishFile.has(key)) //預設使用英文
+			result = englishFile.getString(key);
 		else
-			return "";
-		//return file.has(key) ? file.getString(key) : englishFile.has(key) ? englishFile.getString(key) : "";
+			result = "";
+
+		//以&開頭的json key 代表要去那個地方找
+		return (result.charAt(0) == '&') ? getStringFromJsonKey(userID, result.substring(1)) : result;
 	}
 }

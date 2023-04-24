@@ -12,12 +12,13 @@ The source code of Cartoland Bot, a discord bot developed for a server named Car
 For performance reasons, this bot won't verify if all the necessary paths and files exist. If you want to run the bot yourself, you must have the following folders and files:
 - 📁`lang/` with all `.json` files found in the `lang/` folder of this repository.
 - 📁`logs/`
-- 📄`users.json` with a pair of curly brackets as its content.
-- 📄`command_blocks.json` with a pair of curly brackets as its content.
+- 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
+- 📄`command_blocks.ser` serialized from a `HashMap` which use `Long` as both key and value.
+- 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
 
 ## Launching
 Start the bot by running the following command in your terminal:
 ```
 java -jar Cartoland.jar <token>
 ```
-Replace the `<token>` argument with your own bot's token. Make sure you have all the required folders and files before launching.
+Replace the `<token>` argument with the token of your own bot. Make sure you have all the required folders and files before launching.

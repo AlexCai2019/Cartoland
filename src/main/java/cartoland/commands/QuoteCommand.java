@@ -72,7 +72,7 @@ public class QuoteCommand implements ICommand
 					.ifPresent(firstAttachment -> embedBuilder.setImage(firstAttachment.getUrl()));
 
 			event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(link, JsonHandle.getJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();
+					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 				event.reply("Error: The message might be deleted, or I don't have permission to access it.").queue()));
 	}

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://cdn.discordapp.com/attachments/889200718886608966/1080592685473218621/image.png" alt="banner">
+</p>
+
 # Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / 粵語漢字 / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_cn.md)
 
@@ -8,8 +12,9 @@
 為咗節省效能，本機器人並唔會特別檢查你嘅資料夾同檔案是否符合條件。因此，你必須準備好以下嘅資料夾同檔案，先可以令機器人正常運作：
 - 📁`lang/`，以及本專案的 `lang/` 資料夾內的所有 `.json` 檔案。
 - 📁`logs/`
-- 📄`users.json`，以及一對大括號作為內容。
-- 📄`command_blocks.json`，以及一對大括號作為內容。
+- 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
+- 📄`command_blocks.ser` serialized from a `HashMap` which use `Long` as both key and value.
+- 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

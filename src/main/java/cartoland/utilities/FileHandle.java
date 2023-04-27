@@ -57,8 +57,10 @@ public class FileHandle
 		}
 	}
 
-	static void serialize(String fileName, Serializable object)
+	static void serialize(String fileName, Object object)
 	{
+		if (!(object instanceof Serializable))
+			return;
 		try
 		{
 			FileOutputStream fileStream = new FileOutputStream(fileName);

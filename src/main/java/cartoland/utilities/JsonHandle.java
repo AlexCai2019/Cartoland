@@ -47,7 +47,7 @@ public class JsonHandle
 
 	public static void serializeUsersMap()
 	{
-		FileHandle.serialize(USERS_FILE_NAME, (HashMap<Long, String>) users);
+		FileHandle.serialize(USERS_FILE_NAME, users);
 	}
 
 	public static String command(long userID, String commandName)

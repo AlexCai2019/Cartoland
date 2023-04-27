@@ -27,7 +27,7 @@ public class AddCommands
 
 	//這裡真的很亂
 	//沒有十足的信心 不要編輯這裡的程式碼
-	private static final CommandData[] commands =
+	public static final CommandData[] commands =
 	{
 		Commands.slash("invite", "Get invite link of Cartoland")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
@@ -234,11 +234,6 @@ public class AddCommands
 				.setNameLocalization(CHINESE_TAIWAN, "反應")
 				.setNameLocalization(CHINESE_CHINA, "反应")
 	};
-
-	public static CommandData[] getCommands()
-	{
-		return commands;
-	}
 }
 
 /**

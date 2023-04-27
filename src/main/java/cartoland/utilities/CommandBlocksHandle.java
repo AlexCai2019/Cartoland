@@ -45,7 +45,7 @@ public class CommandBlocksHandle
 		Long nowHave = commandBlocksMap.get(userID);
 		if (nowHave == null)
 			nowHave = 0L;
-		commandBlocksMap.put(userID,  Algorithm.safeAdd(nowHave, add));
+		commandBlocksMap.put(userID, Algorithm.safeAdd(nowHave, add));
 	}
 
 	public static void set(long userID, long value)
@@ -71,6 +71,6 @@ public class CommandBlocksHandle
 
 	public static void serializeCommandBlocksMap()
 	{
-		FileHandle.serialize(COMMAND_BLOCKS_FILE_NAME, (HashMap<Long, Long>) commandBlocksMap);
+		FileHandle.serialize(COMMAND_BLOCKS_FILE_NAME, commandBlocksMap);
 	}
 }

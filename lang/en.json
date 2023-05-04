@@ -12,6 +12,7 @@
 		"lang",
 		"quote",
 		"youtuber",
+		"introduce",
 		"lottery",
 		"transfer"
 	],
@@ -23,6 +24,7 @@
 	"help.name.lang": "Syntax: </lang:1063884269006635074>` <code>`",
 	"help.name.quote": "Syntax: </quote:1080470666714824744>` <message link>`",
 	"help.name.youtuber": "Syntax: </youtuber:1081828414186586202>` [<channel name>]`",
+	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>`",
 	"help.name.lottery": "Syntax: </lottery get:1072947886612033666>` [<user>]` </lottery bet:1072947886612033666>` <amount>` </lottery ranking:1072947886612033666>` <page>`",
 	"help.name.transfer": "Syntax: </transfer:1079058062582759534>` <user> <amount>`",
 	"cmd.begin": "`Commands: ",

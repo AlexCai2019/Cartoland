@@ -10,6 +10,7 @@
 	"help.name.lang": "格式: </lang:1063884269006635074>` <代碼>`",
 	"help.name.quote": "格式: </quote:1080470666714824744>` <訊息連結>`",
 	"help.name.youtuber": "格式: </youtuber:1081828414186586202>` [<頻道名稱>]`",
+	"help.name.introduce": "格式: </introduce user:1103746424384004156>` [<使用者>]` </introduce update:1103746424384004156>` <內容>`",
 	"help.name.lottery": "格式: </lottery get:1072947886612033666>` [<使用者>]` </lottery bet:1072947886612033666>` <數量>` </lottery ranking:1072947886612033666>` <頁數>`",
 	"help.name.transfer": "格式: </transfer:1079058062582759534>` <使用者> <數量>`",
 	"cmd.begin": "指令: `",

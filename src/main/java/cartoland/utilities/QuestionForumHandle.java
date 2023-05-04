@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -135,7 +137,11 @@ public class QuestionForumHandle
 				if (messages.size() > 0)
 					messages.get(0).addReaction(reminder_ribbon).queue();
 			});
-		});
+		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
+		{
+			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
+			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue();
+		}));
 	}
 
 	public static void unIdleForumPost(ThreadChannel forumPost, boolean archive)

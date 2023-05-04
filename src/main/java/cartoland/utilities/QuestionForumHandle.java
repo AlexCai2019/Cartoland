@@ -11,7 +11,10 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -84,14 +87,14 @@ public class QuestionForumHandle
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
 
-	public static boolean typedResolved(Object withReaction)
+	public static boolean notTypedResolved(Object withReaction)
 	{
 		if (withReaction instanceof Message message)
-			return message.getContentRaw().equals(resolvedFormat);
+			return !message.getContentRaw().equals(resolvedFormat);
 		else if (withReaction instanceof MessageReaction reaction)
-			return reaction.getEmoji().equals(resolved);
+			return !reaction.getEmoji().equals(resolved);
 		else
-			return false;
+			return true;
 	}
 
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
@@ -142,6 +145,7 @@ public class QuestionForumHandle
 
 		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
 		{
+			//移除🎗️
 			if (messages.size() > 0)
 			{
 				Message message = messages.get(0);

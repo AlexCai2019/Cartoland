@@ -22,11 +22,11 @@ public class ToolCommand implements ICommand
 
 	public ToolCommand()
 	{
-		subCommands.put("uuid_string", new UUIDStringCommand()); //tool uuid_string
-		subCommands.put("uuid_array", new UUIDArrayCommand()); //tool uuid_array
-		subCommands.put("color_rgba", new ColorRGBA()); //tool color_rgba
-		subCommands.put("color_integer", new ColorInteger()); //tool color_rgb
-		subCommands.put("pack_mcmeta", new PackMcmetaCommand()); //tool pack_mcmeta
+		subCommands.put("uuid_string", new UUIDStringSubCommand()); //tool uuid_string
+		subCommands.put("uuid_array", new UUIDArraySubCommand()); //tool uuid_array
+		subCommands.put("color_rgba", new ColorRGBASubCommand()); //tool color_rgba
+		subCommands.put("color_integer", new ColorIntegerSubCommand()); //tool color_rgb
+		subCommands.put("pack_mcmeta", new PackMcmetaSubCommand()); //tool pack_mcmeta
 	}
 
 	@Override
@@ -42,10 +42,10 @@ public class ToolCommand implements ICommand
  *
  * @since 1.4
  * @see ToolCommand
- * @see UUIDArrayCommand
+ * @see UUIDArraySubCommand
  * @author Alex Cai
  */
-class UUIDStringCommand implements ICommand
+class UUIDStringSubCommand implements ICommand
 {
 	//59c1027b-5559-4e6a-91e4-2b8b949656ce
 	private final Pattern dashRegex = Pattern.compile("[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}");
@@ -108,10 +108,10 @@ class UUIDStringCommand implements ICommand
  *
  * @since 1.4
  * @see ToolCommand
- * @see UUIDStringCommand
+ * @see UUIDStringSubCommand
  * @author Alex Cai
  */
-class UUIDArrayCommand implements ICommand
+class UUIDArraySubCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -151,7 +151,7 @@ class UUIDArrayCommand implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-class ColorRGBA implements ICommand
+class ColorRGBASubCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -209,7 +209,7 @@ class ColorRGBA implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-class ColorInteger implements ICommand
+class ColorIntegerSubCommand implements ICommand
 {
 	private final Pattern decimalRegex = Pattern.compile("\\d{1,10}"); //最高4294967295 最低0
 	private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{8}"); //FFFFFFFF
@@ -263,7 +263,7 @@ class ColorInteger implements ICommand
  * @see ToolCommand
  * @author Alex Cai
  */
-class PackMcmetaCommand implements ICommand
+class PackMcmetaSubCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)

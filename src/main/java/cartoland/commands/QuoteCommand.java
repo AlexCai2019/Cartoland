@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 public class QuoteCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
-	private final int subStringStart = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -42,7 +43,7 @@ public class QuoteCommand implements ICommand
 			return;
 		}
 
-		String[] numbersInLink = link.substring(subStringStart).split("/");
+		String[] numbersInLink = link.substring(SUB_STRING_START).split("/");
 
 		//從創聯中取得頻道
 		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
@@ -57,9 +58,8 @@ public class QuoteCommand implements ICommand
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
 
-			EmbedBuilder embedBuilder = new EmbedBuilder()
-					.setAuthor(linkAuthor.getAsTag(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
-					.appendDescription(linkMessage.getContentRaw()) //訊息的內容
+			embedBuilder.setAuthor(linkAuthor.getAsTag(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
+					.setDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道
 
@@ -69,7 +69,7 @@ public class QuoteCommand implements ICommand
 					.stream()
 					.filter(Message.Attachment::isImage)
 					.findFirst()
-					.ifPresent(firstAttachment -> embedBuilder.setImage(firstAttachment.getUrl()));
+					.ifPresentOrElse(firstAttachment -> embedBuilder.setImage(firstAttachment.getUrl()), () -> embedBuilder.setImage(null));
 
 			event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();

@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.commands.IntroduceCommand;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -118,6 +119,7 @@ public class BotOnlineOffline extends ListenerAdapter
 		JsonHandle.serializeUsersMap();
 		CommandBlocksHandle.serializeCommandBlocksMap();
 		QuestionForumHandle.serializeIdlesSet();
+		IntroduceCommand.serializeIntroduction();
 
 		String logString = "offline";
 		System.out.println(logString);

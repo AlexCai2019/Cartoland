@@ -22,9 +22,9 @@ public class LotteryCommand implements ICommand
 
 	public LotteryCommand()
 	{
-		subCommands.put("get", new Get());
-		subCommands.put("bet", new Bet());
-		subCommands.put("ranking", new Ranking());
+		subCommands.put("get", new GetSubCommand());
+		subCommands.put("bet", new BetSubCommand());
+		subCommands.put("ranking", new RankingSubCommand());
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class LotteryCommand implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-class Get implements ICommand
+class GetSubCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -66,7 +66,7 @@ class Get implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-class Bet implements ICommand
+class BetSubCommand implements ICommand
 {
 	private final Pattern numberRegex = Pattern.compile("\\d+");
 	private final Pattern percentRegex = Pattern.compile("\\d+%");
@@ -151,7 +151,7 @@ class Bet implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-class Ranking implements ICommand
+class RankingSubCommand implements ICommand
 {
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 	private String lastReply = ""; //上一次回覆過的字串
@@ -228,7 +228,7 @@ class Ranking implements ICommand
 					.append("\u001B[0m\n");
 		}
 
-		rankBuilder.append("\n--------------------\nPage ")
+		rankBuilder.append("\n--------------------\n")
 				.append(page)
 				.append(" / ")
 				.append(maxPage)

@@ -89,6 +89,8 @@ public class CommandUsage extends ListenerAdapter
 			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : youtubersString).queue();
 		});
 
+		commands.put("introduce", new IntroduceCommand());
+
 		commands.put("megumin", event ->
 				event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
 

@@ -138,6 +138,23 @@ public class AddCommands
 									.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
 									.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")),
 
+		Commands.slash("introduce", "Introduce a user or update your introduction")
+				.setDescriptionLocalization(CHINESE_TAIWAN, "獲取一名使用者的介紹，或更新你的自我介紹")
+				.setDescriptionLocalization(CHINESE_CHINA, "获取一名用户的介绍，或更新你的自我介绍")
+				.addSubcommands(
+				new SubcommandData("user", "User")
+						.setDescriptionLocalization(CHINESE_TAIWAN, "使用者")
+						.setDescriptionLocalization(CHINESE_CHINA, "用户")
+						.addOptions(new OptionData(OptionType.USER, "user", "The user that you want to know", true, false)
+											.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
+											.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
+				new SubcommandData("update", "Update your introduction")
+						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
+						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
+						.addOptions(new OptionData(OptionType.INTEGER, "content", "Your self introduction", true, false)
+											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
+											.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
+
 		Commands.slash("megumin", "The best anime girl")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 				.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")

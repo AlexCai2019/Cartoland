@@ -2,6 +2,8 @@ package cartoland.messages;
 
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
@@ -32,7 +34,12 @@ public class QuestionForumMessage implements IMessage
 		if (QuestionForumHandle.isIdled(forumPost))
 			QuestionForumHandle.unIdleForumPost(forumPost, false);
 
-		if (QuestionForumHandle.typedResolved(message)) //是:resolved:表情符號
-			QuestionForumHandle.archiveForumPost(forumPost, message);
+		if (QuestionForumHandle.notTypedResolved(message)) //不是:resolved:表情符號
+			return;
+
+		Member member = event.getMember();
+		if (member == null || (member.getIdLong() != forumPost.getOwnerIdLong() && member.hasPermission(Permission.MANAGE_THREADS)))
+			return; //不是討論串擁有者 且 沒有管理討論串的權限
+		QuestionForumHandle.archiveForumPost(forumPost, message);
 	}
 }

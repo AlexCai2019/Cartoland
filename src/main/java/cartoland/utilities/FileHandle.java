@@ -57,7 +57,7 @@ public class FileHandle
 		}
 	}
 
-	static void serialize(String fileName, Object object)
+	public static void serialize(String fileName, Object object)
 	{
 		if (!(object instanceof Serializable))
 			return;
@@ -79,7 +79,7 @@ public class FileHandle
 		}
 	}
 
-	static Object deserialize(String fileName)
+	public static Object deserialize(String fileName)
 	{
 		Object object = null;
 

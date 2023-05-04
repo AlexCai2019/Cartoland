@@ -53,6 +53,7 @@ public class IDAndEntities
 		youtubers.put("收音機", "@radio0529");
 		youtubers.put("SethBling", "@SethBling");
 		youtubers.put("slicedlime", "@slicedlime");
+		youtubers.put("Phoenix SC", "@PhoenixSC");
 	}
 
 	public static JDA jda;

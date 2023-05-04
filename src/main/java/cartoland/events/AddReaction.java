@@ -2,6 +2,8 @@ package cartoland.events;
 
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -16,10 +18,13 @@ public class AddReaction extends ListenerAdapter
 	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
-		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
+		if (QuestionForumHandle.notTypedResolved(event.getReaction())) //不是resolved
 			return;
-		User user = event.getUser();
-		if (user == null || user.isBot() || user.isSystem()) //是機器人或系統
+		Member member = event.getMember();
+		if (member == null)
+			return;
+		User user = member.getUser();
+		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return;
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;
@@ -27,6 +32,8 @@ public class AddReaction extends ListenerAdapter
 		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 		if (forumPost.isArchived()) //關閉著的
+			return;
+		if (user.getIdLong() != forumPost.getOwnerIdLong() && !member.hasPermission(Permission.MANAGE_THREADS))
 			return;
 
 		event.retrieveMessage().queue(message -> QuestionForumHandle.archiveForumPost(forumPost, message));

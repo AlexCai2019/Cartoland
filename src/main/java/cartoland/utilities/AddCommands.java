@@ -145,13 +145,13 @@ public class AddCommands
 				new SubcommandData("user", "User")
 						.setDescriptionLocalization(CHINESE_TAIWAN, "使用者")
 						.setDescriptionLocalization(CHINESE_CHINA, "用户")
-						.addOptions(new OptionData(OptionType.USER, "user", "The user that you want to know", true, false)
+						.addOptions(new OptionData(OptionType.USER, "user", "The user that you want to know", false, false)
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
 											.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
 				new SubcommandData("update", "Update your introduction")
 						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
 						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
-						.addOptions(new OptionData(OptionType.INTEGER, "content", "Your self introduction", true, false)
+						.addOptions(new OptionData(OptionType.STRING, "content", "Your self introduction", true, false)
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
 											.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
 

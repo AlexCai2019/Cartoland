@@ -15,6 +15,7 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
 - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 - 📄`command_blocks.ser` serialized from a `HashMap` which use `Long` as both key and value.
 - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
+- 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## Launching
 Start the bot by running the following command in your terminal:

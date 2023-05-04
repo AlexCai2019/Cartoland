@@ -42,10 +42,7 @@ class UserSubCommand implements ICommand
 	{
 		User target = event.getOption("user", OptionMapping::getAsUser);
 		if (target == null)
-		{
-			event.reply("Impossible, this is required!").queue();
-			return;
-		}
+			target = event.getUser();
 
 		String content = IntroduceCommand.introduction.get(target.getIdLong());
 		event.reply((content != null) ? content : "I don't have any information about this user.").queue();

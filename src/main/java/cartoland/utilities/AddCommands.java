@@ -107,15 +107,13 @@ public class AddCommands
 						new SubcommandData("color_integer", "Get color data from RGB integer")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
-								.addOptions(
-										new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
-												.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
-												.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
+								.addOptions(new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
+													.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
+													.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
 						new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
-								.addOptions(
-										new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
-												.addChoice("Data Pack", "d")
-												.addChoice("Resource Pack", "r"))),
+								.addOptions(new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
+													.addChoice("Data Pack", "d")
+													.addChoice("Resource Pack", "r"))),
 
 		Lang.lang,
 		Lang.language,
@@ -146,12 +144,16 @@ public class AddCommands
 						.setDescriptionLocalization(CHINESE_TAIWAN, "使用者")
 						.setDescriptionLocalization(CHINESE_CHINA, "用户")
 						.addOptions(new OptionData(OptionType.USER, "user", "The user that you want to know", false, false)
+											.setNameLocalization(CHINESE_TAIWAN, "使用者")
+											.setNameLocalization(CHINESE_CHINA, "用户")
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
 											.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
 				new SubcommandData("update", "Update your introduction")
 						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
 						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
 						.addOptions(new OptionData(OptionType.STRING, "content", "Your self introduction", true, false)
+											.setNameLocalization(CHINESE_TAIWAN, "內容")
+											.setNameLocalization(CHINESE_CHINA, "内容")
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
 											.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
 
@@ -168,12 +170,11 @@ public class AddCommands
 		Commands.slash("one_a_two_b", "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
-				.addOptions(
-						new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
-								.setNameLocalization(CHINESE_TAIWAN, "答案")
-								.setNameLocalization(CHINESE_CHINA, "答案")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
-								.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
+				.addOptions(new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
+											.setNameLocalization(CHINESE_TAIWAN, "答案")
+											.setNameLocalization(CHINESE_CHINA, "答案")
+											.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
+											.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
 		Commands.slash("lottery", "Play the lottery game")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 				.setDescriptionLocalization(CHINESE_CHINA, "抽奖")

@@ -1,20 +1,28 @@
 package cartoland.commands;
 
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IntroduceHandle;
+import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+/**
+ * @since 2.0
+ * @author Alex Cai
+ */
 public class IntroduceCommand implements ICommand
 {
-	private static final String INTRODUCTION_FILE_NAME = "introduction.ser";
-	static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
 	private final Map<String, ICommand> subCommands = new HashMap<>();
 
 	public IntroduceCommand()
@@ -28,27 +36,31 @@ public class IntroduceCommand implements ICommand
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
-
-	public static void serializeIntroduction()
-	{
-		FileHandle.serialize(INTRODUCTION_FILE_NAME, introduction);
-	}
 }
 
+/**
+ * @since 2.0
+ * @author Alex Cai
+ */
 class UserSubCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		User user = event.getUser();
 		User target = event.getOption("user", OptionMapping::getAsUser);
 		if (target == null)
-			target = event.getUser();
+			target = user;
 
-		String content = IntroduceCommand.introduction.get(target.getIdLong());
-		event.reply((content != null) ? content : "I don't have any information about this user.").queue();
+		String content = IntroduceHandle.getIntroduction(target.getIdLong());
+		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.no_info")).queue();
 	}
 }
 
+/**
+ * @since 2.0
+ * @author Alex Cai
+ */
 class UpdateSubCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
@@ -57,6 +69,7 @@ class UpdateSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		long userID = event.getUser().getIdLong();
 		String content = event.getOption("content", OptionMapping::getAsString);
 		if (content == null)
 		{
@@ -66,8 +79,8 @@ class UpdateSubCommand implements ICommand
 
 		if (content.equals("delete"))
 		{
-			IntroduceCommand.introduction.remove(event.getUser().getIdLong());
-			event.reply("Deleted success").queue();
+			IntroduceHandle.deleteIntroduction(userID);
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.delete")).queue();
 			return;
 		}
 
@@ -85,11 +98,17 @@ class UpdateSubCommand implements ICommand
 
 			//從頻道中取得訊息 注意ID是String 與慣例的long不同
 			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
-				IntroduceCommand.introduction.put(event.getUser().getIdLong(), linkMessage.getContentRaw()));
+			{
+				String rawMessage = linkMessage.getContentRaw();
+				List<Attachment> attachments = linkMessage.getAttachments();
+				if (!attachments.isEmpty())
+					rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
+				IntroduceHandle.updateIntroduction(userID, rawMessage);
+			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
 		}
 		else
-			IntroduceCommand.introduction.put(event.getUser().getIdLong(), content);
+			IntroduceHandle.updateIntroduction(userID, content);
 
-		event.reply("Updated success").queue();
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update")).queue();
 	}
 }

@@ -18,6 +18,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class NewMember extends ListenerAdapter
 {
 	private final Emoji wave = Emoji.fromUnicode("👋");
+	private final String welcomeMessage =
+			"""
+			歡迎你，%%s，來到 %%s。
+			記得先詳閱 <#%d> 內的訊息，並遵守一切公告規則。
+			%%s, welcome to %%s.
+			Please read messages in <#%d>, and follow all rules.
+			""".formatted(IDAndEntities.READ_ME_CHANNEL_ID, IDAndEntities.READ_ME_CHANNEL_ID);
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
@@ -26,15 +33,9 @@ public class NewMember extends ListenerAdapter
 		if (user.isBot() || user.isSystem() || !user.hasPrivateChannel())
 			return;
 
-		user.openPrivateChannel().queue(privateChannel ->
-		{
-			String userName = user.getName();
-			String serverName = IDAndEntities.cartolandServer.getName();
-			privateChannel.sendMessage("歡迎你，" + userName + "，來到 " + serverName + "\n" +
-										 "記得先詳閱 <#" + IDAndEntities.READ_ME_CHANNEL_ID + "> 內的訊息，並遵守一切公告規則。\n" +
-										 userName + ", welcome to " + serverName + ".\n" +
-										 "Please read messages in <#" + IDAndEntities.READ_ME_CHANNEL_ID + ">, and follow all rules.").queue();
-		});
+		String serverName = IDAndEntities.cartolandServer.getName();
+		String userTag = user.getAsTag();
+		user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userTag, serverName, userTag, serverName)).queue());
 	}
 
 	@Override

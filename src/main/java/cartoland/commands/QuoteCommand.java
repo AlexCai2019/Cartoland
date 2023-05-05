@@ -3,7 +3,7 @@ package cartoland.commands;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -67,7 +67,7 @@ public class QuoteCommand implements ICommand
 			//不用add field 沒必要那麼麻煩
 			linkMessage.getAttachments()
 					.stream()
-					.filter(Message.Attachment::isImage)
+					.filter(Attachment::isImage)
 					.findFirst()
 					.ifPresentOrElse(firstAttachment -> embedBuilder.setImage(firstAttachment.getUrl()), () -> embedBuilder.setImage(null));
 

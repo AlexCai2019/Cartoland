@@ -91,8 +91,7 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put("introduce", new IntroduceCommand());
 
-		commands.put("megumin", event ->
-				event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
+		commands.put("megumin", event -> event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
 
 		//shutdown
 		commands.put("shutdown", event ->
@@ -202,7 +201,7 @@ public class CommandUsage extends ListenerAdapter
  */
 record TA(String name, long... artworks)
 {
-	public String getRandomURL()
+	String getRandomURL()
 	{
 		return "https://twitter.com/" + name + "/status/" + Algorithm.randomElement(artworks);
 	}

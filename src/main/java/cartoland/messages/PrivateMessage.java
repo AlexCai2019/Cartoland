@@ -52,7 +52,7 @@ public class PrivateMessage implements IMessage
 
 			String rawMessage = message.getContentRaw();
 			List<Attachment> attachments = message.getAttachments();
-			if (attachments.size() != 0)
+			if (!attachments.isEmpty())
 				rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
 
 			IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室

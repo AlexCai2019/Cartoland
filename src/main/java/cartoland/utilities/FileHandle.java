@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 /**
  * {@code FileHandle} is a utility class that provides every functions that this program need to deal with file input and
- * output. Can not be instantiated.
+ * output. Including logger, json build and serialize. Can not be instantiated.
  *
  * @since 1.0
  * @author Alex Cai
@@ -36,7 +36,6 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			IDAndEntities.jda.shutdownNow();
 		}
 	}
@@ -51,7 +50,6 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			log(exception);
 			return "{}";
 		}
@@ -73,7 +71,6 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			log(exception);
 			IDAndEntities.jda.shutdownNow();
 		}
@@ -81,25 +78,21 @@ public class FileHandle
 
 	public static Object deserialize(String fileName)
 	{
-		Object object = null;
-
 		try
 		{
 			FileInputStream fileStream = new FileInputStream(fileName);
 			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-			object = objectStream.readObject();
+			Object object = objectStream.readObject();
 			objectStream.close();
 			fileStream.close();
+			return object;
 		}
 		catch (IOException | ClassNotFoundException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			log(exception);
-			IDAndEntities.jda.shutdownNow();
+			return null;
 		}
-
-		return object;
 	}
 
 	public static void log(String output)
@@ -118,7 +111,6 @@ public class FileHandle
 			catch (IOException exception)
 			{
 				exception.printStackTrace();
-				System.err.print('\u0007');
 				IDAndEntities.jda.shutdownNow();
 			}
 		}
@@ -133,7 +125,6 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			IDAndEntities.jda.shutdownNow();
 		}
 	}
@@ -159,7 +150,6 @@ public class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			System.err.print('\u0007');
 			IDAndEntities.jda.shutdownNow();
 		}
 	}

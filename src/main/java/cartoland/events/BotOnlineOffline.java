@@ -1,6 +1,5 @@
 package cartoland.events;
 
-import cartoland.commands.IntroduceCommand;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -119,7 +118,7 @@ public class BotOnlineOffline extends ListenerAdapter
 		JsonHandle.serializeUsersMap();
 		CommandBlocksHandle.serializeCommandBlocksMap();
 		QuestionForumHandle.serializeIdlesSet();
-		IntroduceCommand.serializeIntroduction();
+		IntroduceHandle.serializeIntroduction();
 
 		String logString = "offline";
 		System.out.println(logString);
@@ -136,7 +135,6 @@ public class BotOnlineOffline extends ListenerAdapter
 	private void problemOccurred(String logString)
 	{
 		System.err.println(logString);
-		System.err.print('\u0007');
 		FileHandle.log(logString);
 		jda.shutdownNow();
 		throw new NullPointerException();

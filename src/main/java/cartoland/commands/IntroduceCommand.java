@@ -3,12 +3,12 @@ package cartoland.commands;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.IntroduceHandle;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.HashMap;
@@ -48,7 +48,7 @@ class UserSubCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		User user = event.getUser();
-		User target = event.getOption("user", OptionMapping::getAsUser);
+		User target = event.getOption("user", OptionFunctions.getAsUser);
 		if (target == null)
 			target = user;
 
@@ -70,7 +70,7 @@ class UpdateSubCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = event.getUser().getIdLong();
-		String content = event.getOption("content", OptionMapping::getAsString);
+		String content = event.getOption("content", OptionFunctions.getAsString);
 		if (content == null)
 		{
 			event.reply("Impossible, this is required!").queue();

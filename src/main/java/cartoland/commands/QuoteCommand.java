@@ -2,13 +2,13 @@ package cartoland.commands;
 
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
@@ -30,7 +30,7 @@ public class QuoteCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String link = event.getOption("link", OptionMapping::getAsString);
+		String link = event.getOption("link", OptionFunctions.getAsString);
 		if (link == null)
 		{
 			event.reply("Impossible, this is required!").queue();

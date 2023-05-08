@@ -31,7 +31,7 @@ public class AddCommands
 	{
 		Commands.slash("invite", "Get invite link of Cartoland")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
-				.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请连结"),
+				.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请链接"),
 
 		Commands.slash("help", "Get help with bot commands")
 				.addOptions(

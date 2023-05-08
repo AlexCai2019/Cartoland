@@ -24,13 +24,8 @@ public class CommandBlocksHandle
 
 	public static boolean changed = true;
 	private static final String COMMAND_BLOCKS_FILE_NAME = "command_blocks.ser";
-	private static final Map<Long, Long> commandBlocksMap;
-
-	static
-	{
-		//會有unchecked assignment的警告 but I did it anyway
-		commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
-	}
+	//會有unchecked assignment的警告 but I did it anyway
+	private static final Map<Long, Long> commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
 
 	/**
 	 * Add command blocks to the user that has userID as ID. This method calls

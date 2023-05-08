@@ -3,7 +3,6 @@ package cartoland.commands;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -46,7 +45,7 @@ class GetSubCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		User user = event.getUser();
-		User target = event.getOption("target", OptionMapping::getAsUser);
+		User target = event.getOption("target", OptionFunctions.getAsUser);
 		if (target == null) //沒有填 預設是自己
 			target = user;
 		else if (target.isBot() || target.isSystem())
@@ -79,7 +78,7 @@ class BetSubCommand implements ICommand
 	{
 		long userID = event.getUser().getIdLong();
 		long nowHave = CommandBlocksHandle.get(userID);
-		String betString = event.getOption("bet", OptionMapping::getAsString);
+		String betString = event.getOption("bet", OptionFunctions.getAsString);
 
 		if (betString == null) //不帶參數
 		{
@@ -159,7 +158,7 @@ class RankingSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		Integer pageBox = event.getOption("page", OptionMapping::getAsInt);
+		Integer pageBox = event.getOption("page", OptionFunctions.getAsInt);
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
 		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁

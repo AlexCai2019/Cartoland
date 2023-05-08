@@ -1,8 +1,8 @@
 package cartoland.commands;
 
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ class UUIDStringSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String rawUUID = event.getOption("raw_uuid", OptionMapping::getAsString);
+		String rawUUID = event.getOption("raw_uuid", OptionFunctions.getAsString);
 		if (rawUUID == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -119,7 +119,7 @@ class UUIDArraySubCommand implements ICommand
 		Integer[] uuidArray = new Integer[4];
 		for (int i = 0; i < 4; i++)
 		{
-			uuidArray[i] = event.getOption(String.valueOf(i), OptionMapping::getAsInt);
+			uuidArray[i] = event.getOption(String.valueOf(i), OptionFunctions.getAsInt);
 			if (uuidArray[i] == null)
 			{
 				event.reply("Impossible, this is required!").queue();
@@ -159,10 +159,10 @@ class ColorRGBASubCommand implements ICommand
 		Integer[] rgbaColors = new Integer[4];
 		Integer[] argbColors = new Integer[4];
 
-		rgbaColors[0] = argbColors[1] = event.getOption("red", OptionMapping::getAsInt);
-		rgbaColors[1] = argbColors[2] = event.getOption("green", OptionMapping::getAsInt);
-		rgbaColors[2] = argbColors[3] = event.getOption("blue", OptionMapping::getAsInt);
-		rgbaColors[3] = argbColors[0] = event.getOption("alpha", OptionMapping::getAsInt);
+		rgbaColors[0] = argbColors[1] = event.getOption("red", OptionFunctions.getAsInt);
+		rgbaColors[1] = argbColors[2] = event.getOption("green", OptionFunctions.getAsInt);
+		rgbaColors[2] = argbColors[3] = event.getOption("blue", OptionFunctions.getAsInt);
+		rgbaColors[3] = argbColors[0] = event.getOption("alpha", OptionFunctions.getAsInt);
 
 		int rgba = 0, argb = 0;
 
@@ -218,7 +218,7 @@ class ColorIntegerSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String rgbString = event.getOption("rgba_or_argb", OptionMapping::getAsString);
+		String rgbString = event.getOption("rgba_or_argb", OptionFunctions.getAsString);
 		if (rgbString == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -268,7 +268,7 @@ class PackMcmetaSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String packType = event.getOption("pack_type", OptionMapping::getAsString);
+		String packType = event.getOption("pack_type", OptionFunctions.getAsString);
 		if (packType == null)
 		{
 			event.reply("Impossible, this is required!").queue();

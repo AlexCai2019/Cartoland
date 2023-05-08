@@ -4,9 +4,9 @@ import cartoland.events.CommandUsage;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ public class TransferCommand implements ICommand
 	{
 		long userID = event.getUser().getIdLong();
 
-		User target = event.getOption("target", OptionMapping::getAsUser);
+		User target = event.getOption("target", OptionFunctions.getAsUser);
 		if (target == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -46,7 +46,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		String transferAmountString = event.getOption("amount", OptionMapping::getAsString);
+		String transferAmountString = event.getOption("amount", OptionFunctions.getAsString);
 		if (transferAmountString == null)
 		{
 			event.reply("Impossible, this is required!").queue();

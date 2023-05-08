@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +113,11 @@ public class QuestionForumHandle
 		unIdleForumPost(forumPost, true);
 	}
 
+	private static final Consumer<List<Message>> addRemindReaction = messages ->
+	{
+		if (messages.size() > 0)
+			messages.get(0).addReaction(reminder_ribbon).queue();
+	};
 	public static void tryIdleForumPost(ThreadChannel forumPost)
 	{
 		if (forumPost.isArchived() || forumPost.isLocked())
@@ -132,11 +138,7 @@ public class QuestionForumHandle
 			idledForumPosts.add(forumPost.getIdLong());
 
 			//增加🎗️
-			forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
-			{
-				if (messages.size() > 0)
-					messages.get(0).addReaction(reminder_ribbon).queue();
-			});
+			forumPost.getIterableHistory().reverse().limit(1).queue(addRemindReaction);
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 		{
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";

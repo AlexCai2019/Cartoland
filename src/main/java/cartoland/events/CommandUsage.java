@@ -5,10 +5,10 @@ import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +85,7 @@ public class CommandUsage extends ListenerAdapter
 		String youtubersString = String.join(" ", youtubers.keySet());
 		commands.put("youtuber", event ->
 		{
-			String youtubeChannel = event.getOption("youtuber_name", OptionMapping::getAsString);
+			String youtubeChannel = event.getOption("youtuber_name", OptionFunctions.getAsString);
 			event.reply(youtubeChannel != null ? "https://www.youtube.com/" + youtubeChannel : youtubersString).queue();
 		});
 
@@ -164,7 +164,7 @@ public class CommandUsage extends ListenerAdapter
 	 */
 	private String minecraftCommandRelated(String commandName, SlashCommandInteractionEvent event)
 	{
-		String argument = event.getOption(commandName + "_name", OptionMapping::getAsString); //獲得參數
+		String argument = event.getOption(commandName + "_name", OptionFunctions.getAsString); //獲得參數
 		if (argument == null) //沒有參數
 			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
 		return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);

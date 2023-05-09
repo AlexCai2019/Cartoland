@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -154,6 +155,12 @@ class RankingSubCommand implements ICommand
 {
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 	private String lastReply = ""; //上一次回覆過的字串
+	private final Consumer<Long> traverseID = userID -> //走訪所有的ID
+	{
+		String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
+		if (userName != null)
+			forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
+	};
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -178,12 +185,7 @@ class RankingSubCommand implements ICommand
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
 			forSort.clear(); //清除forSort
-			CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
-			{
-				String userName = IDAndEntities.idAndNames.get(userID); //透過ID從JSON資料庫內獲得名字
-				if (userName != null)
-					forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
-			});
+			CommandBlocksHandle.getKeySet().forEach(traverseID);
 
 			//排序
 			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面

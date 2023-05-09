@@ -2,6 +2,7 @@ package cartoland.events;
 
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static cartoland.utilities.IDAndEntities.*;
 
@@ -159,10 +161,11 @@ public class BotOnlineOffline extends ListenerAdapter
 			secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
+	private final Consumer<ThreadChannel> tryIdleForumPost = QuestionForumHandle::tryIdleForumPost;
 	private void idleFormPost12PM()
 	{
 		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(
-			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::tryIdleForumPost),
+			() -> questionsChannel.getThreadChannels().forEach(tryIdleForumPost),
 			secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 

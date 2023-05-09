@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -26,6 +27,8 @@ public class QuoteCommand implements ICommand
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
 	private final EmbedBuilder embedBuilder = new EmbedBuilder();
+	private final Consumer<Attachment> hasImageAttachment = imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl());
+	private final Runnable notHasImageAttachment = () -> embedBuilder.setImage(null);
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -69,7 +72,7 @@ public class QuoteCommand implements ICommand
 					.stream()
 					.filter(Attachment::isImage)
 					.findFirst()
-					.ifPresentOrElse(firstAttachment -> embedBuilder.setImage(firstAttachment.getUrl()), () -> embedBuilder.setImage(null));
+					.ifPresentOrElse(hasImageAttachment, notHasImageAttachment);
 
 			event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();

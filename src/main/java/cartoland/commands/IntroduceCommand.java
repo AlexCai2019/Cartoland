@@ -4,6 +4,7 @@ import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.IntroduceHandle;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.OptionFunctions;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.api.requests.ErrorResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,14 @@ class UpdateSubCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+	private final Consumer<Message> retrieveMessage = linkMessage ->
+	{
+		String rawMessage = linkMessage.getContentRaw();
+		List<Attachment> attachments = linkMessage.getAttachments();
+		if (!attachments.isEmpty())
+			rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
+		IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
+	};
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -97,14 +107,8 @@ class UpdateSubCommand implements ICommand
 			}
 
 			//從頻道中取得訊息 注意ID是String 與慣例的long不同
-			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
-			{
-				String rawMessage = linkMessage.getContentRaw();
-				List<Attachment> attachments = linkMessage.getAttachments();
-				if (!attachments.isEmpty())
-					rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
-				IntroduceHandle.updateIntroduction(userID, rawMessage);
-			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
+			linkChannel.retrieveMessageById(numbersInLink[1])
+					.queue(retrieveMessage, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
 		}
 		else
 			IntroduceHandle.updateIntroduction(userID, content);

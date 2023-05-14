@@ -56,6 +56,9 @@ public class AddCommands
 		Dtp.dtp,
 		Dtp.datapack,
 
+		Jira.jira,
+		Jira.bug,
+
 		Commands.slash("tool", "Various helpful utilities")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "能協助你的工具")
 				.setDescriptionLocalization(CHINESE_CHINA, "能协助你的工具")
@@ -413,4 +416,33 @@ class Lang
 	static final SlashCommandData language = Commands.slash("language", "Change language")
 			.setDescriptionLocalizations(langDescriptions)
 			.addOptions(langOptions);
+}
+
+class Jira
+{
+	private Jira()
+	{
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+	}
+
+	private static final Map<DiscordLocale, String> jiraDescriptions = new HashMap<>();
+
+	static
+	{
+		jiraDescriptions.put(CHINESE_TAIWAN, "Minecraft漏洞");
+		jiraDescriptions.put(CHINESE_CHINA, "Minecraft漏洞");
+	}
+
+	private static final OptionData jiraOptions =
+			new OptionData(OptionType.STRING, "bug_link", "Link of the bug", true, false)
+					.setNameLocalization(CHINESE_TAIWAN, "漏洞連結")
+					.setNameLocalization(CHINESE_CHINA, "漏洞链接");
+
+	static final SlashCommandData jira = Commands.slash("jira", "Minecraft bug")
+			.setDescriptionLocalizations(jiraDescriptions)
+			.addOptions(jiraOptions);
+
+	static final SlashCommandData bug = Commands.slash("bug", "Minecraft bug")
+			.setDescriptionLocalizations(jiraDescriptions)
+			.addOptions(jiraOptions);
 }

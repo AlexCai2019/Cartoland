@@ -70,9 +70,8 @@ public class GuildMessage implements IMessage
 			message.addReaction(wow).queue();
 		if (rawMessage.contains("貓們"))
 		{
-			if (Algorithm.chance(20)) //20%
-				message.addReaction(learned).queue();
-			message.addReaction(worship_a).queue(); //100%
+			message.addReaction(learned).queue();
+			message.addReaction(worship_a).queue();
 		}
 
 		Category category = message.getCategory();

@@ -12,9 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,37 +23,24 @@ import java.util.stream.Collectors;
  */
 public class IntroduceCommand implements ICommand
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>();
-
-	public IntroduceCommand()
-	{
-		subCommands.put("user", new UserSubCommand());
-		subCommands.put("update", new UpdateSubCommand());
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
-	}
-}
-
-/**
- * @since 2.0
- * @author Alex Cai
- */
-class UserSubCommand implements ICommand
-{
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	private final ICommand userSubCommand = event ->
 	{
 		User user = event.getUser();
 		User target = event.getOption("user", OptionFunctions.getAsUser);
-		if (target == null)
+		if (target == null) //沒有填 預設是自己
 			target = user;
 
 		String content = IntroduceHandle.getIntroduction(target.getIdLong());
 		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.no_info")).queue();
+	};
+	private final UpdateSubCommand updateSubCommand = new UpdateSubCommand();
+
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		String subCommandName = event.getSubcommandName();
+		if (subCommandName != null)
+			(subCommandName.equals("user") ? userSubCommand : updateSubCommand).commandProcess(event);
 	}
 }
 

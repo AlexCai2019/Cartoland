@@ -22,7 +22,21 @@ public class LotteryCommand implements ICommand
 
 	public LotteryCommand()
 	{
-		subCommands.put("get", new GetSubCommand());
+		subCommands.put("get", event ->
+		{
+			User user = event.getUser();
+			User target = event.getOption("target", OptionFunctions.getAsUser);
+			if (target == null) //沒有填 預設是自己
+				target = user;
+			else if (target.isBot() || target.isSystem())
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
+				return;
+			}
+
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
+								.formatted(target.getAsTag(), CommandBlocksHandle.get(target.getIdLong()))).queue();
+		});
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());
 	}
@@ -31,32 +45,6 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
-	}
-}
-
-/**
- * {@code Get} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery get}.
- *
- * @since 1.6
- * @author Alex Cai
- */
-class GetSubCommand implements ICommand
-{
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		User user = event.getUser();
-		User target = event.getOption("target", OptionFunctions.getAsUser);
-		if (target == null) //沒有填 預設是自己
-			target = user;
-		else if (target.isBot() || target.isSystem())
-		{
-			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
-			return;
-		}
-
-		event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-							.formatted(target.getAsTag(), CommandBlocksHandle.get(target.getIdLong()))).queue();
 	}
 }
 
@@ -153,8 +141,30 @@ class BetSubCommand implements ICommand
  */
 class RankingSubCommand implements ICommand
 {
+	/**
+	 * {@code UserNameAndBlocks} has a String userName and long blocks.
+	 *
+	 * @since 1.6
+	 * @author Alex Cai
+	 */
+	private record UserNameAndBlocks(String userName, long blocks)
+	{
+		@Override
+		public boolean equals(Object o)
+		{ //不需要this == o 因為幾乎不會碰到這樣的情況
+			return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return Objects.hash(userName, blocks);
+		}
+	}
+
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 	private String lastReply = ""; //上一次回覆過的字串
+	private int lastPage = -1; //上一次查看的頁面
 	private final Consumer<Long> traverseID = userID -> //走訪所有的ID
 	{
 		String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
@@ -173,9 +183,7 @@ class RankingSubCommand implements ICommand
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
 
-		User user = event.getUser(); //這次事件的使用者
-
-		if (!CommandBlocksHandle.changed) //距離上一次排序 沒有任何變動
+		if (!CommandBlocksHandle.changed && page == lastPage) //距離上一次排序 沒有任何變動 且沒有換頁
 		{
 			event.reply(lastReply).queue();
 			return;
@@ -191,7 +199,8 @@ class RankingSubCommand implements ICommand
 			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
 
 			CommandBlocksHandle.changed = false; //已經排序過了
-			interactionHook.sendMessage(lastReply = replyString(user, finalPage, maxPage)).queue();
+			lastPage = finalPage; //換過頁了
+			interactionHook.sendMessage(lastReply = replyString(event.getUser(), finalPage, maxPage)).queue();
 		});
 	}
 
@@ -236,26 +245,5 @@ class RankingSubCommand implements ICommand
 				.append("\n```");
 
 		return rankBuilder.toString();
-	}
-}
-
-/**
- * {@code UserNameAndBlocks} has a String userName and long blocks.
- *
- * @since 1.6
- * @author Alex Cai
- */
-record UserNameAndBlocks(String userName, long blocks)
-{
-	@Override
-	public boolean equals(Object o)
-	{ //不需要this == o 因為幾乎不會碰到這樣的情況
-		return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(userName, blocks);
 	}
 }

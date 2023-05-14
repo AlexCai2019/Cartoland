@@ -72,6 +72,11 @@ public class CommandUsage extends ListenerAdapter
 		commands.put("dtp", alias);
 		commands.put("datapack", alias);
 
+		//jira
+		alias = new JiraCommand();
+		commands.put("jira", alias);
+		commands.put("bug", alias);
+
 		//tool
 		commands.put("tool", new ToolCommand());
 

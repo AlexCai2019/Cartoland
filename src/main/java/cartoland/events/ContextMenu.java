@@ -1,12 +1,15 @@
 package cartoland.events;
 
 import cartoland.utilities.FileHandle;
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +21,10 @@ import java.util.stream.Collectors;
  */
 public class ContextMenu extends ListenerAdapter
 {
+	private final Function<MessageReaction, String> reactionToString =
+			reaction -> reaction.getEmoji().getFormatted() + " × " + reaction.getCount();
+	private final Collector<CharSequence, ?, String> toReactionListString = Collectors.joining("\t");
+
 	@Override
 	public void onMessageContextInteraction(MessageContextInteractionEvent event)
 	{
@@ -36,8 +43,8 @@ public class ContextMenu extends ListenerAdapter
 				String reactions = event.getTarget()
 						.getReactions()
 						.stream()
-						.map(reaction -> reaction.getEmoji().getFormatted() + " × " + reaction.getCount())
-						.collect(Collectors.joining("\t"));
+						.map(reactionToString)
+						.collect(toReactionListString);
 
 				event.reply(reactions.length() > 0 ? reactions : "There's no any reactions")
 						.setEphemeral(true)

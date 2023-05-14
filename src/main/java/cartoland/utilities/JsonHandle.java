@@ -16,6 +16,7 @@ import java.util.function.Consumer;
  * @since 1.0
  * @author Alex Cai
  */
+@SuppressWarnings("unchecked")
 public class JsonHandle
 {
 	private JsonHandle()

@@ -11,6 +11,7 @@ public class IntroduceHandle
 	}
 
 	private static final String INTRODUCTION_FILE_NAME = "introduction.ser";
+	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
 
 	public static void updateIntroduction(long userID, String content)

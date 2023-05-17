@@ -3,6 +3,8 @@ package cartoland.commands;
 import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,9 +18,11 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/MC(PE)?-\\d+");
-	private final Pattern bugIDRegex = Pattern.compile("MC(PE)?-\\d+");
+	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)MC(PE)?-\\d{1,6}");
+	private final Pattern bugIDRegex = Pattern.compile("(?i)MC(PE)?-\\d{1,6}");
+	private final Pattern numberRegex = Pattern.compile("\\d{1,6}");
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
+	private final EmbedBuilder bugEmbed = new EmbedBuilder().setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png");
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -37,10 +41,15 @@ public class JiraCommand implements ICommand
 			finalLink = link;
 			finalBugID = link.substring(subStringStart);
 		}
-		else if (bugIDRegex.matcher(link).matches())
+		else if (bugIDRegex.matcher(link).matches()) //MC-123456
 		{
 			finalLink = "https://bugs.mojang.com/browse/" + link;
 			finalBugID = link;
+		}
+		else if (numberRegex.matcher(link).matches()) //純數字
+		{
+			finalLink = "https://bugs.mojang.com/browse/MC-" + link;
+			finalBugID = "MC-" + link;
 		}
 		else
 		{
@@ -58,31 +67,34 @@ public class JiraCommand implements ICommand
 			}
 			catch (IOException e)
 			{
-				interactionHook.sendMessage("There's no bug report for " + finalLink).queue();
+				interactionHook.sendMessage("There's no bug report for " + finalBugID).queue();
 				return;
 			}
 
 			Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 			if (issueContent == null)
 			{
-				interactionHook.sendMessage("Can't get issue content").queue();
+				interactionHook.sendMessage("Can't get issue content")
+						.addActionRow(Button.link("Jira", finalLink))
+						.queue();
 				return;
 			}
 
 			Element title = issueContent.getElementById("summary-val");
 			if (title == null)
 			{
-				interactionHook.sendMessage("Unable to get the title of this bug").queue();
+				interactionHook.sendMessage("Unable to get the title of this bug")
+						.addActionRow(Button.link("Jira", finalLink))
+						.queue();
 				return;
 			}
-			EmbedBuilder bugEmbed = new EmbedBuilder()
-					.setTitle('[' + finalBugID + "] " + title.text(), finalLink)
-					.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png");
+			bugEmbed.setTitle('[' + finalBugID + "] " + title.text(), finalLink)
+					.clearFields();
 
 			Element status = issueContent.getElementById("opsbar-transitions_more");
 			if (status == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 			bugEmbed.addField("Status", status.text(), true);
@@ -90,7 +102,7 @@ public class JiraCommand implements ICommand
 			Element resolution = issueContent.getElementById("resolution-val");
 			if (resolution == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 			bugEmbed.addField("Resolution", resolution.text(), true);
@@ -98,7 +110,7 @@ public class JiraCommand implements ICommand
 			Element priority = issueContent.getElementById("customfield_12200-val");
 			if (priority == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 			bugEmbed.addField("Mojang priority", priority.text(), true);
@@ -106,14 +118,14 @@ public class JiraCommand implements ICommand
 			Element affectsVersions = issueContent.getElementById("versions-field");
 			if (affectsVersions == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 
 			Element firstVersion = affectsVersions.children().first();
 			if (firstVersion == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 			bugEmbed.addField("First affects version", firstVersion.text(), true);
@@ -121,7 +133,7 @@ public class JiraCommand implements ICommand
 			Element fixVersion = issueContent.getElementById("fixfor-val");
 			if (fixVersion == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
 			bugEmbed.addField("Fix version/s", fixVersion.text(), true);
@@ -129,10 +141,19 @@ public class JiraCommand implements ICommand
 			Element reporter = issueContent.getElementById("reporter-val");
 			if (reporter == null)
 			{
-				interactionHook.sendMessageEmbeds(bugEmbed.build()).queue();
+				sendBugEmbeds(interactionHook, finalLink);
 				return;
 			}
-			interactionHook.sendMessageEmbeds(bugEmbed.addField("Reporter", reporter.text(), true).build()).queue();
+			bugEmbed.addField("Reporter", reporter.text(), true);
+
+			sendBugEmbeds(interactionHook, finalLink);
 		});
+	}
+
+	private void sendBugEmbeds(InteractionHook interactionHook, String bugLink)
+	{
+		interactionHook.sendMessageEmbeds(bugEmbed.build())
+				.addActionRow(Button.link("Jira", bugLink))
+				.queue();
 	}
 }

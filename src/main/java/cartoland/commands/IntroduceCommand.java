@@ -33,7 +33,7 @@ public class IntroduceCommand implements ICommand
 		String content = IntroduceHandle.getIntroduction(target.getIdLong());
 		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.no_info")).queue();
 	};
-	private final UpdateSubCommand updateSubCommand = new UpdateSubCommand();
+	private final ICommand updateSubCommand = new UpdateSubCommand();
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)

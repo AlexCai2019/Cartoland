@@ -63,11 +63,12 @@ class UUIDStringSubCommand implements ICommand
 		}
 
 		String[] uuidStrings;
-		String dash = rawUUID, noDash = rawUUID;
+		String dash, noDash;
 
 		if (dashRegex.matcher(rawUUID).matches())
 		{
 			uuidStrings = rawUUID.split("-");
+			dash = rawUUID;
 			noDash = String.join("", uuidStrings);
 		}
 		else if (noDashRegex.matcher(rawUUID).matches())
@@ -81,6 +82,7 @@ class UUIDStringSubCommand implements ICommand
 				rawUUID.substring(20) //12
 			};
 			dash = String.join("-", uuidStrings);
+			noDash = rawUUID;
 		}
 		else //不是一個合法的UUID字串
 		{

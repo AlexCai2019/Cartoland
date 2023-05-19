@@ -3,7 +3,6 @@ package cartoland.commands;
 import cartoland.utilities.OptionFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,7 +21,10 @@ public class JiraCommand implements ICommand
 	private final Pattern bugIDRegex = Pattern.compile("(?i)MC(PE)?-\\d{1,6}");
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}");
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
-	private final EmbedBuilder bugEmbed = new EmbedBuilder().setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png");
+	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
+	private final EmbedBuilder bugEmbed = new EmbedBuilder()
+			.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png")
+			.setColor(MOJANG_RED);
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -75,85 +77,26 @@ public class JiraCommand implements ICommand
 			if (issueContent == null)
 			{
 				interactionHook.sendMessage("Can't get issue content")
-						.addActionRow(Button.link("Jira", finalLink))
+						.addActionRow(Button.link(finalLink, "Jira"))
 						.queue();
 				return;
 			}
 
 			Element title = issueContent.getElementById("summary-val");
-			if (title == null)
-			{
-				interactionHook.sendMessage("Unable to get the title of this bug")
-						.addActionRow(Button.link("Jira", finalLink))
-						.queue();
-				return;
-			}
-			bugEmbed.setTitle('[' + finalBugID + "] " + title.text(), finalLink)
-					.clearFields();
-
-			Element status = issueContent.getElementById("opsbar-transitions_more");
-			if (status == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("Status", status.text(), true);
-
-			Element resolution = issueContent.getElementById("resolution-val");
-			if (resolution == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("Resolution", resolution.text(), true);
-
-			Element priority = issueContent.getElementById("customfield_12200-val");
-			if (priority == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("Mojang priority", priority.text(), true);
-
+			bugEmbed.setTitle('[' + finalBugID + "] " + (title != null ? title.text() : ""), finalLink).clearFields();
+			bugEmbedAddField("Status", issueContent.getElementById("opsbar-transitions_more"));
+			bugEmbedAddField("Resolution", issueContent.getElementById("resolution-val"));
+			bugEmbedAddField("Mojang priority", issueContent.getElementById("customfield_12200-val"));
 			Element affectsVersions = issueContent.getElementById("versions-field");
-			if (affectsVersions == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-
-			Element firstVersion = affectsVersions.children().first();
-			if (firstVersion == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("First affects version", firstVersion.text(), true);
-
-			Element fixVersion = issueContent.getElementById("fixfor-val");
-			if (fixVersion == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("Fix version/s", fixVersion.text(), true);
-
-			Element reporter = issueContent.getElementById("reporter-val");
-			if (reporter == null)
-			{
-				sendBugEmbeds(interactionHook, finalLink);
-				return;
-			}
-			bugEmbed.addField("Reporter", reporter.text(), true);
-
-			sendBugEmbeds(interactionHook, finalLink);
+			bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
+			bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
+			bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
+			interactionHook.sendMessageEmbeds(bugEmbed.build()).addActionRow(Button.link(finalLink, "Jira")).queue();
 		});
 	}
 
-	private void sendBugEmbeds(InteractionHook interactionHook, String bugLink)
+	private void bugEmbedAddField(String fieldName, Element fieldValue)
 	{
-		interactionHook.sendMessageEmbeds(bugEmbed.build())
-				.addActionRow(Button.link("Jira", bugLink))
-				.queue();
+		bugEmbed.addField(fieldName, fieldValue != null ? fieldValue.text() : "", true);
 	}
 }

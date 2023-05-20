@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
@@ -52,14 +51,13 @@ public class JsonHandle
 		FileHandle.serialize(USERS_FILE_NAME, users);
 	}
 
-	private static final Consumer<Object> buildDotListArray = s -> builder.append((String) s).append(' ');
 	public static String command(long userID, String commandName)
 	{
 		lastUse(userID);
 		builder.setLength(0);
 		builder.append(file.getString(commandName + ".begin")); //開頭
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
-		dotListArray.forEach(buildDotListArray);
+		dotListArray.forEach(s -> builder.append((String) s).append(' '));
 		builder.deleteCharAt(builder.length() - 1);
 		builder.append(file.getString(commandName + ".end")); //結尾
 		return builder.toString();

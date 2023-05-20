@@ -2,7 +2,7 @@ package cartoland.commands;
 
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.OptionFunctions;
+import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
@@ -12,8 +12,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -28,14 +26,11 @@ public class QuoteCommand implements ICommand
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
 	private final EmbedBuilder embedBuilder = new EmbedBuilder();
-	private final Consumer<Attachment> hasImageAttachment = imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl());
-	private final Predicate<Attachment> isImage = Attachment::isImage;
-	private final Runnable notHasImageAttachment = () -> embedBuilder.setImage(null);
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String link = event.getOption("link", OptionFunctions.getAsString);
+		String link = event.getOption("link", CommonFunctions.getAsString);
 		if (link == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -72,9 +67,9 @@ public class QuoteCommand implements ICommand
 			//不用add field 沒必要那麼麻煩
 			linkMessage.getAttachments()
 					.stream()
-					.filter(isImage)
+					.filter(Attachment::isImage)
 					.findFirst()
-					.ifPresentOrElse(hasImageAttachment, notHasImageAttachment);
+					.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()), () -> embedBuilder.setImage(null));
 
 			event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();

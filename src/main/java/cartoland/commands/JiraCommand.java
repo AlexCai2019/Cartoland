@@ -1,6 +1,6 @@
 package cartoland.commands;
 
-import cartoland.utilities.OptionFunctions;
+import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
+ * {@code JiraCommand} is an execution when a user uses /jira command. This class implements {@link ICommand} interface,
+ * which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't handle sub
+ *  commands, but call other classes to deal with it.
+ *
  * @since 2.0
  * @author Alex Cai
  */
@@ -29,7 +33,7 @@ public class JiraCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String link = event.getOption("bug_link", OptionFunctions.getAsString);
+		String link = event.getOption("bug_link", CommonFunctions.getAsString);
 		if (link == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -38,17 +42,17 @@ public class JiraCommand implements ICommand
 
 		final String finalLink; //lambda要用
 		final String finalBugID;
-		if (jiraLinkRegex.matcher(link).matches()) //是bug的連結
+		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984
 		{
 			finalLink = link;
 			finalBugID = link.substring(subStringStart);
 		}
-		else if (bugIDRegex.matcher(link).matches()) //MC-123456
+		else if (bugIDRegex.matcher(link).matches()) //MC-87984
 		{
 			finalLink = "https://bugs.mojang.com/browse/" + link;
 			finalBugID = link;
 		}
-		else if (numberRegex.matcher(link).matches()) //純數字
+		else if (numberRegex.matcher(link).matches()) //87984
 		{
 			finalLink = "https://bugs.mojang.com/browse/MC-" + link;
 			finalBugID = "MC-" + link;
@@ -61,11 +65,11 @@ public class JiraCommand implements ICommand
 
 		event.deferReply().queue(interactionHook ->
 		{
-			Document document;
+			Document document; //HTML文件
 
 			try
 			{
-				document = Jsoup.connect(finalLink).get();
+				document = Jsoup.connect(finalLink).get(); //嘗試連線
 			}
 			catch (IOException e)
 			{
@@ -74,7 +78,7 @@ public class JiraCommand implements ICommand
 			}
 
 			Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
-			if (issueContent == null)
+			if (issueContent == null) //如果不存在id為issue-content的標籤
 			{
 				interactionHook.sendMessage("Can't get issue content")
 						.addActionRow(Button.link(finalLink, "Jira"))
@@ -97,6 +101,7 @@ public class JiraCommand implements ICommand
 
 	private void bugEmbedAddField(String fieldName, Element fieldValue)
 	{
+		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
 		bugEmbed.addField(fieldName, fieldValue != null ? fieldValue.text() : "", true);
 	}
 }

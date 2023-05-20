@@ -5,7 +5,7 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
-import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.Command.Choice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,11 +98,11 @@ class JsonBasedComplete extends GenericComplete
 			return;
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-		List<Command.Choice> choices = JsonHandle.commandList(commandName)
+		List<Choice> choices = JsonHandle.commandList(commandName)
 				.stream()
 				.map(o -> (String) o)
 				.filter(word -> word.startsWith(optionValue))
-				.map(word -> new Command.Choice(word, word))
+				.map(word -> new Choice(word, word))
 				.toList();
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
@@ -127,11 +127,11 @@ class YouTuberComplete extends GenericComplete
 	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		String optionValue = event.getFocusedOption().getValue();
-		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);
+		List<Choice> choices = new ArrayList<>(CHOICES_LIMIT);
 		IDAndEntities.youtubers.forEach((youtuberName, youtuberID) ->
 		{
 			if (youtuberName.contains(optionValue))
-				choices.add(new Command.Choice(youtuberName, youtuberID));
+				choices.add(new Choice(youtuberName, youtuberID));
 		});
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();

@@ -5,7 +5,7 @@ import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.OptionFunctions;
+import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
@@ -32,7 +32,7 @@ public class OneATwoBCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		Integer argument = event.getOption("answer", OptionFunctions.getAsInt);
+		Integer argument = event.getOption("answer", CommonFunctions.getAsInt);
 		long userID = event.getUser().getIdLong();
 		IMiniGame playing = commandCore.getGames().get(userID);
 

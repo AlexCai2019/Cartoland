@@ -1,7 +1,7 @@
 package cartoland.commands;
 
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.OptionFunctions;
+import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Arrays;
@@ -10,8 +10,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * {@code ToolCommand} is an execution when a user uses /tool command. This class doesn't handle sub command, but
- * call other classes to deal with it.
+ * {@code ToolCommand} is an execution when a user uses /tool command. This class implements {@link ICommand} interface,
+ * which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't handle sub
+ * commands, but call other classes to deal with it.
  *
  * @since 1.4
  * @author Alex Cai
@@ -37,7 +38,7 @@ public class ToolCommand implements ICommand
 }
 
 /**
- * {@code ToolUUIDStringCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code UUIDStringSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
  * {@code /tool uuid_string}.
  *
  * @since 1.4
@@ -55,7 +56,7 @@ class UUIDStringSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String rawUUID = event.getOption("raw_uuid", OptionFunctions.getAsString);
+		String rawUUID = event.getOption("raw_uuid", CommonFunctions.getAsString);
 		if (rawUUID == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -105,7 +106,7 @@ class UUIDStringSubCommand implements ICommand
 }
 
 /**
- * {@code ToolUUIDArrayCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code UUIDArraySubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
  * {@code /tool uuid_array}.
  *
  * @since 1.4
@@ -121,7 +122,7 @@ class UUIDArraySubCommand implements ICommand
 		Integer[] uuidArray = new Integer[4];
 		for (int i = 0; i < 4; i++)
 		{
-			uuidArray[i] = event.getOption(String.valueOf(i), OptionFunctions.getAsInt);
+			uuidArray[i] = event.getOption(String.valueOf(i), CommonFunctions.getAsInt);
 			if (uuidArray[i] == null)
 			{
 				event.reply("Impossible, this is required!").queue();
@@ -147,7 +148,7 @@ class UUIDArraySubCommand implements ICommand
 }
 
 /**
- * {@code ColorRGBA} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code ColorRGBASubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
  * {@code /tool color_rgba}.
  *
  * @since 1.6
@@ -161,10 +162,10 @@ class ColorRGBASubCommand implements ICommand
 		Integer[] rgbaColors = new Integer[4];
 		Integer[] argbColors = new Integer[4];
 
-		rgbaColors[0] = argbColors[1] = event.getOption("red", OptionFunctions.getAsInt);
-		rgbaColors[1] = argbColors[2] = event.getOption("green", OptionFunctions.getAsInt);
-		rgbaColors[2] = argbColors[3] = event.getOption("blue", OptionFunctions.getAsInt);
-		rgbaColors[3] = argbColors[0] = event.getOption("alpha", OptionFunctions.getAsInt);
+		rgbaColors[0] = argbColors[1] = event.getOption("red", CommonFunctions.getAsInt);
+		rgbaColors[1] = argbColors[2] = event.getOption("green", CommonFunctions.getAsInt);
+		rgbaColors[2] = argbColors[3] = event.getOption("blue", CommonFunctions.getAsInt);
+		rgbaColors[3] = argbColors[0] = event.getOption("alpha", CommonFunctions.getAsInt);
 
 		int rgba = 0, argb = 0;
 
@@ -205,7 +206,7 @@ class ColorRGBASubCommand implements ICommand
 }
 
 /**
- * {@code ColorInteger} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code ColorIntegerSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
  * {@code /tool color_integer}.
  *
  * @since 1.6
@@ -220,7 +221,7 @@ class ColorIntegerSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String rgbString = event.getOption("rgba_or_argb", OptionFunctions.getAsString);
+		String rgbString = event.getOption("rgba_or_argb", CommonFunctions.getAsString);
 		if (rgbString == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -258,7 +259,7 @@ class ColorIntegerSubCommand implements ICommand
 }
 
 /**
- * {@code PackMcmetaCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
+ * {@code PackMcmetaSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
  * {@code /tool pack_mcmeta}.
  *
  * @since 1.4
@@ -270,7 +271,7 @@ class PackMcmetaSubCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String packType = event.getOption("pack_type", OptionFunctions.getAsString);
+		String packType = event.getOption("pack_type", CommonFunctions.getAsString);
 		if (packType == null)
 		{
 			event.reply("Impossible, this is required!").queue();

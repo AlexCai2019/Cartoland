@@ -3,6 +3,7 @@ package cartoland.messages;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -68,7 +69,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/gPlBEMV"
 	};
 
-	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
+	private final MentionType[] botType = { MentionType.USER, MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 	private final Pattern lolRegex = Pattern.compile("(?i).*lol.*"); //containsIgnoreCase

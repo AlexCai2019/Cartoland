@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -25,7 +24,7 @@ public class LotteryCommand implements ICommand
 		subCommands.put("get", event ->
 		{
 			User user = event.getUser();
-			User target = event.getOption("target", OptionFunctions.getAsUser);
+			User target = event.getOption("target", CommonFunctions.getAsUser);
 			if (target == null) //沒有填 預設是自己
 				target = user;
 			else if (target.isBot() || target.isSystem())
@@ -49,7 +48,8 @@ public class LotteryCommand implements ICommand
 }
 
 /**
- * {@code Bet} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery bet}.
+ * {@code BetSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+ * {@code /lottery bet}.
  *
  * @since 1.6
  * @author Alex Cai
@@ -67,7 +67,7 @@ class BetSubCommand implements ICommand
 	{
 		long userID = event.getUser().getIdLong();
 		long nowHave = CommandBlocksHandle.get(userID);
-		String betString = event.getOption("bet", OptionFunctions.getAsString);
+		String betString = event.getOption("bet", CommonFunctions.getAsString);
 
 		if (betString == null) //不帶參數
 		{
@@ -134,7 +134,8 @@ class BetSubCommand implements ICommand
 }
 
 /**
- * {@code Ranking} is a class that handles one of the sub commands of {@code /lottery} command, which is {@code /lottery ranking}.
+ * {@code RankingSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+ * {@code /lottery ranking}.
  *
  * @since 1.6
  * @author Alex Cai
@@ -165,17 +166,11 @@ class RankingSubCommand implements ICommand
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 	private String lastReply = ""; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
-	private final Consumer<Long> traverseID = userID -> //走訪所有的ID
-	{
-		String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
-		if (userName != null)
-			forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
-	};
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		Integer pageBox = event.getOption("page", OptionFunctions.getAsInt);
+		Integer pageBox = event.getOption("page", CommonFunctions.getAsInt);
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
 		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
@@ -193,7 +188,12 @@ class RankingSubCommand implements ICommand
 		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
 		{
 			forSort.clear(); //清除forSort
-			CommandBlocksHandle.getKeySet().forEach(traverseID);
+			CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
+			{
+				String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
+				if (userName != null)
+					forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
+			});
 
 			//排序
 			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
@@ -206,6 +206,16 @@ class RankingSubCommand implements ICommand
 
 	private final StringBuilder rankBuilder = new StringBuilder();
 
+	/**
+	 * Builds a page in the ranking list of command blocks.
+	 *
+	 * @param user The user who used the command.
+	 * @param page The page that the command user want to check.
+	 * @param maxPage Maximum of pages that the ranking list has.
+	 * @return A page of the ranking list into a single string.
+	 * @since 1.6
+	 * @author Alex Cai
+	 */
 	private String replyString(User user, int page, int maxPage)
 	{
 		//page 從1開始

@@ -1,5 +1,6 @@
 package cartoland.messages;
 
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
@@ -53,7 +54,7 @@ public class PrivateMessage implements IMessage
 			String rawMessage = message.getContentRaw();
 			List<Attachment> attachments = message.getAttachments();
 			if (!attachments.isEmpty())
-				rawMessage += attachments.stream().map(Attachment::getUrl).collect(Collectors.joining("\n", "\n", ""));
+				rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
 
 			IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
 			FileHandle.log(author.getAsTag() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");

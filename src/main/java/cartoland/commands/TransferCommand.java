@@ -4,7 +4,7 @@ import cartoland.events.CommandUsage;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.OptionFunctions;
+import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -27,7 +27,7 @@ public class TransferCommand implements ICommand
 	{
 		long userID = event.getUser().getIdLong();
 
-		User target = event.getOption("target", OptionFunctions.getAsUser);
+		User target = event.getOption("target", CommonFunctions.getAsUser);
 		if (target == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -46,7 +46,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		String transferAmountString = event.getOption("amount", OptionFunctions.getAsString);
+		String transferAmountString = event.getOption("amount", CommonFunctions.getAsString);
 		if (transferAmountString == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -65,7 +65,7 @@ public class TransferCommand implements ICommand
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
-			transferAmount = nowHave * percentage / 100;
+			transferAmount = (nowHave * percentage) / 100;
 		}
 		else
 		{

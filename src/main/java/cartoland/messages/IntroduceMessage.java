@@ -30,7 +30,7 @@ public class IntroduceMessage implements IMessage
 	{
 		Message message = event.getMessage();
 		String introduction = message.getContentRaw();
-		List<Attachment> attachments = message.getAttachments();
+		List<Message.Attachment> attachments = message.getAttachments();
 		if (!attachments.isEmpty())
 			introduction += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
 		IntroduceHandle.updateIntroduction(message.getAuthor().getIdLong(), introduction); //將自介頻道內的訊息設為/introduce的內容

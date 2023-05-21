@@ -4,7 +4,6 @@ import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -52,7 +51,7 @@ public class PrivateMessage implements IMessage
 			}
 
 			String rawMessage = message.getContentRaw();
-			List<Attachment> attachments = message.getAttachments();
+			List<Message.Attachment> attachments = message.getAttachments();
 			if (!attachments.isEmpty())
 				rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
 

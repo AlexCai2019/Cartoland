@@ -1,6 +1,7 @@
 package cartoland.commands;
 
 import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * {@code JiraCommand} is an execution when a user uses /jira command. This class implements {@link ICommand} interface,
  * which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't handle sub
- *  commands, but call other classes to deal with it.
+ * commands, but call other classes to deal with it.
  *
  * @since 2.0
  * @author Alex Cai
@@ -33,6 +34,7 @@ public class JiraCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		long userID = event.getUser().getIdLong();
 		String link = event.getOption("bug_link", CommonFunctions.getAsString);
 		if (link == null)
 		{
@@ -59,7 +61,7 @@ public class JiraCommand implements ICommand
 		}
 		else
 		{
-			event.reply("Please enter a valid Minecraft bug link or ID").queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).queue();
 			return;
 		}
 
@@ -73,14 +75,14 @@ public class JiraCommand implements ICommand
 			}
 			catch (IOException e)
 			{
-				interactionHook.sendMessage("There's no bug report for " + finalBugID).queue();
+				interactionHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(finalBugID)).queue();
 				return;
 			}
 
 			Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 			if (issueContent == null) //如果不存在id為issue-content的標籤
 			{
-				interactionHook.sendMessage("Can't get issue content")
+				interactionHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
 						.addActionRow(Button.link(finalLink, "Jira"))
 						.queue();
 				return;

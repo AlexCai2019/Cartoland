@@ -278,7 +278,6 @@ class PackMcmetaSubCommand implements ICommand
 			return;
 		}
 
-
 		event.reply(switch (packType.charAt(0))
 		{
 			case 'd' ->

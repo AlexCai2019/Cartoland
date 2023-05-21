@@ -103,7 +103,7 @@ public class JsonHandle
 		else if (englishFile.has(key)) //預設使用英文
 			result = englishFile.getString(key);
 		else
-			result = "";
+			return "";
 
 		//以&開頭的json key 代表要去那個地方找
 		return (result.charAt(0) == '&') ? getStringFromJsonKey(userID, result.substring(1)) : result;

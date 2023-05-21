@@ -1,10 +1,10 @@
 package cartoland.commands;
 
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -30,6 +30,7 @@ public class QuoteCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		long userID = event.getUser().getIdLong();
 		String link = event.getOption("link", CommonFunctions.getAsString);
 		if (link == null)
 		{
@@ -39,7 +40,7 @@ public class QuoteCommand implements ICommand
 
 		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
-			event.reply("Invalid input: Please input a message link from Cartoland.").queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.invalid_link")).queue();
 			return;
 		}
 
@@ -49,7 +50,7 @@ public class QuoteCommand implements ICommand
 		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 		if (linkChannel == null)
 		{
-			event.reply("Error: The channel might be deleted, or I don't have permission to access it.").queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).queue();
 			return;
 		}
 
@@ -67,13 +68,14 @@ public class QuoteCommand implements ICommand
 			//不用add field 沒必要那麼麻煩
 			linkMessage.getAttachments()
 					.stream()
-					.filter(Attachment::isImage)
+					.filter(Message.Attachment::isImage)
 					.findFirst()
 					.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()), () -> embedBuilder.setImage(null));
 
 			event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message"))).queue();
+					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))
+					.queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
-				event.reply("Error: The message might be deleted, or I don't have permission to access it.").queue()));
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).queue()));
 	}
 }

@@ -26,7 +26,7 @@ public class CommandBlocksHandle
 	private static final String COMMAND_BLOCKS_FILE_NAME = "command_blocks.ser";
 	//會有unchecked assignment的警告 but I did it anyway
 	@SuppressWarnings("unchecked")
-	private static final Map<Long, Long> commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof Map map) ? map : new HashMap<>();
+	private static final Map<Long, Long> commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
 	/**
 	 * Add command blocks to the user that has userID as ID. This method calls

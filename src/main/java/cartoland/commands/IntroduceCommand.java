@@ -1,10 +1,10 @@
 package cartoland.commands;
 
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.IntroduceHandle;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.CommonFunctions;
-import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -39,7 +39,7 @@ public class IntroduceCommand implements ICommand
 			target = user;
 
 		String content = IntroduceHandle.getIntroduction(target.getIdLong());
-		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.no_info")).queue();
+		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
 	};
 	private final ICommand updateSubCommand = new UpdateSubCommand();
 
@@ -72,6 +72,7 @@ class UpdateSubCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+	private static final String delete = "delete";
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -84,10 +85,10 @@ class UpdateSubCommand implements ICommand
 			return;
 		}
 
-		if (content.equals("delete")) //如果使用/introduce update delete
+		if (content.equals(delete)) //如果使用/introduce update delete
 		{
 			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.delete")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
 			return;
 		}
 
@@ -99,7 +100,7 @@ class UpdateSubCommand implements ICommand
 			MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 			if (linkChannel == null)
 			{
-				event.reply("Error: The channel might be deleted, or I don't have permission to access it.").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
 				return;
 			}
 
@@ -108,7 +109,7 @@ class UpdateSubCommand implements ICommand
 					.queue(linkMessage ->
 					{
 						   String rawMessage = linkMessage.getContentRaw();
-						   List<Attachment> attachments = linkMessage.getAttachments();
+						   List<Message.Attachment> attachments = linkMessage.getAttachments();
 						   if (!attachments.isEmpty())
 							   rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
 						   IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
@@ -117,6 +118,6 @@ class UpdateSubCommand implements ICommand
 		else
 			IntroduceHandle.updateIntroduction(userID, content);
 
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update")).queue();
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
 	}
 }

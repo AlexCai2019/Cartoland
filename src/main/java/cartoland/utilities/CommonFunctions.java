@@ -1,11 +1,17 @@
 package cartoland.utilities;
 
-import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.function.Function;
 
+/**
+ * Common lambda functions for use. Including method references in {@link OptionMapping} and {@link Message.Attachment}.
+ *
+ * @since 2.0
+ * @author Alex Cai
+ */
 public class CommonFunctions
 {
 	private CommonFunctions()
@@ -16,5 +22,5 @@ public class CommonFunctions
 	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
 	public static final Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
 	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
-	public static final Function<Attachment, String> getUrl = Attachment::getUrl;
+	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
 }

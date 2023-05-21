@@ -58,7 +58,7 @@ public class QuestionForumHandle
 
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "idled_questions.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-	private static final Set<Long> idledForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof Set<?> set ?
+	private static final Set<Long> idledForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
 			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
 
 	private QuestionForumHandle()

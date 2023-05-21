@@ -18,19 +18,22 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
  */
 public class QuestionForumMessage implements IMessage
 {
+	private ThreadChannel forumPost = null;
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
 		MessageChannelUnion channel = event.getChannel();
 		return channel.getType().isThread() &&
-				channel.asThreadChannel().getParentChannel().getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID;
+				(forumPost = channel.asThreadChannel()).getParentChannel().getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID;
 	}
 
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
+		if (forumPost == null)
+			return;
 		Message message = event.getMessage();
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
 		if (QuestionForumHandle.isIdled(forumPost))
 			QuestionForumHandle.unIdleForumPost(forumPost, false);
 

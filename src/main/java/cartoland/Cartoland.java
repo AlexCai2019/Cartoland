@@ -18,6 +18,16 @@ import static cartoland.utilities.IDAndEntities.jda;
  */
 public class Cartoland
 {
+	/**
+	 * The entry point of the entire program. JDA was built here. Commands was register at here also, but
+	 * source code of commands are not in here. Instead, they are in {@link AddCommands}.
+	 *
+	 * @param args Command line arguments. The first argument is the token of the bot.
+	 * @throws InterruptedException If this thread is interrupted while waiting.
+	 * @throws IllegalStateException If JDA is shutdown during the wait period.
+	 * @since 1.0
+	 * @author Alex Cai
+	 */
 	public static void main(String[] args) throws InterruptedException
 	{
 		if (args.length < 1)

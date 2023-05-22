@@ -15,7 +15,6 @@ import java.util.Map;
  * @since 1.0
  * @author Alex Cai
  */
-@SuppressWarnings("unchecked")
 public class JsonHandle
 {
 	private JsonHandle()
@@ -25,7 +24,8 @@ public class JsonHandle
 
 	private static final String USERS_FILE_NAME = "users.ser";
 
-	private static final Map<Long, String> users; //使用者的語言設定 id為key en, tw 等等的語言字串為value
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value
 	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(); //語言字串為key 語言檔案為value
 	private static final Map<String, List<Object>> commandListMap = new HashMap<>(); //cmd.list等等為key 語言檔案對應的JSONArray為value
 	private static final StringBuilder builder = new StringBuilder();
@@ -36,7 +36,7 @@ public class JsonHandle
 	static
 	{
 		reloadLanguageFiles();
-		users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+		FileHandle.registerSerialize(USERS_FILE_NAME, users);
 	}
 
 	private static void lastUse(long userID)
@@ -44,11 +44,6 @@ public class JsonHandle
 		//獲取使用者設定的語言
 		//找不到設定的語言就放英文進去
 		file = languageFileMap.get(users.computeIfAbsent(userID, k -> IDAndEntities.Languages.ENGLISH));
-	}
-
-	public static void serializeUsersMap()
-	{
-		FileHandle.serialize(USERS_FILE_NAME, users);
 	}
 
 	public static String command(long userID, String commandName)

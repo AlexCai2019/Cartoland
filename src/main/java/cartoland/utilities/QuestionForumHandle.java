@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
  */
 public class QuestionForumHandle
 {
+	private QuestionForumHandle()
+	{
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+	}
+
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
 	private static final String resolvedFormat = resolved.getFormatted();
 	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
@@ -56,19 +61,14 @@ public class QuestionForumHandle
 			If it didn't, try offer more information of question.
 			""".formatted(resolvedFormat, resolvedFormat);
 
-	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "idled_questions.ser";
+	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
 	private static final Set<Long> idledForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
 			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
 
-	private QuestionForumHandle()
+	static
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
-	}
-
-	public static void serializeIdlesSet()
-	{
-		FileHandle.serialize(IDLED_QUESTIONS_SET_FILE_NAME, idledForumPosts);
+		FileHandle.registerSerialize(IDLED_QUESTIONS_SET_FILE_NAME, idledForumPosts);
 	}
 
 	public static void createForumPost(ThreadChannel forumPost)

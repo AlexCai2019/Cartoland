@@ -5,7 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +26,7 @@ public class FileHandle
 
 	private static LocalDate lastDateHasLog; //上一次有寫log的日期
 	private static FileWriter logger;
+	private static final List<SerializeObject> serializeObjects = new ArrayList<>();
 
 	static
 	{
@@ -55,7 +58,37 @@ public class FileHandle
 		}
 	}
 
-	public static void serialize(String fileName, Object object)
+	/**
+	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by
+	 * {@link #serialize} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware
+	 * that the object must implement {@link Serializable} interface. Most importantly, this object must be <b>final</b>,
+	 * since Java doesn't have double pointer, there's no way to serialize correct contents if the class reference
+	 * changed its pointing address.
+	 *
+	 * @param fileName The name of the serialize file. Usually has {@code .ser} as file name extension.
+	 * @param object The object that is going to be serialized.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	public static void registerSerialize(String fileName, Object object)
+	{
+		serializeObjects.add(new SerializeObject(fileName, object));
+	}
+
+	/**
+	 * This method will be call when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed.
+	 * It will serialize every objects in {@link #serializeObjects}, which was registered by {@link #registerSerialize}.
+	 *
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	public static void serialize()
+	{
+		for (SerializeObject so : serializeObjects)
+			serialize(so.fileName, so.object);
+	}
+
+	private static void serialize(String fileName, Object object)
 	{
 		if (!(object instanceof Serializable))
 			return;
@@ -153,4 +186,6 @@ public class FileHandle
 			IDAndEntities.jda.shutdownNow();
 		}
 	}
+
+	private static record SerializeObject(String fileName, Object object) {}
 }

@@ -142,27 +142,6 @@ class BetSubCommand implements ICommand
  */
 class RankingSubCommand implements ICommand
 {
-	/**
-	 * {@code UserNameAndBlocks} has a String userName and long blocks.
-	 *
-	 * @since 1.6
-	 * @author Alex Cai
-	 */
-	private record UserNameAndBlocks(String userName, long blocks)
-	{
-		@Override
-		public boolean equals(Object o)
-		{ //不需要this == o 因為幾乎不會碰到這樣的情況
-			return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
-		}
-
-		@Override
-		public int hashCode()
-		{
-			return Objects.hash(userName, blocks);
-		}
-	}
-
 	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
 	private String lastReply = ""; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
@@ -230,11 +209,11 @@ class RankingSubCommand implements ICommand
 		rankBuilder.setLength(0);
 		rankBuilder.append("```ansi\nCommand blocks in ")
 				.append(IDAndEntities.cartolandServer.getName())
-				.append("\n--------------------\nYou are rank #")
+				.append("\n--------------------\nYou are rank \u001B[36m#")
 				.append(forSort.indexOf(new UserNameAndBlocks(user.getAsTag(), blocks)) + 1)
-				.append(", with ")
+				.append("\u001B[0m, with \u001B[36m")
 				.append(blocks)
-				.append(" command blocks.\n\n");
+				.append("\u001B[0m command blocks.\n\n");
 
 		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
 		{
@@ -248,12 +227,32 @@ class RankingSubCommand implements ICommand
 					.append("\u001B[0m\n");
 		}
 
-		rankBuilder.append("\n--------------------\n")
+		return rankBuilder.append("\n--------------------\n")
 				.append(page)
 				.append(" / ")
 				.append(maxPage)
-				.append("\n```");
+				.append("\n```")
+				.toString();
+	}
+}
 
-		return rankBuilder.toString();
+/**
+ * {@code UserNameAndBlocks} has a String userName and long blocks.
+ *
+ * @since 1.6
+ * @author Alex Cai
+ */
+record UserNameAndBlocks(String userName, long blocks)
+{
+	@Override
+	public boolean equals(Object o)
+	{ //不需要this == o 因為幾乎不會碰到這樣的情況
+		return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(userName, blocks);
 	}
 }

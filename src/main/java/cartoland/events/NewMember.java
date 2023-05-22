@@ -1,11 +1,17 @@
 package cartoland.events;
 
+import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * {@code NewMember} is a listener that triggers when a user joined a server that the bot is in, or get a new role. For now,
@@ -25,6 +31,14 @@ public class NewMember extends ListenerAdapter
 			%%s, welcome to %%s.
 			Please read messages in <#%d>, and follow all rules.
 			""".formatted(IDAndEntities.READ_ME_CHANNEL_ID, IDAndEntities.READ_ME_CHANNEL_ID);
+	private final String ALL_MEMBERS = "serialize/all_members.ser";
+	private final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet<?> set ?
+			set.stream().map(userID -> (Long)userID).collect(Collectors.toSet()) : new HashSet<>();
+
+	public NewMember()
+	{
+		FileHandle.registerSerialize(ALL_MEMBERS, allMembers);
+	}
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
@@ -41,6 +55,9 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event)
 	{
+		if (allMembers.contains(event.getUser().getIdLong()))
+			return;
+
 		if (!event.getRoles().contains(IDAndEntities.memberRole))
 			return;
 
@@ -49,5 +66,11 @@ public class NewMember extends ListenerAdapter
 
 		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" +
 													   mentionUser + ", welcome to " + serverName).queue(message -> message.addReaction(wave).queue());
+	}
+
+	@Override
+	public void onGuildMemberRemove(GuildMemberRemoveEvent event)
+	{
+		allMembers.remove(event.getUser().getIdLong());
 	}
 }

@@ -115,10 +115,7 @@ public class BotOnlineOffline extends ListenerAdapter
 		twelvePMTask.cancel(true);
 		scheduleExecutor.shutdown();
 
-		JsonHandle.serializeUsersMap();
-		CommandBlocksHandle.serializeCommandBlocksMap();
-		QuestionForumHandle.serializeIdlesSet();
-		IntroduceHandle.serializeIntroduction();
+		FileHandle.serialize(); //所有有註冊的物件
 
 		String logString = "offline";
 		System.out.println(logString);

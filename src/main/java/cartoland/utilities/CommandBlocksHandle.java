@@ -23,10 +23,16 @@ public class CommandBlocksHandle
 	}
 
 	public static boolean changed = true;
-	private static final String COMMAND_BLOCKS_FILE_NAME = "command_blocks.ser";
+	private static final String COMMAND_BLOCKS_FILE_NAME = "serialize/command_blocks.ser";
+
 	//會有unchecked assignment的警告 but I did it anyway
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, Long> commandBlocksMap = (FileHandle.deserialize(COMMAND_BLOCKS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+
+	static
+	{
+		FileHandle.registerSerialize(COMMAND_BLOCKS_FILE_NAME, commandBlocksMap);
+	}
 
 	/**
 	 * Add command blocks to the user that has userID as ID. This method calls
@@ -63,10 +69,5 @@ public class CommandBlocksHandle
 	public static Set<Long> getKeySet()
 	{
 		return commandBlocksMap.keySet();
-	}
-
-	public static void serializeCommandBlocksMap()
-	{
-		FileHandle.serialize(COMMAND_BLOCKS_FILE_NAME, commandBlocksMap);
 	}
 }

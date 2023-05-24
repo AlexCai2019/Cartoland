@@ -37,11 +37,11 @@ public class Cartoland
 				.addEventListeners(
 						new BotOnlineOffline(), //當機器人上下線的時候
 						new MessageEvent(), //當有任何訊息
-						new AddReaction(),
+						new AddReaction(), //當有人為訊息新增反應
 						new CommandUsage(), //當有人使用指令
 						new AutoComplete(), //當指令需要自動補完
 						new ContextMenu(), //當有人使用右鍵功能
-						new NewMember(), //當有人加入或獲得會員身分組
+						new NewMember(), //當有人加入、離開，或獲得會員身分組
 						new ThreadEvent(), //和討論串有關
 						new UserChangeName()) //當有人改名(不是暱稱)
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)

@@ -22,7 +22,7 @@ public class JsonHandle
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final String USERS_FILE_NAME = "users.ser";
+	private static final String USERS_FILE_NAME = "serialize/users.ser";
 
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value

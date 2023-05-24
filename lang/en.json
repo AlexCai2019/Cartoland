@@ -1,7 +1,7 @@
 {
 	"help.begin": "Available commands: `",
 	"help.end": "`",
-	"help.fail": "Invalid query. Please do </help:1063884269006635069> for a list of available commands.",
+	"help.fail": "Invalid query. Please do </help:1102681768701722796> for a list of available commands.",
 	"help.list":
 	[
 		"invite",
@@ -17,21 +17,21 @@
 		"lottery",
 		"transfer"
 	],
-	"help.name.invite": "Syntax: </invite:1063884269006635068>``",
-	"help.name.cmd": "Syntax: </cmd:1063884269006635070>` [<command>]`",
-	"help.name.faq": "Syntax: </faq:1063884269006635071>` [<question>]`",
-	"help.name.dtp": "Syntax: </dtp:1063884269006635072>` [<datapack feature>]`",
+	"help.name.invite": "Syntax: </invite:1102681768701722795>",
+	"help.name.cmd": "Syntax: </cmd:1102681768701722797>` [<command>]`",
+	"help.name.faq": "Syntax: </faq:1102681768701722800>` [<question>]`",
+	"help.name.dtp": "Syntax: </dtp:1102681768701722802>` [<datapack feature>]`",
 	"help.name.jira": "Syntax: </jira:1107373400512532500>` [<bug link>]`",
-	"help.name.tool": "Syntax: </tool uuid_string:1074390327407947867> </tool uuid_array:1074390327407947867> </tool color_rgba:1074390327407947867> </tool color_integer:1074390327407947867> </tool pack_mcmeta:1074390327407947867>` <arguments...>`",
-	"help.name.lang": "Syntax: </lang:1063884269006635074>` <code>`",
-	"help.name.quote": "Syntax: </quote:1080470666714824744>` <message link>`",
-	"help.name.youtuber": "Syntax: </youtuber:1081828414186586202>` [<channel name>]`",
+	"help.name.tool": "Syntax: </tool uuid_string:1102681768701722804> </tool uuid_array:1102681768701722804> </tool color_rgba:1102681768701722804> </tool color_integer:1102681768701722804> </tool pack_mcmeta:1102681768701722804>` <arguments...>`",
+	"help.name.lang": "Syntax: </lang:1102681768840138935>` <code>`",
+	"help.name.quote": "Syntax: </quote:1102681768840138937>` <message link>`",
+	"help.name.youtuber": "Syntax: </youtuber:1102681768840138938>` [<channel name>]`",
 	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>`",
-	"help.name.lottery": "Syntax: </lottery get:1072947886612033666>` [<user>]` </lottery bet:1072947886612033666>` <amount>` </lottery ranking:1072947886612033666>` <page>`",
-	"help.name.transfer": "Syntax: </transfer:1079058062582759534>` <user> <amount>`",
+	"help.name.lottery": "Syntax: </lottery get:1102681768840138942>` [<user>]` </lottery bet:1102681768840138942>` <amount>` </lottery ranking:1102681768840138942>` <page>`",
+	"help.name.transfer": "Syntax: </transfer:1102681768840138943>` <user> <amount>`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",
-	"cmd.fail": "Invalid command. Please do </cmd:1063884269006635070> for a list of valid commands.",
+	"cmd.fail": "Invalid command. Please do </cmd:1102681768701722797> for a list of valid commands.",
 	"cmd.list":
 	[
 		"advancement",
@@ -191,7 +191,7 @@
 	"cmd.name.xp": "```ansi\n\u001B[31mxp \u001B[0m(\u001B[34madd\u001B[0m|\u001B[34mset\u001B[0m) \u001B[36m<targets> \u001B[32m<amount> \u001B[0m[\u001B[34mlevels\u001B[0m|\u001B[34mpoints\u001B[0m]\n\u001B[31mxp \u001B[34mquery \u001B[36m<targets> \u001B[0m[\u001B[34mlevels\u001B[0m|\u001B[34mpoints\u001B[0m]\n```<https://minecraft.fandom.com/wiki/Commands/xp>",
 	"faq.begin": "`Frequently asked questions: ",
 	"faq.end": "`",
-	"faq.fail": "No FAQ found by that topic. Please do </faq:1063884269006635071> for a list of FAQ topics.",
+	"faq.fail": "No FAQ found by that topic. Please do </faq:1102681768701722800> for a list of FAQ topics.",
 	"faq.list":
 	[
 		"aec",
@@ -221,7 +221,7 @@
 	"faq.name.standsvsclouds": "https://www.youtube.com/watch?v=RKXzWGQfIcg",
 	"dtp.begin": "`Datapack features: ",
 	"dtp.end": "`",
-	"dtp.fail": "Invalid datapack feature. Please do </dtp:1063884269006635072> for a list of all datapack features.",
+	"dtp.fail": "Invalid datapack feature. Please do </dtp:1102681768701722802> for a list of all datapack features.",
 	"dtp.list":
 	[
 		"advancements",
@@ -296,7 +296,7 @@
 	"tool.color_rgba.wrong_range": "You must input an integer that is in the range from 0 to 255!",
 	"tool.color_rgba.decimal": "Decimal",
 	"tool.color_rgba.hexadecimal": "Hexadecimal",
-	"tool.color_integer.wrong_argument": "Please use </tool color_integer:1074390327407947867>` <decimal integer>`, </tool color_integer:1074390327407947867>` <hexadecimal integer>` or </tool color_integer:1074390327407947867>` #<hexadecimal integer>`",
+	"tool.color_integer.wrong_argument": "Please use </tool color_integer:1102681768701722804>` <decimal integer>`, </tool color_integer:1102681768701722804>` <hexadecimal integer>` or </tool color_integer:1102681768701722804>` #<hexadecimal integer>`",
 	"tool.color_integer.decimal": "Decimal",
 	"tool.color_integer.hexadecimal": "Hexadecimal",
 	"lang.name.en": "Language set to English.",
@@ -312,9 +312,9 @@
 	"introduce.update.no_channel": "Error: The channel might be deleted, or I don't have permission to access it.",
 	"introduce.update.delete": "Deleted success.",
 	"introduce.update.update": "Updated success.",
-	"one_a_two_b.start": "Started a game of 1A2B! Type </one_a_two_b:1074401556113403914>` <answer>` to make a guess.",
+	"one_a_two_b.start": "Started a game of 1A2B! Type </one_a_two_b:1102681768840138941>` <answer>` to make a guess.",
 	"one_a_two_b.playing_another_game": "You are already in a %s game.",
-	"one_a_two_b.too_much_arguments": "Please run </one_a_two_b:1074401556113403914> without any arguments to start a new game.",
+	"one_a_two_b.too_much_arguments": "Please run </one_a_two_b:1102681768840138941> without any arguments to start a new game.",
 	"one_a_two_b.not_unique": "Invalid guess: please enter %d unique digits.",
 	"one_a_two_b.game_over": "%s\nGame over! The answer is **%03d**.\nTime elapsed: %d minutes, %d seconds\nGuesses: %d times",
 	"one_a_two_b.reward": "\nYou solved this in %d minutes and %d guesses, rewarded %d command blocks.",
@@ -325,13 +325,13 @@
 	"lottery.bet.play_with_your_limit": "You've gone and busted, my good man.",
 	"lottery.bet.result": "You bet %d command blocks and %s\nYou now have %d command blocks.",
 	"lottery.bet.wrong_percent": "You can't bet %d%% of your command blocks!",
-	"lottery.bet.wrong_argument": "Usage: </lottery bet:1072947886612033666>` <integer>` or </lottery bet:1072947886612033666>` <percentage>%`. Numbers must not be positive integers.",
+	"lottery.bet.wrong_argument": "Usage: </lottery bet:1102681768840138942>` <integer>` or </lottery bet:1102681768840138942>` <percentage>%`. Numbers must not be positive integers.",
 	"lottery.bet.not_enough": "You don't have enough command blocks!\nYou are trying to bet %d command blocks, but you only have %d command blocks.",
 	"lottery.bet.too_much": "You can't bet %d command blocks!\nYou can at most bet %d command blocks.",
 	"transfer.success": "You transferred %d command blocks to %s.\nYou now have %d command blocks.",
 	"transfer.self_transfer": "You can't transfer command blocks to yourself!",
 	"transfer.wrong_user": "You can't transfer command blocks to this user!",
 	"transfer.wrong_percent": "You can't transfer %d%% of your command blocks!",
-	"transfer.wrong_argument": "Usage: </transfer:1079058062582759534>` <user> <integer>` or </transfer:1079058062582759534>` <user> <percentage>%`. Numbers must be positive integers.",
+	"transfer.wrong_argument": "Usage: </transfer:1102681768840138943>` <user> <integer>` or </transfer:1102681768840138943>` <user> <percentage>%`. Numbers must be positive integers.",
 	"transfer.not_enough": "You don't have enough command blocks!\nYou are trying to transfer %d command blocks, but you only have %d command blocks."
 }

@@ -4,7 +4,10 @@ import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -58,8 +61,6 @@ class BetSubCommand implements ICommand
 {
 	private final Pattern numberRegex = Pattern.compile("\\d+");
 	private final Pattern percentRegex = Pattern.compile("\\d+%");
-	private int win = 0;
-	private int lose = 0;
 	private static final long MAXIMUM = 1000000L;
 
 	@Override
@@ -113,13 +114,11 @@ class BetSubCommand implements ICommand
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
-			win++;
 		}
 		else //賭輸
 		{
 			afterBet = nowHave - bet;
 			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.lose");
-			lose++;
 		}
 
 		String replyMessage = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet);
@@ -128,8 +127,6 @@ class BetSubCommand implements ICommand
 
 		final long finalAfterBet = afterBet;
 		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, finalAfterBet));
-
-		FileHandle.log(win + " / " + lose);
 	}
 }
 
@@ -163,24 +160,20 @@ class RankingSubCommand implements ICommand
 			return;
 		}
 
-		final int finalPage = page; //lambda要用
-		event.deferReply().queue(interactionHook -> //發送機器人正在思考中 並在回呼函式內執行排序等行為
+		forSort.clear(); //清除forSort
+		CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
 		{
-			forSort.clear(); //清除forSort
-			CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
-			{
-				String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
-				if (userName != null)
-					forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
-			});
-
-			//排序
-			forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
-
-			CommandBlocksHandle.changed = false; //已經排序過了
-			lastPage = finalPage; //換過頁了
-			interactionHook.sendMessage(lastReply = replyString(event.getUser(), finalPage, maxPage)).queue();
+			String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
+			if (userName != null)
+				forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
 		});
+
+		//排序
+		forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
+
+		CommandBlocksHandle.changed = false; //已經排序過了
+		lastPage = page; //換過頁了
+		event.reply(lastReply = replyString(event.getUser(), page, maxPage)).queue();
 	}
 
 	private final StringBuilder rankBuilder = new StringBuilder();
@@ -210,7 +203,7 @@ class RankingSubCommand implements ICommand
 		rankBuilder.append("```ansi\nCommand blocks in ")
 				.append(IDAndEntities.cartolandServer.getName())
 				.append("\n--------------------\nYou are rank \u001B[36m#")
-				.append(forSort.indexOf(new UserNameAndBlocks(user.getAsTag(), blocks)) + 1)
+				.append(forSortBinarySearch(blocks) + 1)
 				.append("\u001B[0m, with \u001B[36m")
 				.append(blocks)
 				.append("\u001B[0m command blocks.\n\n");
@@ -234,6 +227,24 @@ class RankingSubCommand implements ICommand
 				.append("\n```")
 				.toString();
 	}
+
+	private int forSortBinarySearch(long blocks)
+	{
+		long midValue;
+		for (int low = 0, middle, high = forSort.size() - 1; low < high;)
+		{
+			middle = (low + high) >>> 1;
+			midValue = forSort.get(middle).blocks();
+
+			if (midValue < blocks)
+				low = middle + 1;
+			else if (midValue > blocks)
+				high = middle - 1;
+			else
+				return middle;
+		}
+		return -1;
+	}
 }
 
 /**
@@ -242,17 +253,4 @@ class RankingSubCommand implements ICommand
  * @since 1.6
  * @author Alex Cai
  */
-record UserNameAndBlocks(String userName, long blocks)
-{
-	@Override
-	public boolean equals(Object o)
-	{ //不需要this == o 因為幾乎不會碰到這樣的情況
-		return o instanceof UserNameAndBlocks that && this.userName.equals(that.userName);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(userName, blocks);
-	}
-}
+record UserNameAndBlocks(String userName, long blocks) {}

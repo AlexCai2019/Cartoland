@@ -73,7 +73,7 @@ public class OneATwoBCommand implements ICommand
 		String shouldReply = String.format("%0" + OneATwoBGame.ANSWER_LENGTH + "d", answer) + " = " + ab[0] + " A " + ab[1] + " B";
 		if (ab[0] != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
 		{
-			event.reply(shouldReply + "\n</one_a_two_b:1074401556113403914>").setEphemeral(true).queue();
+			event.reply(shouldReply + "\n</one_a_two_b:1102681768840138941>").setEphemeral(true).queue();
 			return;
 		}
 

@@ -89,14 +89,15 @@ public class QuestionForumHandle
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
 
-	public static boolean notTypedResolved(Object withReaction)
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted") //IntelliJ IDEA 閉嘴
+	public static boolean typedResolved(Object withReaction)
 	{
 		if (withReaction instanceof Message message)
-			return !message.getContentRaw().equals(resolvedFormat);
+			return message.getContentRaw().equals(resolvedFormat);
 		else if (withReaction instanceof MessageReaction reaction)
-			return !reaction.getEmoji().equals(resolved);
+			return reaction.getEmoji().equals(resolved);
 		else
-			return true;
+			return false;
 	}
 
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)

@@ -30,7 +30,7 @@ public class AddReaction extends ListenerAdapter
 			return;
 		if (Algorithm.chance(10) && event.getReaction().getEmoji().equals(learned))
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
-		if (QuestionForumHandle.notTypedResolved(event.getReaction())) //不是resolved
+		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
 			return;
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;

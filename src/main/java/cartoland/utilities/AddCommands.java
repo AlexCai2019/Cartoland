@@ -224,29 +224,6 @@ public class AddCommands
 								.setDescriptionLocalization(CHINESE_TAIWAN, "想轉帳的數量")
 								.setDescriptionLocalization(CHINESE_CHINA, "想转帐的数量")),
 
-			//TODO: finish cartoland.commands.MinesweeperCommand
-			//TODO: stop being lazy
-			//TODO: I didn't finish it on ver 1.6. Yes, very sad. Anyway...
-		/*Commands.slash("minesweeper", "Play a minesweeper game")
-				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場踩地雷")
-				.setDescriptionLocalization(CHINESE_CHINA, "玩一场扫雷")
-				.addOptions(
-						new OptionData(OptionType.STRING, "difficulty", "The difficulty of game", true, false)
-								.setNameLocalization(CHINESE_TAIWAN, "難度")
-								.setNameLocalization(CHINESE_CHINA, "难度")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "遊戲的難度")
-								.setDescriptionLocalization(CHINESE_CHINA, "游戏的难度")
-								.addChoices(
-										new Command.Choice("easy", IDAndEntities.Difficulty.EASY)
-												.setNameLocalization(CHINESE_TAIWAN, "簡單")
-												.setNameLocalization(CHINESE_CHINA, "简单"),
-										new Command.Choice("normal", IDAndEntities.Difficulty.NORMAL)
-												.setNameLocalization(CHINESE_TAIWAN, "普通")
-												.setNameLocalization(CHINESE_CHINA, "普通"),
-										new Command.Choice("hard", IDAndEntities.Difficulty.HARD)
-												.setNameLocalization(CHINESE_TAIWAN, "困難")
-												.setNameLocalization(CHINESE_CHINA, "困难"))),*/
-
 		Commands.message("Raw Text")
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")
 				.setNameLocalization(CHINESE_CHINA, "原始文本"),

@@ -1,5 +1,6 @@
 package cartoland.utilities;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -16,11 +17,6 @@ public class Algorithm
 	}
 
 	private static final Random random = new Random();
-
-	static void updateSeed()
-	{
-		random.setSeed(System.currentTimeMillis());
-	}
 
 	/**
 	 * Shuffle an array.
@@ -73,5 +69,10 @@ public class Algorithm
 	public static long randomElement(long[] array)
 	{
 		return array[random.nextInt(array.length)];
+	}
+
+	public static<T> T randomElement(List<T> list)
+	{
+		return list.get(random.nextInt(list.size()));
 	}
 }

@@ -133,7 +133,6 @@ public class FileHandle
 		LocalDate today = LocalDate.now(); //今天
 		if (!today.isEqual(lastDateHasLog)) //如果今天跟上次有寫log的日期不同
 		{
-			Algorithm.updateSeed(); //在換日時更新種子
 			lastDateHasLog = today;
 			try
 			{

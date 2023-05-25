@@ -44,9 +44,8 @@ public class NewMember extends ListenerAdapter
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
 	{
 		User user = event.getUser();
-		if (user.isBot() || user.isSystem() || !user.hasPrivateChannel())
+		if (!user.hasPrivateChannel())
 			return;
-
 		String serverName = IDAndEntities.cartolandServer.getName();
 		String userTag = user.getAsTag();
 		user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userTag, serverName, userTag, serverName)).queue());
@@ -55,13 +54,16 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event)
 	{
-		if (allMembers.contains(event.getUser().getIdLong()))
+		User user = event.getUser();
+		long userID = user.getIdLong();
+		if (allMembers.contains(userID))
 			return;
 
 		if (!event.getRoles().contains(IDAndEntities.memberRole))
 			return;
 
-		String mentionUser = event.getUser().getAsMention();
+		allMembers.add(userID);
+		String mentionUser = user.getAsMention();
 		String serverName = IDAndEntities.cartolandServer.getName();
 
 		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" +

@@ -4,10 +4,7 @@ import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -59,6 +56,7 @@ public class LotteryCommand implements ICommand
  */
 class BetSubCommand implements ICommand
 {
+	private final Random random = new Random(); //不使用Algorithm.chance
 	private final Pattern numberRegex = Pattern.compile("\\d+");
 	private final Pattern percentRegex = Pattern.compile("\\d+%");
 	private static final long MAXIMUM = 1000000L;
@@ -110,7 +108,7 @@ class BetSubCommand implements ICommand
 
 		long afterBet;
 		String result;
-		if (Algorithm.chance(50)) //賭贏 可用random.nextBoolean()
+		if (random.nextBoolean()) //賭贏
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
@@ -203,7 +201,7 @@ class RankingSubCommand implements ICommand
 		rankBuilder.append("```ansi\nCommand blocks in ")
 				.append(IDAndEntities.cartolandServer.getName())
 				.append("\n--------------------\nYou are rank \u001B[36m#")
-				.append(forSortBinarySearch(blocks) + 1)
+				.append(forSortBinarySearch(blocks))
 				.append("\u001B[0m, with \u001B[36m")
 				.append(blocks)
 				.append("\u001B[0m command blocks.\n\n");
@@ -228,6 +226,16 @@ class RankingSubCommand implements ICommand
 				.toString();
 	}
 
+	/**
+	 * Use binary search to find the index of the user that has these blocks in the {@link #forSort} list, in order to find
+	 * the ranking of a user. These code was stole from {@link java.util.Collections#binarySearch(List, Object)}
+	 *
+	 * @param blocks The number of blocks that are used to match in the {@link #forSort} list.
+	 * @return The index of the user that has these blocks in the {@link #forSort} list and add 1, because though an
+	 * array is 0-indexed, but the ranking that are going to display should be 1-indexed.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
 	private int forSortBinarySearch(long blocks)
 	{
 		long midValue;
@@ -237,13 +245,13 @@ class RankingSubCommand implements ICommand
 			midValue = forSort.get(middle).blocks();
 
 			if (midValue < blocks)
-				low = middle + 1;
-			else if (midValue > blocks)
 				high = middle - 1;
+			else if (midValue > blocks)
+				low = middle + 1;
 			else
-				return middle;
+				return middle + 1;
 		}
-		return -1;
+		return 0;
 	}
 }
 

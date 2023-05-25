@@ -37,7 +37,7 @@ public class QuestionForumMessage implements IMessage
 		if (QuestionForumHandle.isIdled(forumPost))
 			QuestionForumHandle.unIdleForumPost(forumPost, false);
 
-		if (QuestionForumHandle.notTypedResolved(message)) //不是:resolved:表情符號
+		if (!QuestionForumHandle.typedResolved(message)) //不是:resolved:表情符號
 			return;
 
 		Member member = event.getMember();

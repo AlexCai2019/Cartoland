@@ -3,9 +3,9 @@ package cartoland.events;
 import cartoland.commands.*;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.Algorithm;
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.JsonHandle;
-import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -135,8 +135,8 @@ public class CommandUsage extends ListenerAdapter
 		//transfer
 		commands.put("transfer", new TransferCommand());
 
-		//minesweeper
-		//commands.put("minesweeper", m);
+		//tic_tac_toe
+		commands.put("tic_tac_toe", new TicTacToeCommand(this));
 	}
 
 	/**
@@ -174,28 +174,6 @@ public class CommandUsage extends ListenerAdapter
 			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
 		return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);
 	}
-
-	/*
-	private final Pattern minesweeperButtonRegex = Pattern.compile("\\d \\d");
-	private final MinesweeperCommand m = new MinesweeperCommand(this);
-
-	@Override
-	public void onButtonInteraction(@NotNull ButtonInteractionEvent event)
-	{
-		String buttonID = event.getComponentId();
-		if (minesweeperButtonRegex.matcher(buttonID).matches())
-		{
-			User user = event.getUser();
-			IMiniGame playing = games.get(user.getIdLong());
-			if (!(playing instanceof MinesweeperGame))
-				return;
-
-			int x = buttonID.charAt(0) - '0';
-			int y = buttonID.charAt(2) - '0';
-			m.pressed(user, x, y);
-		}
-	}
-	*/
 }
 
 /**

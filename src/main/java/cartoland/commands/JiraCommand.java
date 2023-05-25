@@ -4,12 +4,14 @@ import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -22,8 +24,8 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)MC(PE)?-\\d{1,6}");
-	private final Pattern bugIDRegex = Pattern.compile("(?i)MC(PE)?-\\d{1,6}");
+	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
+	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}");
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
@@ -42,63 +44,53 @@ public class JiraCommand implements ICommand
 			return;
 		}
 
-		final String finalLink; //lambda要用
-		final String finalBugID;
+		String bugID; //MC-87984
 		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984
-		{
-			finalLink = link;
-			finalBugID = link.substring(subStringStart);
-		}
+			bugID = link.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 		else if (bugIDRegex.matcher(link).matches()) //MC-87984
-		{
-			finalLink = "https://bugs.mojang.com/browse/" + link;
-			finalBugID = link;
-		}
+			bugID = link.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 		else if (numberRegex.matcher(link).matches()) //87984
-		{
-			finalLink = "https://bugs.mojang.com/browse/MC-" + link;
-			finalBugID = "MC-" + link;
-		}
+			bugID = "MC-" + link;
 		else
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).queue();
 			return;
 		}
+		link = "https://bugs.mojang.com/browse/" + bugID;
 
-		event.deferReply().queue(interactionHook ->
+		event.deferReply().queue(); //延後回覆
+		InteractionHook eventHook = event.getHook();
+
+		Document document; //HTML文件
+
+		try
 		{
-			Document document; //HTML文件
+			document = Jsoup.connect(link).get(); //嘗試連線
+		}
+		catch (IOException e)
+		{
+			eventHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID)).queue();
+			return;
+		}
 
-			try
-			{
-				document = Jsoup.connect(finalLink).get(); //嘗試連線
-			}
-			catch (IOException e)
-			{
-				interactionHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(finalBugID)).queue();
-				return;
-			}
+		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
+		if (issueContent == null) //如果不存在id為issue-content的標籤
+		{
+			eventHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
+					.addActionRow(Button.link(link, "Jira")).queue();
+			return;
+		}
 
-			Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
-			if (issueContent == null) //如果不存在id為issue-content的標籤
-			{
-				interactionHook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
-						.addActionRow(Button.link(finalLink, "Jira"))
-						.queue();
-				return;
-			}
-
-			Element title = issueContent.getElementById("summary-val");
-			bugEmbed.setTitle('[' + finalBugID + "] " + (title != null ? title.text() : ""), finalLink).clearFields();
-			bugEmbedAddField("Status", issueContent.getElementById("opsbar-transitions_more"));
-			bugEmbedAddField("Resolution", issueContent.getElementById("resolution-val"));
-			bugEmbedAddField("Mojang priority", issueContent.getElementById("customfield_12200-val"));
-			Element affectsVersions = issueContent.getElementById("versions-field");
-			bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
-			bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
-			bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
-			interactionHook.sendMessageEmbeds(bugEmbed.build()).addActionRow(Button.link(finalLink, "Jira")).queue();
-		});
+		Element title = issueContent.getElementById("summary-val");
+		bugEmbed.setTitle('[' + bugID + "] " + (title != null ? title.text() : ""), link).clearFields();
+		bugEmbedAddField("Status", issueContent.getElementById("opsbar-transitions_more"));
+		bugEmbedAddField("Resolution", issueContent.getElementById("resolution-val"));
+		bugEmbedAddField("Mojang priority", issueContent.getElementById("customfield_12200-val"));
+		Element affectsVersions = issueContent.getElementById("versions-field");
+		bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
+		bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
+		bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
+		eventHook.sendMessageEmbeds(bugEmbed.build()).addActionRow(Button.link(link, "Jira")).queue();
 	}
 
 	private void bugEmbedAddField(String fieldName, Element fieldValue)

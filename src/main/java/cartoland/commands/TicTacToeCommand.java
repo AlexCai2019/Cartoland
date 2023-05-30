@@ -31,18 +31,18 @@ public class TicTacToeCommand implements ICommand
 		{
 			if (playing == null) //沒有在玩遊戲 開始井字遊戲
 			{
-				event.reply("Start Tic-Tac_Toe!").queue();
+				event.reply("Start Tic-Tac-Toe!").queue();
 				commandCore.getGames().put(userID, new TicTacToeGame());
 			}
 			else
-				event.reply("You are already in " + playing.gameName() + " game.").queue();
+				event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
 			return;
 		}
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run /tic_tac_toe without arguments.").queue();
+			event.reply("Please run /tic_tac_toe without arguments.").setEphemeral(true).queue();
 			return;
 		}
 
@@ -53,11 +53,34 @@ public class TicTacToeCommand implements ICommand
 			return;
 		}
 
-		if (ticTacToe.humanPlace(row, column))
+		if (!TicTacToeGame.isInBounds(row, column))
 		{
-			event.reply("You win!").queue();
+			event.reply("You can't place piece out of the board").setEphemeral(true).queue();
+			return;
 		}
 
-		//TODO: Finish the rest of the command.
+		if (ticTacToe.isPlaced(row, column))
+		{
+			event.reply("You can't put piece at where has been taken!").setEphemeral(true).queue();
+			return;
+		}
+
+		if (ticTacToe.humanPlace(row, column))
+		{
+			event.reply("You won!\n" + ticTacToe.getBoard()).queue();
+			commandCore.getGames().remove(userID);
+			return;
+		}
+
+		String playerMove = "Your move:\n" + ticTacToe.getBoard();
+
+		if (ticTacToe.aiPlaced())
+		{
+			event.reply("You lost..\n" + ticTacToe.getBoard()).queue();
+			commandCore.getGames().remove(userID);
+			return;
+		}
+
+		event.reply(playerMove + "\nBot's move:\n" + ticTacToe.getBoard()).queue();
 	}
 }

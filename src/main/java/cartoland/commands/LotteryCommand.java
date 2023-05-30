@@ -106,9 +106,11 @@ class BetSubCommand implements ICommand
 			return;
 		}
 
-		long afterBet;
+		final long afterBet;
 		String result;
-		if (random.nextBoolean()) //賭贏
+		boolean win = random.nextBoolean();
+
+		if (win) //賭贏
 		{
 			afterBet = Algorithm.safeAdd(nowHave, bet);
 			result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
@@ -120,11 +122,10 @@ class BetSubCommand implements ICommand
 		}
 
 		String replyMessage = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet);
-		if (afterBet == 0)
-			replyMessage += "\n" + JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit");
+		if (bet == nowHave) //梭哈
+			replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
 
-		final long finalAfterBet = afterBet;
-		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, finalAfterBet));
+		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, afterBet));
 	}
 }
 
@@ -228,7 +229,7 @@ class RankingSubCommand implements ICommand
 
 	/**
 	 * Use binary search to find the index of the user that has these blocks in the {@link #forSort} list, in order to find
-	 * the ranking of a user. These code was stole from {@link java.util.Collections#binarySearch(List, Object)}
+	 * the ranking of a user. These code was stole... was <i>"borrowed"</i> from {@link java.util.Collections#binarySearch(List, Object)}
 	 *
 	 * @param blocks The number of blocks that are used to match in the {@link #forSort} list.
 	 * @return The index of the user that has these blocks in the {@link #forSort} list and add 1, because though an

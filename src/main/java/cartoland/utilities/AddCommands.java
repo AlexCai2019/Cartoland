@@ -154,7 +154,7 @@ public class AddCommands
 				new SubcommandData("update", "Update your introduction")
 						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
 						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
-						.addOptions(new OptionData(OptionType.STRING, "content", "Your self introduction", true, false)
+						.addOptions(new OptionData(OptionType.STRING, "content", "Your self introduction", true, true)
 											.setNameLocalization(CHINESE_TAIWAN, "內容")
 											.setNameLocalization(CHINESE_CHINA, "内容")
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
@@ -380,11 +380,12 @@ class Lang
 					.setNameLocalization(CHINESE_CHINA, "语言名字")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "要切換的語言")
 					.setDescriptionLocalization(CHINESE_CHINA, "要切换的语言")
-					.addChoice("English", IDAndEntities.Languages.ENGLISH)
-					.addChoice("台灣正體", IDAndEntities.Languages.TW_MANDARIN)
-					.addChoice("台語文字", IDAndEntities.Languages.TAIWANESE)
-					.addChoice("粵語漢字", IDAndEntities.Languages.CANTONESE)
-					.addChoice("简体中文", IDAndEntities.Languages.CHINESE);
+					.addChoice("English", Languages.ENGLISH)
+					.addChoice("台灣正體", Languages.TW_MANDARIN)
+					.addChoice("台語文字", Languages.TAIWANESE)
+					.addChoice("粵語漢字", Languages.CANTONESE)
+					.addChoice("简体中文", Languages.CHINESE)
+					.addChoice("Español", Languages.ESPANOL);
 
 	static final SlashCommandData lang = Commands.slash("lang", "Change language")
 			.setDescriptionLocalizations(langDescriptions)

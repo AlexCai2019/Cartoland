@@ -138,8 +138,8 @@ class BetSubCommand implements ICommand
  */
 class RankingSubCommand implements ICommand
 {
-	private final List<UserNameAndBlocks> forSort = new ArrayList<>(); //需要排序的list
-	private String lastReply = ""; //上一次回覆過的字串
+	private final List<UserNameAndBlocks> forSort = new ArrayList<>(100); //需要排序的list
+	private String lastReply; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
 
 	@Override
@@ -153,8 +153,10 @@ class RankingSubCommand implements ICommand
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
 
-		if (!CommandBlocksHandle.changed && page == lastPage) //距離上一次排序 沒有任何變動 且沒有換頁
+		if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
 		{
+			if (page != lastPage) //有換頁
+				lastReply = replyString(event.getUser(), page, maxPage);
 			event.reply(lastReply).queue();
 			return;
 		}

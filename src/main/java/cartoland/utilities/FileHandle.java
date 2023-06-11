@@ -105,7 +105,6 @@ public class FileHandle
 		{
 			exception.printStackTrace();
 			log(exception);
-			IDAndEntities.jda.shutdownNow();
 		}
 	}
 

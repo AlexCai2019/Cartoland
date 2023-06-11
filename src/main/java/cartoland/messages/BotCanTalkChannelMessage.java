@@ -51,7 +51,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		"哪裡來的小孩子，家教差成這樣。",
 		"老子瘋狗的外號Maps群時期就有啦！",
 		"沒被打過是不是？",
-		"tag機器人是不好的行為，小朋友不要學"
+		"tag機器人是不好的行為，小朋友不要學",
+		"上帝把智慧撒向人間的時候你撐了把傘嗎？",
+		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
+		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
+		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個-大大的星星！讓我知道。"
 	};
 	private final String[] megumin =
 	{
@@ -65,13 +69,14 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://tenor.com/view/fbi-calling-tom-gif-12699976",
 		"https://tenor.com/view/fbi-swat-busted-police-open-up-gif-16928811",
 		"https://tenor.com/view/fbi-swat-police-entry-attack-gif-16037524",
-		"https://imgur.com/gPlBEMV"
+		"https://imgur.com/GLElBwY", //電話在那裡
+		"https://imgur.com/Aax1R2U", //我要走向電話
+		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
 
 	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
-	private final Pattern lolRegex = Pattern.compile("(?i).*lol.*"); //containsIgnoreCase
 
 	private final Set<Long> canTalkCategories = new HashSet<>(3);
 
@@ -118,7 +123,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
 
-		if (lolRegex.matcher(rawMessage).matches())
+		if (rawMessage.equalsIgnoreCase("lol"))
 			channel.sendMessage("LOL").queue();
 
 		if (rawMessage.contains("早安"))

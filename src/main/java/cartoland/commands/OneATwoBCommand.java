@@ -48,6 +48,8 @@ public class OneATwoBCommand implements ICommand
 			return;
 		}
 		int answer = argument; //拆箱
+		if (answer < 0)
+			answer = -answer;
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數

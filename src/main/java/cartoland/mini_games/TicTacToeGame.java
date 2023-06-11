@@ -28,7 +28,7 @@ public class TicTacToeGame implements IMiniGame
 	private static final char NOUGHT = 'O';
 	private static final char CROSS = 'X';
 	private static final char EMPTY = ' ';
-	private static final List<Integer> notPlaced = new ArrayList<>(BOARD_SIDE * BOARD_SIDE - 1);
+	private static final List<int[]> notPlaced = new ArrayList<>(BOARD_SIDE * BOARD_SIDE - 1);
 
 	static
 	{
@@ -105,19 +105,19 @@ public class TicTacToeGame implements IMiniGame
 		boardBuilder.setCharAt(((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), NOUGHT);
 		//省略 (頭上的列 = -符號 和 其他棋盤列) + 2 等差數列 注意row和column從1開始
 		//上一列加上換行字元 有ROW_LENGTH個字元 -符號有ROW_LENGTH個 加上換行字元
+
+		//更新空棋盤清單
+		updateNotPlaced(board);
+
 		return checkWin(NOUGHT);
 	}
 
 	public boolean aiPlaced()
 	{
-		notPlaced.clear();
-		for (int i = 0; i < board.length; i++)
-			if (board[i] == EMPTY)
-				notPlaced.add(i);
-		int co = Algorithm.randomElement(notPlaced);
-		board[co] = CROSS; //隨機選一個地方放X
-		int row = (co + 1) / BOARD_SIDE;
-		int column = (co + 1) % BOARD_SIDE;
+		int[] co = Algorithm.randomElement(notPlaced);
+		int row = co[0];
+		int column = co[1];
+		board[boardCoordinate(row, column)] = CROSS; //隨機選一個地方放X
 		boardBuilder.setCharAt(((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), CROSS);
 		return checkWin(CROSS);
 	}
@@ -125,6 +125,15 @@ public class TicTacToeGame implements IMiniGame
 	public String getBoard()
 	{
 		return boardBuilder.toString();
+	}
+
+	private static void updateNotPlaced(char[] board)
+	{
+		notPlaced.clear();
+		for (int r = 1; r <= BOARD_SIDE; r++)
+			for (int c = 1; c <= BOARD_SIDE; c++)
+				if (board[boardCoordinate(r,c)] == EMPTY)
+					notPlaced.add(new int[]{r, c});
 	}
 
 	/**

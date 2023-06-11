@@ -44,18 +44,9 @@ public class IDAndEntities
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
 
-	public static final Map<String, String> youtubers = new HashMap<>();
-	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
+	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
 
-	static
-	{
-		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
-		youtubers.put("惡靈oreki", "@oreki20");
-		youtubers.put("收音機", "@radio0529");
-		youtubers.put("SethBling", "@SethBling");
-		youtubers.put("slicedlime", "@slicedlime");
-		youtubers.put("Phoenix SC", "@PhoenixSC");
-	}
+	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
 
 	public static JDA jda;
 	public static Guild cartolandServer;
@@ -68,44 +59,4 @@ public class IDAndEntities
 	public static Role memberRole;
 	public static Role nsfwRole;
 	public static User botItself;
-
-	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
-
-	/**
-	 * Language constants. Can not be instantiated.
-	 *
-	 * @since 1.0
-	 * @author Alex Cai
-	 */
-	public static class Languages
-	{
-		private Languages()
-		{
-			throw new AssertionError(YOU_SHALL_NOT_ACCESS);
-		}
-
-		public static final String ENGLISH = "en";
-		public static final String TW_MANDARIN = "tw";
-		public static final String TAIWANESE = "ta";
-		public static final String CANTONESE = "hk";
-		public static final String CHINESE = "cn";
-	}
-
-	/**
-	 * Difficulty constants. Can not be instantiated.
-	 *
-	 * @since 1.5
-	 * @author Alex Cai
-	 */
-	public static class Difficulty
-	{
-		private Difficulty()
-		{
-			throw new AssertionError(YOU_SHALL_NOT_ACCESS);
-		}
-
-		public static final String EASY = "easy";
-		public static final String NORMAL = "normal";
-		public static final String HARD = "hard";
-	}
 }

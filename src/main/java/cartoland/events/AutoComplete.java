@@ -1,11 +1,10 @@
 package cartoland.events;
 
-import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
-import net.dv8tion.jda.api.interactions.commands.Command.Choice;
+import net.dv8tion.jda.api.interactions.commands.Command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +42,8 @@ public class AutoComplete extends ListenerAdapter
 		commands.put("datapack", alias);
 
 		commands.put("youtuber", new YouTuberComplete());
+
+		commands.put("introduce", new IntroduceComplete());
 	}
 
 	@Override
@@ -65,13 +66,7 @@ public class AutoComplete extends ListenerAdapter
  */
 abstract class GenericComplete
 {
-	protected final String commandName;
 	protected static final int CHOICES_LIMIT = 25;
-
-	GenericComplete(String commandName)
-	{
-		this.commandName = commandName;
-	}
 
 	abstract void completeProcess(CommandAutoCompleteInteractionEvent event);
 }
@@ -85,9 +80,11 @@ abstract class GenericComplete
  */
 class JsonBasedComplete extends GenericComplete
 {
+	private final String commandName;
+
 	JsonBasedComplete(String commandName)
 	{
-		super(commandName);
+		this.commandName = commandName;
 	}
 
 	@Override
@@ -98,11 +95,11 @@ class JsonBasedComplete extends GenericComplete
 			return;
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-		List<Choice> choices = JsonHandle.commandList(commandName)
+		List<Command.Choice> choices = JsonHandle.commandList(commandName)
 				.stream()
 				.map(o -> (String) o)
 				.filter(word -> word.startsWith(optionValue))
-				.map(word -> new Choice(word, word))
+				.map(word -> new Command.Choice(word, word))
 				.toList();
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
@@ -111,29 +108,65 @@ class JsonBasedComplete extends GenericComplete
 
 /**
  * {@code YouTuberComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
- * /youtuber. This class use {@link IDAndEntities#youtubers} to get every YouTubers and their channel ID.
+ * /youtuber. This class use {@link #youtubers} to get every YouTubers and their channel ID.
  *
  * @since 1.6
  * @author Alex Cai
  */
 class YouTuberComplete extends GenericComplete
 {
+	private final Map<String, String> youtubers = new HashMap<>();
+
 	YouTuberComplete()
 	{
-		super("youtuber");
+		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
+		youtubers.put("天豹星雲", "@nebulirion");
+		youtubers.put("惡靈oreki", "@oreki20");
+		youtubers.put("收音機", "@radio0529");
+		youtubers.put("SethBling", "@SethBling");
+		youtubers.put("slicedlime", "@slicedlime");
+		youtubers.put("Phoenix SC", "@PhoenixSC");
 	}
 
 	@Override
 	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		String optionValue = event.getFocusedOption().getValue();
-		List<Choice> choices = new ArrayList<>(CHOICES_LIMIT);
-		IDAndEntities.youtubers.forEach((youtuberName, youtuberID) ->
+		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);
+		youtubers.forEach((youtuberName, youtuberID) ->
 		{
 			if (youtuberName.contains(optionValue))
-				choices.add(new Choice(youtuberName, youtuberID));
+				choices.add(new Command.Choice(youtuberName, youtuberID));
 		});
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
+	}
+}
+
+/**
+ * {@code IntroduceComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
+ * /introduce. This class only provide /introduce update delete.
+ *
+ * @since 2.0
+ * @author Alex Cai
+ */
+class IntroduceComplete extends GenericComplete
+{
+	private final List<Command.Choice> delete = new ArrayList<>(1);
+	private final List<Command.Choice> empty = new ArrayList<>();
+
+	IntroduceComplete()
+	{
+		delete.add(new Command.Choice("delete", "delete"));
+	}
+
+	@Override
+	void completeProcess(CommandAutoCompleteInteractionEvent event)
+	{
+		String subCommandName = event.getSubcommandName();
+		if (subCommandName == null || !subCommandName.equals("update"))
+			event.replyChoices(empty).queue();
+		else
+			event.replyChoices("delete".startsWith(event.getFocusedOption().getValue()) ? delete : empty).queue();
 	}
 }

@@ -43,7 +43,7 @@ public class JsonHandle
 	{
 		//獲取使用者設定的語言
 		//找不到設定的語言就放英文進去
-		file = languageFileMap.get(users.computeIfAbsent(userID, k -> IDAndEntities.Languages.ENGLISH));
+		file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.ENGLISH));
 	}
 
 	public static String command(long userID, String commandName)
@@ -52,7 +52,8 @@ public class JsonHandle
 		builder.setLength(0);
 		builder.append(file.getString(commandName + ".begin")); //開頭
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
-		dotListArray.forEach(s -> builder.append((String) s).append(' '));
+		for (var o : dotListArray)
+			builder.append((String) o).append(' ');
 		builder.deleteCharAt(builder.length() - 1);
 		builder.append(file.getString(commandName + ".end")); //結尾
 		return builder.toString();
@@ -76,11 +77,12 @@ public class JsonHandle
 
 	public static void reloadLanguageFiles()
 	{
-		languageFileMap.put(IDAndEntities.Languages.ENGLISH, englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json")));
-		languageFileMap.put(IDAndEntities.Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
-		languageFileMap.put(IDAndEntities.Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
-		languageFileMap.put(IDAndEntities.Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
-		languageFileMap.put(IDAndEntities.Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+		languageFileMap.put(Languages.ENGLISH, englishFile = new JSONObject(FileHandle.buildJsonStringFromFile("lang/en.json")));
+		languageFileMap.put(Languages.TW_MANDARIN, new JSONObject(FileHandle.buildJsonStringFromFile("lang/tw.json")));
+		languageFileMap.put(Languages.TAIWANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/ta.json")));
+		languageFileMap.put(Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
+		languageFileMap.put(Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
+		languageFileMap.put(Languages.ESPANOL, new JSONObject(FileHandle.buildJsonStringFromFile("lang/es.json")));
 
 		commandListMap.put("cmd.list", englishFile.getJSONArray("cmd.list").toList());
 		commandListMap.put("faq.list", englishFile.getJSONArray("faq.list").toList());

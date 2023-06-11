@@ -5,9 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +24,6 @@ public class FileHandle
 
 	private static LocalDate lastDateHasLog; //上一次有寫log的日期
 	private static FileWriter logger;
-	private static final List<SerializeObject> serializeObjects = new ArrayList<>();
 
 	static
 	{
@@ -58,6 +55,8 @@ public class FileHandle
 		}
 	}
 
+	private static final SerializeObject[] serializeObjects = new SerializeObject[6];
+	private static int serializeObjectsIndex = 0;
 	/**
 	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by
 	 * {@link #serialize} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware
@@ -72,7 +71,7 @@ public class FileHandle
 	 */
 	public static void registerSerialize(String fileName, Object object)
 	{
-		serializeObjects.add(new SerializeObject(fileName, object));
+		serializeObjects[serializeObjectsIndex++] = new SerializeObject(fileName, object);
 	}
 
 	/**

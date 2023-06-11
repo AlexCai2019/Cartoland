@@ -56,7 +56,7 @@ public class PrivateMessage implements IMessage
 				rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
 
 			IDAndEntities.undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
-			FileHandle.log(author.getAsTag() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
+			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MEMBER, e ->
 				message.reply("You are not a member of " + IDAndEntities.cartolandServer.getName() + can_t).mentionRepliedUser(false).queue()));
 	}

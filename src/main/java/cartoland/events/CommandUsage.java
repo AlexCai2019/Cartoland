@@ -147,7 +147,7 @@ public class CommandUsage extends ListenerAdapter
 	{
 		String commandName = event.getName();
 		User user = event.getUser();
-		FileHandle.log(user.getAsTag() + "(" + user.getIdLong() + ") used /" + commandName);
+		FileHandle.log(user.getName() + "(" + user.getIdLong() + ") used /" + commandName);
 		ICommand commandExecution = commands.get(commandName);
 		if (commandExecution != null)
 			commandExecution.commandProcess(event);

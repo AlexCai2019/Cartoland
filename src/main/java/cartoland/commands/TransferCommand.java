@@ -80,7 +80,7 @@ public class TransferCommand implements ICommand
 		}
 
 		long afterHave = nowHave - transferAmount;
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getAsTag(), afterHave))
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getName(), afterHave))
 			.queue(interactionHook ->
 			{
 				CommandBlocksHandle.set(targetID, Algorithm.safeAdd(CommandBlocksHandle.get(targetID), transferAmount));

@@ -18,6 +18,7 @@
   - 📄`users.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
   - 📄`command_blocks.ser`，從一个索引和值攏是`Long`的`HashMap`串聯化而來。
   - 📄`idled_questions.ser`，從一个值是`Long`的`HashSet`串聯化而來。
+  - 📄`has_start_message.ser`，從一个值是`Long`的`HashSet`串聯化而來。
   - 📄`introduction.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
   - 📄`all_members.ser`，從一个值是`Long`的`HashSet`串聯化而來。
 

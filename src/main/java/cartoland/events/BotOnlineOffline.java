@@ -169,7 +169,7 @@ public class BotOnlineOffline extends ListenerAdapter
 		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockUsers.size());
 		commandBlockUsers.forEach(userID -> retrieve.add(jda.retrieveUserById(userID)));
 		if (retrieve.size() > 0)
-			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getAsTag())));
+			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getName())));
 		CommandBlocksHandle.changed = true;
 	}
 }

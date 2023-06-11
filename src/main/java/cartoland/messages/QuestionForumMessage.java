@@ -37,6 +37,9 @@ public class QuestionForumMessage implements IMessage
 		if (QuestionForumHandle.isIdled(forumPost))
 			QuestionForumHandle.unIdleForumPost(forumPost, false);
 
+		if (QuestionForumHandle.shouldSendStartEmbed(forumPost)) //如果是第一次傳送初始訊息
+			QuestionForumHandle.sendStartEmbed(forumPost); //傳送指南
+
 		if (!QuestionForumHandle.typedResolved(message)) //不是:resolved:表情符號
 			return;
 

@@ -18,6 +18,7 @@
   - 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
   - 📄`command_blocks.ser`，从一个键和值皆为`Long`的`HashMap`序列化而来。
   - 📄`idled_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
+  - 📄`has_start_message.ser`，从一个键为`Long`的`HashSet`序列化而来。
   - 📄`introduction.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
   - 📄`all_members.ser`，从一个键为`Long`的`HashSet`序列化而来。
 

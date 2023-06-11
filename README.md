@@ -18,6 +18,7 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
   - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`command_blocks.ser` serialized from a `HashMap` which use `Long` as both key and value.
   - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
 

@@ -62,18 +62,34 @@ public class QuestionForumHandle
 			""".formatted(resolvedFormat, resolvedFormat);
 
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
+	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
 	private static final Set<Long> idledForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
+			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
+	private static final Set<Long> hasStartMessageForumPosts = FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME) instanceof HashSet<?> set ?
 			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
 
 	static
 	{
 		FileHandle.registerSerialize(IDLED_QUESTIONS_SET_FILE_NAME, idledForumPosts);
+		FileHandle.registerSerialize(HAS_START_MESSAGE_FILE_NAME, hasStartMessageForumPosts);
+	}
+
+	public static boolean shouldSendStartEmbed(ThreadChannel forumPost)
+	{
+		return !hasStartMessageForumPosts.contains(forumPost.getIdLong());
+	}
+
+	public static void sendStartEmbed(ThreadChannel forumPost)
+	{
+		forumPost.sendMessageEmbeds(startEmbed).queue();
+		hasStartMessageForumPosts.add(forumPost.getIdLong());
 	}
 
 	public static void createForumPost(ThreadChannel forumPost)
 	{
-		forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
+		if (forumPost.getLatestMessageIdLong() != 0) //有初始訊息
+			sendStartEmbed(forumPost);//傳送發問指南
 
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
@@ -133,11 +149,7 @@ public class QuestionForumHandle
 			idledForumPosts.add(forumPost.getIdLong());
 
 			//增加🎗️
-			forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
-			{
-				if (messages.size() > 0)
-					messages.get(0).addReaction(reminder_ribbon).queue();
-			});
+			forumPost.retrieveStartMessage().queue(message -> message.addReaction(reminder_ribbon).queue());
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 		{
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
@@ -150,15 +162,11 @@ public class QuestionForumHandle
 		if (forumPost.isArchived() || forumPost.isLocked())
 			return;
 
-		forumPost.getIterableHistory().reverse().limit(1).queue(messages ->
+		forumPost.retrieveStartMessage().queue(message ->
 		{
 			//移除🎗️
-			if (messages.size() > 0)
-			{
-				Message message = messages.get(0);
-				if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
-					message.removeReaction(reminder_ribbon).queue();
-			}
+			if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
+				message.removeReaction(reminder_ribbon).queue();
 
 			idledForumPosts.remove(forumPost.getIdLong());
 

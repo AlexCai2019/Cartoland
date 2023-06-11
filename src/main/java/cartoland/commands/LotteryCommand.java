@@ -34,7 +34,7 @@ public class LotteryCommand implements ICommand
 			}
 
 			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-								.formatted(target.getAsTag(), CommandBlocksHandle.get(target.getIdLong()))).queue();
+								.formatted(target.getName(), CommandBlocksHandle.get(target.getIdLong()))).queue();
 		});
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());

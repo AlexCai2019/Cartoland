@@ -43,7 +43,9 @@ public class Cartoland
 						new ContextMenu(), //當有人使用右鍵功能
 						new NewMember(), //當有人加入、離開，或獲得會員身分組
 						new ThreadEvent(), //和討論串有關
-						new UserChangeName()) //當有人改名(不是暱稱)
+						new UserChangeName(), //當有人改名(不是暱稱)
+						new ClickedButton(), //當有人按按鈕
+						new ReceiveModal()) //當有人使用Modal時
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Do /help for more information")) //正在玩

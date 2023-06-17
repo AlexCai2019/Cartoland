@@ -2,13 +2,15 @@ package cartoland.utilities;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import net.dv8tion.jda.api.interactions.commands.*;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
-
-import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static cartoland.commands.ICommand.*;
+import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 /**
  * {@code AddCommands} is a utility that holds every command. The only usage is for {@link cartoland.Cartoland#main} to
@@ -29,22 +31,15 @@ public class AddCommands
 	//沒有十足的信心 不要編輯這裡的程式碼
 	public static final CommandData[] commands =
 	{
-		Commands.slash("invite", "Get invite link of Cartoland")
+		Commands.slash(INVITE, "Get invite link of Cartoland")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
 				.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请链接"),
 
-		Commands.slash("help", "Get help with bot commands")
+		Commands.slash(HELP, "Get help with bot commands")
 				.addOptions(
 						new OptionData(OptionType.STRING, "help_name", "The command you want help with", false, false)
 								.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的指令")
-								.setDescriptionLocalization(CHINESE_CHINA, "想确认的命令")
-								.addChoice("invite", "invite")
-								.addChoice("cmd", "cmd")
-								.addChoice("faq", "faq")
-								.addChoice("dtp", "dtp")
-								.addChoice("tool", "tool")
-								.addChoice("lang", "lang")
-								.addChoice("quote", "quote")),
+								.setDescriptionLocalization(CHINESE_CHINA, "想确认的命令")),
 
 		Cmd.cmd,
 		Cmd.mcc,
@@ -59,7 +54,7 @@ public class AddCommands
 		Jira.jira,
 		Jira.bug,
 
-		Commands.slash("tool", "Various helpful utilities")
+		Commands.slash(TOOL, "Various helpful utilities")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "能協助你的工具")
 				.setDescriptionLocalization(CHINESE_CHINA, "能协助你的工具")
 				.addSubcommands(
@@ -121,7 +116,7 @@ public class AddCommands
 		Lang.lang,
 		Lang.language,
 
-		Commands.slash("quote", "Display content from a message link")
+		Commands.slash(QUOTE, "Display content from a message link")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
 				.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息链接的内容")
 				.addOptions(new OptionData(OptionType.STRING, "link", "The link to the message", true, false)
@@ -130,16 +125,17 @@ public class AddCommands
 									.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
 									.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
 
-		Commands.slash("youtuber", "Send a link of a YouTube video creator channel")
+		Commands.slash(YOUTUBER, "Send a link of a YouTube video creator channel")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
 				.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
 				.addOptions(new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", false, true)
 									.setNameLocalization(CHINESE_TAIWAN, "名字")
 									.setNameLocalization(CHINESE_CHINA, "名字")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
-									.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")),
+									.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")
+									.addChoices()),
 
-		Commands.slash("introduce", "Introduce a user or update your introduction")
+		Commands.slash(INTRODUCE, "Introduce a user or update your introduction")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "獲取一名使用者的介紹，或更新你的自我介紹")
 				.setDescriptionLocalization(CHINESE_CHINA, "获取一名用户的介绍，或更新你的自我介绍")
 				.addSubcommands(
@@ -160,17 +156,17 @@ public class AddCommands
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
 											.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
 
-		Commands.slash("megumin", "The best anime girl")
+		Commands.slash(MEGUMIN, "The best anime girl")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 				.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")
 				.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
 
-		Commands.slash("shutdown", "Use this to shut down the bot")
+		Commands.slash(SHUTDOWN, "Use this to shut down the bot")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
-		Commands.slash("reload", "Reload all JSON files")
+		Commands.slash(RELOAD, "Reload all JSON files")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 
-		Commands.slash("one_a_two_b", "Play a game of 1A2B")
+		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
 				.addOptions(new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
@@ -178,7 +174,7 @@ public class AddCommands
 											.setNameLocalization(CHINESE_CHINA, "答案")
 											.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
 											.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
-		Commands.slash("lottery", "Play the lottery game")
+		Commands.slash(LOTTERY, "Play the lottery game")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 				.setDescriptionLocalization(CHINESE_CHINA, "抽奖")
 				.addSubcommands(
@@ -209,7 +205,7 @@ public class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "页数")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "排名清單的頁數")
 												.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数"))),
-		Commands.slash("transfer", "Transfer your command blocks")
+		Commands.slash(TIC_TAC_TOE, "Transfer your command blocks")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 				.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")
 				.addOptions(
@@ -263,15 +259,15 @@ class Cmd
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft指令的名字")
 					.setDescriptionLocalization(CHINESE_CHINA, "Minecraft命令的名字");
 
-	static final SlashCommandData cmd = Commands.slash("cmd", "Get help with Minecraft commands")
+	static final SlashCommandData cmd = Commands.slash(CMD, "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 
-	static final SlashCommandData mcc = Commands.slash("mcc", "Get help with Minecraft commands")
+	static final SlashCommandData mcc = Commands.slash(MCC, "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 
-	static final SlashCommandData command = Commands.slash("command", "Get help with Minecraft commands")
+	static final SlashCommandData command = Commands.slash(COMMAND, "Get help with Minecraft commands")
 			.setDescriptionLocalizations(cmdDescriptions)
 			.addOptions(cmdOption);
 }
@@ -305,11 +301,11 @@ class Faq
 					.setDescriptionLocalization(CHINESE_TAIWAN, "地圖製作的問題")
 					.setDescriptionLocalization(CHINESE_CHINA, "地图制作的问题");
 
-	static final SlashCommandData faq = Commands.slash("faq", "Find answers to map making questions")
+	static final SlashCommandData faq = Commands.slash(FAQ, "Find answers to map making questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 
-	static final SlashCommandData question = Commands.slash("question", "Find answers to map making questions")
+	static final SlashCommandData question = Commands.slash(QUESTION, "Find answers to map making questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 }
@@ -343,11 +339,11 @@ class Dtp
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft資料包的功能")
 					.setDescriptionLocalization(CHINESE_CHINA, "Minecraft数据包的功能");
 
-	static final SlashCommandData dtp = Commands.slash("dtp", "Get help with Minecraft datapack features")
+	static final SlashCommandData dtp = Commands.slash(DTP, "Get help with Minecraft datapack features")
 			.setDescriptionLocalizations(dtpDescriptions)
 			.addOptions(dtpOption);
 
-	static final SlashCommandData datapack = Commands.slash("datapack", "Get help with Minecraft datapack features")
+	static final SlashCommandData datapack = Commands.slash(DATAPACK, "Get help with Minecraft datapack features")
 			.setDescriptionLocalizations(dtpDescriptions)
 			.addOptions(dtpOption);
 }
@@ -387,11 +383,11 @@ class Lang
 					.addChoice("简体中文", Languages.CHINESE)
 					.addChoice("Español", Languages.ESPANOL);
 
-	static final SlashCommandData lang = Commands.slash("lang", "Change language")
+	static final SlashCommandData lang = Commands.slash(LANG, "Change language")
 			.setDescriptionLocalizations(langDescriptions)
 			.addOptions(langOptions);
 
-	static final SlashCommandData language = Commands.slash("language", "Change language")
+	static final SlashCommandData language = Commands.slash(LANGUAGE, "Change language")
 			.setDescriptionLocalizations(langDescriptions)
 			.addOptions(langOptions);
 }
@@ -416,11 +412,11 @@ class Jira
 					.setNameLocalization(CHINESE_TAIWAN, "漏洞連結")
 					.setNameLocalization(CHINESE_CHINA, "漏洞链接");
 
-	static final SlashCommandData jira = Commands.slash("jira", "Minecraft bug")
+	static final SlashCommandData jira = Commands.slash(JIRA, "Minecraft bug")
 			.setDescriptionLocalizations(jiraDescriptions)
 			.addOptions(jiraOptions);
 
-	static final SlashCommandData bug = Commands.slash("bug", "Minecraft bug")
+	static final SlashCommandData bug = Commands.slash(BUG, "Minecraft bug")
 			.setDescriptionLocalizations(jiraDescriptions)
 			.addOptions(jiraOptions);
 }

@@ -1,18 +1,16 @@
 package cartoland.events;
 
-import cartoland.utilities.*;
-import net.dv8tion.jda.api.entities.User;
+import cartoland.utilities.CommandBlocksHandle;
+import cartoland.utilities.FileHandle;
+import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -151,9 +149,11 @@ public class BotOnlineOffline extends ListenerAdapter
 	//https://stackoverflow.com/questions/65984126
 	private void ohBoy3AM()
 	{
-		threeAMTask = scheduleExecutor.scheduleAtFixedRate(
-			() -> undergroundChannel.sendMessage("https://imgur.com/EGO35hf").queue(),
-			secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		threeAMTask = scheduleExecutor.scheduleAtFixedRate(() ->
+			{
+				undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue();
+				undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue();
+			}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void idleFormPost12PM()
@@ -166,10 +166,8 @@ public class BotOnlineOffline extends ListenerAdapter
 	private void initialIDAndName()
 	{
 		Set<Long> commandBlockUsers = CommandBlocksHandle.getKeySet();
-		List<CacheRestAction<User>> retrieve = new ArrayList<>(commandBlockUsers.size());
-		commandBlockUsers.forEach(userID -> retrieve.add(jda.retrieveUserById(userID)));
-		if (retrieve.size() > 0)
-			RestAction.allOf(retrieve).queue(users -> users.forEach(user -> idAndNames.put(user.getIdLong(), user.getName())));
+		for (long userID : commandBlockUsers)
+			jda.retrieveUserById(userID).queue(user -> idAndNames.put(user.getIdLong(), user.getEffectiveName()));
 		CommandBlocksHandle.changed = true;
 	}
 }

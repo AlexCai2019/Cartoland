@@ -45,6 +45,6 @@ public class ContextMenu extends ListenerAdapter
 			}
 		}
 
-		FileHandle.log(user.getName() + "(" + user.getIdLong() + ") used " + eventName);
+		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);
 	}
 }

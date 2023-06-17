@@ -10,6 +10,31 @@ package cartoland.commands;
  */
 public interface ICommand
 {
+	String INVITE = "invite";
+	String HELP = "help";
+	String CMD = "cmd";
+	String MCC = "mcc";
+	String COMMAND = "command";
+	String FAQ = "faq";
+	String QUESTION = "question";
+	String DTP = "dtp";
+	String DATAPACK = "datapack";
+	String JIRA = "jira";
+	String BUG = "bug";
+	String TOOL = "tool";
+	String LANG = "lang";
+	String LANGUAGE = "language";
+	String QUOTE = "quote";
+	String YOUTUBER = "youtuber";
+	String INTRODUCE = "introduce";
+	String MEGUMIN = "megumin";
+	String SHUTDOWN = "shutdown";
+	String RELOAD = "reload";
+	String ONE_A_TWO_B = "one_a_two_b";
+	String LOTTERY = "lottery";
+	String TRANSFER = "transfer";
+	String TIC_TAC_TOE = "tic_tac_toe";
+
 	/**
 	 * The execution of a slash command.
 	 *

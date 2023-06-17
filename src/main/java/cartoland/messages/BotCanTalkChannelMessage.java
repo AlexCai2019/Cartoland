@@ -126,13 +126,13 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessage.equalsIgnoreCase("lol"))
 			channel.sendMessage("LOL").queue();
 
-		if (rawMessage.contains("早安"))
+		if (rawMessage.equals("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
-		if (rawMessage.contains("午安"))
+		if (rawMessage.equals("午安"))
 			channel.sendMessage("午安你好，歡迎來到" + IDAndEntities.cartolandServer.getName()).queue(); //午安長輩圖
-		if (rawMessage.contains("晚安"))
+		if (rawMessage.equals("晚安"))
 			channel.sendMessage("那我也要睡啦").queue();
-		if (rawMessage.contains("安安"))
+		if (rawMessage.equals("安安"))
 			channel.sendMessage("安安你好幾歲住哪").queue();
 
 		if (rawMessage.contains("聰明"))

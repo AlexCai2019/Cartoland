@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cartoland.commands.ICommand.*;
 import static cartoland.utilities.IDAndEntities.*;
 
 /**
@@ -51,51 +52,50 @@ public class CommandUsage extends ListenerAdapter
 
 		//初始化map 放入所有指令
 		//invite
-		commands.put("invite", event -> event.reply("https://discord.gg/UMYxwHyRNE").queue());
+		commands.put(INVITE, event -> event.reply("https://discord.gg/UMYxwHyRNE").queue());
 
 		//help
-		commands.put("help", event -> event.reply(minecraftCommandRelated("help", event)).queue());
+		commands.put(HELP, event -> event.reply(minecraftCommandRelated("help", event)).queue());
 
 		//cmd
 		alias = event -> event.reply(minecraftCommandRelated("cmd", event)).queue();
-		commands.put("cmd", alias);
-		commands.put("mcc", alias);
-		commands.put("command", alias);
+		commands.put(CMD, alias);
+		commands.put(MCC, alias);
+		commands.put(COMMAND, alias);
 
 		//faq
 		alias = event -> event.reply(minecraftCommandRelated("faq", event)).queue();
-		commands.put("faq", alias);
-		commands.put("question", alias);
+		commands.put(FAQ, alias);
+		commands.put(QUESTION, alias);
 
 		//dtp
 		alias = event -> event.reply(minecraftCommandRelated("dtp", event)).queue();
-		commands.put("dtp", alias);
-		commands.put("datapack", alias);
+		commands.put(DTP, alias);
+		commands.put(DATAPACK, alias);
 
 		//jira
 		alias = new JiraCommand();
-		commands.put("jira", alias);
-		commands.put("bug", alias);
+		commands.put(JIRA, alias);
+		commands.put(BUG, alias);
 
 		//tool
-		commands.put("tool", new ToolCommand());
+		commands.put(TOOL, new ToolCommand());
 
 		//lang
 		alias = event -> event.reply(minecraftCommandRelated("lang", event)).queue();
-		commands.put("lang", alias);
-		commands.put("language", alias);
+		commands.put(LANG, alias);
+		commands.put(LANGUAGE, alias);
 
-		commands.put("quote", new QuoteCommand());
+		commands.put(QUOTE, new QuoteCommand());
 
-		commands.put("youtuber", event ->
-				event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", CommonFunctions.getAsString)).queue());
+		commands.put(YOUTUBER, event -> event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", CommonFunctions.getAsString)).queue());
 
-		commands.put("introduce", new IntroduceCommand());
+		commands.put(INTRODUCE, new IntroduceCommand());
 
-		commands.put("megumin", event -> event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
+		commands.put(MEGUMIN, event -> event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
 
 		//shutdown
-		commands.put("shutdown", event ->
+		commands.put(SHUTDOWN, event ->
 		{
 			if (event.getUser().getIdLong() != AC_ID) //不是我
 			{
@@ -111,7 +111,7 @@ public class CommandUsage extends ListenerAdapter
 		});
 
 		//reload
-		commands.put("reload", event ->
+		commands.put(RELOAD, event ->
 		{
 			if (event.getUser().getIdLong() != AC_ID) //不是我
 			{
@@ -123,16 +123,16 @@ public class CommandUsage extends ListenerAdapter
 		});
 
 		//one_a_two_b
-		commands.put("one_a_two_b", new OneATwoBCommand(this));
+		commands.put(ONE_A_TWO_B, new OneATwoBCommand(this));
 
 		//lottery
-		commands.put("lottery", new LotteryCommand());
+		commands.put(LOTTERY, new LotteryCommand());
 
 		//transfer
-		commands.put("transfer", new TransferCommand());
+		commands.put(TRANSFER, new TransferCommand());
 
 		//tic_tac_toe
-		commands.put("tic_tac_toe", new TicTacToeCommand(this));
+		commands.put(TIC_TAC_TOE, new TicTacToeCommand(this));
 	}
 
 	/**
@@ -147,7 +147,7 @@ public class CommandUsage extends ListenerAdapter
 	{
 		String commandName = event.getName();
 		User user = event.getUser();
-		FileHandle.log(user.getName() + "(" + user.getIdLong() + ") used /" + commandName);
+		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used /" + commandName);
 		ICommand commandExecution = commands.get(commandName);
 		if (commandExecution != null)
 			commandExecution.commandProcess(event);

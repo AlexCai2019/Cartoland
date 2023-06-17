@@ -47,7 +47,7 @@ public class NewMember extends ListenerAdapter
 		if (!user.hasPrivateChannel())
 			return;
 		String serverName = IDAndEntities.cartolandServer.getName();
-		String userName = user.getName();
+		String userName = user.getEffectiveName();
 		user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)).queue());
 	}
 

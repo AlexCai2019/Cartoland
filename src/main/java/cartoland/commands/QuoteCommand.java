@@ -59,7 +59,7 @@ public class QuoteCommand implements ICommand
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
 
-			embedBuilder.setAuthor(linkAuthor.getName(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
+			embedBuilder.setAuthor(linkAuthor.getEffectiveName(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
 					.setDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道

@@ -34,7 +34,7 @@ public class LotteryCommand implements ICommand
 			}
 
 			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-								.formatted(target.getName(), CommandBlocksHandle.get(target.getIdLong()))).queue();
+								.formatted(target.getEffectiveName(), CommandBlocksHandle.get(target.getIdLong()))).queue();
 		});
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());
@@ -242,7 +242,7 @@ class RankingSubCommand implements ICommand
 	private int forSortBinarySearch(long blocks)
 	{
 		long midValue;
-		for (int low = 0, middle, high = forSort.size() - 1; low < high;)
+		for (int low = 0, middle, high = forSort.size() - 1; low <= high;)
 		{
 			middle = (low + high) >>> 1;
 			midValue = forSort.get(middle).blocks();

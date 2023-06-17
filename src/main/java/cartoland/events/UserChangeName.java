@@ -19,7 +19,7 @@ public class UserChangeName extends ListenerAdapter
 	public void onUserUpdateName(UserUpdateNameEvent event)
 	{
 		User user = event.getUser();
-		IDAndEntities.idAndNames.replace(user.getIdLong(), user.getName());
+		IDAndEntities.idAndNames.replace(user.getIdLong(), user.getEffectiveName());
 		CommandBlocksHandle.changed = true;
 	}
 }

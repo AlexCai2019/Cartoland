@@ -20,7 +20,8 @@ public class MessageEvent extends ListenerAdapter
 		new PrivateMessage(),
 		new BotCanTalkChannelMessage(),
 		new QuestionForumMessage(),
-		new IntroduceMessage()
+		new IntroduceMessage(),
+		new ShowcaseMessage()
 	};
 
 	@Override

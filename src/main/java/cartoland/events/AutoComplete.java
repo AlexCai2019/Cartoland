@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cartoland.commands.ICommand.*;
+
 /**
  * {@code AutoComplete} is a listener that triggers when a user is typing a command. This class was registered
  * in {@link cartoland.Cartoland#main}, with the build of JDA. It uses {@link #commands} to store every commands that
@@ -28,22 +30,24 @@ public class AutoComplete extends ListenerAdapter
 	{
 		GenericComplete alias;
 
+		commands.put(HELP, new JsonBasedComplete("help"));
+
 		alias = new JsonBasedComplete("cmd");
-		commands.put("cmd", alias);
-		commands.put("mcc", alias);
-		commands.put("command", alias);
+		commands.put(CMD, alias);
+		commands.put(MCC, alias);
+		commands.put(COMMAND, alias);
 
 		alias = new JsonBasedComplete("faq");
-		commands.put("faq", alias);
-		commands.put("question", alias);
+		commands.put(FAQ, alias);
+		commands.put(QUESTION, alias);
 
 		alias = new JsonBasedComplete("dtp");
-		commands.put("dtp", alias);
-		commands.put("datapack", alias);
+		commands.put(DTP, alias);
+		commands.put(DATAPACK, alias);
 
-		commands.put("youtuber", new YouTuberComplete());
+		commands.put(YOUTUBER, new YouTuberComplete());
 
-		commands.put("introduce", new IntroduceComplete());
+		commands.put(INTRODUCE, new IntroduceComplete());
 	}
 
 	@Override

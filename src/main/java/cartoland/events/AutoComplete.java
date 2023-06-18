@@ -6,10 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cartoland.commands.ICommand.*;
 
@@ -119,17 +116,17 @@ class JsonBasedComplete extends GenericComplete
  */
 class YouTuberComplete extends GenericComplete
 {
-	private final Map<String, String> youtubers = new HashMap<>();
+	private final Map<String, String> youtubers = new LinkedHashMap<>(); //LinkedHashMap or TreeMap ?
 
 	YouTuberComplete()
 	{
 		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
+		youtubers.put("Phoenix SC", "@PhoenixSC");
+		youtubers.put("SethBling", "@SethBling");
+		youtubers.put("slicedlime", "@slicedlime");
 		youtubers.put("天豹星雲", "@nebulirion");
 		youtubers.put("惡靈oreki", "@oreki20");
 		youtubers.put("收音機", "@radio0529");
-		youtubers.put("SethBling", "@SethBling");
-		youtubers.put("slicedlime", "@slicedlime");
-		youtubers.put("Phoenix SC", "@PhoenixSC");
 	}
 
 	@Override

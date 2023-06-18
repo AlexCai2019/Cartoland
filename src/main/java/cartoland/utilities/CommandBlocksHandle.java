@@ -64,10 +64,11 @@ public class CommandBlocksHandle
 
 		cartolandServer.retrieveMemberById(userID).queue(member ->
 		{
-			if (value >= GAMBLE_ROLE_MIN && !member.getRoles().contains(godOfGamblersRole))
-				cartolandServer.addRoleToMember(member, godOfGamblersRole).queue();
-			else if (value < GAMBLE_ROLE_MIN && member.getRoles().contains(godOfGamblersRole))
-				cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue();
+			boolean hasRole = member.getRoles().contains(godOfGamblersRole);
+			if (value >= GAMBLE_ROLE_MIN && !hasRole)
+				cartolandServer.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
+			else if (value < GAMBLE_ROLE_MIN && hasRole)
+				cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
 		});
 	}
 

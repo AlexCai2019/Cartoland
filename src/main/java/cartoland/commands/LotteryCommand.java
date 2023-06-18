@@ -128,7 +128,8 @@ class BetSubCommand implements ICommand
 		if (bet == nowHave) //梭哈
 			replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
 
-		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.setBlocks(userID, afterBet));
+		CommandBlocksHandle.setBlocks(userID, afterBet);
+		event.reply(replyMessage).queue();
 	}
 }
 
@@ -155,7 +156,9 @@ class RankingSubCommand implements ICommand
 		int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
-		else if (page < 1)
+		else if (page < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
+			page = (-page < maxPage) ? maxPage + page + 1 : 1;
+		else if (page == 0)
 			page = 1;
 
 		if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動

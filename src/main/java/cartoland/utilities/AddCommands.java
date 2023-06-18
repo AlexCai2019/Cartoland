@@ -105,13 +105,15 @@ public class AddCommands
 						new SubcommandData("color_integer", "Get color data from RGB integer")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
-								.addOptions(new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
-													.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
-													.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
+								.addOptions(
+										new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
+												.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
+												.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
 						new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
-								.addOptions(new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
-													.addChoice("Data Pack", "d")
-													.addChoice("Resource Pack", "r"))),
+								.addOptions(
+										new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
+												.addChoice("Data Pack", "d")
+												.addChoice("Resource Pack", "r"))),
 
 		Lang.lang,
 		Lang.language,
@@ -119,42 +121,45 @@ public class AddCommands
 		Commands.slash(QUOTE, "Display content from a message link")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
 				.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息链接的内容")
-				.addOptions(new OptionData(OptionType.STRING, "link", "The link to the message", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "連結")
-									.setNameLocalization(CHINESE_CHINA, "链接")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
-									.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
+				.addOptions(
+						new OptionData(OptionType.STRING, "link", "The link to the message", true, false)
+								.setNameLocalization(CHINESE_TAIWAN, "連結")
+								.setNameLocalization(CHINESE_CHINA, "链接")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
+								.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
 
 		Commands.slash(YOUTUBER, "Send a link of a YouTube video creator channel")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
 				.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
-				.addOptions(new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", false, true)
-									.setNameLocalization(CHINESE_TAIWAN, "名字")
-									.setNameLocalization(CHINESE_CHINA, "名字")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
-									.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")
-									.addChoices()),
+				.addOptions(
+						new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", true, true)
+								.setNameLocalization(CHINESE_TAIWAN, "名字")
+								.setNameLocalization(CHINESE_CHINA, "名字")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
+								.setDescriptionLocalization(CHINESE_CHINA, "YouTuber的名字")),
 
 		Commands.slash(INTRODUCE, "Introduce a user or update your introduction")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "獲取一名使用者的介紹，或更新你的自我介紹")
 				.setDescriptionLocalization(CHINESE_CHINA, "获取一名用户的介绍，或更新你的自我介绍")
 				.addSubcommands(
-				new SubcommandData("user", "User")
-						.setDescriptionLocalization(CHINESE_TAIWAN, "使用者")
-						.setDescriptionLocalization(CHINESE_CHINA, "用户")
-						.addOptions(new OptionData(OptionType.USER, "user", "The user that you want to know", false, false)
-											.setNameLocalization(CHINESE_TAIWAN, "使用者")
-											.setNameLocalization(CHINESE_CHINA, "用户")
-											.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
-											.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
+						new SubcommandData("user", "User")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "使用者")
+								.setDescriptionLocalization(CHINESE_CHINA, "用户")
+								.addOptions(
+										new OptionData(OptionType.USER, "user", "The user that you want to know", false, false)
+												.setNameLocalization(CHINESE_TAIWAN, "使用者")
+												.setNameLocalization(CHINESE_CHINA, "用户")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
+												.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
 				new SubcommandData("update", "Update your introduction")
 						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
 						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
-						.addOptions(new OptionData(OptionType.STRING, "content", "Your self introduction", true, true)
-											.setNameLocalization(CHINESE_TAIWAN, "內容")
-											.setNameLocalization(CHINESE_CHINA, "内容")
-											.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
-											.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
+						.addOptions(
+								new OptionData(OptionType.STRING, "content", "Your self introduction", true, true)
+										.setNameLocalization(CHINESE_TAIWAN, "內容")
+										.setNameLocalization(CHINESE_CHINA, "内容")
+										.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
+										.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
 
 		Commands.slash(MEGUMIN, "The best anime girl")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
@@ -169,11 +174,12 @@ public class AddCommands
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
-				.addOptions(new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
-											.setNameLocalization(CHINESE_TAIWAN, "答案")
-											.setNameLocalization(CHINESE_CHINA, "答案")
-											.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
-											.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
+				.addOptions(
+						new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
+								.setNameLocalization(CHINESE_TAIWAN, "答案")
+								.setNameLocalization(CHINESE_CHINA, "答案")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
+								.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
 		Commands.slash(LOTTERY, "Play the lottery game")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 				.setDescriptionLocalization(CHINESE_CHINA, "抽奖")

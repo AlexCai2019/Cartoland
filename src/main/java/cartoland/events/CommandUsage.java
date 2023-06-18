@@ -92,7 +92,11 @@ public class CommandUsage extends ListenerAdapter
 
 		commands.put(INTRODUCE, new IntroduceCommand());
 
-		commands.put(MEGUMIN, event -> event.reply(Algorithm.randomElement(twitterAuthors).getRandomURL()).queue()); //隨機一張惠惠
+		commands.put(MEGUMIN, event ->
+		{
+			TA twitterAuthor = Algorithm.randomElement(twitterAuthors);
+			event.reply("https://twitter.com/" + twitterAuthor.name() + "/status/" + Algorithm.randomElement(twitterAuthor.artworks())).queue();
+		}); //隨機一張惠惠
 
 		//shutdown
 		commands.put(SHUTDOWN, event ->
@@ -178,10 +182,4 @@ public class CommandUsage extends ListenerAdapter
  * @since 1.3
  * @author Alex Cai
  */
-record TA(String name, long... artworks)
-{
-	String getRandomURL()
-	{
-		return "https://twitter.com/" + name + "/status/" + Algorithm.randomElement(artworks);
-	}
-}
+record TA(String name, long... artworks) {}

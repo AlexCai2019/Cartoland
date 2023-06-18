@@ -53,7 +53,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		long nowHave = CommandBlocksHandle.get(userID);
+		long nowHave = CommandBlocksHandle.getBlocks(userID);
 		long transferAmount;
 		if (numberRegex.matcher(transferAmountString).matches())
 			transferAmount = Long.parseLong(transferAmountString);
@@ -83,8 +83,8 @@ public class TransferCommand implements ICommand
 		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getEffectiveName(), afterHave))
 			.queue(interactionHook ->
 			{
-				CommandBlocksHandle.set(targetID, Algorithm.safeAdd(CommandBlocksHandle.get(targetID), transferAmount));
-				CommandBlocksHandle.set(userID, afterHave);
+				CommandBlocksHandle.setBlocks(targetID, Algorithm.safeAdd(CommandBlocksHandle.getBlocks(targetID), transferAmount));
+				CommandBlocksHandle.setBlocks(userID, afterHave);
 			});
 	}
 }

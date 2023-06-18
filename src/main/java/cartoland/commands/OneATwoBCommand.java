@@ -87,7 +87,7 @@ public class OneATwoBCommand implements ICommand
 		if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES)
 		{
 			replyString += JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.reward").formatted(MAX_MINUTE, MAX_GUESSES, REWARD);
-			CommandBlocksHandle.add(userID, REWARD);
+			CommandBlocksHandle.addBlocks(userID, REWARD);
 		}
 
 		event.reply(replyString).queue();

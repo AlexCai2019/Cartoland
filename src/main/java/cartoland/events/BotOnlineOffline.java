@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -74,6 +73,10 @@ public class BotOnlineOffline extends ListenerAdapter
 		if (unresolvedForumTag == null)
 			problemOccurred("Can't find Unresolved Forum Tag");
 
+		godOfGamblersRole = cartolandServer.getRoleById(GOD_OF_GAMBLERS_ROLE_ID); //賭神身分組
+		if (godOfGamblersRole == null)
+			problemOccurred("Can't find god Of Gamblers Role.");
+
 		memberRole = cartolandServer.getRoleById(MEMBER_ROLE_ID); //會員身分組
 		if (memberRole == null)
 			problemOccurred("Can't find Member Role.");
@@ -88,7 +91,7 @@ public class BotOnlineOffline extends ListenerAdapter
 
 		idleFormPost12PM(); //中午十二點時處理並提醒未解決的論壇貼文
 
-		initialIDAndName(); //初始化idAndName
+		CommandBlocksHandle.initial(); //初始化idAndName
 
 		botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
 		String logString = "online";
@@ -161,13 +164,5 @@ public class BotOnlineOffline extends ListenerAdapter
 		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(
 			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::tryIdleForumPost),
 			secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
-	}
-
-	private void initialIDAndName()
-	{
-		Set<Long> commandBlockUsers = CommandBlocksHandle.getKeySet();
-		for (long userID : commandBlockUsers)
-			jda.retrieveUserById(userID).queue(user -> idAndNames.put(user.getIdLong(), user.getEffectiveName()));
-		CommandBlocksHandle.changed = true;
 	}
 }

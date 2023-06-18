@@ -1,7 +1,6 @@
 package cartoland.events;
 
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -19,7 +18,7 @@ public class UserChangeName extends ListenerAdapter
 	public void onUserUpdateName(UserUpdateNameEvent event)
 	{
 		User user = event.getUser();
-		IDAndEntities.idAndNames.replace(user.getIdLong(), user.getEffectiveName());
+		CommandBlocksHandle.rename(user.getIdLong(), user.getEffectiveName());
 		CommandBlocksHandle.changed = true;
 	}
 }

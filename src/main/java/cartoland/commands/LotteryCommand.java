@@ -4,7 +4,10 @@ import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -34,7 +37,7 @@ public class LotteryCommand implements ICommand
 			}
 
 			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-								.formatted(target.getEffectiveName(), CommandBlocksHandle.get(target.getIdLong()))).queue();
+								.formatted(target.getEffectiveName(), CommandBlocksHandle.getBlocks(target.getIdLong()))).queue();
 		});
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());
@@ -65,7 +68,7 @@ class BetSubCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = event.getUser().getIdLong();
-		long nowHave = CommandBlocksHandle.get(userID);
+		long nowHave = CommandBlocksHandle.getBlocks(userID);
 		String betString = event.getOption("bet", CommonFunctions.getAsString);
 
 		if (betString == null) //不帶參數
@@ -125,7 +128,7 @@ class BetSubCommand implements ICommand
 		if (bet == nowHave) //梭哈
 			replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
 
-		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.set(userID, afterBet));
+		event.reply(replyMessage).queue(interactionHook -> CommandBlocksHandle.setBlocks(userID, afterBet));
 	}
 }
 
@@ -138,7 +141,7 @@ class BetSubCommand implements ICommand
  */
 class RankingSubCommand implements ICommand
 {
-	private final List<UserNameAndBlocks> forSort = new ArrayList<>(100); //需要排序的list
+	private List<CommandBlocksHandle.NameAndBlocks> forSort; //需要排序的list
 	private String lastReply; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
 
@@ -152,6 +155,8 @@ class RankingSubCommand implements ICommand
 		int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;
 		if (page > maxPage) //超出範圍
 			page = maxPage; //同上例子 就改成顯示第3頁
+		else if (page < 1)
+			page = 1;
 
 		if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
 		{
@@ -161,16 +166,10 @@ class RankingSubCommand implements ICommand
 			return;
 		}
 
-		forSort.clear(); //清除forSort
-		CommandBlocksHandle.getKeySet().forEach(userID -> //走訪所有的ID
-		{
-			String userName = IDAndEntities.idAndNames.get(userID); //透過ID從Map資料庫內獲得名字
-			if (userName != null)
-				forSort.add(new UserNameAndBlocks(userName, CommandBlocksHandle.get(userID))); //新增一對名字和方塊數量
-		});
+		forSort = CommandBlocksHandle.toArrayList();
 
 		//排序
-		forSort.sort((user1, user2) -> Long.compare(user2.blocks(), user1.blocks())); //方塊較多的在前面 方塊較少的在後面
+		forSort.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面
 
 		CommandBlocksHandle.changed = false; //已經排序過了
 		lastPage = page; //換過頁了
@@ -197,8 +196,8 @@ class RankingSubCommand implements ICommand
 		if (endElement > forSort.size()) //結束的那個元素比list總長還長
 			endElement = forSort.size();
 
-		List<UserNameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-		long blocks = CommandBlocksHandle.get(user.getIdLong()); //本使用者擁有的方塊數
+		List<CommandBlocksHandle.NameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
+		long blocks = CommandBlocksHandle.getBlocks(user.getIdLong()); //本使用者擁有的方塊數
 
 		rankBuilder.setLength(0);
 		rankBuilder.append("```ansi\nCommand blocks in ")
@@ -211,13 +210,13 @@ class RankingSubCommand implements ICommand
 
 		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
 		{
-			UserNameAndBlocks rank = ranking.get(i);
+			CommandBlocksHandle.NameAndBlocks rank = ranking.get(i);
 			rankBuilder.append("[\u001B[36m")
 					.append(String.format("%03d", add + i))
 					.append("\u001B[0m]\t")
-					.append(rank.userName())
+					.append(rank.getName())
 					.append(": \u001B[36m")
-					.append(rank.blocks())
+					.append(rank.getBlocks())
 					.append("\u001B[0m\n");
 		}
 
@@ -245,7 +244,7 @@ class RankingSubCommand implements ICommand
 		for (int low = 0, middle, high = forSort.size() - 1; low <= high;)
 		{
 			middle = (low + high) >>> 1;
-			midValue = forSort.get(middle).blocks();
+			midValue = forSort.get(middle).getBlocks();
 
 			if (midValue < blocks)
 				high = middle - 1;
@@ -257,11 +256,3 @@ class RankingSubCommand implements ICommand
 		return 0;
 	}
 }
-
-/**
- * {@code UserNameAndBlocks} has a String userName and long blocks.
- *
- * @since 1.6
- * @author Alex Cai
- */
-record UserNameAndBlocks(String userName, long blocks) {}

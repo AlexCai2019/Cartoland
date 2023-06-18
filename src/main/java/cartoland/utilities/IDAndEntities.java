@@ -8,9 +8,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * {@code IDAndEntities} is a utility class that stores IDs, JDA entities and language constants. For example, this class
  * has some channel IDs, role IDs, and entities such as {@link JDA} and {@link TextChannel}. Can not be instantiated.
@@ -20,6 +17,8 @@ import java.util.Map;
  */
 public class IDAndEntities
 {
+	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
+
 	private IDAndEntities()
 	{
 		throw new AssertionError(YOU_SHALL_NOT_ACCESS);
@@ -39,14 +38,11 @@ public class IDAndEntities
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
 	public static final long RESOLVED_FORUM_TAG_ID = 1079074167468605490L; //已解決的tag
 	public static final long UNRESOLVED_FORUM_TAG_ID = 1079074098493280347L; //未解決的tag
+	public static final long GOD_OF_GAMBLERS_ROLE_ID = 1119944573117014096L; //賭神身分組
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
-
-	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
-
-	public static final Map<Long, String> idAndNames = new HashMap<>(); //ID為key 名字為value
 
 	public static JDA jda;
 	public static Guild cartolandServer;
@@ -56,6 +52,7 @@ public class IDAndEntities
 	public static TextChannel undergroundChannel;
 	public static ForumTag resolvedForumTag;
 	public static ForumTag unresolvedForumTag;
+	public static Role godOfGamblersRole;
 	public static Role memberRole;
 	public static Role nsfwRole;
 	public static User botItself;

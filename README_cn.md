@@ -16,7 +16,7 @@
 - 📁`logs/`
 - 📁`serialize/`，以及下列文件：
   - 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
-  - 📄`command_blocks.ser`，从一个键和值皆为`Long`的`HashMap`序列化而来。
+  - 📄`name_and_blocks.ser`，从一个键为`Long`、值为`cartoland.utilities.CommandBlocksHandle.NameAndBlocks`的`HashMap`序列化而来。
   - 📄`idled_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
   - 📄`has_start_message.ser`，从一个键为`Long`的`HashSet`序列化而来。
   - 📄`introduction.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。

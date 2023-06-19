@@ -90,7 +90,11 @@ public class CommandBlocksHandle
 
 	public static void rename(long userID, String newName)
 	{
-		nameAndBlocksMap.get(userID).name = newName;
+		NameAndBlocks nameAndBlocks = nameAndBlocksMap.get(userID);
+		if (nameAndBlocks != null)
+			nameAndBlocks.name = newName;
+		else
+			nameAndBlocksMap.put(userID, new NameAndBlocks(newName, 0L));
 	}
 
 	public static List<NameAndBlocks> toArrayList()

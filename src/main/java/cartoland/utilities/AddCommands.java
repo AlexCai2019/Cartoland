@@ -211,7 +211,7 @@ public class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "页数")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "排名清單的頁數")
 												.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数"))),
-		Commands.slash(TIC_TAC_TOE, "Transfer your command blocks")
+		Commands.slash(TRANSFER, "Transfer your command blocks")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 				.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")
 				.addOptions(

@@ -16,7 +16,7 @@ public class ClickedButton extends ListenerAdapter
 	public static final String RENAME_THREAD = "rename_thread";
 
 	private final TextInput.Builder newTitleInputBuilder = TextInput.create("new_title", "New Title", TextInputStyle.SHORT)
-			.setMinLength(0).setMaxLength(100);
+			.setRequiredRange(0, 100);
 
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event)
@@ -34,18 +34,20 @@ public class ClickedButton extends ListenerAdapter
 				Member member = event.getMember();
 				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong()))
 				{
-					event.reply("You don't have the permission to archive this thread!").queue();
+					event.reply("You don't have the permission to archive this thread!").setEphemeral(true).queue();
 					return;
 				}
-				channel.getManager().setArchived(true).queue();
+				event.reply(member.getEffectiveName() + " archived this thread.")
+						.queue(interactionHook -> channel.getManager().setArchived(true).queue());
 			}
 
 			case RENAME_THREAD ->
 			{
-				newTitleInputBuilder.setPlaceholder(event.getChannel().getName());
-				event.replyModal(Modal.create("new_title", "Set New Thread Title")
-										 .addComponents(ActionRow.of(newTitleInputBuilder.build()))
-										 .build()).queue();
+				newTitleInputBuilder.setValue(event.getChannel().getName());
+				event.replyModal(
+						Modal.create("new_title", "Set New Thread Title")
+								.addComponents(ActionRow.of(newTitleInputBuilder.build()))
+								.build()).queue();
 			}
 		}
 	}

@@ -13,7 +13,7 @@
 	"help.name.youtuber": "Syntax: </youtuber:1102681768840138938>` [<channel name>]`",
 	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>`",
 	"help.name.lottery": "Syntax: </lottery get:1102681768840138942>` [<user>]` </lottery bet:1102681768840138942>` <amount>` </lottery ranking:1102681768840138942>` <page>`",
-	"help.name.transfer": "Syntax: </transfer:1102681768840138943>` <user> <amount>`",
+	"help.name.transfer": "Syntax: </transfer:1120202223348088893>` <user> <amount>`",
 	"cmd.begin": "`Commands: ",
 	"cmd.end": "`",
 	"cmd.fail": "Invalid command. Please do </cmd:1102681768701722797> for a list of valid commands.",
@@ -204,6 +204,6 @@
 	"transfer.self_transfer": "You can't transfer command blocks to yourself!",
 	"transfer.wrong_user": "You can't transfer command blocks to this user!",
 	"transfer.wrong_percent": "You can't transfer %d%% of your command blocks!",
-	"transfer.wrong_argument": "Usage: </transfer:1102681768840138943>` <user> <integer>` or </transfer:1102681768840138943>` <user> <percentage>%`. Numbers must be positive integers.",
+	"transfer.wrong_argument": "Usage: </transfer:1120202223348088893>` <user> <integer>` or </transfer:1120202223348088893>` <user> <percentage>%`. Numbers must be positive integers.",
 	"transfer.not_enough": "You don't have enough command blocks!\nYou are trying to transfer %d command blocks, but you only have %d command blocks."
 }

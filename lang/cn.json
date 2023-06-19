@@ -13,7 +13,7 @@
 	"help.name.youtuber": "格式: </youtuber:1102681768840138938>` [<频道名称>]`",
 	"help.name.introduce": "格式: </introduce user:1103746424384004156>` [<用户>]` </introduce update:1103746424384004156>` <内容>`",
 	"help.name.lottery": "格式: </lottery get:1102681768840138942>` [<用户>]` </lottery bet:1102681768840138942>` <数量>` </lottery ranking:1102681768840138942>` <页数>`",
-	"help.name.transfer": "格式: </transfer:1102681768840138943>` <用户> <数量>`",
+	"help.name.transfer": "格式: </transfer:1120202223348088893>` <用户> <数量>`",
 	"cmd.begin": "`命令: ",
 	"cmd.end": "`",
 	"cmd.fail": "无效的命令，请尝试使用</cmd:1102681768701722797>查看所有命令。",
@@ -176,6 +176,6 @@
 	"transfer.self_transfer": "你不能转帐给自己！",
 	"transfer.wrong_user": "你不能转帐给这名用户！",
 	"transfer.wrong_percent": "你不能转帐 %d%% 的命令方块！",
-	"transfer.wrong_argument": "用法： </transfer:1102681768840138943>` <用户> <整数>` 或 </transfer:1102681768840138943>` <用户> <百分比>%`，且必须为正整数。",
+	"transfer.wrong_argument": "用法： </transfer:1120202223348088893>` <用户> <整数>` 或 </transfer:1120202223348088893>` <用户> <百分比>%`，且必须为正整数。",
 	"transfer.not_enough": "你没有足够的命令方块！\n你想转帐 %d 个命令方块，但你目前只有 %d 个命令方块。"
 }

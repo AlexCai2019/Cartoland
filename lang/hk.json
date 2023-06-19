@@ -13,7 +13,7 @@
 	"help.name.youtuber": "Syntax: </youtuber:1102681768840138938>` [<channel name>]`",
 	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>`",
 	"help.name.lottery": "Syntax: </lottery get:1102681768840138942>` [<user>]` </lottery bet:1102681768840138942>` <amount>` </lottery ranking:1102681768840138942>` <page>`",
-	"help.name.transfer": "Syntax: </transfer:1102681768840138943>` <user> <amount>`",
+	"help.name.transfer": "Syntax: </transfer:1120202223348088893>` <user> <amount>`",
 	"cmd.begin": "`指令: ",
 	"cmd.end": "`",
 	"cmd.fail": "無效嘅指令，請嘗試用</cmd:1102681768701722797>查看所有指令。",
@@ -200,6 +200,6 @@
 	"transfer.self_transfer": "你唔可以轉帳給畀自己！",
 	"transfer.wrong_user": "你唔可以轉帳畀呢位使用者！",
 	"transfer.wrong_percent": "你唔可以轉帳 %d%% 嘅指令方塊！",
-	"transfer.wrong_argument": "用法： </transfer:1102681768840138943>` <使用者> <整數>` 或 </transfer:1102681768840138943>` <使用者> <百分比>%`，且必須為正整數。",
+	"transfer.wrong_argument": "用法： </transfer:1120202223348088893>` <使用者> <整數>` 或 </transfer:1120202223348088893>` <使用者> <百分比>%`，且必須為正整數。",
 	"transfer.not_enough": "你無足夠嘅指令方塊！\n你想轉帳 %d 個指令方塊，但你目前只有 %d 個指令方塊。"
 }

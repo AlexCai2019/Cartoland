@@ -13,7 +13,7 @@
 	"help.name.youtuber": "格式: </youtuber:1102681768840138938>` [<頻道名稱>]`",
 	"help.name.introduce": "格式: </introduce user:1103746424384004156>` [<使用者>]` </introduce update:1103746424384004156>` <內容>`",
 	"help.name.lottery": "格式: </lottery get:1102681768840138942>` [<使用者>]` </lottery bet:1102681768840138942>` <數量>` </lottery ranking:1102681768840138942>` <頁數>`",
-	"help.name.transfer": "格式: </transfer:1102681768840138943>` <使用者> <數量>`",
+	"help.name.transfer": "格式: </transfer:1120202223348088893>` <使用者> <數量>`",
 	"cmd.begin": "指令: `",
 	"cmd.end": "`",
 	"cmd.fail": "無效的指令，請嘗試使用</cmd:1102681768701722797>查看所有指令。",
@@ -203,6 +203,6 @@
 	"transfer.self_transfer": "你不能轉帳給自己！",
 	"transfer.wrong_user": "你不能轉帳給這名使用者！",
 	"transfer.wrong_percent": "你不能轉帳 %d%% 的指令方塊！",
-	"transfer.wrong_argument": "用法： </transfer:1102681768840138943>` <使用者> <整數>` 或 </transfer:1102681768840138943>` <使用者> <百分比>%`，且必須為正整數。",
+	"transfer.wrong_argument": "用法： </transfer:1120202223348088893>` <使用者> <整數>` 或 </transfer:1120202223348088893>` <使用者> <百分比>%`，且必須為正整數。",
 	"transfer.not_enough": "你沒有足夠的指令方塊！\n你想轉帳 %d 個指令方塊，但你目前只有 %d 個指令方塊。"
 }

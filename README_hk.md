@@ -16,7 +16,7 @@
 - 📁`logs/`
 - 📁`serialize/` with these following files:
   - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
-  - 📄`name_and_blocks.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.NameAndBlocks` as value.
+  - 📄`name_and_blocks.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
   - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.

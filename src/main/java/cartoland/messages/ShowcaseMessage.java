@@ -19,6 +19,8 @@ public class ShowcaseMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
+		if (!event.isFromGuild() || event.isFromThread())
+			return false; //是私訊或在討論串內
 		Category category = event.getMessage().getCategory();
 		return category != null && category.getIdLong() == IDAndEntities.SHOWCASE_CATEGORY_ID;
 	}
@@ -26,8 +28,6 @@ public class ShowcaseMessage implements IMessage
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		if (event.isFromThread())
-			return;
 		String name = event.getAuthor().getEffectiveName();
 		event.getMessage().createThreadChannel(name + '(' + LocalDate.now() + ')').queue(threadChannel ->
 			threadChannel.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention())

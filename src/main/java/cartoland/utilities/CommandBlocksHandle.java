@@ -11,7 +11,7 @@ import static cartoland.utilities.IDAndEntities.*;
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
  * feature that whatever a user say in some specific channels, the user will gain command blocks as a kind of
- * reward point. This class open a static field {@link #nameAndBlocksMap} for {@link JsonHandle}, which is where all the
+ * reward point. This class open a static field {@link #lotteryDataMap} for {@link JsonHandle}, which is where all the
  * command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}. Can not be
  * instantiated.
  *
@@ -27,16 +27,16 @@ public class CommandBlocksHandle
 	}
 
 	public static boolean changed = true;
-	private static final String NAME_AND_BLOCKS_FILE_NAME = "serialize/name_and_blocks.ser";
-	private static final long GAMBLE_ROLE_MIN = 100000;
+	private static final String LOTTERY_DATA_FILE_NAME = "serialize/lottery_data.ser";
+	private static final long GAMBLE_ROLE_MIN = 100000L;
 
 	//會有unchecked assignment的警告 but I did it anyway
 	@SuppressWarnings("unchecked")
-	private static final Map<Long, NameAndBlocks> nameAndBlocksMap = (FileHandle.deserialize(NAME_AND_BLOCKS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
 	static
 	{
-		FileHandle.registerSerialize(NAME_AND_BLOCKS_FILE_NAME, nameAndBlocksMap);
+		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
 	}
 
 	/**
@@ -48,78 +48,89 @@ public class CommandBlocksHandle
 	 */
 	public static void addBlocks(long userID, long add)
 	{
-		NameAndBlocks nameAndBlocks = nameAndBlocksMap.get(userID);
-		setBlocks(userID, (nameAndBlocks != null) ? Algorithm.safeAdd(nameAndBlocks.blocks, add) : add);
+		LotteryData lotteryData = lotteryDataMap.get(userID);
+		setBlocks(userID, (lotteryData != null) ? Algorithm.safeAdd(lotteryData.blocks, add) : add);
 	}
 
-	public static void setBlocks(long userID, long value)
+	public static void setBlocks(long userID, long newValue)
 	{
 		changed = true;
-		NameAndBlocks nameAndBlocks = nameAndBlocksMap.get(userID);
+		LotteryData lotteryData = lotteryDataMap.get(userID);
 
-		if (nameAndBlocks != null)
-			nameAndBlocks.blocks = value;
+		long oldValue;
+		if (lotteryData != null)
+		{
+			oldValue = lotteryData.blocks;
+			lotteryData.blocks = newValue;
+		}
 		else
-			jda.retrieveUserById(userID).queue(user -> nameAndBlocksMap.put(userID, new NameAndBlocks(user.getEffectiveName(), value)));
+		{
+			oldValue = 0L;
+			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.put(userID, new LotteryData(user.getEffectiveName(), newValue)));
+		}
+
+		boolean less = newValue < GAMBLE_ROLE_MIN;
+		if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
+			return;
 
 		cartolandServer.retrieveMemberById(userID).queue(member ->
 		{
 			boolean hasRole = member.getRoles().contains(godOfGamblersRole);
-			if (value >= GAMBLE_ROLE_MIN && !hasRole)
+			if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
 				cartolandServer.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
-			else if (value < GAMBLE_ROLE_MIN && hasRole)
+			else if (less && hasRole) //小於GAMBLE_ROLE_MIN 且有身分組
 				cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
 		});
 	}
 
 	public static long getBlocks(long userID)
 	{
-		NameAndBlocks nameAndBlocks = nameAndBlocksMap.get(userID);
-		if (nameAndBlocks != null)
-			return nameAndBlocks.blocks;
+		LotteryData lotteryData = lotteryDataMap.get(userID);
+		if (lotteryData != null)
+			return lotteryData.blocks;
 
 		//如果沒有記錄這名玩家
-		jda.retrieveUserById(userID).queue(user -> nameAndBlocksMap.put(userID, new NameAndBlocks(user.getEffectiveName(), 0L)));
+		jda.retrieveUserById(userID).queue(user -> lotteryDataMap.put(userID, new LotteryData(user.getEffectiveName(), 0L)));
 		return 0L;
 	}
 
 	public static int size()
 	{
-		return nameAndBlocksMap.size();
+		return lotteryDataMap.size();
 	}
 
 	public static void rename(long userID, String newName)
 	{
-		NameAndBlocks nameAndBlocks = nameAndBlocksMap.get(userID);
-		if (nameAndBlocks != null)
-			nameAndBlocks.name = newName;
+		LotteryData lotteryData = lotteryDataMap.get(userID);
+		if (lotteryData != null)
+			lotteryData.name = newName;
 		else
-			nameAndBlocksMap.put(userID, new NameAndBlocks(newName, 0L));
+			lotteryDataMap.put(userID, new LotteryData(newName, 0L));
 	}
 
-	public static List<NameAndBlocks> toArrayList()
+	public static List<LotteryData> toArrayList()
 	{
-		return new ArrayList<>(nameAndBlocksMap.values());
+		return new ArrayList<>(lotteryDataMap.values());
 	}
 
 	public static void initial()
 	{
-		nameAndBlocksMap.forEach((userID, nameAndBlocks) ->
+		lotteryDataMap.forEach((userID, lotteryData) ->
 			jda.retrieveUserById(userID).queue(user ->
 			{
 				String name = user.getEffectiveName();
-				if (!nameAndBlocks.getName().equals(name)) //如果名字和紀錄的名字不一樣
-					nameAndBlocks.setName(name); //新名字
+				if (!lotteryData.name.equals(name)) //如果名字和紀錄的名字不一樣
+					lotteryData.name = name; //新名字
 			}));
 		changed = true;
 	}
 
-	public static class NameAndBlocks implements Serializable
+	public static class LotteryData implements Serializable
 	{
-		private String name; //名字
+		public String name; //名字
 		private long blocks; //方塊數
 
-		public NameAndBlocks(String name, long blocks)
+		public LotteryData(String name, long blocks)
 		{
 			this.name = name;
 			this.blocks = blocks;

@@ -20,4 +20,5 @@ public class Languages
 	public static final String CANTONESE = "hk";
 	public static final String CHINESE = "cn";
 	public static final String ESPANOL = "es";
+	public static final String JAPANESE = "jp";
 }

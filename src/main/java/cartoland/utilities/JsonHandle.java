@@ -83,6 +83,7 @@ public class JsonHandle
 		languageFileMap.put(Languages.CANTONESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/hk.json")));
 		languageFileMap.put(Languages.CHINESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/cn.json")));
 		languageFileMap.put(Languages.ESPANOL, new JSONObject(FileHandle.buildJsonStringFromFile("lang/es.json")));
+		languageFileMap.put(Languages.JAPANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/jp.json")));
 
 		commandListMap.put("help.list", englishFile.getJSONArray("help.list").toList());
 		commandListMap.put("cmd.list", englishFile.getJSONArray("cmd.list").toList());

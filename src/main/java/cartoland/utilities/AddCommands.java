@@ -387,7 +387,8 @@ class Lang
 					.addChoice("台語文字", Languages.TAIWANESE)
 					.addChoice("粵語漢字", Languages.CANTONESE)
 					.addChoice("简体中文", Languages.CHINESE)
-					.addChoice("Español", Languages.ESPANOL);
+					.addChoice("Español", Languages.ESPANOL)
+					.addChoice("日本語", Languages.JAPANESE);
 
 	static final SlashCommandData lang = Commands.slash(LANG, "Change language")
 			.setDescriptionLocalizations(langDescriptions)

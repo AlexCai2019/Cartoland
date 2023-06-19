@@ -58,8 +58,7 @@ public class FileHandle
 	}
 
 	private static final List<SerializeObject> serializeObjects = new ArrayList<>();
-	//private static final SerializeObject[] serializeObjects = new SerializeObject[6];
-	//private static int serializeObjectsIndex = 0;
+
 	/**
 	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by
 	 * {@link #serialize} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware

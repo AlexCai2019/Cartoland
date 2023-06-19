@@ -62,7 +62,7 @@ class BetSubCommand implements ICommand
 	private final Random random = new Random(); //不使用Algorithm.chance
 	private final Pattern numberRegex = Pattern.compile("\\d+");
 	private final Pattern percentRegex = Pattern.compile("\\d+%");
-	private static final long MAXIMUM = 1000000L;
+	private static final long MAXIMUM = 100000L;
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -142,7 +142,7 @@ class BetSubCommand implements ICommand
  */
 class RankingSubCommand implements ICommand
 {
-	private List<CommandBlocksHandle.NameAndBlocks> forSort; //需要排序的list
+	private List<CommandBlocksHandle.LotteryData> forSort; //需要排序的list
 	private String lastReply; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
 
@@ -199,7 +199,7 @@ class RankingSubCommand implements ICommand
 		if (endElement > forSort.size()) //結束的那個元素比list總長還長
 			endElement = forSort.size();
 
-		List<CommandBlocksHandle.NameAndBlocks> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
+		List<CommandBlocksHandle.LotteryData> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
 		long blocks = CommandBlocksHandle.getBlocks(user.getIdLong()); //本使用者擁有的方塊數
 
 		rankBuilder.setLength(0);
@@ -213,11 +213,11 @@ class RankingSubCommand implements ICommand
 
 		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
 		{
-			CommandBlocksHandle.NameAndBlocks rank = ranking.get(i);
+			CommandBlocksHandle.LotteryData rank = ranking.get(i);
 			rankBuilder.append("[\u001B[36m")
 					.append(String.format("%03d", add + i))
 					.append("\u001B[0m]\t")
-					.append(rank.getName())
+					.append(rank.name)
 					.append(": \u001B[36m")
 					.append(rank.getBlocks())
 					.append("\u001B[0m\n");

@@ -12,6 +12,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
+ * {@code BotCanTalkChannelMessage} is a listener that triggers when a user types anything in any channel that the
+ * bot can talk. This class is in an array in {@link cartoland.events.MessageEvent}.
+ *
  * @since 2.0
  * @author Alex Cai
  */
@@ -78,12 +81,13 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
-	private final Set<Long> canTalkCategories = new HashSet<>(3);
+	private final Set<Long> canTalkCategories = new HashSet<>(4);
 
 	public BotCanTalkChannelMessage()
 	{
 		canTalkCategories.add(IDAndEntities.GENERAL_CATEGORY_ID);
 		canTalkCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
+		canTalkCategories.add(IDAndEntities.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDAndEntities.DANGEROUS_CATEGORY_ID);
 	}
 

@@ -24,7 +24,7 @@ public class GuildMessage implements IMessage
 	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
 	private final Emoji worship_a = Emoji.fromCustom("worship_a", 935135593527128104L, true);
-	private final Set<Long> commandBlockCategories = new HashSet<>(4);
+	private final Set<Long> commandBlockCategories = new HashSet<>(5);
 
 	public GuildMessage()
 	{
@@ -32,6 +32,7 @@ public class GuildMessage implements IMessage
 		commandBlockCategories.add(IDAndEntities.TECH_TALK_CATEGORY_ID);
 		commandBlockCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
 		commandBlockCategories.add(IDAndEntities.SHOWCASE_CATEGORY_ID);
+		commandBlockCategories.add(IDAndEntities.VOICE_CATEGORY_ID);
 	}
 
 	/**

@@ -29,6 +29,7 @@ public class IDAndEntities
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
 	public static final long PUBLIC_AREA_CATEGORY_ID = 922892242459459657L; //創聯的公眾區域類別
 	public static final long SHOWCASE_CATEGORY_ID = 892127357878554634L; //創聯的創作展示類別
+	public static final long VOICE_CATEGORY_ID = 886936475143405618L; //創聯的語音頻道類別
 	public static final long DANGEROUS_CATEGORY_ID = 919696732613378078L; //創聯的地下類別
 	public static final long READ_ME_CHANNEL_ID = 973898745777377330L; //創聯的解鎖須知頻道
 	public static final long SELF_INTRO_CHANNEL_ID = 892415434240950282L; //創聯的會員申請頻道

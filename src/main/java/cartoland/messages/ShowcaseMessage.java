@@ -9,6 +9,13 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.time.LocalDate;
 
+/**
+ * {@code ShowcaseMessage} is a listener that triggers when a user types anything in text channels (excluding thread
+ * channels) in showcase category. This class is in an array in {@link cartoland.events.MessageEvent}.
+ *
+ * @since 2.0
+ * @author Alex Cai
+ */
 public class ShowcaseMessage implements IMessage
 {
 	private final Button archiveButton = Button.success(ClickedButton.ARCHIVE_THREAD, "Archive thread")

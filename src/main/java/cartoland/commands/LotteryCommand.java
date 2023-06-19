@@ -60,8 +60,8 @@ public class LotteryCommand implements ICommand
 class BetSubCommand implements ICommand
 {
 	private final Random random = new Random(); //不使用Algorithm.chance
-	private final Pattern numberRegex = Pattern.compile("\\d+");
-	private final Pattern percentRegex = Pattern.compile("\\d+%");
+	private final Pattern numberRegex = Pattern.compile("\\d{1,18}");
+	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%");
 	private static final long MAXIMUM = 100000L;
 
 	@Override
@@ -83,8 +83,8 @@ class BetSubCommand implements ICommand
 			bet = Long.parseLong(betString);
 		else if (percentRegex.matcher(betString).matches()) //賭%數
 		{
-			long percentage = Long.parseLong(betString.substring(0, betString.length() - 1));
-			if (percentage > 100L) //超過100%
+			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
+			if (percentage > 100) //超過100%
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_percent").formatted(percentage)).queue();
 				return;

@@ -10,10 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ReceiveModal extends ListenerAdapter
 {
+	public static final String NEW_TITLE_TEXT = "new_title";
+	public static final String NEW_TITLE_MODAL_ID = "new_title";
+
 	@Override
 	public void onModalInteraction(@NotNull ModalInteractionEvent event)
 	{
-		if (event.getModalId().equals("new_title"))
+		if (event.getModalId().equals(NEW_TITLE_MODAL_ID))
 		{
 			ThreadChannel channel = event.getChannel().asThreadChannel();
 			Member member = event.getMember();
@@ -22,15 +25,17 @@ public class ReceiveModal extends ListenerAdapter
 				event.reply("You don't have the permission to rename this thread!").setEphemeral(true).queue();
 				return;
 			}
-			ModalMapping newTitle = event.getValue("new_title");
-			if (newTitle != null)
+
+			ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
+			if (newTitle == null)
 			{
-				String newTitleString = newTitle.getAsString();
-				channel.getManager().setName(newTitleString).queue();
-				event.reply(member.getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
-			}
-			else
 				event.reply("Something went wrong...").setEphemeral(true).queue();
+				return;
+			}
+
+			String newTitleString = newTitle.getAsString();
+			channel.getManager().setName(newTitleString).queue();
+			event.reply(member.getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
 		}
 	}
 }

@@ -30,8 +30,9 @@ public class ThreadEvent extends ListenerAdapter
 		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
 		threadChannel.join().queue(); //加入討論串
 
+		long threadID = threadChannel.getParentChannel().getIdLong();
 		//關於問題論壇
-		if (threadChannel.getParentChannel().getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID)
+		if (threadID == IDAndEntities.QUESTIONS_CHANNEL_ID)
 			QuestionForumHandle.createForumPost(threadChannel);
 	}
 

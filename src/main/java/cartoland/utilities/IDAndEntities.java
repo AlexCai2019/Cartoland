@@ -34,6 +34,7 @@ public class IDAndEntities
 	public static final long READ_ME_CHANNEL_ID = 973898745777377330L; //創聯的解鎖須知頻道
 	public static final long SELF_INTRO_CHANNEL_ID = 892415434240950282L; //創聯的會員申請頻道
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
+	public static final long VOTE_KICK_CHANNEL_ID = 1120734899356323931L; //創聯的法庭頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
@@ -48,6 +49,7 @@ public class IDAndEntities
 	public static JDA jda;
 	public static Guild cartolandServer;
 	public static ForumChannel questionsChannel;
+	public static ForumChannel voteKickChannel;
 	public static TextChannel lobbyChannel;
 	public static TextChannel botChannel;
 	public static TextChannel undergroundChannel;

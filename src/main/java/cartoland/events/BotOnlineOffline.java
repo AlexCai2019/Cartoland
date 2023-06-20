@@ -53,6 +53,10 @@ public class BotOnlineOffline extends ListenerAdapter
 		if (questionsChannel == null)
 			problemOccurred("Can't find Questions Channel.");
 
+		voteKickChannel = cartolandServer.getForumChannelById(VOTE_KICK_CHANNEL_ID);
+		if (voteKickChannel == null)
+			problemOccurred("Can't find Vote Kick Channel.");
+
 		lobbyChannel = cartolandServer.getTextChannelById(LOBBY_CHANNEL_ID); //創聯的大廳頻道
 		if (lobbyChannel == null)
 			problemOccurred("Can't find Lobby Channel.");

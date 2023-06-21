@@ -61,10 +61,12 @@ public class JsonHandle
 
 	public static String command(long userID, String commandName, String argument)
 	{
-		if (commandName.equals("lang"))
-			users.put(userID, argument);
-
 		String result = getStringFromJsonKey(userID, commandName + ".name." + argument);
+		if (commandName.equals("lang"))
+		{
+			users.put(userID, argument);
+			return result;
+		}
 
 		//空字串代表獲取失敗
 		return result.isEmpty() ? file.getString(commandName + ".fail") : result;

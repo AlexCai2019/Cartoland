@@ -18,9 +18,9 @@ import java.time.LocalDate;
  */
 public class ShowcaseMessage implements IMessage
 {
-	private final Button archiveButton = Button.success(ClickedButton.ARCHIVE_THREAD, "Archive thread")
+	private final Button archiveButton = Button.success(ClickedButton.ARCHIVE_THREAD, "Archive Thread")
 			.withEmoji(Emoji.fromUnicode("📁"));
-	private final Button renameButton = Button.primary(ClickedButton.RENAME_THREAD, "Rename Thread")
+	private final Button renameButton = Button.primary(ClickedButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
 
 	@Override

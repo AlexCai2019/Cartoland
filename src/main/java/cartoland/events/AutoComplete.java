@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -88,7 +89,7 @@ class JsonBasedComplete extends GenericComplete
 	JsonBasedComplete(String commandName)
 	{
 		this.commandName = commandName;
-		commandStream = JsonHandle.commandList(commandName).stream().map(String::valueOf);
+		commandStream = JsonHandle.commandList(commandName).stream().map(CommonFunctions.stringValue);
 	}
 
 	@Override

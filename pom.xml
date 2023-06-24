@@ -49,6 +49,10 @@
             <name>Hexakon</name>
             <url>https://github.com/Hexakon</url>
         </contributor>
+        <contributor>
+            <name>vin_3462</name>
+            <url>https://github.com/vincentlee3462</url>
+        </contributor>
     </contributors>
 
     <dependencies>

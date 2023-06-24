@@ -145,10 +145,15 @@ class RankingSubCommand implements ICommand
 	private List<CommandBlocksHandle.LotteryData> forSort; //需要排序的list
 	private String lastReply; //上一次回覆過的字串
 	private int lastPage = -1; //上一次查看的頁面
+	private long lastUser = -1L; //上一次使用指令的使用者
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		long userID = event.getUser().getIdLong();
+		boolean sameUser = userID == lastUser;
+		lastUser = userID;
+
 		Integer pageBox = event.getOption("page", CommonFunctions.getAsInt);
 		int page = pageBox != null ? pageBox : 1; //page從1開始
 
@@ -163,8 +168,8 @@ class RankingSubCommand implements ICommand
 
 		if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
 		{
-			if (page != lastPage) //有換頁
-				lastReply = replyString(event.getUser(), page, maxPage);
+			if (page != lastPage || !sameUser) //有換頁 或 不是同一位使用者
+				lastReply = replyString(userID, page, maxPage); //重新建立字串
 			event.reply(lastReply).queue();
 			return;
 		}
@@ -176,7 +181,7 @@ class RankingSubCommand implements ICommand
 
 		CommandBlocksHandle.changed = false; //已經排序過了
 		lastPage = page; //換過頁了
-		event.reply(lastReply = replyString(event.getUser(), page, maxPage)).queue();
+		event.reply(lastReply = replyString(userID, page, maxPage)).queue();
 	}
 
 	private final StringBuilder rankBuilder = new StringBuilder();
@@ -184,14 +189,14 @@ class RankingSubCommand implements ICommand
 	/**
 	 * Builds a page in the ranking list of command blocks.
 	 *
-	 * @param user The user who used the command.
+	 * @param userID The ID of the user who used the command.
 	 * @param page The page that the command user want to check.
 	 * @param maxPage Maximum of pages that the ranking list has.
 	 * @return A page of the ranking list into a single string.
 	 * @since 1.6
 	 * @author Alex Cai
 	 */
-	private String replyString(User user, int page, int maxPage)
+	private String replyString(long userID, int page, int maxPage)
 	{
 		//page 從1開始
 		int startElement = (page - 1) * 10; //開始的那個元素
@@ -200,7 +205,7 @@ class RankingSubCommand implements ICommand
 			endElement = forSort.size();
 
 		List<CommandBlocksHandle.LotteryData> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-		long blocks = CommandBlocksHandle.getBlocks(user.getIdLong()); //本使用者擁有的方塊數
+		long blocks = CommandBlocksHandle.getBlocks(userID); //本使用者擁有的方塊數
 
 		rankBuilder.setLength(0);
 		rankBuilder.append("```ansi\nCommand blocks in ")

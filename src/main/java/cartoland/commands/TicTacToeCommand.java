@@ -81,6 +81,6 @@ public class TicTacToeCommand implements ICommand
 			return;
 		}
 
-		event.reply(playerMove + "\nBot's move:\n" + ticTacToe.getBoard()).queue();
+		event.reply(playerMove + "\nBot's move:\n" + ticTacToe.getBoard()).setEphemeral(true).queue();
 	}
 }

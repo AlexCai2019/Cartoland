@@ -164,7 +164,7 @@ public class FileHandle
 	public static void log(Exception exception)
 	{
 		log(Arrays.stream(exception.getStackTrace())
-					.map(StackTraceElement::toString)
+					.map(CommonFunctions.stringValue)
 					.collect(Collectors.joining("\n")));
 	}
 

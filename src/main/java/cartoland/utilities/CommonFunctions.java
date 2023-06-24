@@ -7,7 +7,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import java.util.function.Function;
 
 /**
- * Common lambda functions for use. Including method references in {@link OptionMapping} and {@link Message.Attachment}.
+ * Common lambda functions for use. Including method references in {@link OptionMapping},
+ * {@link Message.Attachment} and {@link String}.
  *
  * @since 2.0
  * @author Alex Cai
@@ -23,4 +24,5 @@ public class CommonFunctions
 	public static final Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
 	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
 	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
+	public static final Function<Object, String> stringValue = String::valueOf;
 }

@@ -105,15 +105,14 @@ class UpdateSubCommand implements ICommand
 			}
 
 			//從頻道中取得訊息 注意ID是String 與慣例的long不同
-			linkChannel.retrieveMessageById(numbersInLink[1])
-					.queue(linkMessage ->
-					{
-						   String rawMessage = linkMessage.getContentRaw();
-						   List<Message.Attachment> attachments = linkMessage.getAttachments();
-						   if (!attachments.isEmpty())
-							   rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-						   IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
-					}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
+			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
+			{
+				String rawMessage = linkMessage.getContentRaw();
+				List<Message.Attachment> attachments = linkMessage.getAttachments();
+				if (!attachments.isEmpty())
+					rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
+				IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
+			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
 		}
 		else
 			IntroduceHandle.updateIntroduction(userID, content);

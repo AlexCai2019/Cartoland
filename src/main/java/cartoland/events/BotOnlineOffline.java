@@ -157,10 +157,10 @@ public class BotOnlineOffline extends ListenerAdapter
 	private void ohBoy3AM()
 	{
 		threeAMTask = scheduleExecutor.scheduleAtFixedRate(() ->
-			{
-				undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue();
-				undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue();
-			}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+		{
+			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue();
+			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue();
+		}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 
 	private void idleFormPost12PM()

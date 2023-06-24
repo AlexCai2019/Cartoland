@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -66,11 +67,13 @@ public class QuoteCommand implements ICommand
 
 			//選擇連結訊息內的第一張圖片作為embed的圖片
 			//不用add field 沒必要那麼麻煩
-			linkMessage.getAttachments()
-					.stream()
-					.filter(Message.Attachment::isImage)
-					.findFirst()
-					.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()), () -> embedBuilder.setImage(null));
+			List<Message.Attachment> attachments = linkMessage.getAttachments();
+			if (!attachments.isEmpty())
+				attachments.stream()
+						.filter(Message.Attachment::isImage)
+						.findFirst()
+						.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()),
+										 () -> embedBuilder.setImage(null));
 
 			event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))

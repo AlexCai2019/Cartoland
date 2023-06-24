@@ -162,7 +162,7 @@
 	"dtp.name.w": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
 	"dtp.name.oreki20": "維基： https://minecraft.fandom.com/zh/wiki/自定义世界生成?variant=zh-hk\n生成器： https://misode.github.io/worldgen/",
 	"jira.invalid_link": "Please enter a valid Minecraft bug link or ID, such as `https://bugs.mojang.com/browse/MC-87984` or `MC-87984` or `87984`.",
-	"jira.no_bug": "唔存在呢個漏洞報告",
+	"jira.no_bug": "唔存在 %s 漏洞報告",
 	"jira.no_issue": "Can't get issue content",
 	"tool.uuid_string.invalid_string": "Incorrect syntax: please enter the UUID string in the correct format! Such as `59c1027b-5559-4e6a-91e4-2b8b949656ce` or `59c1027b55594e6a91e42b8b949656ce`",
 	"tool.uuid_string.without_dash": "without dash",

@@ -69,7 +69,7 @@ public class CommandBlocksHandle
 			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.put(userID, new LotteryData(user.getEffectiveName(), newValue)));
 		}
 
-		boolean less = newValue < GAMBLE_ROLE_MIN;
+		boolean less = newValue < GAMBLE_ROLE_MIN; //新值依舊比GAMBLE_ROLE_MIN少
 		if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
 			return;
 

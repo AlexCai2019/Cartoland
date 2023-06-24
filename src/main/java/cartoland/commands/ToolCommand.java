@@ -20,14 +20,19 @@ import java.util.regex.Pattern;
 public class ToolCommand implements ICommand
 {
 	private final Map<String, ICommand> subCommands = new HashMap<>();
+	public static final String UUID_STRING = "uuid_string";
+	public static final String UUID_ARRAY = "uuid_array";
+	public static final String COLOR_RGBA = "color_rgba";
+	public static final String COLOR_INTEGER = "color_integer";
+	public static final String PACK_MCMETA = "pack_mcmeta";
 
 	public ToolCommand()
 	{
-		subCommands.put("uuid_string", new UUIDStringSubCommand()); //tool uuid_string
-		subCommands.put("uuid_array", new UUIDArraySubCommand()); //tool uuid_array
-		subCommands.put("color_rgba", new ColorRGBASubCommand()); //tool color_rgba
-		subCommands.put("color_integer", new ColorIntegerSubCommand()); //tool color_rgb
-		subCommands.put("pack_mcmeta", new PackMcmetaSubCommand()); //tool pack_mcmeta
+		subCommands.put(UUID_STRING, new UUIDStringSubCommand()); //tool uuid_string
+		subCommands.put(UUID_ARRAY, new UUIDArraySubCommand()); //tool uuid_array
+		subCommands.put(COLOR_RGBA, new ColorRGBASubCommand()); //tool color_rgba
+		subCommands.put(COLOR_INTEGER, new ColorIntegerSubCommand()); //tool color_rgb
+		subCommands.put(PACK_MCMETA, new PackMcmetaSubCommand()); //tool pack_mcmeta
 	}
 
 	@Override

@@ -177,5 +177,9 @@
 	"transfer.wrong_user": "你不能转帐给这名用户！",
 	"transfer.wrong_percent": "你不能转帐 %d%% 的命令方块！",
 	"transfer.wrong_argument": "用法： </transfer:1120202223348088893>` <用户> <整数>` 或 </transfer:1120202223348088893>` <用户> <百分比>%`，且必须为正整数。",
-	"transfer.not_enough": "你没有足够的命令方块！\n你想转帐 %d 个命令方块，但你目前只有 %d 个命令方块。"
+	"transfer.not_enough": "你没有足够的命令方块！\n你想转帐 %d 个命令方块，但你目前只有 %d 个命令方块。",
+	"archive_thread.already_archived": "This thread is already archived!",
+	"archive_thread.no_permission": "You don't have the permission to archive this thread!",
+	"archive_thread.archived": "%s archived this thread.",
+	"rename_thread.set_new_thread_title": "Set New Thread Title"
 }

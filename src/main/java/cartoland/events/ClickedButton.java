@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -21,6 +22,8 @@ public class ClickedButton extends ListenerAdapter
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event)
 	{
+		long userID = event.getUser().getIdLong();
+
 		switch (event.getComponentId())
 		{
 			case ARCHIVE_THREAD ->
@@ -28,26 +31,26 @@ public class ClickedButton extends ListenerAdapter
 				ThreadChannel channel = event.getChannel().asThreadChannel();
 				if (channel.isArchived())
 				{
-					event.reply("This thread is already archived!").setEphemeral(true).queue();
+					event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.already_archived")).setEphemeral(true).queue();
 					return;
 				}
 
 				Member member = event.getMember();
-				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong()))
+				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong())) //獲取失敗 或 沒有權限
 				{
-					event.reply("You don't have the permission to archive this thread!").setEphemeral(true).queue();
+					event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.no_permission")).setEphemeral(true).queue();
 					return;
 				}
 
-				event.reply(member.getEffectiveName() + " archived this thread.")
-						.queue(interactionHook -> channel.getManager().setArchived(true).queue());
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.archived").formatted(member.getEffectiveName()))
+						.queue(interactionHook -> channel.getManager().setArchived(true).queue()); //在回呼函式內執行 才不會導致討論串被關了後才回覆
 			}
 
 			case RENAME_THREAD ->
 			{
 				newTitleInputBuilder.setValue(event.getChannel().getName());
 				event.replyModal(
-						Modal.create(ReceiveModal.NEW_TITLE_MODAL_ID, "Set New Thread Title")
+						Modal.create(ReceiveModal.NEW_TITLE_MODAL_ID, JsonHandle.getStringFromJsonKey(userID, "rename_thread.set_new_thread_title"))
 								.addComponents(ActionRow.of(newTitleInputBuilder.build()))
 								.build()).queue();
 			}

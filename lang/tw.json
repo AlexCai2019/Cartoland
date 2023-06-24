@@ -204,5 +204,9 @@
 	"transfer.wrong_user": "你不能轉帳給這名使用者！",
 	"transfer.wrong_percent": "你不能轉帳 %d%% 的指令方塊！",
 	"transfer.wrong_argument": "用法： </transfer:1120202223348088893>` <使用者> <整數>` 或 </transfer:1120202223348088893>` <使用者> <百分比>%`，且必須為正整數。",
-	"transfer.not_enough": "你沒有足夠的指令方塊！\n你想轉帳 %d 個指令方塊，但你目前只有 %d 個指令方塊。"
+	"transfer.not_enough": "你沒有足夠的指令方塊！\n你想轉帳 %d 個指令方塊，但你目前只有 %d 個指令方塊。",
+	"archive_thread.already_archived": "此討論串已被關閉！",
+	"archive_thread.no_permission": "你沒有關閉此討論串的權限！",
+	"archive_thread.archived": "%s 關閉了討論串。",
+	"rename_thread.set_new_thread_title": "設定新的討論串標題"
 }

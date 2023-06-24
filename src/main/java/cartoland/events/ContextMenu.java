@@ -18,6 +18,10 @@ import java.util.stream.Collectors;
  */
 public class ContextMenu extends ListenerAdapter
 {
+	public static final String RAW_TEXT = "Raw Text";
+	public static final String REACTIONS = "Reactions";
+	public static final String CODE_BLOCK = "Code Block";
+
 	@Override
 	public void onMessageContextInteraction(MessageContextInteractionEvent event)
 	{
@@ -26,12 +30,12 @@ public class ContextMenu extends ListenerAdapter
 
 		switch (eventName)
 		{
-			case "Raw Text" ->
+			case RAW_TEXT ->
 					event.replyFiles(FileUpload.fromData(event.getTarget().getContentRaw().getBytes(StandardCharsets.UTF_8), "message.txt"))
 							.setEphemeral(true)
 							.queue();
 
-			case "Reactions" ->
+			case REACTIONS ->
 			{
 				String reactions = event.getTarget()
 						.getReactions()
@@ -43,6 +47,8 @@ public class ContextMenu extends ListenerAdapter
 						.setEphemeral(true)
 						.queue();
 			}
+
+			case CODE_BLOCK -> event.reply("```\n" + event.getTarget().getContentRaw() + "\n```").queue();
 		}
 
 		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);

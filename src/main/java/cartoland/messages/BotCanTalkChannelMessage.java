@@ -3,6 +3,7 @@ package cartoland.messages;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDAndEntities;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -107,10 +108,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		Message message = event.getMessage(); //獲取訊息
 		String rawMessage = message.getContentRaw(); //獲取訊息字串
 		MessageChannel channel = message.getChannel();
+		User author = event.getAuthor();
 
 		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
 		{
-			long userID = event.getAuthor().getIdLong();
+			long userID = author.getIdLong();
 			String replyString;
 
 			//不要再想著用switch了 Java的switch不支援long
@@ -145,5 +147,9 @@ public class BotCanTalkChannelMessage implements IMessage
 			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
 		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
 			channel.sendMessage(Algorithm.randomElement(fbi)).queue();
+		if (rawMessage.contains("無情"))
+			channel.sendMessage("太無情了" + author.getEffectiveName() + "，你真的太無情了！").queue();
+		if (rawMessage.contains("閃現"))
+			channel.sendMessage("這什麼到底什麼閃現齁齁齁齁齁").queue();
 	}
 }

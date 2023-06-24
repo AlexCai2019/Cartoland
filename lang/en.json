@@ -335,5 +335,9 @@
 	"transfer.wrong_user": "You can't transfer command blocks to this user!",
 	"transfer.wrong_percent": "You can't transfer %d%% of your command blocks!",
 	"transfer.wrong_argument": "Usage: </transfer:1120202223348088893>` <user> <integer>` or </transfer:1120202223348088893>` <user> <percentage>%`. Numbers must be positive integers.",
-	"transfer.not_enough": "You don't have enough command blocks!\nYou are trying to transfer %d command blocks, but you only have %d command blocks."
+	"transfer.not_enough": "You don't have enough command blocks!\nYou are trying to transfer %d command blocks, but you only have %d command blocks.",
+	"archive_thread.already_archived": "This thread is already archived!",
+	"archive_thread.no_permission": "You don't have the permission to archive this thread!",
+	"archive_thread.archived": "%s archived this thread.",
+	"rename_thread.set_new_thread_title": "Set New Thread Title"
 }

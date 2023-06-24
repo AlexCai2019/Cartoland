@@ -1,5 +1,6 @@
 package cartoland.utilities;
 
+import cartoland.commands.ToolCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static cartoland.commands.ICommand.*;
+import static cartoland.events.ContextMenu.*;
 import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 /**
@@ -58,11 +60,11 @@ public class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "能協助你的工具")
 				.setDescriptionLocalization(CHINESE_CHINA, "能协助你的工具")
 				.addSubcommands(
-						new SubcommandData("uuid_string", "Get UUID data from raw UUID string")
+						new SubcommandData(ToolCommand.UUID_STRING, "Get UUID data from raw UUID string")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從UUID字串獲得UUID資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从UUID字符串获得UUID数据")
 								.addOption(OptionType.STRING, "raw_uuid", "The raw UUID that you want to convert", true, false),
-						new SubcommandData("uuid_array", "Get UUID data from UUID integer array")
+						new SubcommandData(ToolCommand.UUID_ARRAY, "Get UUID data from UUID integer array")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從uuid整數陣列獲得uuid資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从uuid整数数组获得uuid数据")
 								.addOptions(
@@ -78,7 +80,7 @@ public class AddCommands
 										new OptionData(OptionType.INTEGER, "3", "The [3] of the array", true, false)
 												.setDescriptionLocalization(CHINESE_TAIWAN, "陣列的第[3]項")
 												.setDescriptionLocalization(CHINESE_CHINA, "数组的第[3]项")),
-						new SubcommandData("color_rgba", "Get color data from RGBA array")
+						new SubcommandData(ToolCommand.COLOR_RGBA, "Get color data from RGBA array")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGBA陣列獲得顏色資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从RGBA数组获得颜色数据")
 								.addOptions(
@@ -102,14 +104,14 @@ public class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "不透明度")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "不透明度 (0 ~ 255)")
 												.setDescriptionLocalization(CHINESE_CHINA, "不透明度 (0 ~ 255)")),
-						new SubcommandData("color_integer", "Get color data from RGB integer")
+						new SubcommandData(ToolCommand.COLOR_INTEGER, "Get color data from RGB integer")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
 								.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
 								.addOptions(
 										new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
 												.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
 												.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
-						new SubcommandData("pack_mcmeta", "Generate a pack.mcmeta")
+						new SubcommandData(ToolCommand.PACK_MCMETA, "Generate a pack.mcmeta")
 								.addOptions(
 										new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
 												.addChoice("Data Pack", "d")
@@ -226,13 +228,17 @@ public class AddCommands
 								.setDescriptionLocalization(CHINESE_TAIWAN, "想轉帳的數量")
 								.setDescriptionLocalization(CHINESE_CHINA, "想转帐的数量")),
 
-		Commands.message("Raw Text")
+		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")
 				.setNameLocalization(CHINESE_CHINA, "原始文本"),
 
-		Commands.message("Reactions")
+		Commands.message(REACTIONS)
 				.setNameLocalization(CHINESE_TAIWAN, "反應")
-				.setNameLocalization(CHINESE_CHINA, "反应")
+				.setNameLocalization(CHINESE_CHINA, "反应"),
+
+		Commands.message(CODE_BLOCK)
+				.setNameLocalization(CHINESE_TAIWAN, "程式碼區塊")
+				.setNameLocalization(CHINESE_CHINA, "代码区块")
 	};
 }
 

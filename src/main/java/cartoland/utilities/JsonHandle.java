@@ -52,11 +52,18 @@ public class JsonHandle
 		builder.setLength(0);
 		builder.append(file.getString(commandName + ".begin")); //開頭
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
-		for (var o : dotListArray)
-			builder.append((String) o).append(' ');
-		builder.deleteCharAt(builder.length() - 1);
-		builder.append(file.getString(commandName + ".end")); //結尾
-		return builder.toString();
+		int dotListLength = dotListArray.length();
+		if (dotListLength != 0)
+		{
+			for (int i = 0; ; i++)
+			{
+				builder.append(dotListArray.getString(i));
+				if (i + 1 == dotListLength)
+					break;
+				builder.append(", ");
+			}
+		}
+		return builder.append(file.getString(commandName + ".end")).toString(); //結尾
 	}
 
 	public static String command(long userID, String commandName, String argument)
@@ -91,8 +98,6 @@ public class JsonHandle
 		commandListMap.put("cmd.list", englishFile.getJSONArray("cmd.list").toList());
 		commandListMap.put("faq.list", englishFile.getJSONArray("faq.list").toList());
 		commandListMap.put("dtp.list", englishFile.getJSONArray("dtp.list").toList());
-
-		//FileHandle.log("Reload all language json files");
 	}
 
 	public static String getStringFromJsonKey(long userID, String key)

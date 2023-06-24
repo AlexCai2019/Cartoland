@@ -60,8 +60,8 @@ public class LotteryCommand implements ICommand
 class BetSubCommand implements ICommand
 {
 	private final Random random = new Random(); //不使用Algorithm.chance
-	private final Pattern numberRegex = Pattern.compile("\\d{1,18}");
-	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%");
+	private final Pattern numberRegex = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
+	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
 	private static final long MAXIMUM = 100000L;
 
 	@Override

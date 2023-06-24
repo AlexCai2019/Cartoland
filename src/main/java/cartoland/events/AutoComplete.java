@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static cartoland.commands.ICommand.*;
 
@@ -82,10 +83,12 @@ abstract class GenericComplete
 class JsonBasedComplete extends GenericComplete
 {
 	private final String commandName;
+	private final Stream<String> commandStream;
 
 	JsonBasedComplete(String commandName)
 	{
 		this.commandName = commandName;
+		commandStream = JsonHandle.commandList(commandName).stream().map(String::valueOf);
 	}
 
 	@Override
@@ -96,12 +99,8 @@ class JsonBasedComplete extends GenericComplete
 			return;
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-		List<Command.Choice> choices = JsonHandle.commandList(commandName)
-				.stream()
-				.map(o -> (String) o)
-				.filter(word -> word.startsWith(optionValue))
-				.map(word -> new Command.Choice(word, word))
-				.toList();
+		List<Command.Choice> choices = commandStream.filter(word -> word.startsWith(optionValue))
+				.map(word -> new Command.Choice(word, word)).toList();
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 	}
@@ -117,9 +116,11 @@ class JsonBasedComplete extends GenericComplete
 class YouTuberComplete extends GenericComplete
 {
 	private final Map<String, String> youtubers = new LinkedHashMap<>(); //LinkedHashMap or TreeMap ?
+	private final Set<Map.Entry<String, String>> youtubersEntries;
 
 	YouTuberComplete()
 	{
+		//這是TreeMap的排序方式 若要新增YouTuber 必須寫一個小程式測試TreeMap會怎麼排序
 		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
 		youtubers.put("Phoenix SC", "@PhoenixSC");
 		youtubers.put("SethBling", "@SethBling");
@@ -127,6 +128,7 @@ class YouTuberComplete extends GenericComplete
 		youtubers.put("天豹星雲", "@nebulirion");
 		youtubers.put("惡靈oreki", "@oreki20");
 		youtubers.put("收音機", "@radio0529");
+		youtubersEntries = youtubers.entrySet();
 	}
 
 	@Override
@@ -134,11 +136,12 @@ class YouTuberComplete extends GenericComplete
 	{
 		String optionValue = event.getFocusedOption().getValue();
 		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);
-		youtubers.forEach((youtuberName, youtuberID) ->
+		for (Map.Entry<String, String> entry : youtubersEntries)
 		{
+			String youtuberName = entry.getKey();
 			if (youtuberName.contains(optionValue))
-				choices.add(new Command.Choice(youtuberName, youtuberID));
-		});
+				choices.add(new Command.Choice(youtuberName, entry.getValue()));
+		}
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 	}

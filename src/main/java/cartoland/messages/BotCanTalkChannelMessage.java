@@ -42,7 +42,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"不要耍智障好不好。",
 		"你看看，就是有像你這種臭俗辣。",
 		"吃屎比較快。",
-		"妳是怎麼樣？",
+		"你是怎麼樣？",
 		"在那叫什麼？",
 		"我知道我很帥，不用一直tag我",
 		"tag我該女裝負責吧。",
@@ -55,11 +55,13 @@ public class BotCanTalkChannelMessage implements IMessage
 		"哪裡來的小孩子，家教差成這樣。",
 		"老子瘋狗的外號Maps群時期就有啦！",
 		"沒被打過是不是？",
-		"tag機器人是不好的行為，小朋友不要學",
+		"tag機器人是不好的行為，小朋友不要學。",
 		"上帝把智慧撒向人間的時候你撐了把傘嗎？",
 		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
-		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個-大大的星星！讓我知道。"
+		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
+		"請問您有什麼事嗎？是不是太閒？", //由brick-bk新增
+		":mute:再tag我，就禁言！" //由brick-bk新增
 	};
 	private final String[] megumin =
 	{
@@ -131,6 +133,9 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		if (rawMessage.equalsIgnoreCase("lol"))
 			channel.sendMessage("LOL").queue();
+		
+		if (rawMessage.equals("轉生"))
+			channel.sendMessage("您好，您的目標是lv7轉生！\n轉生後記得找收音機登記原因！").queue();
 
 		if (rawMessage.equals("早安"))
 			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();

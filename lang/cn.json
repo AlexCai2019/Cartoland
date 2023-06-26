@@ -165,6 +165,7 @@
 	"introduce.update.update": "更新成功。",
 	"lottery.invalid_get": "你不能查看这名用户的命令方块！",
 	"lottery.get.query": "%s 目前有 %d 个命令方块。",
+	"lottery.get.query_detail": "%s 目前有 %d 个命令方块。\n赌了 %d 次\n- 赢了 %d 次\n- 输了 %d 次\n梭哈 %d 次\n- 赢了 %d 次\n- 输了 %d 次",
 	"lottery.bet.win": "赢了！",
 	"lottery.bet.lose": "输了…",
 	"lottery.bet.play_with_your_limit": "小赌怡情，大赌伤身。",

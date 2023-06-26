@@ -23,6 +23,7 @@ public class CommonFunctions
 	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
 	public static final Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
 	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
+	public static final Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
 	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
 	public static final Function<Object, String> stringValue = String::valueOf;
 }

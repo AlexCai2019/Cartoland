@@ -24,21 +24,7 @@ public class LotteryCommand implements ICommand
 
 	public LotteryCommand()
 	{
-		subCommands.put("get", event ->
-		{
-			User user = event.getUser();
-			User target = event.getOption("target", CommonFunctions.getAsUser);
-			if (target == null) //沒有填 預設是自己
-				target = user;
-			else if (target.isBot() || target.isSystem())
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
-				return;
-			}
-
-			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-								.formatted(target.getEffectiveName(), CommandBlocksHandle.getBlocks(target.getIdLong()))).queue();
-		});
+		subCommands.put("get", new GetSubCommand());
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());
 	}
@@ -47,6 +33,42 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
+	}
+}
+
+class GetSubCommand implements ICommand
+{
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		User user = event.getUser();
+
+		User target = event.getOption("target", CommonFunctions.getAsUser);
+		if (target == null) //沒有填 預設是自己
+			target = user;
+		else if (target.isBot() || target.isSystem())
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
+			return;
+		}
+
+		Boolean displayDetailBox = event.getOption("display_detail", CommonFunctions.getAsBoolean);
+		boolean displayDetail = (displayDetailBox != null) ? displayDetailBox : false;
+
+		CommandBlocksHandle.LotteryData targetLotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
+		int won = targetLotteryData.getWon();
+		int lost = targetLotteryData.getLost();
+		int showHandWon = targetLotteryData.getShowHandWon();
+		int showHandLost = targetLotteryData.getShowHandLost();
+		if (displayDetail)
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query_detail")
+								.formatted(
+										targetLotteryData.getName(), targetLotteryData.getBlocks(),
+										won + lost, won, lost,
+										showHandWon + showHandLost, showHandWon, showHandLost)).queue();
+		else
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
+								.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();
 	}
 }
 
@@ -68,7 +90,8 @@ class BetSubCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		long userID = event.getUser().getIdLong();
-		long nowHave = CommandBlocksHandle.getBlocks(userID);
+		CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
+		long nowHave = lotteryData.getBlocks();
 		String betString = event.getOption("bet", CommonFunctions.getAsString);
 
 		if (betString == null) //不帶參數
@@ -92,6 +115,12 @@ class BetSubCommand implements ICommand
 			bet = nowHave * percentage / 100;
 		}
 		else //都不是
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).queue();
+			return;
+		}
+
+		if (bet == 0L)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).queue();
 			return;
@@ -125,10 +154,12 @@ class BetSubCommand implements ICommand
 		}
 
 		String replyMessage = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet);
-		if (bet == nowHave) //梭哈
+		boolean showHand = bet == nowHave; //梭哈
+		if (showHand)
 			replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
+		lotteryData.addGame(win, showHand);
 
-		CommandBlocksHandle.setBlocks(userID, afterBet);
+		lotteryData.setBlocks(afterBet);
 		event.reply(replyMessage).queue();
 	}
 }
@@ -205,7 +236,8 @@ class RankingSubCommand implements ICommand
 			endElement = forSort.size();
 
 		List<CommandBlocksHandle.LotteryData> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-		long blocks = CommandBlocksHandle.getBlocks(userID); //本使用者擁有的方塊數
+		CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
+		long blocks = myData.getBlocks(); //本使用者擁有的方塊數
 
 		rankBuilder.setLength(0);
 		rankBuilder.append("```ansi\nCommand blocks in ")
@@ -222,7 +254,7 @@ class RankingSubCommand implements ICommand
 			rankBuilder.append("[\u001B[36m")
 					.append(String.format("%03d", add + i))
 					.append("\u001B[0m]\t")
-					.append(rank.name)
+					.append(rank.getName())
 					.append(": \u001B[36m")
 					.append(rank.getBlocks())
 					.append("\u001B[0m\n");

@@ -1,10 +1,9 @@
 package cartoland.commands;
 
 import cartoland.events.CommandUsage;
-import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.JsonHandle;
 import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -19,8 +18,8 @@ import java.util.regex.Pattern;
  */
 public class TransferCommand implements ICommand
 {
-	private final Pattern numberRegex = Pattern.compile("\\d+");
-	private final Pattern percentRegex = Pattern.compile("\\d+%");
+	private final Pattern numberRegex = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
+	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -53,21 +52,30 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		long nowHave = CommandBlocksHandle.getBlocks(userID);
+		CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
+		CommandBlocksHandle.LotteryData targetData = CommandBlocksHandle.getLotteryData(targetID);
+
+		long nowHave = myData.getBlocks();
 		long transferAmount;
 		if (numberRegex.matcher(transferAmountString).matches())
 			transferAmount = Long.parseLong(transferAmountString);
 		else if (percentRegex.matcher(transferAmountString).matches())
 		{
-			long percentage = Long.parseLong(transferAmountString.substring(0, transferAmountString.length() - 1));
-			if (percentage > 100L) //超過100%
+			short percentage = Short.parseShort(transferAmountString.substring(0, transferAmountString.length() - 1));
+			if (percentage > 100) //超過100%
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(percentage)).queue();
 				return;
 			}
-			transferAmount = (nowHave * percentage) / 100;
+			transferAmount = nowHave * percentage / 100;
 		}
 		else
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
+			return;
+		}
+
+		if (transferAmount == 0L)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
 			return;
@@ -80,11 +88,9 @@ public class TransferCommand implements ICommand
 		}
 
 		long afterHave = nowHave - transferAmount;
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getEffectiveName(), afterHave))
-			.queue(interactionHook ->
-			{
-				CommandBlocksHandle.setBlocks(targetID, Algorithm.safeAdd(CommandBlocksHandle.getBlocks(targetID), transferAmount));
-				CommandBlocksHandle.setBlocks(userID, afterHave);
-			});
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getEffectiveName(), afterHave)).queue();
+
+		targetData.addBlocks(transferAmount);
+		myData.setBlocks(afterHave);
 	}
 }

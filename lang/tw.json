@@ -191,6 +191,7 @@
 	"one_a_two_b.reward": "\n你在 %d 分鐘和 %d 次猜測內解開了問題，獎勵 %d 個指令方塊。",
 	"lottery.get.invalid_get": "你不能查看這名使用者的指令方塊！",
 	"lottery.get.query": "%s 目前有 %d 個指令方塊。",
+	"lottery.get.query_detail": "%s 目前有 %d 個指令方塊。\n賭了 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n梭哈 %d 次\n- 贏了 %d 次\n- 輸了 %d 次",
 	"lottery.bet.win": "贏了！",
 	"lottery.bet.lose": "輸了…",
 	"lottery.bet.play_with_your_limit": "小賭怡情，大賭傷身。",

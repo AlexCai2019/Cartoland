@@ -39,73 +39,21 @@ public class CommandBlocksHandle
 		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
 	}
 
-	/**
-	 * Add command blocks to the user that has userID as ID. This method calls
-	 * {@link Algorithm#safeAdd(long, long)} in order to add without overflow.
-	 *
-	 * @param userID The ID of the user that needs to add command blocks.
-	 * @param add The amount of command blocks that are going to add on this user.
-	 */
-	public static void addBlocks(long userID, long add)
+	public static LotteryData getLotteryData(long userID)
 	{
 		LotteryData lotteryData = lotteryDataMap.get(userID);
-		setBlocks(userID, (lotteryData != null) ? Algorithm.safeAdd(lotteryData.blocks, add) : add);
-	}
-
-	public static void setBlocks(long userID, long newValue)
-	{
-		changed = true;
-		LotteryData lotteryData = lotteryDataMap.get(userID);
-
-		long oldValue;
-		if (lotteryData != null)
+		if (lotteryData == null) //如果沒有記錄這名玩家
 		{
-			oldValue = lotteryData.blocks;
-			lotteryData.blocks = newValue;
+			lotteryDataMap.put(userID, lotteryData = new LotteryData(userID));
+			final LotteryData finalLotteryData = lotteryData; //lambda要用
+			jda.retrieveUserById(userID).queue(user -> finalLotteryData.name = user.getEffectiveName());
 		}
-		else
-		{
-			oldValue = 0L;
-			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.put(userID, new LotteryData(user.getEffectiveName(), newValue)));
-		}
-
-		boolean less = newValue < GAMBLE_ROLE_MIN; //新值依舊比GAMBLE_ROLE_MIN少
-		if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
-			return;
-
-		cartolandServer.retrieveMemberById(userID).queue(member ->
-		{
-			boolean hasRole = member.getRoles().contains(godOfGamblersRole);
-			if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
-				cartolandServer.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
-			else if (less && hasRole) //小於GAMBLE_ROLE_MIN 且有身分組
-				cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
-		});
-	}
-
-	public static long getBlocks(long userID)
-	{
-		LotteryData lotteryData = lotteryDataMap.get(userID);
-		if (lotteryData != null)
-			return lotteryData.blocks;
-
-		//如果沒有記錄這名玩家
-		jda.retrieveUserById(userID).queue(user -> lotteryDataMap.put(userID, new LotteryData(user.getEffectiveName(), 0L)));
-		return 0L;
+		return lotteryData;
 	}
 
 	public static int size()
 	{
 		return lotteryDataMap.size();
-	}
-
-	public static void rename(long userID, String newName)
-	{
-		LotteryData lotteryData = lotteryDataMap.get(userID);
-		if (lotteryData != null)
-			lotteryData.name = newName;
-		else
-			lotteryDataMap.put(userID, new LotteryData(newName, 0L));
 	}
 
 	public static List<LotteryData> toArrayList()
@@ -120,20 +68,39 @@ public class CommandBlocksHandle
 			{
 				String name = user.getEffectiveName();
 				if (!lotteryData.name.equals(name)) //如果名字和紀錄的名字不一樣
-					lotteryData.name = name; //新名字
+					lotteryData.setName(name); //新名字
 			}));
 		changed = true;
 	}
 
 	public static class LotteryData implements Serializable
 	{
-		public String name; //名字
+		private String name; //名字
+		private final long userID;
 		private long blocks; //方塊數
+		private int won; //勝場
+		private int lost; //敗場
+		private int showHandWon; //梭哈勝
+		private int showHandLost; //梭哈敗(破產)
 
-		public LotteryData(String name, long blocks)
+		public LotteryData(long userID)
 		{
-			this.name = name;
+			this(userID, 0L);
+		}
+
+		public LotteryData(long userID, long blocks)
+		{
+			this.userID = userID;
 			this.blocks = blocks;
+			won = 0;
+			lost = 0;
+			showHandWon = 0;
+			showHandLost = 0;
+		}
+
+		public void setName(String newName)
+		{
+			name = newName;
 		}
 
 		public String getName()
@@ -141,14 +108,77 @@ public class CommandBlocksHandle
 			return name;
 		}
 
-		public void setName(String name)
+		/**
+		 * Add command blocks to the user that has userID as ID. This method calls
+		 * {@link Algorithm#safeAdd(long, long)} in order to add without overflow.
+		 *
+		 * @param add The amount of command blocks that are going to add on this user.
+		 */
+		public void addBlocks(long add)
 		{
-			this.name = name;
+			setBlocks(Algorithm.safeAdd(blocks, add));
+		}
+
+		public void setBlocks(long newValue)
+		{
+			changed = true; //指令方塊改變過了
+
+			long oldValue = blocks;
+			blocks = newValue;
+
+			boolean less = newValue < GAMBLE_ROLE_MIN; //true = 新值依舊比GAMBLE_ROLE_MIN少
+			if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
+				return;
+
+			cartolandServer.retrieveMemberById(userID).queue(member ->
+			{
+				boolean hasRole = member.getRoles().contains(godOfGamblersRole);
+				if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
+				 cartolandServer.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
+				else if (less && hasRole) //小於GAMBLE_ROLE_MIN 且有身分組
+				 cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
+			});
 		}
 
 		public long getBlocks()
 		{
 			return blocks;
+		}
+
+		public int getWon()
+		{
+			return won;
+		}
+
+		public int getLost()
+		{
+			return lost;
+		}
+
+		public int getShowHandWon()
+		{
+			return showHandWon;
+		}
+
+		public int getShowHandLost()
+		{
+			return showHandLost;
+		}
+
+		public void addGame(boolean isWon, boolean isShowHand)
+		{
+			if (isWon)
+			{
+				won++;
+				if (isShowHand)
+					showHandWon++;
+			}
+			else
+			{
+				lost++;
+				if (isShowHand)
+					showHandLost++;
+			}
 		}
 	}
 }

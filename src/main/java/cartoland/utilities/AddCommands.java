@@ -197,7 +197,12 @@ public class AddCommands
 												.setNameLocalization(CHINESE_TAIWAN, "目標")
 												.setNameLocalization(CHINESE_CHINA, "目标")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的使用者")
-												.setDescriptionLocalization(CHINESE_CHINA, "想确认的用户")),
+												.setDescriptionLocalization(CHINESE_CHINA, "想确认的用户"),
+										new OptionData(OptionType.BOOLEAN, "display_detail", "Whether the command shows bet records", false, false)
+												.setNameLocalization(CHINESE_TAIWAN, "顯示細節")
+												.setNameLocalization(CHINESE_CHINA, "显示细节")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "指令是否顯示賭注紀錄")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "命令是否显示赌注纪录")),
 						new SubcommandData("bet", "Bet some command blocks")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "賭上一些指令方塊")
 								.setDescriptionLocalization(CHINESE_CHINA, "赌上一些命令方块")

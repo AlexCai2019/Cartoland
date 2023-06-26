@@ -18,7 +18,7 @@ public class UserChangeName extends ListenerAdapter
 	public void onUserUpdateName(UserUpdateNameEvent event)
 	{
 		User user = event.getUser();
-		CommandBlocksHandle.rename(user.getIdLong(), user.getEffectiveName()); //修改紀錄內的名字
+		CommandBlocksHandle.getLotteryData(user.getIdLong()).setName(user.getEffectiveName()); //修改紀錄內的名字
 		CommandBlocksHandle.changed = true;
 	}
 }

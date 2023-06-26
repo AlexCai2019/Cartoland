@@ -80,6 +80,6 @@ public class GuildMessage implements IMessage
 			return; //不用執行
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
 		if (message.getChannel().getIdLong() != IDAndEntities.BOT_CHANNEL_ID && commandBlockCategories.contains(category.getIdLong()))
-			CommandBlocksHandle.addBlocks(event.getAuthor().getIdLong(), rawMessage.length() + 1 + message.getAttachments().size()); //說話加等級 +1當作加上\0 附加一個檔案算1個
+			CommandBlocksHandle.getLotteryData(event.getAuthor().getIdLong()).addBlocks(rawMessage.length() + 1 + message.getAttachments().size()); //說話加等級 +1當作加上\0 附加一個檔案算1個
 	}
 }

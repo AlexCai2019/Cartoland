@@ -45,7 +45,10 @@ public class QuoteCommand implements ICommand
 			return;
 		}
 
-		String[] numbersInLink = link.substring(SUB_STRING_START).split("/");
+		String[] numbersInLink = link.substring(SUB_STRING_START).split("/"); //從字串中取得數字
+		//舉例 https://discord.com/channels/886936474723950603/886936474723950611/891666028986253322
+		//numbersInLink[0] = "886936474723950611";
+		//numbersInLink[1] = "891666028986253322";
 
 		//從創聯中取得頻道
 		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));

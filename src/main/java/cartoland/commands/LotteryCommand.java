@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class LotteryCommand implements ICommand
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>();
+	private final Map<String, ICommand> subCommands = new HashMap<>(3);
 
 	public LotteryCommand()
 	{

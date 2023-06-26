@@ -26,7 +26,7 @@
 	"help.name.lang": "Syntax: </lang:1102681768840138935>` <code>`",
 	"help.name.quote": "Syntax: </quote:1102681768840138937>` <message link>`",
 	"help.name.youtuber": "Syntax: </youtuber:1102681768840138938>` [<channel name>]`",
-	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>`",
+	"help.name.introduce": "Syntax: </introduce user:1103746424384004156>` [<user>]` </introduce update:1103746424384004156>` <content>` </introduce delete:1103746424384004156>",
 	"help.name.lottery": "Syntax: </lottery get:1102681768840138942>` [<user>]` </lottery bet:1102681768840138942>` <amount>` </lottery ranking:1102681768840138942>` <page>`",
 	"help.name.transfer": "Syntax: </transfer:1120202223348088893>` <user> <amount>`",
 	"cmd.begin": "`Commands: ",

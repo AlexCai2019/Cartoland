@@ -153,15 +153,18 @@ public class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "用户")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "你想認識的使用者")
 												.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
-				new SubcommandData("update", "Update your introduction")
-						.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
-						.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
-						.addOptions(
-								new OptionData(OptionType.STRING, "content", "Your self introduction", true, true)
-										.setNameLocalization(CHINESE_TAIWAN, "內容")
-										.setNameLocalization(CHINESE_CHINA, "内容")
-										.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
-										.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍"))),
+						new SubcommandData("update", "Update your introduction")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
+								.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
+								.addOptions(
+										new OptionData(OptionType.STRING, "content", "Your self introduction", false, false)
+												.setNameLocalization(CHINESE_TAIWAN, "內容")
+												.setNameLocalization(CHINESE_CHINA, "内容")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
+												.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍")),
+						new SubcommandData("delete" ,"Delete your introduction")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的自我介紹")
+								.setDescriptionLocalization(CHINESE_CHINA, "删除你的自我介绍")),
 
 		Commands.slash(MEGUMIN, "The best anime girl")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
@@ -256,7 +259,7 @@ class Cmd
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Map<DiscordLocale, String> cmdDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> cmdDescriptions = new HashMap<>(2);
 
 	static
 	{
@@ -298,7 +301,7 @@ class Faq
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Map<DiscordLocale, String> faqDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> faqDescriptions = new HashMap<>(2);
 
 	static
 	{
@@ -336,7 +339,7 @@ class Dtp
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Map<DiscordLocale, String> dtpDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> dtpDescriptions = new HashMap<>(2);
 
 	static
 	{
@@ -374,7 +377,7 @@ class Lang
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Map<DiscordLocale, String> langDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> langDescriptions = new HashMap<>(2);
 
 	static
 	{
@@ -412,7 +415,7 @@ class Jira
 		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Map<DiscordLocale, String> jiraDescriptions = new HashMap<>();
+	private static final Map<DiscordLocale, String> jiraDescriptions = new HashMap<>(2);
 
 	static
 	{

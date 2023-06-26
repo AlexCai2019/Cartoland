@@ -26,7 +26,7 @@ public class JsonHandle
 
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value
-	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(); //語言字串為key 語言檔案為value
+	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(7); //語言字串為key 語言檔案為value
 	private static final Map<String, List<Object>> commandListMap = new HashMap<>(); //cmd.list等等為key 語言檔案對應的JSONArray為value
 	private static final StringBuilder builder = new StringBuilder();
 

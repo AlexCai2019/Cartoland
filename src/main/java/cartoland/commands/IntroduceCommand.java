@@ -11,7 +11,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,23 +27,23 @@ import java.util.stream.Collectors;
  */
 public class IntroduceCommand implements ICommand
 {
-	/**
-	 * {@code userSubCommand} is a lambda that handles one of the sub commands of {@code /introduce} command,
-	 * which is {@code /introduce user}.
-	 *
-	 * @since 2.0
-	 */
-	private final ICommand userSubCommand = event ->
-	{
-		User user = event.getUser();
-		User target = event.getOption("user", CommonFunctions.getAsUser);
-		if (target == null) //沒有填 預設是自己
-			target = user;
+	private final Map<String, ICommand> subCommands = new HashMap<>(3);
 
-		String content = IntroduceHandle.getIntroduction(target.getIdLong());
-		event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
-	};
-	private final ICommand updateSubCommand = new UpdateSubCommand();
+	public IntroduceCommand()
+	{
+		subCommands.put("user", event ->
+		{
+			User user = event.getUser();
+			User target = event.getOption("user", CommonFunctions.getAsUser);
+			if (target == null) //沒有填 預設是自己
+				target = user;
+
+			String content = IntroduceHandle.getIntroduction(target.getIdLong());
+			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
+		});
+		subCommands.put("update", new UpdateSubCommand());
+		subCommands.put("delete", new DeleteSubCommand());
+	}
 
 	/**
 	 * The execution of a slash command. Unlike other commands that has sub commands, since this
@@ -55,9 +57,7 @@ public class IntroduceCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		String subCommandName = event.getSubcommandName();
-		if (subCommandName != null)
-			(subCommandName.equals("user") ? userSubCommand : updateSubCommand).commandProcess(event);
+		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
 }
 
@@ -72,7 +72,6 @@ class UpdateSubCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
-	private static final String delete = "delete";
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -80,12 +79,6 @@ class UpdateSubCommand implements ICommand
 		long userID = event.getUser().getIdLong();
 		String content = event.getOption("content", CommonFunctions.getAsString);
 		if (content == null)
-		{
-			event.reply("Impossible, this is required!").queue();
-			return;
-		}
-
-		if (content.equals(delete)) //如果使用/introduce update delete
 		{
 			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
@@ -118,5 +111,16 @@ class UpdateSubCommand implements ICommand
 			IntroduceHandle.updateIntroduction(userID, content);
 
 		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
+	}
+}
+
+class DeleteSubCommand implements ICommand
+{
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		long userID = event.getUser().getIdLong();
+		IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
 	}
 }

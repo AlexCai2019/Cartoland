@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class ToolCommand implements ICommand
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>();
+	private final Map<String, ICommand> subCommands = new HashMap<>(5);
 	public static final String UUID_STRING = "uuid_string";
 	public static final String UUID_ARRAY = "uuid_array";
 	public static final String COLOR_RGBA = "color_rgba";

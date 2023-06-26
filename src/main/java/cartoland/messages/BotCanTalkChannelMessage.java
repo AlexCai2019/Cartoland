@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -61,7 +63,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
 		"請問您有什麼事嗎？是不是太閒？", //由brick-bk新增
-		":mute:再tag我，就禁言！" //由brick-bk新增
+		"你再tag我啊，再tag啊，沒被禁言過是不是？"
 	};
 	private final String[] megumin =
 	{
@@ -86,12 +88,20 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	private final Set<Long> canTalkCategories = new HashSet<>(4);
 
+	private final Map<String, String> keywords = new HashMap<>(5);
+
 	public BotCanTalkChannelMessage()
 	{
 		canTalkCategories.add(IDAndEntities.GENERAL_CATEGORY_ID);
 		canTalkCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
 		canTalkCategories.add(IDAndEntities.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDAndEntities.DANGEROUS_CATEGORY_ID);
+
+		keywords.put("早安", "早上好中國 現在我有Bing Chilling");
+		keywords.put("午安", "午安你好");
+		keywords.put("晚安", "那我也要睡啦");
+		keywords.put("安安", "安安你好幾歲住哪");
+		keywords.put("轉生", "您好，您的目標是lv7轉生！");
 	}
 
 	@Override
@@ -123,28 +133,30 @@ public class BotCanTalkChannelMessage implements IMessage
 			else if (userID == IDAndEntities.MEGA_ID)
 				replyString = Algorithm.randomElement(replyMegaMention);
 			else
-				replyString = Algorithm.randomElement(replyMention);
+			{
+				long channelID = channel.getIdLong();
+				replyString = (channelID == IDAndEntities.BOT_CHANNEL_ID || channelID == IDAndEntities.UNDERGROUND_CHANNEL_ID) ?
+						Algorithm.randomElement(replyMention) : "蛤，我地盤在<#" + IDAndEntities.BOT_CHANNEL_ID + ">啦";
+			}
 
 			message.reply(replyString).mentionRepliedUser(false).queue();
 		}
 
+		if (rawMessage.equalsIgnoreCase("lol"))
+		{
+			channel.sendMessage("LOL").queue();
+			return;
+		}
+
+		String sendString = keywords.get(rawMessage); //尋找完全相同的字串
+		if (sendString != null) //如果找到了
+		{
+			channel.sendMessage(sendString).queue();
+			return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
+		}
+
 		if (rawMessage.contains("惠惠") || meguminRegex.matcher(rawMessage).matches() || rawMessage.contains("めぐみん"))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
-
-		if (rawMessage.equalsIgnoreCase("lol"))
-			channel.sendMessage("LOL").queue();
-		
-		if (rawMessage.equals("轉生"))
-			channel.sendMessage("您好，您的目標是lv7轉生！\n轉生後記得找收音機登記原因！").queue();
-
-		if (rawMessage.equals("早安"))
-			channel.sendMessage("早上好中國 現在我有Bing Chilling").queue();
-		if (rawMessage.equals("午安"))
-			channel.sendMessage("午安你好，歡迎來到" + IDAndEntities.cartolandServer.getName()).queue(); //午安長輩圖
-		if (rawMessage.equals("晚安"))
-			channel.sendMessage("那我也要睡啦").queue();
-		if (rawMessage.equals("安安"))
-			channel.sendMessage("安安你好幾歲住哪").queue();
 
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();

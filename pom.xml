@@ -53,6 +53,10 @@
             <name>vin_3462</name>
             <url>https://github.com/vincentlee3462</url>
         </contributor>
+        <contributor>
+            <name>brick-bk</name>
+            <url>https://github.com/brick-bk</url>
+        </contributor>
     </contributors>
 
     <dependencies>

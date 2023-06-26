@@ -11,7 +11,7 @@
 	"help.name.lang": "格式: </lang:1102681768840138935>` <代码>`",
 	"help.name.quote": "格式: </quote:1102681768840138937>` <信息链接>`",
 	"help.name.youtuber": "格式: </youtuber:1102681768840138938>` [<频道名称>]`",
-	"help.name.introduce": "格式: </introduce user:1103746424384004156>` [<用户>]` </introduce update:1103746424384004156>` <内容>`",
+	"help.name.introduce": "格式: </introduce user:1103746424384004156>` [<用户>]` </introduce update:1103746424384004156>` <内容>` </introduce delete:1103746424384004156>",
 	"help.name.lottery": "格式: </lottery get:1102681768840138942>` [<用户>]` </lottery bet:1102681768840138942>` <数量>` </lottery ranking:1102681768840138942>` <页数>`",
 	"help.name.transfer": "格式: </transfer:1120202223348088893>` <用户> <数量>`",
 	"cmd.begin": "`命令: ",

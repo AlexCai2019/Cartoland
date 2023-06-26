@@ -23,7 +23,7 @@ import static cartoland.commands.ICommand.*;
  */
 public class AutoComplete extends ListenerAdapter
 {
-	private final Map<String, GenericComplete> commands = new HashMap<>(); //指令們
+	private final Map<String, GenericComplete> commands = new HashMap<>(9); //指令們
 
 	public AutoComplete()
 	{
@@ -45,8 +45,6 @@ public class AutoComplete extends ListenerAdapter
 		commands.put(DATAPACK, alias);
 
 		commands.put(YOUTUBER, new YouTuberComplete());
-
-		commands.put(INTRODUCE, new IntroduceComplete());
 	}
 
 	@Override
@@ -89,6 +87,7 @@ class JsonBasedComplete extends GenericComplete
 	JsonBasedComplete(String commandName)
 	{
 		this.commandName = commandName;
+		//將指令選項列表轉換為字串串流
 		commandStream = JsonHandle.commandList(commandName).stream().map(CommonFunctions.stringValue);
 	}
 
@@ -101,7 +100,7 @@ class JsonBasedComplete extends GenericComplete
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
 		List<Command.Choice> choices = commandStream.filter(word -> word.startsWith(optionValue))
-				.map(word -> new Command.Choice(word, word)).toList();
+				.map(word -> new Command.Choice(word, word)).toList(); //將字串串流轉換為選項列表
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 	}
@@ -145,33 +144,5 @@ class YouTuberComplete extends GenericComplete
 		}
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
-	}
-}
-
-/**
- * {@code IntroduceComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
- * /introduce. This class only provide /introduce update delete.
- *
- * @since 2.0
- * @author Alex Cai
- */
-class IntroduceComplete extends GenericComplete
-{
-	private final List<Command.Choice> delete = new ArrayList<>(1);
-	private final List<Command.Choice> empty = new ArrayList<>();
-
-	IntroduceComplete()
-	{
-		delete.add(new Command.Choice("delete", "delete"));
-	}
-
-	@Override
-	void completeProcess(CommandAutoCompleteInteractionEvent event)
-	{
-		String subCommandName = event.getSubcommandName();
-		if (subCommandName == null || !subCommandName.equals("update"))
-			event.replyChoices(empty).queue();
-		else
-			event.replyChoices("delete".startsWith(event.getFocusedOption().getValue()) ? delete : empty).queue();
 	}
 }

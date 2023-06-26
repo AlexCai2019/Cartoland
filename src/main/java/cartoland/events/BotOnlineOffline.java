@@ -158,8 +158,8 @@ public class BotOnlineOffline extends ListenerAdapter
 	{
 		threeAMTask = scheduleExecutor.scheduleAtFixedRate(() ->
 		{
-			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue();
-			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue();
+			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
+			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
 		}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 

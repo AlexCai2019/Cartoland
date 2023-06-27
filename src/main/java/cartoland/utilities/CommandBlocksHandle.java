@@ -11,12 +11,9 @@ import static cartoland.utilities.IDAndEntities.*;
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
  * feature that whatever a user say in some specific channels, the user will gain command blocks as a kind of
- * reward point. This class open a static field {@link #lotteryDataMap} for {@link JsonHandle}, which is where all the
- * command blocks are stored, hence this class can be seen as an extension of {@code JsonHandle}. Can not be
- * instantiated.
+ * reward point. Can not be instantiated.
  *
  * @since 1.5
- * @see JsonHandle
  * @author Alex Cai
  */
 public class CommandBlocksHandle
@@ -34,21 +31,34 @@ public class CommandBlocksHandle
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
+	private static final List<LotteryData> lotteryDataList; //將map的值轉為array list
+
 	static
 	{
 		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
+		lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list 因為每次修改的是LotteryData的內容 而不是參考本身 所以可以事先建好
 	}
 
+	/**
+	 * Get the lottery data of a user from ID.
+	 *
+	 * @param userID The ID of the user.
+	 * @return The lottery data of the user. It will never be null.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
 	public static LotteryData getLotteryData(long userID)
 	{
 		LotteryData lotteryData = lotteryDataMap.get(userID);
-		if (lotteryData == null) //如果沒有記錄這名玩家
-		{
-			lotteryDataMap.put(userID, lotteryData = new LotteryData(userID));
-			final LotteryData finalLotteryData = lotteryData; //lambda要用
-			jda.retrieveUserById(userID).queue(user -> finalLotteryData.name = user.getEffectiveName());
-		}
-		return lotteryData;
+		if (lotteryData != null)
+			return lotteryData;
+
+		//如果沒有記錄這名玩家
+		LotteryData newUser = new LotteryData(userID);
+		lotteryDataMap.put(userID, newUser); //放入這名玩家
+		lotteryDataList.add(newUser); //放入這名玩家
+		jda.retrieveUserById(userID).queue(user -> newUser.name = user.getEffectiveName());
+		return newUser; //絕不回傳null
 	}
 
 	public static int size()
@@ -58,7 +68,7 @@ public class CommandBlocksHandle
 
 	public static List<LotteryData> toArrayList()
 	{
-		return new ArrayList<>(lotteryDataMap.values());
+		return lotteryDataList;
 	}
 
 	public static void initial()
@@ -85,13 +95,8 @@ public class CommandBlocksHandle
 
 		public LotteryData(long userID)
 		{
-			this(userID, 0L);
-		}
-
-		public LotteryData(long userID, long blocks)
-		{
 			this.userID = userID;
-			this.blocks = blocks;
+			blocks = 0L;
 			won = 0;
 			lost = 0;
 			showHandWon = 0;

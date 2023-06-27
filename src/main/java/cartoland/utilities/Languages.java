@@ -7,18 +7,13 @@ package cartoland.utilities;
  * @author Alex Cai
  */
 
-public class Languages
+public interface Languages
 {
-	private Languages()
-	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
-	}
-
-	public static final String ENGLISH = "en";
-	public static final String TW_MANDARIN = "tw";
-	public static final String TAIWANESE = "ta";
-	public static final String CANTONESE = "hk";
-	public static final String CHINESE = "cn";
-	public static final String ESPANOL = "es";
-	public static final String JAPANESE = "jp";
+	String ENGLISH = "en";
+	String TW_MANDARIN = "tw";
+	String TAIWANESE = "ta";
+	String CANTONESE = "hk";
+	String CHINESE = "cn";
+	String ESPANOL = "es";
+	String JAPANESE = "jp";
 }

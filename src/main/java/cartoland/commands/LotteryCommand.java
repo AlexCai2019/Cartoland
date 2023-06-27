@@ -52,23 +52,23 @@ class GetSubCommand implements ICommand
 			return;
 		}
 
-		Boolean displayDetailBox = event.getOption("display_detail", CommonFunctions.getAsBoolean);
-		boolean displayDetail = (displayDetailBox != null) ? displayDetailBox : false;
-
+		Boolean displayDetail = event.getOption("display_detail", CommonFunctions.getAsBoolean);
 		CommandBlocksHandle.LotteryData targetLotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
+		if (displayDetail == null || !displayDetail)
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
+								.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();
+			return;
+		}
 		int won = targetLotteryData.getWon();
 		int lost = targetLotteryData.getLost();
 		int showHandWon = targetLotteryData.getShowHandWon();
 		int showHandLost = targetLotteryData.getShowHandLost();
-		if (displayDetail)
-			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query_detail")
-								.formatted(
-										targetLotteryData.getName(), targetLotteryData.getBlocks(),
-										won + lost, won, lost,
-										showHandWon + showHandLost, showHandWon, showHandLost)).queue();
-		else
-			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-								.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();
+		event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query_detail")
+							.formatted(
+									targetLotteryData.getName(), targetLotteryData.getBlocks(),
+									won + lost, won, lost,
+									showHandWon + showHandLost, showHandWon, showHandLost)).queue();
 	}
 }
 
@@ -84,7 +84,7 @@ class BetSubCommand implements ICommand
 	private final Random random = new Random(); //不使用Algorithm.chance
 	private final Pattern numberRegex = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
 	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
-	private static final long MAXIMUM = 100000L;
+	private static final long MAXIMUM = 1000000L;
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -120,13 +120,13 @@ class BetSubCommand implements ICommand
 			return;
 		}
 
-		if (bet == 0L)
+		if (bet == 0L) //不能賭0
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).queue();
 			return;
 		}
 
-		if (bet > MAXIMUM)
+		if (bet > MAXIMUM) //限紅
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).queue();
 			return;

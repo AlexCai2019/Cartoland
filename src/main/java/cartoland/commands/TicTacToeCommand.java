@@ -3,16 +3,25 @@ package cartoland.commands;
 import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.TicTacToeGame;
+import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
+ * {@code TicTacToeCommand} is an execution when user uses /tic_tac_toe command. This class implements
+ * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
+ * of the Tic-Tac-Toe game.
+ *
  * @since 2.0
+ * @see TicTacToeGame The backend of the Tic-Tac-Toe game.
  * @author Alex Cai
  */
 public class TicTacToeCommand implements ICommand
 {
 	private final CommandUsage commandCore;
+	private static final byte REWARD = 5;
+	private static final byte PUNISH = 100;
 
 	public TicTacToeCommand(CommandUsage commandUsage)
 	{
@@ -31,56 +40,70 @@ public class TicTacToeCommand implements ICommand
 		{
 			if (playing == null) //沒有在玩遊戲 開始井字遊戲
 			{
-				event.reply("Start Tic-Tac-Toe!").queue();
-				commandCore.getGames().put(userID, new TicTacToeGame());
+				TicTacToeGame newGame = new TicTacToeGame();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.start") + newGame.getBoard()).queue();
+				commandCore.getGames().put(userID, newGame);
 			}
 			else
-				event.reply("You are already in " + playing.gameName() + " game.").setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 			return;
 		}
 
 		//帶參數
 		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
 		{
-			event.reply("Please run /tic_tac_toe without arguments.").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
 			return;
 		}
 
 		//已經有在玩遊戲
 		if (!(playing instanceof TicTacToeGame ticTacToe)) //不是在玩井字遊戲
 		{
-			event.reply("You are already in a " + playing.gameName() + " game.").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 			return;
 		}
 
 		if (!TicTacToeGame.isInBounds(row, column))
 		{
-			event.reply("You can't place piece out of the board").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.out_of_bounds")).setEphemeral(true).queue();
 			return;
 		}
 
 		if (ticTacToe.isPlaced(row, column))
 		{
-			event.reply("You can't put piece at where has been taken!").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.already_taken")).setEphemeral(true).queue();
 			return;
 		}
 
 		if (ticTacToe.humanPlace(row, column))
 		{
-			event.reply("You won!\n" + ticTacToe.getBoard()).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win").formatted(REWARD) + ticTacToe.getBoard()).queue();
+			CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD);
 			commandCore.getGames().remove(userID);
 			return;
 		}
 
-		String playerMove = "Your move:\n" + ticTacToe.getBoard();
+		if (ticTacToe.isTie())
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.tie") + ticTacToe.getBoard()).queue();
+			commandCore.getGames().remove(userID);
+			return;
+		}
+
+		String playerMove = JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + ticTacToe.getBoard();
 
 		if (ticTacToe.aiPlaced())
 		{
-			event.reply("You lost..\n" + ticTacToe.getBoard()).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose").formatted(PUNISH) + ticTacToe.getBoard()).queue();
+			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
+			long newValue = lotteryData.getBlocks() - PUNISH;
+			if (newValue < 0)
+				newValue = 0L;
+			lotteryData.setBlocks(newValue);
 			commandCore.getGames().remove(userID);
 			return;
 		}
 
-		event.reply(playerMove + "\nBot's move:\n" + ticTacToe.getBoard()).setEphemeral(true).queue();
+		event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") + ticTacToe.getBoard()).setEphemeral(true).queue();
 	}
 }

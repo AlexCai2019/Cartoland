@@ -134,7 +134,7 @@ public class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
 				.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
 				.addOptions(
-						new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", true, true)
+						new OptionData(OptionType.STRING, "youtuber_name", "The n of the YouTuber", true, true)
 								.setNameLocalization(CHINESE_TAIWAN, "名字")
 								.setNameLocalization(CHINESE_CHINA, "名字")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
@@ -235,6 +235,20 @@ public class AddCommands
 								.setNameLocalization(CHINESE_CHINA, "数量")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "想轉帳的數量")
 								.setDescriptionLocalization(CHINESE_CHINA, "想转帐的数量")),
+		Commands.slash(TIC_TAC_TOE, "Play a game of Tic-Tac-Toe")
+				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
+				.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
+				.addOptions(
+						new OptionData(OptionType.INTEGER, "row", "The row of the board", false, false)
+								.setNameLocalization(CHINESE_TAIWAN, "列")
+								.setNameLocalization(CHINESE_CHINA, "行")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的列")
+								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的行"),
+						new OptionData(OptionType.INTEGER, "column", "The column of the board", false, false)
+								.setNameLocalization(CHINESE_TAIWAN, "行")
+								.setNameLocalization(CHINESE_CHINA, "列")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的行")
+								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的列")),
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")
@@ -273,7 +287,7 @@ class Cmd
 	}
 
 	private static final OptionData cmdOption =
-			new OptionData(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false, true)
+			new OptionData(OptionType.STRING, "cmd_name", "The n of a Minecraft command", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "指令名字")
 					.setNameLocalization(CHINESE_CHINA, "命令名字")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft指令的名字")

@@ -63,8 +63,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
 		"請問您有什麼事嗎？是不是太閒？", //由brick-bk新增
-		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由brick-bk新增，經原作者大幅修改
-		"也不去看看人家賭神都數不清的指令方塊，還在這邊tag我！趕快去</lottery bet:1102681768840138942>賭博啊！" //由brick-bk新增
+		"你再tag我啊，再tag啊，沒被禁言過是不是？" //由brick-bk新增，經原作者大幅修改
 	};
 	private final String[] megumin =
 	{
@@ -103,7 +102,6 @@ public class BotCanTalkChannelMessage implements IMessage
 		keywords.put("晚安", "那我也要睡啦");
 		keywords.put("安安", "安安你好幾歲住哪");
 		keywords.put("轉生", "您好，您的目標是lv7轉生！");
-		keywords.put("AC", "到底要我說幾次，那個 AC 是我爸不是交流電！");
 	}
 
 	@Override
@@ -143,6 +141,9 @@ public class BotCanTalkChannelMessage implements IMessage
 
 			message.reply(replyString).mentionRepliedUser(false).queue();
 		}
+
+		if (rawMessage.length() <= 1) //只打一個字或是沒有字
+			return; //沒有必要執行下面那些檢測
 
 		if (rawMessage.equalsIgnoreCase("lol"))
 		{

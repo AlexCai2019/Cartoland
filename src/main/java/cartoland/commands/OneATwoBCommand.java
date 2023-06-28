@@ -22,7 +22,7 @@ public class OneATwoBCommand implements ICommand
 	private final CommandUsage commandCore;
 	private static final int MAX_MINUTE = 2;
 	private static final int MAX_GUESSES = 7;
-	private static final int REWARD = 100;
+	private static final byte REWARD = 100;
 
 	public OneATwoBCommand(CommandUsage commandUsage)
 	{

@@ -8,10 +8,10 @@ import java.util.List;
 
 /**
  * {@code TicTacToeGame} is the backend of the Tic-Tac-Toe game, it can process the entire game with all fields and
- * methods. This game start with an empty {@link #BOARD_SIDE} square board, the player and the bot...
- * TODO: Test and comment
+ * methods. This game start with an empty {@link #BOARD_SIDE} square board, the player and the bot take turns.
  *
  * @since 2.0
+ * @see cartoland.commands.TicTacToeCommand The frontend of the Tic-Tac-Toe game.
  * @author Alex Cai
  */
 public class TicTacToeGame implements IMiniGame
@@ -60,7 +60,7 @@ public class TicTacToeGame implements IMiniGame
 	public TicTacToeGame()
 	{
 		Arrays.fill(board, ' ');
-		boardBuilder.append("r\\c");
+		boardBuilder.append("```\nr\\c");
 		int r, c;
 		for (c = 1; c <= BOARD_SIDE; c++)
 			boardBuilder.append("| ").append(c).append(' ');
@@ -70,6 +70,7 @@ public class TicTacToeGame implements IMiniGame
 			for (c = 1; c <= BOARD_SIDE; c++)
 				boardBuilder.append(" | ").append(board[boardCoordinate(r, c)]);
 		}
+		boardBuilder.append("\n```");
 	}
 
 	@Override
@@ -102,8 +103,8 @@ public class TicTacToeGame implements IMiniGame
 	{
 		int co = boardCoordinate(row, column);
 		board[co] = NOUGHT;
-		boardBuilder.setCharAt(((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), NOUGHT);
-		//省略 (頭上的列 = -符號 和 其他棋盤列) + 2 等差數列 注意row和column從1開始
+		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), NOUGHT);
+		//省略 開頭的四個字元 (頭上的列 = -符號 和 其他棋盤列) + 2 等差數列 注意row和column從1開始
 		//上一列加上換行字元 有ROW_LENGTH個字元 -符號有ROW_LENGTH個 加上換行字元
 
 		//更新空棋盤清單
@@ -118,7 +119,7 @@ public class TicTacToeGame implements IMiniGame
 		int row = co[0];
 		int column = co[1];
 		board[boardCoordinate(row, column)] = CROSS; //隨機選一個地方放X
-		boardBuilder.setCharAt(((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), CROSS);
+		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), CROSS);
 		return checkWin(CROSS);
 	}
 
@@ -154,7 +155,7 @@ public class TicTacToeGame implements IMiniGame
 	private boolean checkWin(char symbol)
 	{
 		for (int[] winLine : winningCombinations)
-			if (matchWinLine(winLine, symbol))
+			if (matchWinLine(winLine, symbol)) //如果有任何一條中了勝利的組合
 				return true;
 		return false;
 	}
@@ -165,5 +166,10 @@ public class TicTacToeGame implements IMiniGame
 			if (board[w] != symbol)
 				return false;
 		return true;
+	}
+
+	public boolean isTie()
+	{
+		return notPlaced.isEmpty(); //沒地方可以走了
 	}
 }

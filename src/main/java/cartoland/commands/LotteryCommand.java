@@ -36,6 +36,13 @@ public class LotteryCommand implements ICommand
 	}
 }
 
+/**
+ * {@code GetSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+ * {@code /lottery get}.
+ *
+ * @since 1.6
+ * @author Alex Cai
+ */
 class GetSubCommand implements ICommand
 {
 	@Override
@@ -138,7 +145,7 @@ class BetSubCommand implements ICommand
 			return;
 		}
 
-		final long afterBet;
+		long afterBet;
 		String result;
 		boolean win = random.nextBoolean();
 
@@ -157,9 +164,9 @@ class BetSubCommand implements ICommand
 		boolean showHand = bet == nowHave; //梭哈
 		if (showHand)
 			replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
-		lotteryData.addGame(win, showHand);
+		lotteryData.addGame(win, showHand); //紀錄勝場和是否梭哈
 
-		lotteryData.setBlocks(afterBet);
+		lotteryData.setBlocks(afterBet); //設定方塊
 		event.reply(replyMessage).queue();
 	}
 }
@@ -245,7 +252,7 @@ class RankingSubCommand implements ICommand
 				.append("\n--------------------\nYou are rank \u001B[36m#")
 				.append(forSortBinarySearch(blocks))
 				.append("\u001B[0m, with \u001B[36m")
-				.append(blocks)
+				.append(String.format("%,d", blocks))
 				.append("\u001B[0m command blocks.\n\n");
 
 		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
@@ -256,7 +263,7 @@ class RankingSubCommand implements ICommand
 					.append("\u001B[0m]\t")
 					.append(rank.getName())
 					.append(": \u001B[36m")
-					.append(rank.getBlocks())
+					.append(String.format("%,d", rank.getBlocks()))
 					.append("\u001B[0m\n");
 		}
 

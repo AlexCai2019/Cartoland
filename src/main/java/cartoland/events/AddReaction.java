@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
+ * {@code AddReaction} is a listener that triggers when a user added reaction to a message. This class was registered in
+ * {@link cartoland.Cartoland#main}, with the build of JDA.
+ *
  * @since 2.0
  * @author Alex Cai
  */
@@ -28,8 +31,10 @@ public class AddReaction extends ListenerAdapter
 		User user = member.getUser();
 		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return;
-		if (Algorithm.chance(10) && event.getReaction().getEmoji().equals(learned))
+		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned))
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
+
+		//這以下是和問題論壇的resolved有關
 		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
 			return;
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文

@@ -66,7 +66,7 @@ public class FileHandle
 	 * since Java doesn't have double pointer, there's no way to serialize correct contents if the class reference
 	 * changed its pointing address.
 	 *
-	 * @param fileName The name of the serialize file. Usually has {@code .ser} as file name extension.
+	 * @param fileName The n of the serialize file. Usually has {@code .ser} as file n extension.
 	 * @param object The object that is going to be serialized.
 	 * @since 2.0
 	 * @author Alex Cai

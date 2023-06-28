@@ -219,5 +219,6 @@
 	"archive_thread.already_archived": "此討論串已被關閉！",
 	"archive_thread.no_permission": "你沒有關閉此討論串的權限！",
 	"archive_thread.archived": "%s 關閉了討論串。",
+	"rename_thread.no_permission": "你沒有重新命名此討論串的權限！",
 	"rename_thread.set_new_thread_title": "設定新的討論串標題"
 }

@@ -128,13 +128,14 @@ public class BotCanTalkChannelMessage implements IMessage
 			String replyString;
 
 			//不要再想著用switch了 Java的switch不支援long
-			if (userID == IDAndEntities.AC_ID)
+			if (userID == IDAndEntities.AC_ID) //是AC
 				replyString = Algorithm.randomElement(replyACMention);
-			else if (userID == IDAndEntities.MEGA_ID)
+			else if (userID == IDAndEntities.MEGA_ID) //是米格
 				replyString = Algorithm.randomElement(replyMegaMention);
-			else
+			else //都不是
 			{
 				long channelID = channel.getIdLong();
+				//如果頻道在機器人或地下 就正常地回傳replyMention 反之就說 蛤，我地盤在#bot專區｜bots啦
 				replyString = (channelID == IDAndEntities.BOT_CHANNEL_ID || channelID == IDAndEntities.UNDERGROUND_CHANNEL_ID) ?
 						Algorithm.randomElement(replyMention) : "蛤，我地盤在<#" + IDAndEntities.BOT_CHANNEL_ID + ">啦";
 			}
@@ -148,7 +149,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessage.equalsIgnoreCase("lol"))
 		{
 			channel.sendMessage("LOL").queue();
-			return;
+			return; //在這之下的if們 全都不可能通過
 		}
 
 		String sendString = keywords.get(rawMessage); //尋找完全相同的字串

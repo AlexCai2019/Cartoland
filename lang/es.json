@@ -220,5 +220,6 @@
 	"archive_thread.already_archived": "This thread is already archived!",
 	"archive_thread.no_permission": "You don't have the permission to archive this thread!",
 	"archive_thread.archived": "%s archived this thread.",
+	"rename_thread.no_permission": "You don't have the permission to rename this thread!",
 	"rename_thread.set_new_thread_title": "Set New Thread Title"
 }

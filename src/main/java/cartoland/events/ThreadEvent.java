@@ -21,8 +21,6 @@ import java.util.List;
  */
 public class ThreadEvent extends ListenerAdapter
 {
-	private long parentID;
-
 	@Override
 	public void onChannelCreate(ChannelCreateEvent event)
 	{
@@ -32,7 +30,7 @@ public class ThreadEvent extends ListenerAdapter
 		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
 		threadChannel.join().queue(); //加入討論串
 
-		parentID = threadChannel.getParentChannel().getIdLong();
+		long parentID = threadChannel.getParentChannel().getIdLong();
 		//關於問題論壇
 		if (parentID == IDAndEntities.QUESTIONS_CHANNEL_ID)
 			QuestionForumHandle.createForumPost(threadChannel);
@@ -47,10 +45,10 @@ public class ThreadEvent extends ListenerAdapter
 		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
 			return;
 
-		if (parentID != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
+		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(IDAndEntities.resolvedForumTag); //移除resolved
 		tags.add(IDAndEntities.unresolvedForumTag); //新增unresolved

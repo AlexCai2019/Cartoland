@@ -44,6 +44,7 @@ public class AutoComplete extends ListenerAdapter
 		commands.put(DTP, alias);
 		commands.put(DATAPACK, alias);
 
+		//youtuber
 		commands.put(YOUTUBER, new YouTuberComplete());
 	}
 
@@ -115,8 +116,9 @@ class JsonBasedComplete extends GenericComplete
  */
 class YouTuberComplete extends GenericComplete
 {
-	private final Map<String, String> youtubers = new LinkedHashMap<>(); //LinkedHashMap or TreeMap ?
+	private final Map<String, String> youtubers = new LinkedHashMap<>(8); //LinkedHashMap or TreeMap ?
 	private final Set<Map.Entry<String, String>> youtubersEntries;
+	private final List<Command.Choice> choices = new ArrayList<>();
 
 	YouTuberComplete()
 	{
@@ -124,6 +126,7 @@ class YouTuberComplete extends GenericComplete
 		youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
 		youtubers.put("Phoenix SC", "@PhoenixSC");
 		youtubers.put("SethBling", "@SethBling");
+		youtubers.put("kingbdogz", "@kingbdogz");
 		youtubers.put("slicedlime", "@slicedlime");
 		youtubers.put("天豹星雲", "@nebulirion");
 		youtubers.put("惡靈oreki", "@oreki20");
@@ -135,7 +138,7 @@ class YouTuberComplete extends GenericComplete
 	void completeProcess(CommandAutoCompleteInteractionEvent event)
 	{
 		String optionValue = event.getFocusedOption().getValue();
-		List<Command.Choice> choices = new ArrayList<>(CHOICES_LIMIT);
+		choices.clear();
 		for (Map.Entry<String, String> entry : youtubersEntries)
 		{
 			String youtuberName = entry.getKey();

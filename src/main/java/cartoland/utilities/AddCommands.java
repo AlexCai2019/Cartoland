@@ -3,6 +3,7 @@ package cartoland.utilities;
 import cartoland.commands.ToolCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
@@ -134,7 +135,7 @@ public class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")
 				.setDescriptionLocalization(CHINESE_CHINA, "发送一个YouTube视频博主的频道链接")
 				.addOptions(
-						new OptionData(OptionType.STRING, "youtuber_name", "The n of the YouTuber", true, true)
+						new OptionData(OptionType.STRING, "youtuber_name", "The name of the YouTuber", true, true)
 								.setNameLocalization(CHINESE_TAIWAN, "名字")
 								.setNameLocalization(CHINESE_CHINA, "名字")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "YouTuber的名字")
@@ -175,6 +176,54 @@ public class AddCommands
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 		Commands.slash(RELOAD, "Reload all JSON files")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
+		Commands.slash(ADMIN, "Admin commands")
+				.setDescriptionLocalization(CHINESE_TAIWAN, "管理員專用指令")
+				.setDescriptionLocalization(CHINESE_CHINA, "管理员专用命令")
+				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS,Permission.BAN_MEMBERS,Permission.MODERATE_MEMBERS))
+				.addSubcommands(
+						new SubcommandData("mute", "Mute a user")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
+								.setDescriptionLocalization(CHINESE_CHINA, "禁言一名用户")
+								.addOptions(
+										new OptionData(OptionType.USER, "target", "The user that you want to mute", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "目標")
+												.setNameLocalization(CHINESE_CHINA, "目标")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你想禁言的使用者")
+												.setDescriptionLocalization(CHINESE_CHINA, "你想禁言的用户"),
+										new OptionData(OptionType.NUMBER, "duration", "Duration that the user is going to be muted", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "時間")
+												.setNameLocalization(CHINESE_CHINA, "时长")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "使用者將被禁言的時間")
+												.setDescriptionLocalization(CHINESE_CHINA, "用户将被禁言的时长"),
+										new OptionData(OptionType.STRING, "unit" ,"The time unit of the duration", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "單位")
+												.setNameLocalization(CHINESE_CHINA, "单位")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+												.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
+												.addChoices(
+														new Command.Choice("Second", "second")
+																.setNameLocalization(CHINESE_TAIWAN, "秒")
+																.setNameLocalization(CHINESE_CHINA, "秒"),
+														new Command.Choice("Minute", "minute")
+																.setNameLocalization(CHINESE_TAIWAN, "分鐘")
+																.setNameLocalization(CHINESE_CHINA, "分钟"),
+														new Command.Choice("Hour", "hour")
+																.setNameLocalization(CHINESE_TAIWAN, "小時")
+																.setNameLocalization(CHINESE_CHINA, "小时"),
+														new Command.Choice("Double Hour", "double_hour")
+																.setNameLocalization(CHINESE_TAIWAN, "時辰")
+																.setNameLocalization(CHINESE_CHINA, "时辰"),
+														new Command.Choice("Day", "day")
+																.setNameLocalization(CHINESE_TAIWAN, "天")
+																.setNameLocalization(CHINESE_CHINA, "天"),
+														new Command.Choice("Week", "week")
+																.setNameLocalization(CHINESE_TAIWAN, "星期")
+																.setNameLocalization(CHINESE_CHINA, "星期")),
+										new OptionData(OptionType.STRING, "reason", "Reason of mute", false, false)
+												.setNameLocalization(CHINESE_TAIWAN, "理由")
+												.setNameLocalization(CHINESE_CHINA, "理由")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "禁言的理由")
+												.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由"))),
 
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
@@ -287,7 +336,7 @@ class Cmd
 	}
 
 	private static final OptionData cmdOption =
-			new OptionData(OptionType.STRING, "cmd_name", "The n of a Minecraft command", false, true)
+			new OptionData(OptionType.STRING, "cmd_name", "The name of a Minecraft command", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "指令名字")
 					.setNameLocalization(CHINESE_CHINA, "命令名字")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "Minecraft指令的名字")

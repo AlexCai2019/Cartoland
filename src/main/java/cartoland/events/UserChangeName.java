@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 /**
- * {@code UserChangeName} is a listener that triggers when a user changed his/her n. This class was registered in
+ * {@code UserChangeName} is a listener that triggers when a user changed his/her name. This class was registered in
  * {@link cartoland.Cartoland#main}, with the build of JDA.
  *
  * @since 1.6

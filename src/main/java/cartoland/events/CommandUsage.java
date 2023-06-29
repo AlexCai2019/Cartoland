@@ -86,12 +86,16 @@ public class CommandUsage extends ListenerAdapter
 		commands.put(LANG, alias);
 		commands.put(LANGUAGE, alias);
 
+		//quote
 		commands.put(QUOTE, new QuoteCommand());
 
+		//youtuber
 		commands.put(YOUTUBER, event -> event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", CommonFunctions.getAsString)).queue());
 
+		//introduce
 		commands.put(INTRODUCE, new IntroduceCommand());
 
+		//megumin
 		commands.put(MEGUMIN, event ->
 		{
 			TA twitterAuthor = Algorithm.randomElement(twitterAuthors);
@@ -125,6 +129,9 @@ public class CommandUsage extends ListenerAdapter
 
 			event.reply("Reloading...").queue(interactionHook -> JsonHandle.reloadLanguageFiles());
 		});
+
+		//admin
+		commands.put(ADMIN, new AdminCommand());
 
 		//one_a_two_b
 		commands.put(ONE_A_TWO_B, new OneATwoBCommand(this));

@@ -63,7 +63,8 @@ public class BotCanTalkChannelMessage implements IMessage
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
 		"請問您有什麼事嗎？是不是太閒？", //由brick-bk新增
-		"你再tag我啊，再tag啊，沒被禁言過是不是？" //由brick-bk新增，經原作者大幅修改
+		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由brick-bk新增，經alexcai2019大幅修改
+		"你是不是tag我？快承認！要是說謊，鼻子就會變長的！" //由brick-bk新增
 	};
 	private final String[] megumin =
 	{

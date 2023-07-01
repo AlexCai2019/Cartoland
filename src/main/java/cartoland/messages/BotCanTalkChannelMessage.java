@@ -28,13 +28,16 @@ public class BotCanTalkChannelMessage implements IMessage
 		"父親，您找我有事嗎？",
 		"向父親請安，父親您好嗎？",
 		"爹，您好呀。",
-		"聽候您差遣。"
+		"聽候您差遣。",
+		"父親，無論您需要什麼幫助，我都會全力以赴！" //由 brick-bk 新增
 	};
 	private final String[] replyMegaMention =
 	{
 		"臣向陛下請安",
 		"陛下萬福金安",
-		"陛下今日可好？"
+		"陛下今日可好？",
+		"願陛下萬壽無疆，國泰民安，天下太平。", //由 brick-bk 新增
+		"祝陛下萬歲，萬歲，萬萬歲！" //由 brick-bk 新增
 	};
 	private final String[] replyMention =
 	{
@@ -62,9 +65,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
-		"請問您有什麼事嗎？是不是太閒？", //由brick-bk新增
-		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由brick-bk新增，經Alex Cai大幅修改
-		"你是不是tag我？快承認！要是說謊，鼻子就會變長的！" //由brick-bk新增
+		"請問您有什麼事嗎？是不是太閒？", //由 brick-bk 新增
+		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
+		"你是不是tag我？快承認！要是說謊，鼻子就會變長的！", //由 brick-bk 新增
+		"聽說有人tag我？你知道是誰嗎？", //由 brick-bk 新增
+		"為什麼要召喚我，打斷我蓋地圖？" //由 brick-bk 新增
 	};
 	private final String[] megumin =
 	{
@@ -99,10 +104,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		canTalkCategories.add(IDAndEntities.DANGEROUS_CATEGORY_ID);
 
 		keywords.put("早安", "早上好中國 現在我有 Bing Chilling");
-		keywords.put("午安", "午安你好，記得天下沒有白吃的午餐");
+		keywords.put("午安", "午安你好，記得天下沒有白吃的午餐"); //後面那句由 brick-bk 新增
 		keywords.put("晚安", "那我也要睡啦");
 		keywords.put("安安", "安安你好幾歲住哪");
-		keywords.put("轉生", "您好，您的目標是lv7轉生！");
+		keywords.put("轉生", "您好，您的目標是lv7轉生！"); //由 brick-bk 新增
+		keywords.put("美麗星期天", "https://media.discordapp.net/attachments/1119976215885922315/1124601796753621012/3_.png?width=831&height=630"); //由 brick-bk 新增
 	}
 
 	@Override

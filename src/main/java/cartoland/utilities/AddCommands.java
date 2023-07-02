@@ -287,17 +287,36 @@ public class AddCommands
 		Commands.slash(TIC_TAC_TOE, "Play a game of Tic-Tac-Toe")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
-				.addOptions(
-						new OptionData(OptionType.INTEGER, "row", "The row of the board", false, false)
-								.setNameLocalization(CHINESE_TAIWAN, "橫列")
-								.setNameLocalization(CHINESE_CHINA, "横行")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的橫列")
-								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的横行"),
-						new OptionData(OptionType.INTEGER, "column", "The column of the board", false, false)
-								.setNameLocalization(CHINESE_TAIWAN, "直行")
-								.setNameLocalization(CHINESE_CHINA, "直列")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
-								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
+				.addSubcommands(
+						new SubcommandData("start", "Start a game of Tic-Tac-Toe")
+								.addOptions(
+										new OptionData(OptionType.INTEGER, "difficulty", "Difficulty of the game", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "難度")
+												.setNameLocalization(CHINESE_CHINA, "难度")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "遊戲的難度")
+												.setDescriptionLocalization(CHINESE_CHINA, "游戏的难度")
+												.addChoices(
+														new Command.Choice("Easy", 1)
+																.setNameLocalization(CHINESE_TAIWAN, "簡單")
+																.setNameLocalization(CHINESE_CHINA, "简单"),
+														new Command.Choice("Normal", 2)
+																.setNameLocalization(CHINESE_TAIWAN, "普通")
+																.setNameLocalization(CHINESE_CHINA, "普通"),
+														new Command.Choice("Hard", 3)
+																.setNameLocalization(CHINESE_TAIWAN, "困難")
+																.setNameLocalization(CHINESE_CHINA, "困难"))),
+						new SubcommandData("play", "Play a game of Tic-Tac-Toe")
+								.addOptions(
+										new OptionData(OptionType.INTEGER, "row", "The row of the board", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "橫列")
+												.setNameLocalization(CHINESE_CHINA, "横行")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的橫列")
+												.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的横行"),
+										new OptionData(OptionType.INTEGER, "column", "The column of the board", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "直行")
+												.setNameLocalization(CHINESE_CHINA, "直列")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
+												.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列"))),
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")

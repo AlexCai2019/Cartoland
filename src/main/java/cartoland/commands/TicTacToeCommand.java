@@ -63,13 +63,13 @@ public class TicTacToeCommand implements ICommand
 			return;
 		}
 
-		if (!TicTacToeGame.isInBounds(row, column))
+		if (!TicTacToeGame.isInBounds(row, column)) //不在範圍內
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.out_of_bounds")).setEphemeral(true).queue();
 			return;
 		}
 
-		if (ticTacToe.isPlaced(row, column))
+		if (ticTacToe.isPlaced(row, column)) //已經有放子了
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.already_taken")).setEphemeral(true).queue();
 			return;
@@ -96,14 +96,15 @@ public class TicTacToeCommand implements ICommand
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose").formatted(PUNISH) + ticTacToe.getBoard()).queue();
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
-			long newValue = lotteryData.getBlocks() - PUNISH;
-			if (newValue < 0)
-				newValue = 0L;
+			long newValue = lotteryData.getBlocks() - PUNISH; //懲罰PUNISH個指令方塊
+			if (newValue < 0) //資產變負了
+				newValue = 0L; //0就好
 			lotteryData.setBlocks(newValue);
 			commandCore.getGames().remove(userID);
 			return;
 		}
 
-		event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") + ticTacToe.getBoard()).setEphemeral(true).queue();
+		event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") +
+							ticTacToe.getBoard() + "\n</tic_tac_toe:1123462079546937485>").setEphemeral(true).queue();
 	}
 }

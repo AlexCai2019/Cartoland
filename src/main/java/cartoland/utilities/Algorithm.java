@@ -1,6 +1,5 @@
 package cartoland.utilities;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -66,13 +65,13 @@ public class Algorithm
 		return array[random.nextInt(array.length)];
 	}
 
-	public static long randomElement(long[] array)
+	public static int randomElement(int[] array)
 	{
 		return array[random.nextInt(array.length)];
 	}
 
-	public static<T> T randomElement(List<T> list)
+	public static long randomElement(long[] array)
 	{
-		return list.get(random.nextInt(list.size()));
+		return array[random.nextInt(array.length)];
 	}
 }

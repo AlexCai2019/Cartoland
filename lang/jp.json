@@ -205,7 +205,7 @@
 	"one_a_two_b.reward": "\nYou solved this in %d minutes and %d guesses, rewarded %d command blocks.",
 	"lottery.get.invalid_get": "You can't get amount of command blocks this user has!",
 	"lottery.get.query": "%s has %,d command blocks.",
-	"lottery.get.query_detail": "%s has %,d command blocks.\nbet %d times\n- won %d times\n- lost %d times\nShow hand %d times\n- won %d times\n- lost %d times",
+	"lottery.get.query_detail": "%s has %,d command blocks.\nBet %d times\n- won %d times\n- lost %d times\nShow hand %d times\n- won %d times\n- lost %d times",
 	"lottery.bet.win": "won!",
 	"lottery.bet.lose": "lost...",
 	"lottery.bet.play_with_your_limit": "You've gone and busted, my good man.",

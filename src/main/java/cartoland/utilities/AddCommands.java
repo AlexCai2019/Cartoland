@@ -289,15 +289,15 @@ public class AddCommands
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
 				.addOptions(
 						new OptionData(OptionType.INTEGER, "row", "The row of the board", false, false)
-								.setNameLocalization(CHINESE_TAIWAN, "列")
-								.setNameLocalization(CHINESE_CHINA, "行")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的列")
-								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的行"),
+								.setNameLocalization(CHINESE_TAIWAN, "橫列")
+								.setNameLocalization(CHINESE_CHINA, "横行")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的橫列")
+								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的横行"),
 						new OptionData(OptionType.INTEGER, "column", "The column of the board", false, false)
-								.setNameLocalization(CHINESE_TAIWAN, "行")
-								.setNameLocalization(CHINESE_CHINA, "列")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的行")
-								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的列")),
+								.setNameLocalization(CHINESE_TAIWAN, "直行")
+								.setNameLocalization(CHINESE_CHINA, "直列")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
+								.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")

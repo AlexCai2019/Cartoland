@@ -202,7 +202,7 @@
 	"one_a_two_b.reward": "\n你喺 %d 分鐘同埋 %d 次猜測之內解開咗呢條問題，獎勵你 %d 個指令方塊。",
 	"lottery.get.invalid_get": "你唔能夠查看呢位使用者所擁有嘅指令方塊。",
 	"lottery.get.query": "%s 目前有 %,d 個指令方塊。",
-	"lottery.get.query_detail": "%s has %d command blocks.\nbet %d times\n- won %d times\n- lost %d times\nShow hand %d times\n- won %d times\n- lost %d times",
+	"lottery.get.query_detail": "%s has %d command blocks.\nBet %d times\n- won %d times\n- lost %d times\nShow hand %d times\n- won %d times\n- lost %d times",
 	"lottery.bet.win": "贏咗！",
 	"lottery.bet.lose": "輸咗…",
 	"lottery.bet.play_with_your_limit": "小賭怡情，大賭傷身。",

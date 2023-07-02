@@ -3,11 +3,13 @@ package cartoland.commands;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @since 2.1
@@ -20,6 +22,7 @@ public class AdminCommand implements ICommand
 	public AdminCommand()
 	{
 		subCommands.put("mute", new MuteSubCommand());
+		subCommands.put("clear", new ClearSubCommand());
 	}
 
 	@Override
@@ -95,9 +98,9 @@ class MuteSubCommand implements ICommand
 			return;
 		}
 
-		String durationString = Double.toString(duration);
-		int dotIndex = durationString.indexOf('.');
-		int firstZero = durationString.length();
+		String durationString = Double.toString(duration); //將時間轉成字串
+		int dotIndex = durationString.indexOf('.'); //小數點的索引
+		int firstZero = durationString.length(); //尋找小數部分最後的一串0中 第一個0
 		int i;
 		for (i = firstZero - 1; i >= dotIndex; i--)
 		{
@@ -108,6 +111,9 @@ class MuteSubCommand implements ICommand
 			}
 		}
 		durationString = durationString.substring(0, (i == dotIndex) ? dotIndex : firstZero);
+		//結果:
+		//5.000000 => 5
+		//1.500000 => 1.5
 
 		String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 		String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
@@ -117,5 +123,16 @@ class MuteSubCommand implements ICommand
 
 		event.reply(replyString).queue();
 		target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue();
+	}
+}
+
+class ClearSubCommand implements ICommand
+{
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		/*Channel channel = event.getOption("channel", CommonFunctions.getAsChannel);
+		if (channel == null)
+			channel = event.getChannel();*/
 	}
 }

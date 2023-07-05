@@ -21,6 +21,7 @@
   - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use both `Long` as key and value.
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

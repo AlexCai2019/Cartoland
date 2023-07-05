@@ -131,22 +131,22 @@ public class QuestionForumHandle
 
 	public static void tryIdleForumPost(ThreadChannel forumPost)
 	{
-		if (forumPost.isArchived() || forumPost.isLocked())
+		if (forumPost.isArchived() || forumPost.isLocked()) //已經關閉 或已經鎖起來了
 			return;
 
 		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
 		{
 			User author = lastMessage.getAuthor();
-			if (author.isBot() || author.isSystem())
-				return;
+			if (author.isBot() || author.isSystem()) //是機器人或系統
+				return; //不用執行
 
 			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < LAST_MESSAGE_HOUR) //LAST_MESSAGE_HOUR小時內有人發言
 				return;
 
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
-			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue();
+			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue(); //提醒開串者
 
-			idledForumPosts.add(forumPost.getIdLong());
+			idledForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
 
 			//增加🎗️
 			forumPost.retrieveStartMessage().queue(message -> message.addReaction(reminder_ribbon).queue());

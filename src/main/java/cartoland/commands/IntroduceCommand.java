@@ -59,68 +59,72 @@ public class IntroduceCommand implements ICommand
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
-}
 
-/**
- * {@code UpdateSubCommand} is a class that handles one of the sub commands of {@code /introduce} command, which is
- * {@code /introduce update}.
- *
- * @since 2.0
- * @author Alex Cai
- */
-class UpdateSubCommand implements ICommand
-{
-	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
-	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	/**
+	 * {@code UpdateSubCommand} is a class that handles one of the sub commands of {@code /introduce} command, which is
+	 * {@code /introduce update}.
+	 *
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	private static class UpdateSubCommand implements ICommand
 	{
-		long userID = event.getUser().getIdLong();
-		String content = event.getOption("content", CommonFunctions.getAsString);
-		if (content == null)
-		{
-			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
-			return;
-		}
+		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
+		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
 
-		if (linkRegex.matcher(content).matches()) //如果內容是個創聯群組連結
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
-
-			//從創聯中取得頻道
-			MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
-			if (linkChannel == null)
+			long userID = event.getUser().getIdLong();
+			String content = event.getOption("content", CommonFunctions.getAsString);
+			if (content == null)
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
+				IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
 				return;
 			}
 
-			//從頻道中取得訊息 注意ID是String 與慣例的long不同
-			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
+			if (linkRegex.matcher(content).matches()) //如果內容是個創聯群組連結
 			{
-				String rawMessage = linkMessage.getContentRaw();
-				List<Message.Attachment> attachments = linkMessage.getAttachments();
-				if (!attachments.isEmpty())
-					rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-				IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
-			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
+				String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
+
+				//從創聯中取得頻道
+				MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
+				if (linkChannel == null)
+				{
+					event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
+					return;
+				}
+
+				//從頻道中取得訊息 注意ID是String 與慣例的long不同
+				linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
+				{
+					String rawMessage = linkMessage.getContentRaw();
+					List<Message.Attachment> attachments = linkMessage.getAttachments();
+					if (!attachments.isEmpty())
+						rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
+					IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
+				}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
+			}
+			else
+				IntroduceHandle.updateIntroduction(userID, content);
+
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
 		}
-		else
-			IntroduceHandle.updateIntroduction(userID, content);
-
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
 	}
-}
 
-class DeleteSubCommand implements ICommand
-{
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
+	/**
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	private static class DeleteSubCommand implements ICommand
 	{
-		long userID = event.getUser().getIdLong();
-		IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
+		{
+			long userID = event.getUser().getIdLong();
+			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+		}
 	}
 }

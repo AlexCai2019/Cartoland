@@ -185,16 +185,16 @@ public class AddCommands
 								.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
 								.setDescriptionLocalization(CHINESE_CHINA, "禁言一名用户")
 								.addOptions(
-										new OptionData(OptionType.USER, "target", "The user that you want to mute", true, false)
+										new OptionData(OptionType.USER, "target", "The member that you want to mute", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "目標")
 												.setNameLocalization(CHINESE_CHINA, "目标")
-												.setDescriptionLocalization(CHINESE_TAIWAN, "你想禁言的使用者")
-												.setDescriptionLocalization(CHINESE_CHINA, "你想禁言的用户"),
-										new OptionData(OptionType.NUMBER, "duration", "Duration that the user is going to be muted", true, false)
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你想禁言的成員")
+												.setDescriptionLocalization(CHINESE_CHINA, "你想禁言的成员"),
+										new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be muted", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "時間")
 												.setNameLocalization(CHINESE_CHINA, "时长")
-												.setDescriptionLocalization(CHINESE_TAIWAN, "使用者將被禁言的時間")
-												.setDescriptionLocalization(CHINESE_CHINA, "用户将被禁言的时长"),
+												.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被禁言的時間")
+												.setDescriptionLocalization(CHINESE_CHINA, "成员将被禁言的时长"),
 										new OptionData(OptionType.STRING, "unit" ,"The time unit of the duration", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "單位")
 												.setNameLocalization(CHINESE_CHINA, "单位")
@@ -223,7 +223,48 @@ public class AddCommands
 												.setNameLocalization(CHINESE_TAIWAN, "理由")
 												.setNameLocalization(CHINESE_CHINA, "理由")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "禁言的理由")
-												.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由"))),
+												.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由")),
+						new SubcommandData("temp_ban", "Temporary ban a member")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "暫時停權一名成員")
+								.setDescriptionLocalization(CHINESE_CHINA, "暂时封锁一名成员")
+								.addOptions(
+										new OptionData(OptionType.USER, "target", "The member that you want to ban", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "目標")
+												.setNameLocalization(CHINESE_CHINA, "目标")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你想停權的成員")
+												.setDescriptionLocalization(CHINESE_CHINA, "你想封锁的成员"),
+										new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be banned", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "時間")
+												.setNameLocalization(CHINESE_CHINA, "时长")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被停權的時間")
+												.setDescriptionLocalization(CHINESE_CHINA, "成员将被封锁的时长"),
+										new OptionData(OptionType.STRING, "unit" ,"The time unit of the duration", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "單位")
+												.setNameLocalization(CHINESE_CHINA, "单位")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+												.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
+												.addChoices(
+														new Command.Choice("Day", "day")
+																.setNameLocalization(CHINESE_TAIWAN, "天")
+																.setNameLocalization(CHINESE_CHINA, "天"),
+														new Command.Choice("Week", "week")
+																.setNameLocalization(CHINESE_TAIWAN, "星期")
+																.setNameLocalization(CHINESE_CHINA, "星期"),
+														new Command.Choice("Month", "month")
+																.setNameLocalization(CHINESE_TAIWAN, "月")
+																.setNameLocalization(CHINESE_CHINA, "月"),
+														new Command.Choice("Season", "season")
+																.setNameLocalization(CHINESE_TAIWAN, "季")
+																.setNameLocalization(CHINESE_CHINA, "季"),
+														new Command.Choice("Year", "year")
+																.setNameLocalization(CHINESE_TAIWAN, "年")
+																.setNameLocalization(CHINESE_CHINA, "年"),
+														new Command.Choice("Wood Rat", "wood_rat")
+																.setNameLocalization(CHINESE_TAIWAN, "甲子")
+																.setNameLocalization(CHINESE_CHINA, "甲子"),
+														new Command.Choice("Century", "century")
+																.setNameLocalization(CHINESE_TAIWAN, "世紀")
+																.setNameLocalization(CHINESE_CHINA, "世纪")))),
 
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
@@ -330,6 +371,13 @@ public class AddCommands
 				.setNameLocalization(CHINESE_TAIWAN, "程式碼區塊")
 				.setNameLocalization(CHINESE_CHINA, "代码区块")
 	};
+
+	/*
+	.setNameLocalization(CHINESE_TAIWAN, "")
+	.setNameLocalization(CHINESE_CHINA, "")
+	.setDescriptionLocalization(CHINESE_TAIWAN, "")
+	.setDescriptionLocalization(CHINESE_CHINA, "")
+	 */
 }
 
 /**

@@ -275,11 +275,11 @@ class NormalBot extends EasyBot
 		if (game.board[TicTacToeGame.LEFT_CORNER] == TicTacToeGame.CROSS) //第一手下在左上角
 		{
 			if (game.board[1] == TicTacToeGame.EMPTY && game.board[2] == TicTacToeGame.EMPTY) //橫列
-				return Algorithm.chance(50) ? 1 : 2;
+				return 2; //搶角落
 			else if (game.board[3] == TicTacToeGame.EMPTY && game.board[6] == TicTacToeGame.EMPTY) //直行
-				return Algorithm.chance(50) ? 3 : 6;
+				return 6; //搶角落
 			else //if (board[4] == EMPTY && board[8] == EMPTY) //斜線
-				return Algorithm.chance(50) ? 4 : 8;
+				return 8; //搶角落
 		}
 		else //如果不是下在左上角 那就肯定是下在中間了
 		{

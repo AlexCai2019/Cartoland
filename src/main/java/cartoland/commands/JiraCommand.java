@@ -4,6 +4,7 @@ import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,11 +36,13 @@ public class JiraCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
+		event.deferReply().queue(); //延後回覆
+		InteractionHook hook = event.getHook();
 		long userID = event.getUser().getIdLong();
 		String link = event.getOption("bug_link", CommonFunctions.getAsString);
 		if (link == null)
 		{
-			event.reply("Impossible, this is required!").queue();
+			hook.sendMessage("Impossible, this is required!").queue();
 			return;
 		}
 
@@ -52,12 +55,10 @@ public class JiraCommand implements ICommand
 			bugID = "MC-" + link;
 		else
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).queue();
 			return;
 		}
 		link = "https://bugs.mojang.com/browse/" + bugID;
-
-		event.deferReply().queue(); //延後回覆
 
 		Document document; //HTML文件
 
@@ -67,19 +68,15 @@ public class JiraCommand implements ICommand
 		}
 		catch (IOException e)
 		{
-			event.getHook()
-				.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID))
-				.queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID)).queue();
 			return;
 		}
 
 		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 		if (issueContent == null) //如果不存在id為issue-content的標籤
 		{
-			event.getHook()
-				.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
-				.addActionRow(Button.link(link, "Jira"))
-				.queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
+					.addActionRow(Button.link(link, "Jira")).queue();
 			return;
 		}
 
@@ -93,10 +90,7 @@ public class JiraCommand implements ICommand
 		bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
 		bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
 		bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
-		event.getHook()
-			.sendMessageEmbeds(bugEmbed.build())
-			.addActionRow(Button.link(link, "Jira"))
-			.queue();
+		hook.sendMessageEmbeds(bugEmbed.build()).addActionRow(Button.link(link, "Jira")).queue();
 	}
 
 	private void bugEmbedAddField(String fieldName, Element fieldValue)

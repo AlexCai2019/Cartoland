@@ -48,7 +48,27 @@ public class ContextMenu extends ListenerAdapter
 						.queue();
 			}
 
-			case CODE_BLOCK -> event.reply("```\n" + event.getTarget().getContentRaw() + "\n```").queue();
+			case CODE_BLOCK ->
+			{
+				String rawContent = event.getTarget().getContentRaw();
+				int contentLength = rawContent.length();
+				if (contentLength <= 1992) //因為前後要加```\n和\n``` 因此以1992為界線
+				{
+					event.reply("```\n" + rawContent + "\n```").queue();
+					return;
+				}
+
+				//先回覆前1992個字 以及格式
+				event.reply("```\n" + rawContent.substring(0, 1993) + "\n```").queue(interactionHook ->
+					interactionHook.retrieveOriginal().queue(message ->
+					{
+						if (contentLength <= 1992 + 1992) //如果從第1993個字開始算起 長度不超過1992個字
+							message.reply("```\n" + rawContent.substring(1993) + "\n```").queue();
+						else
+							message.reply("```\n" + rawContent.substring(1993, 1993 + 1993) + "\n```").queue(message1 ->
+								message1.reply("```\n" + rawContent.substring(1993) + "\n```").queue());
+					}));
+			}
 		}
 
 		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);

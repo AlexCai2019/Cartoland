@@ -4,6 +4,7 @@ import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -11,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -31,8 +35,37 @@ import static cartoland.utilities.IDAndEntities.*;
 public class BotOnlineOffline extends ListenerAdapter
 {
 	private final ScheduledExecutorService scheduleExecutor = Executors.newScheduledThreadPool(2);
-	private ScheduledFuture<?> threeAMTask;
-	private ScheduledFuture<?> twelvePMTask;
+	private static final String TEMP_BAN_LIST = "serialize/temp_ban_list.ser";
+	@SuppressWarnings("unchecked")
+	public static final Map<Long, Long> tempBanList = (FileHandle.deserialize(TEMP_BAN_LIST) instanceof HashMap map) ? map : new HashMap<>(); //userID為key ban time為value
+
+	static
+	{
+		FileHandle.registerSerialize(TEMP_BAN_LIST, tempBanList);
+	}
+
+	//https://stackoverflow.com/questions/65984126
+	private final ScheduledFuture<?> threeAMTask = scheduleExecutor.scheduleAtFixedRate(() ->
+	{
+		undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
+		undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
+	}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS); //好棒 三點了
+
+	//中午十二點時處理並提醒未解決的論壇貼文
+	//解ban所有超過temp ban 時間的人
+	private final ScheduledFuture<?> twelvePMTask = scheduleExecutor.scheduleAtFixedRate(() ->
+	{
+		List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
+		for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
+			QuestionForumHandle.tryIdleForumPost(forumPost); //試著讓它們idle
+
+		final long now = System.currentTimeMillis();
+		tempBanList.forEach((userID, banMillis) ->
+		{
+			if (banMillis >= now) //已經超過了它們被ban的時間
+				jda.retrieveUserById(userID).queue(user -> cartolandServer.unban(user).queue()); //找到這名使用者後解ban他
+		});
+	}, secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will initialize
@@ -91,10 +124,6 @@ public class BotOnlineOffline extends ListenerAdapter
 
 		botItself = jda.getSelfUser(); //機器人自己
 
-		ohBoy3AM(); //好棒 三點了
-
-		idleFormPost12PM(); //中午十二點時處理並提醒未解決的論壇貼文
-
 		CommandBlocksHandle.initial(); //初始化idAndName
 
 		botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
@@ -151,22 +180,5 @@ public class BotOnlineOffline extends ListenerAdapter
 			untilTime = untilTime.plusDays(1L);
 
 		return Duration.between(now, untilTime).getSeconds();
-	}
-
-	//https://stackoverflow.com/questions/65984126
-	private void ohBoy3AM()
-	{
-		threeAMTask = scheduleExecutor.scheduleAtFixedRate(() ->
-		{
-			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
-			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
-		}, secondsUntil(3), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
-	}
-
-	private void idleFormPost12PM()
-	{
-		twelvePMTask = scheduleExecutor.scheduleAtFixedRate(
-			() -> questionsChannel.getThreadChannels().forEach(QuestionForumHandle::tryIdleForumPost),
-			secondsUntil(12), TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 	}
 }

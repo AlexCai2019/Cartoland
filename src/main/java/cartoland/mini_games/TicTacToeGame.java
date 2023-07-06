@@ -37,6 +37,7 @@ public class TicTacToeGame implements IMiniGame
 	int[] notPlaced = null; //board還是EMPTY的index們 之所以不用ArrayList 是為了省效能 注意要到第三輪才會開始追蹤空棋盤
 	int round = 1;
 
+	private final int difficulty;
 	private final DifficultyBot difficultyBot;
 
 	private static final int ROW_LENGTH = (BOARD_SIDE << 2) + 3; //3 * (BOARD_SIDE + 1) + BOARD_SIDE
@@ -57,6 +58,7 @@ public class TicTacToeGame implements IMiniGame
 		}
 		boardBuilder.append("\n```");
 
+		this.difficulty = difficulty;
 		difficultyBot = switch (difficulty)
 		{
 			case 1 -> new EasyBot(this);
@@ -116,6 +118,11 @@ public class TicTacToeGame implements IMiniGame
 	public String getBoard()
 	{
 		return boardBuilder.toString();
+	}
+
+	public int getDifficulty()
+	{
+		return difficulty;
 	}
 
 	void updateNotPlaced()

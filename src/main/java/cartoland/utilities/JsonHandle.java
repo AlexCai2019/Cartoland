@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 1.0
  * @author Alex Cai
  */
-public class JsonHandle
+public final class JsonHandle
 {
 	private JsonHandle()
 	{

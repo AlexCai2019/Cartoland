@@ -23,7 +23,7 @@ import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
  * @see cartoland.Cartoland
  * @author Alex Cai
  */
-public class AddCommands
+public final class AddCommands
 {
 	private AddCommands()
 	{

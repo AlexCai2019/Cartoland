@@ -8,7 +8,7 @@ import java.util.Random;
  * @since 1.5
  * @author Alex Cai
  */
-public class Algorithm
+public final class Algorithm
 {
 	private Algorithm()
 	{

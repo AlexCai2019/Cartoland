@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
  * @since 1.3
  * @author Alex Cai
  */
-public class IDAndEntities
+public final class IDAndEntities
 {
 	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
 

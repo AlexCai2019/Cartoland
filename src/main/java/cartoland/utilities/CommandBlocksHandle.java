@@ -16,7 +16,7 @@ import static cartoland.utilities.IDAndEntities.*;
  * @since 1.5
  * @author Alex Cai
  */
-public class CommandBlocksHandle
+public final class CommandBlocksHandle
 {
 	private CommandBlocksHandle()
 	{

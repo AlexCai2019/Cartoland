@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @since 1.0
  * @author Alex Cai
  */
-public class FileHandle
+public final class FileHandle
 {
 	private FileHandle()
 	{

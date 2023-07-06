@@ -11,7 +11,7 @@ import java.util.Map;
  * @since 2.0
  * @author Alex Cai
  */
-public class IntroduceHandle
+public final class IntroduceHandle
 {
 	private IntroduceHandle()
 	{

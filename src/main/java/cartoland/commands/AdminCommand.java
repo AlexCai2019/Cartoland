@@ -1,9 +1,9 @@
 package cartoland.commands;
 
-import cartoland.events.BotOnlineOffline;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -170,33 +170,33 @@ public class AdminCommand implements ICommand
 				return;
 			}
 
-			long durationMillis = (long) (duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
+			long durationHours = (long) (duration * switch (unit) //將單位轉成小時
 			{
-				case "day" -> 1000L * 60 * 60 * 24;
-				case "week" -> 1000L * 60 * 60 * 24 * 7;
-				case "month" -> 1000L * 60 * 60 * 24 * 30;
-				case "season" -> 1000L * 60 * 60 * 24 * 30 * 3;
-				case "year" -> 1000L * 60 * 60 * 24 * 365;
-				case "wood_rat" -> 1000L * 60 * 60 * 24 * 365 * 60;
-				case "century" -> 1000L * 60 * 60 * 24 * 365 * 100;
+				case "day" -> 24;
+				case "week" -> 24 * 7;
+				case "month" -> 24 * 30;
+				case "season" -> 24 * 30 * 3;
+				case "year" -> 24 * 365;
+				case "wood_rat" -> 24 * 365 * 60;
+				case "century" -> 24 * 365 * 100;
 				default -> 1;
 			});
 
-			if (durationMillis <= 0) //溢位
-				durationMillis = Long.MAX_VALUE;
+			if (durationHours <= 0) //溢位
+				durationHours = Long.MAX_VALUE;
 
-			long untilPardon = System.currentTimeMillis() + durationMillis;
+			long untilPardon =  TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis()) + durationHours;
 			if (untilPardon <= 0) //溢位
 				untilPardon = Long.MAX_VALUE;
 
-			BotOnlineOffline.tempBanList.put(target.getIdLong(), untilPardon);
+			TimerHandle.tempBanList.put(target.getIdLong(), untilPardon);
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 					.formatted(target.getAsMention(), buildDurationString(duration),
 							   JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit),
-							   (System.currentTimeMillis() + durationMillis) / 1000);
+							   TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)); //直到<t:> 以秒為單位
 			if (reason != null)
 				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason);
 

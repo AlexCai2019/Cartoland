@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @since 2.0
  * @author Alex Cai
  */
-public class QuestionForumHandle
+public final class QuestionForumHandle
 {
 	private QuestionForumHandle()
 	{

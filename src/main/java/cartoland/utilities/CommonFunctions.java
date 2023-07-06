@@ -3,7 +3,6 @@ package cartoland.utilities;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.function.Function;
@@ -15,15 +14,18 @@ import java.util.function.Function;
  * @since 2.0
  * @author Alex Cai
  */
-public interface CommonFunctions
+public final class CommonFunctions
 {
-	Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
-	Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
-	Function<OptionMapping, Double> getAsDouble = OptionMapping::getAsDouble;
-	Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
-	Function<OptionMapping, GuildChannelUnion> getAsChannel = OptionMapping::getAsChannel;
-	Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
-	Function<OptionMapping, Member> getAsMember = OptionMapping::getAsMember;
-	Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
-	Function<Object, String> stringValue = String::valueOf;
+	private CommonFunctions()
+	{
+		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+	}
+	public static final Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
+	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
+	public static final Function<OptionMapping, Double> getAsDouble = OptionMapping::getAsDouble;
+	public static final Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
+	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
+	public static final Function<OptionMapping, Member> getAsMember = OptionMapping::getAsMember;
+	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
+	public static final Function<Object, String> stringValue = String::valueOf;
 }

@@ -78,7 +78,7 @@ public class TicTacToeCommand implements ICommand
 	 */
 	public static class PlaySubCommand implements ICommand
 	{
-		private static final byte REWARD = 5;
+		private static final int[] REWARDS = { 5, 50, 100 };
 		private static final byte PUNISH = 100;
 
 		private final CommandUsage commandCore;
@@ -134,8 +134,9 @@ public class TicTacToeCommand implements ICommand
 			//玩家下
 			if (ticTacToe.humanPlace(row, column)) //玩家贏
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win").formatted(REWARD) + ticTacToe.getBoard()).queue();
-				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD);
+				int reward = REWARDS[ticTacToe.getDifficulty() - 1]; //簡單從1開始
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win").formatted(reward) + ticTacToe.getBoard()).queue();
+				CommandBlocksHandle.getLotteryData(userID).addBlocks(reward);
 				games.remove(userID);
 				return;
 			}

@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -20,6 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * {@code QuestionForumHandle} is a utility class that has functions which controls question forum from create to
+ * archive. Can not be instantiated or inherited.
  * @since 2.0
  * @author Alex Cai
  */
@@ -27,7 +30,7 @@ public final class QuestionForumHandle
 {
 	private QuestionForumHandle()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
@@ -91,9 +94,13 @@ public final class QuestionForumHandle
 		if (forumPost.getLatestMessageIdLong() != 0) //有初始訊息
 			sendStartEmbed(forumPost);//傳送發問指南
 
+		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
+		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
+		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
+
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
-		tags.remove(IDAndEntities.resolvedForumTag); //避免使用者自己加resolved
-		if (tags.contains(IDAndEntities.unresolvedForumTag)) //如果使用者有加unresolved
+		tags.remove(resolvedForumTag); //避免使用者自己加resolved
+		if (tags.contains(unresolvedForumTag)) //如果使用者有加unresolved
 		{
 			forumPost.getManager().setAppliedTags(tags).queue(); //直接送出
 			return;
@@ -101,7 +108,7 @@ public final class QuestionForumHandle
 
 		if (tags.size() >= MAX_TAG) //不可以超過MAX_TAG個tag
 			tags.remove(MAX_TAG - 1); //移除最後一個 空出位置給unresolved
-		tags.add(IDAndEntities.unresolvedForumTag);
+		tags.add(unresolvedForumTag);
 		forumPost.getManager().setAppliedTags(tags).queue();
 	}
 
@@ -119,9 +126,13 @@ public final class QuestionForumHandle
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
 		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
+		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
+		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
+		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
+
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
-		tags.remove(IDAndEntities.unresolvedForumTag); //移除unresolved
-		tags.add(IDAndEntities.resolvedForumTag); //新增resolved
+		tags.remove(unresolvedForumTag); //移除unresolved
+		tags.add(resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).queue();
 		idledForumPosts.remove(forumPost.getIdLong());
 

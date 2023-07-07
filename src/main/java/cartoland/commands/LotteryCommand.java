@@ -1,6 +1,8 @@
 package cartoland.commands;
 
+import cartoland.Cartoland;
 import cartoland.utilities.*;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -60,7 +62,7 @@ public class LotteryCommand implements ICommand
 
 			Boolean displayDetail = event.getOption("display_detail", CommonFunctions.getAsBoolean);
 			CommandBlocksHandle.LotteryData targetLotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (displayDetail == null || !displayDetail)
+			if (displayDetail == null || !displayDetail) //不顯示細節
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
 									.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();
@@ -163,10 +165,10 @@ public class LotteryCommand implements ICommand
 			boolean showHand = bet == nowHave; //梭哈
 			if (showHand)
 				replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
-			lotteryData.addGame(win, showHand); //紀錄勝場和是否梭哈
-
-			lotteryData.setBlocks(afterBet); //設定方塊
 			event.reply(replyMessage).queue();
+
+			lotteryData.addGame(win, showHand); //紀錄勝場和是否梭哈
+			lotteryData.setBlocks(afterBet); //設定方塊
 		}
 	}
 
@@ -216,9 +218,9 @@ public class LotteryCommand implements ICommand
 			//排序
 			forSort.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面
 
+			event.reply(lastReply = replyString(userID, page, maxPage)).queue();
 			CommandBlocksHandle.changed = false; //已經排序過了
 			lastPage = page; //換過頁了
-			event.reply(lastReply = replyString(userID, page, maxPage)).queue();
 		}
 
 		private final StringBuilder rankBuilder = new StringBuilder();
@@ -245,9 +247,10 @@ public class LotteryCommand implements ICommand
 			CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
 			long blocks = myData.getBlocks(); //本使用者擁有的方塊數
 
+			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
 			rankBuilder.setLength(0);
 			rankBuilder.append("```ansi\nCommand blocks in ")
-					.append(IDAndEntities.cartolandServer.getName())
+					.append(cartoland != null ? cartoland.getName() : "")
 					.append("\n--------------------\nYou are rank \u001B[36m#")
 					.append(forSortBinarySearch(blocks))
 					.append("\u001B[0m, with \u001B[36m")

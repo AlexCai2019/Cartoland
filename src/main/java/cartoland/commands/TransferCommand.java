@@ -32,9 +32,9 @@ public class TransferCommand implements ICommand
 			event.reply("Impossible, this is required!").queue();
 			return;
 		}
-		if (target.isBot() || target.isSystem())
+		if (target.isBot() || target.isSystem()) //是機器人或系統
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_user")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_user")).queue(); //不能轉帳
 			return;
 		}
 
@@ -75,13 +75,13 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		if (transferAmount == 0L)
+		if (transferAmount == 0L) //不能轉0
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
 			return;
 		}
 
-		if (nowHave < transferAmount)
+		if (nowHave < transferAmount) //不夠轉
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.not_enough").formatted(transferAmount, nowHave)).queue();
 			return;

@@ -1,6 +1,6 @@
 package cartoland.messages;
 
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -25,7 +25,7 @@ public class QuestionForumMessage implements IMessage
 	{
 		MessageChannelUnion channel = event.getChannel();
 		return channel.getType().isThread() &&
-				(forumPost = channel.asThreadChannel()).getParentChannel().getIdLong() == IDAndEntities.QUESTIONS_CHANNEL_ID;
+				(forumPost = channel.asThreadChannel()).getParentChannel().getIdLong() == IDs.QUESTIONS_CHANNEL_ID;
 	}
 
 	@Override

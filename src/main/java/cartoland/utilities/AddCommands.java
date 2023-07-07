@@ -17,7 +17,7 @@ import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 /**
  * {@code AddCommands} is a utility that holds every command. The only usage is for {@link cartoland.Cartoland#main} to
- * get all commands when registering JDA. Can not be instantiated.
+ * get all commands when registering JDA. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @see cartoland.Cartoland
@@ -27,7 +27,7 @@ public final class AddCommands
 {
 	private AddCommands()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	//這裡真的很亂
@@ -180,6 +180,7 @@ public final class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "管理員專用指令")
 				.setDescriptionLocalization(CHINESE_CHINA, "管理员专用命令")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS,Permission.BAN_MEMBERS,Permission.MODERATE_MEMBERS))
+				.setGuildOnly(true)
 				.addSubcommands(
 						new SubcommandData("mute", "Mute a user")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
@@ -381,17 +382,17 @@ public final class AddCommands
 }
 
 /**
- * /cmd, /mcc and /command. Can not be instantiated.
+ * /cmd, /mcc and /command. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @see AddCommands
  * @author Alex Cai
  */
-class Cmd
+final class Cmd
 {
 	private Cmd()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Map<DiscordLocale, String> cmdDescriptions = new HashMap<>(2);
@@ -423,17 +424,17 @@ class Cmd
 }
 
 /**
- * /faq and /question. Can not be instantiated.
+ * /faq and /question. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @see AddCommands
  * @author Alex Cai
  */
-class Faq
+final class Faq
 {
 	private Faq()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Map<DiscordLocale, String> faqDescriptions = new HashMap<>(2);
@@ -461,17 +462,17 @@ class Faq
 }
 
 /**
- * /dtp and /datapack. Can not be instantiated.
+ * /dtp and /datapack. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @see AddCommands
  * @author Alex Cai
  */
-class Dtp
+final class Dtp
 {
 	private Dtp()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Map<DiscordLocale, String> dtpDescriptions = new HashMap<>(2);
@@ -499,17 +500,17 @@ class Dtp
 }
 
 /**
- * /lang and /language. Can not be instantiated.
+ * /lang and /language. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @see AddCommands
  * @author Alex Cai
  */
-class Lang
+final class Lang
 {
 	private Lang()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Map<DiscordLocale, String> langDescriptions = new HashMap<>(2);
@@ -543,11 +544,18 @@ class Lang
 			.addOptions(langOptions);
 }
 
-class Jira
+/**
+ * /jira and /bug. Can not be instantiated or inherited.
+ *
+ * @since 2.0
+ * @see AddCommands
+ * @author Alex Cai
+ */
+final class Jira
 {
 	private Jira()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Map<DiscordLocale, String> jiraDescriptions = new HashMap<>(2);

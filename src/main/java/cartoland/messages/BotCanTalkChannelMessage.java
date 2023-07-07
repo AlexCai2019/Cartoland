@@ -1,7 +1,8 @@
 package cartoland.messages;
 
+import cartoland.Cartoland;
 import cartoland.utilities.Algorithm;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -93,10 +94,10 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	public BotCanTalkChannelMessage()
 	{
-		canTalkCategories.add(IDAndEntities.GENERAL_CATEGORY_ID);
-		canTalkCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
-		canTalkCategories.add(IDAndEntities.VOICE_CATEGORY_ID);
-		canTalkCategories.add(IDAndEntities.DANGEROUS_CATEGORY_ID);
+		canTalkCategories.add(IDs.GENERAL_CATEGORY_ID);
+		canTalkCategories.add(IDs.PUBLIC_AREA_CATEGORY_ID);
+		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
+		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
 
 		keywords.put("早安", "早上好中國 現在我有 Bing Chilling");
 		keywords.put("午安", "午安你好，記得天下沒有白吃的午餐");
@@ -123,22 +124,22 @@ public class BotCanTalkChannelMessage implements IMessage
 		MessageChannel channel = message.getChannel();
 		User author = event.getAuthor();
 
-		if (message.getMentions().isMentioned(IDAndEntities.botItself, botType)) //有人tag機器人
+		if (message.getMentions().isMentioned(Cartoland.getJDA().getSelfUser(), botType)) //有人tag機器人
 		{
 			long userID = author.getIdLong();
 			String replyString;
 
 			//不要再想著用switch了 Java的switch不支援long
-			if (userID == IDAndEntities.AC_ID) //是AC
+			if (userID == IDs.AC_ID) //是AC
 				replyString = Algorithm.randomElement(replyACMention);
-			else if (userID == IDAndEntities.MEGA_ID) //是米格
+			else if (userID == IDs.MEGA_ID) //是米格
 				replyString = Algorithm.randomElement(replyMegaMention);
 			else //都不是
 			{
 				long channelID = channel.getIdLong();
 				//如果頻道在機器人或地下 就正常地回傳replyMention 反之就說 蛤，我地盤在#bot專區｜bots啦
-				replyString = (channelID == IDAndEntities.BOT_CHANNEL_ID || channelID == IDAndEntities.UNDERGROUND_CHANNEL_ID) ?
-						Algorithm.randomElement(replyMention) : "蛤，我地盤在<#" + IDAndEntities.BOT_CHANNEL_ID + ">啦";
+				replyString = (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) ?
+						Algorithm.randomElement(replyMention) : "蛤，我地盤在<#" + IDs.BOT_CHANNEL_ID + ">啦";
 			}
 
 			message.reply(replyString).mentionRepliedUser(false).queue();

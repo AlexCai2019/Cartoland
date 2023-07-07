@@ -1,9 +1,11 @@
 package cartoland.commands;
 
+import cartoland.Cartoland;
 import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -23,8 +25,8 @@ import java.util.regex.Pattern;
  */
 public class QuoteCommand implements ICommand
 {
-	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
-	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
+	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
 	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
@@ -50,7 +52,15 @@ public class QuoteCommand implements ICommand
 		//numbersInLink[1] = "891666028986253322";
 
 		//從創聯中取得頻道
-		MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
+		Guild cartoland = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
+		if (cartoland == null || cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //結果不是在創聯
+			cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
+		if (cartoland == null) //找不到創聯
+		{
+			event.reply("Can't get Cartoland server").queue();
+			return; //結束
+		}
+		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 		if (linkChannel == null)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).queue();
@@ -74,7 +84,7 @@ public class QuoteCommand implements ICommand
 					.filter(Message.Attachment::isImage)
 					.findFirst()
 					.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()),
-									 () -> embedBuilder.setImage(null));
+									 () -> embedBuilder.setImage(null)); //這個stream不能省略 否則圖片會保留下來
 
 			event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))

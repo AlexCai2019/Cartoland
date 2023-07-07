@@ -1,7 +1,7 @@
 package cartoland.utilities;
 
 /**
- * Language constants. Can not be instantiated.
+ * Language constants. Can not be instantiated or inherited.
  *
  * @since 1.0
  * @author Alex Cai
@@ -11,7 +11,7 @@ public final class Languages
 {
 	private Languages()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static final String ENGLISH = "en";

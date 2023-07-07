@@ -1,25 +1,17 @@
 package cartoland.utilities;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
-
 /**
- * {@code IDAndEntities} is a utility class that stores IDs, JDA entities and language constants. For example, this class
- * has some channel IDs, role IDs, and entities such as {@link JDA} and {@link TextChannel}. Can not be instantiated.
+ * {@code IDs} is a utility class that stores IDs. For example, this class has some channel IDs, role IDs. Can
+ * not be instantiated or inherited.
  *
  * @since 1.3
  * @author Alex Cai
  */
-public final class IDAndEntities
+public final class IDs
 {
 	public static final String YOU_SHALL_NOT_ACCESS = "You shall not access!";
 
-	private IDAndEntities()
+	private IDs()
 	{
 		throw new AssertionError(YOU_SHALL_NOT_ACCESS);
 	}
@@ -34,7 +26,6 @@ public final class IDAndEntities
 	public static final long READ_ME_CHANNEL_ID = 973898745777377330L; //創聯的解鎖須知頻道
 	public static final long SELF_INTRO_CHANNEL_ID = 892415434240950282L; //創聯的會員申請頻道
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
-	public static final long VOTE_KICK_CHANNEL_ID = 1120734899356323931L; //創聯的法庭頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
@@ -45,18 +36,4 @@ public final class IDAndEntities
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
-
-	public static JDA jda;
-	public static Guild cartolandServer;
-	public static ForumChannel questionsChannel;
-	public static ForumChannel voteKickChannel;
-	public static TextChannel lobbyChannel;
-	public static TextChannel botChannel;
-	public static TextChannel undergroundChannel;
-	public static ForumTag resolvedForumTag;
-	public static ForumTag unresolvedForumTag;
-	public static Role godOfGamblersRole;
-	public static Role memberRole;
-	public static Role nsfwRole;
-	public static User botItself;
 }

@@ -2,7 +2,7 @@ package cartoland.messages;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -28,11 +28,11 @@ public class GuildMessage implements IMessage
 
 	public GuildMessage()
 	{
-		commandBlockCategories.add(IDAndEntities.GENERAL_CATEGORY_ID);
-		commandBlockCategories.add(IDAndEntities.TECH_TALK_CATEGORY_ID);
-		commandBlockCategories.add(IDAndEntities.PUBLIC_AREA_CATEGORY_ID);
-		commandBlockCategories.add(IDAndEntities.SHOWCASE_CATEGORY_ID);
-		commandBlockCategories.add(IDAndEntities.VOICE_CATEGORY_ID);
+		commandBlockCategories.add(IDs.GENERAL_CATEGORY_ID);
+		commandBlockCategories.add(IDs.TECH_TALK_CATEGORY_ID);
+		commandBlockCategories.add(IDs.PUBLIC_AREA_CATEGORY_ID);
+		commandBlockCategories.add(IDs.SHOWCASE_CATEGORY_ID);
+		commandBlockCategories.add(IDs.VOICE_CATEGORY_ID);
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class GuildMessage implements IMessage
 		if (category == null) //獲取類別失敗
 			return; //不用執行
 		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
-		if (message.getChannel().getIdLong() != IDAndEntities.BOT_CHANNEL_ID && commandBlockCategories.contains(category.getIdLong()))
+		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && commandBlockCategories.contains(category.getIdLong()))
 			CommandBlocksHandle.getLotteryData(event.getAuthor().getIdLong())
 					.addBlocks(rawMessage.length() + 1 + message.getAttachments().size() + message.getStickers().size()); //說話加等級 +1當作加上\0 附加一個檔案或貼圖算1個
 	}

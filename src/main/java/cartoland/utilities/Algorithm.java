@@ -3,7 +3,7 @@ package cartoland.utilities;
 import java.util.Random;
 
 /**
- * {@code Algorithm} is a class that provides functions that helps calculate. Can not be instantiated.
+ * {@code Algorithm} is a class that provides functions that helps calculate. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @author Alex Cai
@@ -12,7 +12,7 @@ public final class Algorithm
 {
 	private Algorithm()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final Random random = new Random();

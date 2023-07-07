@@ -15,13 +15,13 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
 - 📁`lang/` with all `.json` files found in the `lang/` folder of this repository.
 - 📁`logs/`
 - 📁`serialize/` with these following files:
-  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
-  - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
-  - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use both `Long` as key and value.
+  - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
+  - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
+  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use `Long` as key and `long[]` as value.
+  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## Launching
 Start the bot by running the following command in your terminal:

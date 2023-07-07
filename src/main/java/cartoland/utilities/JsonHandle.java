@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * {@code JsonHandle} is a utility class that handles all the need of JSON. It will load every JSON files that the bot need
  * at the beginning of process, and provide every information that the outer classes need. This is the only place
- * that imports {@link JSONArray} and {@link JSONObject}. Can not be instantiated.
+ * that imports {@link JSONArray} and {@link JSONObject}. Can not be instantiated or inherited.
  *
  * @since 1.0
  * @author Alex Cai
@@ -19,7 +19,7 @@ public final class JsonHandle
 {
 	private JsonHandle()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final String USERS_FILE_NAME = "serialize/users.ser";
@@ -53,12 +53,12 @@ public final class JsonHandle
 		builder.append(file.getString(commandName + ".begin")); //開頭
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list");
 		int dotListLength = dotListArray.length();
-		if (dotListLength != 0)
+		if (dotListLength != 0) //建立回覆字串
 		{
 			for (int i = 0; ; i++)
 			{
 				builder.append(dotListArray.getString(i));
-				if (i + 1 == dotListLength)
+				if (i + 1 == dotListLength) //已經是最後一個了
 					break;
 				builder.append(", ");
 			}

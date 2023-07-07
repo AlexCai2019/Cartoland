@@ -1,7 +1,7 @@
 package cartoland.events;
 
 import cartoland.utilities.Algorithm;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -20,7 +20,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
  */
 public class AddReaction extends ListenerAdapter
 {
-	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 
 	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event)
@@ -31,6 +30,7 @@ public class AddReaction extends ListenerAdapter
 		User user = member.getUser();
 		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return;
+		Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
 		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned))
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
 
@@ -40,7 +40,7 @@ public class AddReaction extends ListenerAdapter
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;
 		ThreadChannel forumPost = event.getChannel().asThreadChannel();
-		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
+		if (forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 		if (forumPost.isArchived()) //關閉著的
 			return;

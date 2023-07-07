@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * {@code IntroduceHandle} is a utility class that handles introduction of users. Whenever user typed anything in the
  * self-intro channel, the message will be store into {@link #introduction}. Users can also modify their introduction
- * via /introduce command.
+ * via /introduce command. Can not be instantiated or inherited.
  *
  * @since 2.0
  * @author Alex Cai
@@ -15,7 +15,7 @@ public final class IntroduceHandle
 {
 	private IntroduceHandle()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";

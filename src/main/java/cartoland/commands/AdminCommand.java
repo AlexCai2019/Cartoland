@@ -1,9 +1,10 @@
 package cartoland.commands;
 
 import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.IDAndEntities;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -63,7 +64,19 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			long userID = event.getUser().getIdLong();
+			Member member = event.getMember();
+			if (member == null)
+			{
+				event.reply("Can't check if you have the permission.").queue();
+				return;
+			}
+			if (!member.hasPermission(Permission.MODERATE_MEMBERS))
+			{
+				event.reply("You don't have a permission to time out members!").queue();
+				return;
+			}
+
+			long userID = member.getIdLong();
 			Member target = event.getOption("target", CommonFunctions.getAsMember); //要被禁言的成員
 			if (target == null) //找不到該成員
 			{
@@ -121,15 +134,18 @@ public class AdminCommand implements ICommand
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
+			String bannedTime = buildDurationString(duration) + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
-					.formatted(target.getAsMention(), buildDurationString(duration),
-							   JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_" + unit),
-							   (System.currentTimeMillis() + durationMillis) / 1000);
+					.formatted(target.getAsMention(), bannedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			if (reason != null)
 				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason);
 
-			event.reply(replyString).queue();
-			IDAndEntities.cartolandServer.timeoutFor(target, Duration.ofMillis(durationMillis)).reason(reason).queue();
+			event.reply(replyString).queue(); //盡量盡早回覆
+
+			Guild guild = event.getGuild();
+			if (guild == null) //這是一個伺服器限定指令
+				return;
+			guild.timeoutFor(target, Duration.ofMillis(durationMillis)).reason(reason).queue();
 		}
 	}
 
@@ -142,7 +158,19 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			long userID = event.getUser().getIdLong();
+			Member member = event.getMember();
+			if (member == null)
+			{
+				event.reply("Can't check if you have the permission.").queue();
+				return;
+			}
+			if (!member.hasPermission(Permission.BAN_MEMBERS))
+			{
+				event.reply("You don't have a permission to ban members!").queue();
+				return;
+			}
+
+			long userID = member.getIdLong();
 			Member target = event.getOption("target", CommonFunctions.getAsMember);
 			if (target == null)
 			{
@@ -185,24 +213,34 @@ public class AdminCommand implements ICommand
 			if (durationHours <= 0) //溢位
 				durationHours = Long.MAX_VALUE;
 
-			long untilPardon =  TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis()) + durationHours;
-			if (untilPardon <= 0) //溢位
-				untilPardon = Long.MAX_VALUE;
-
-			TimerHandle.tempBanList.put(target.getIdLong(), untilPardon);
-
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
+			String bannedTime = buildDurationString(duration) + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
-					.formatted(target.getAsMention(), buildDurationString(duration),
-							   JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit),
-							   TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)); //直到<t:> 以秒為單位
+					.formatted(
+							target.getAsMention(), bannedTime,
+							System.currentTimeMillis() / 1000 + durationHours * 60 * 60); //直到<t:> 以秒為單位
+							//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) +
+							//TimeUnit.HOURS.toSeconds(durationHours)
 			if (reason != null)
 				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason);
 
-			event.reply(replyString).queue();
+			event.reply(replyString).queue(); //回覆
 
-			IDAndEntities.cartolandServer.ban(target, 0, TimeUnit.SECONDS).reason(reason).queue();
+			//回覆完再開始動作 避免超過三秒限制
+			long untilPardon = System.currentTimeMillis() / (1000 * 60 * 60) + durationHours; //計算解除時間
+			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
+			if (untilPardon <= 0) //溢位
+				untilPardon = Long.MAX_VALUE;
+
+			Guild guild = event.getGuild();
+			if (guild == null) //這是一個伺服器限定指令 應該不會通過才對
+				return;
+			long[] banData = new long[2];
+			banData[TimerHandle.BANNED_TIME] = untilPardon;
+			banData[TimerHandle.BANNED_SERVER] = guild.getIdLong();
+			TimerHandle.tempBanList.put(target.getIdLong(), banData);
+			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
 		}
 	}
 }

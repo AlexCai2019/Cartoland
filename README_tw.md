@@ -15,13 +15,13 @@
 - 📁`lang/`，以及本專案的 `lang/` 資料夾內的所有 `.json` 檔案。
 - 📁`logs/`
 - 📁`serialize/`，以及下列檔案：
-  - 📄`users.ser`，從一個索引為`Long`、值為`String`的`HashMap`串聯化而來。
-  - 📄`lottery_data.ser`，從一個索引為`Long`、值為`cartoland.utilties.CommandBlocksHandle.LotteryData`的`HashMap`串聯化而來。
-  - 📄`idled_questions.ser`，從一個值為`Long`的`HashSet`串聯化而來。
-  - 📄`has_start_message.ser`，從一個值為`Long`的`HashSet`串聯化而來。
-  - 📄`introduction.ser`，從一個索引為`Long`、值為`String`的`HashMap`串聯化而來。
   - 📄`all_members.ser`，從一個值為`Long`的`HashSet`串聯化而來。
-  - 📄`temp_ban_list.ser`，從一個索引和值皆為`Long`的`HashMap`串聯化而來。
+  - 📄`has_start_message.ser`，從一個值為`Long`的`HashSet`串聯化而來。
+  - 📄`idled_questions.ser`，從一個值為`Long`的`HashSet`串聯化而來。
+  - 📄`introduction.ser`，從一個索引為`Long`、值為`String`的`HashMap`串聯化而來。
+  - 📄`lottery_data.ser`，從一個索引為`Long`、值為`cartoland.utilties.CommandBlocksHandle.LotteryData`的`HashMap`串聯化而來。
+  - 📄`temp_ban_list.ser`，從一個索引為`Long`、值為`long[]`的`HashMap`串聯化而來。
+  - 📄`users.ser`，從一個索引為`Long`、值為`String`的`HashMap`串聯化而來。
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

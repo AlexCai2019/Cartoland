@@ -1,8 +1,11 @@
 package cartoland.events;
 
 import cartoland.utilities.FileHandle;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -23,14 +26,13 @@ import java.util.stream.Collectors;
  */
 public class NewMember extends ListenerAdapter
 {
-	private final Emoji wave = Emoji.fromUnicode("👋");
 	private final String welcomeMessage =
 			"""
 			歡迎你，%%s，來到 %%s。
 			記得先詳閱 <#%d> 內的訊息，並遵守一切公告規則。
 			%%s, welcome to %%s.
 			Please read messages in <#%d>, and follow all rules.
-			""".formatted(IDAndEntities.READ_ME_CHANNEL_ID, IDAndEntities.READ_ME_CHANNEL_ID);
+			""".formatted(IDs.READ_ME_CHANNEL_ID, IDs.READ_ME_CHANNEL_ID);
 	private final String ALL_MEMBERS = "serialize/all_members.ser";
 	private final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet<?> set ?
 			set.stream().map(userID -> (Long)userID).collect(Collectors.toSet()) : new HashSet<>();
@@ -46,7 +48,10 @@ public class NewMember extends ListenerAdapter
 		User user = event.getUser();
 		if (!user.hasPrivateChannel())
 			return;
-		String serverName = IDAndEntities.cartolandServer.getName();
+		Guild cartoland = event.getGuild();
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
+			return;
+		String serverName = cartoland.getName();
 		String userName = user.getEffectiveName();
 		user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)).queue());
 	}
@@ -59,15 +64,25 @@ public class NewMember extends ListenerAdapter
 		if (allMembers.contains(userID))
 			return;
 
-		if (!event.getRoles().contains(IDAndEntities.memberRole))
+		Guild cartoland = event.getGuild();
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
+			return;
+
+		Role memberRole = cartoland.getRoleById(IDs.MEMBER_ROLE_ID);
+		if (memberRole == null)
+			return;
+		if (!event.getRoles().contains(memberRole))
 			return;
 
 		allMembers.add(userID);
-		String mentionUser = user.getAsMention();
-		String serverName = IDAndEntities.cartolandServer.getName();
 
-		IDAndEntities.lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" +
-													   mentionUser + ", welcome to " + serverName).queue(message -> message.addReaction(wave).queue());
+		TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID);
+		if (lobbyChannel == null)
+			return;
+		String mentionUser = user.getAsMention();
+		String serverName = cartoland.getName();
+		lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" + mentionUser + ", welcome to " + serverName)
+				.queue(message -> message.addReaction(Emoji.fromUnicode("👋")).queue());
 	}
 
 	@Override

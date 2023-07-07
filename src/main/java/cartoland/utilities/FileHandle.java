@@ -1,5 +1,7 @@
 package cartoland.utilities;
 
+import cartoland.Cartoland;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * {@code FileHandle} is a utility class that provides every functions that this program need to deal with file input and
- * output. Including logger, json build and serialize. Can not be instantiated.
+ * output. Including logger, json build and serialize. Can not be instantiated or inherited.
  *
  * @since 1.0
  * @author Alex Cai
@@ -21,7 +23,7 @@ public final class FileHandle
 {
 	private FileHandle()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static LocalDate lastDateHasLog; //上一次有寫log的日期
@@ -38,7 +40,7 @@ public final class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			IDAndEntities.jda.shutdownNow();
+			Cartoland.getJDA().shutdownNow();
 		}
 	}
 
@@ -143,7 +145,7 @@ public final class FileHandle
 			catch (IOException exception)
 			{
 				exception.printStackTrace();
-				IDAndEntities.jda.shutdownNow();
+				Cartoland.getJDA().shutdownNow();
 			}
 		}
 
@@ -157,7 +159,7 @@ public final class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			IDAndEntities.jda.shutdownNow();
+			Cartoland.getJDA().shutdownNow();
 		}
 	}
 
@@ -182,7 +184,7 @@ public final class FileHandle
 		catch (IOException exception)
 		{
 			exception.printStackTrace();
-			IDAndEntities.jda.shutdownNow();
+			Cartoland.getJDA().shutdownNow();
 		}
 	}
 

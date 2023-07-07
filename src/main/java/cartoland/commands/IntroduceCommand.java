@@ -1,9 +1,11 @@
 package cartoland.commands;
 
+import cartoland.Cartoland;
 import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.IntroduceHandle;
 import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -42,7 +44,12 @@ public class IntroduceCommand implements ICommand
 			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
 		});
 		subCommands.put("update", new UpdateSubCommand());
-		subCommands.put("delete", new DeleteSubCommand());
+		subCommands.put("delete", event ->
+		{
+			long userID = event.getUser().getIdLong();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+		});
 	}
 
 	/**
@@ -69,8 +76,8 @@ public class IntroduceCommand implements ICommand
 	 */
 	private static class UpdateSubCommand implements ICommand
 	{
-		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
-		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDAndEntities.CARTOLAND_SERVER_ID + "/").length();
+		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
+		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -79,52 +86,53 @@ public class IntroduceCommand implements ICommand
 			String content = event.getOption("content", CommonFunctions.getAsString);
 			if (content == null)
 			{
-				IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+				IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
 				return;
 			}
 
-			if (linkRegex.matcher(content).matches()) //如果內容是個創聯群組連結
+			if (!linkRegex.matcher(content).matches()) //如果內容不是創聯群組連結
 			{
-				String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
-
-				//從創聯中取得頻道
-				MessageChannel linkChannel = IDAndEntities.cartolandServer.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
-				if (linkChannel == null)
-				{
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
-					return;
-				}
-
-				//從頻道中取得訊息 注意ID是String 與慣例的long不同
-				linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
-				{
-					String rawMessage = linkMessage.getContentRaw();
-					List<Message.Attachment> attachments = linkMessage.getAttachments();
-					if (!attachments.isEmpty())
-						rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-					IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage);
-				}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> IntroduceHandle.updateIntroduction(userID, content)));
-			}
-			else
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
 				IntroduceHandle.updateIntroduction(userID, content);
+				return;
+			}
 
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
-		}
-	}
+			//以下就是處理創聯群組連結的部分
+			String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
 
-	/**
-	 * @since 2.0
-	 * @author Alex Cai
-	 */
-	private static class DeleteSubCommand implements ICommand
-	{
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
-		{
-			long userID = event.getUser().getIdLong();
-			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+			//從創聯中取得頻道
+			Guild cartoland = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
+			if (cartoland == null || cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //結果不是在創聯
+				cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
+			if (cartoland == null) //找不到創聯
+			{
+				event.reply("Can't get Cartoland server").queue();
+				return; //結束
+			}
+
+			MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
+			if (linkChannel == null) //找不到訊息內的頻道
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
+				return;
+			}
+
+			//從頻道中取得訊息 注意ID是String 與慣例的long不同
+			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
+				String rawMessage = linkMessage.getContentRaw(); //訊息內容
+				List<Message.Attachment> attachments = linkMessage.getAttachments(); //副件
+				if (!attachments.isEmpty())
+					rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
+				IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage); //更新介紹
+			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();
+				IntroduceHandle.updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
+			}));
+
 		}
 	}
 }

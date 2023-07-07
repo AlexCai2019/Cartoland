@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 /**
  * Common lambda functions for use. Including method references in {@link OptionMapping},
- * {@link Message.Attachment} and {@link String}. Can not be instantiated.
+ * {@link Message.Attachment} and {@link String}. Can not be instantiated or inherited.
  *
  * @since 2.0
  * @author Alex Cai
@@ -18,7 +18,7 @@ public final class CommonFunctions
 {
 	private CommonFunctions()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 	public static final Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
 	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;

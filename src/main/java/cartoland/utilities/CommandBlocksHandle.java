@@ -1,17 +1,16 @@
 package cartoland.utilities;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import cartoland.Cartoland;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 
-import static cartoland.utilities.IDAndEntities.*;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
  * feature that whatever a user say in some specific channels, the user will gain command blocks as a kind of
- * reward point. Can not be instantiated.
+ * reward point. Can not be instantiated or inherited.
  *
  * @since 1.5
  * @author Alex Cai
@@ -20,7 +19,7 @@ public final class CommandBlocksHandle
 {
 	private CommandBlocksHandle()
 	{
-		throw new AssertionError(YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	public static boolean changed = true;
@@ -31,12 +30,12 @@ public final class CommandBlocksHandle
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
-	private static final List<LotteryData> lotteryDataList; //將map的值轉為array list
+	private static final List<LotteryData> lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list
+	//因為每次修改的是LotteryData的內容 而不是參考本身 所以可以事先建好
 
 	static
 	{
 		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
-		lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list 因為每次修改的是LotteryData的內容 而不是參考本身 所以可以事先建好
 	}
 
 	/**
@@ -57,7 +56,7 @@ public final class CommandBlocksHandle
 		LotteryData newUser = new LotteryData(userID);
 		lotteryDataMap.put(userID, newUser); //放入這名玩家
 		lotteryDataList.add(newUser); //放入這名玩家
-		jda.retrieveUserById(userID).queue(user -> newUser.name = user.getEffectiveName());
+		Cartoland.getJDA().retrieveUserById(userID).queue(user -> newUser.name = user.getEffectiveName());
 		return newUser; //絕不回傳null
 	}
 
@@ -74,13 +73,24 @@ public final class CommandBlocksHandle
 	public static void initial()
 	{
 		lotteryDataMap.forEach((userID, lotteryData) ->
-			jda.retrieveUserById(userID).queue(user ->
+			Cartoland.getJDA().retrieveUserById(userID).queue(user ->
 			{
 				String name = user.getEffectiveName();
 				if (!lotteryData.name.equals(name)) //如果名字和紀錄的名字不一樣
 					lotteryData.setName(name); //新名字
 			}));
 		changed = true;
+	}
+
+	public static void optimizeMap()
+	{
+		Set<Long> userIDs = new HashSet<>(lotteryDataMap.keySet()); //避免移除的過程中影響到
+		for (long userID : userIDs) //走訪所有玩家
+		{
+			LotteryData data = lotteryDataMap.get(userID);
+			if (data.blocks == 0 && data.won == 0 && data.lost == 0) //如果沒有任何紀錄
+				lotteryDataMap.remove(userID); //移除玩家
+		}
 	}
 
 	public static class LotteryData implements Serializable
@@ -135,13 +145,19 @@ public final class CommandBlocksHandle
 			if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
 				return;
 
-			cartolandServer.retrieveMemberById(userID).queue(member ->
+			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
+			if (cartoland == null) //找不到創聯
+				return;
+			cartoland.retrieveMemberById(userID).queue(member ->
 			{
+				Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID);
+				if (godOfGamblersRole == null) //找不到賭神身分組
+					return;
 				boolean hasRole = member.getRoles().contains(godOfGamblersRole);
 				if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
-				 cartolandServer.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
+					cartoland.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
 				else if (less && hasRole) //小於GAMBLE_ROLE_MIN 且有身分組
-				 cartolandServer.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
+					cartoland.removeRoleFromMember(member, godOfGamblersRole).queue(); //剝奪賭神身分組
 			});
 		}
 

@@ -15,13 +15,13 @@
 - 📁`lang/`，以及本專案的 `lang/` 文件夾內的所有 `.json` 文件。
 - 📁`logs/`
 - 📁`serialize/` with these following files:
-  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
-  - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
-  - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use both `Long` as key and value.
+  - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
+  - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
+  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use `Long` as key and `long[]` as value.
+  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

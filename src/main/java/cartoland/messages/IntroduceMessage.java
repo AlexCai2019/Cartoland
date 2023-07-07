@@ -1,7 +1,7 @@
 package cartoland.messages;
 
 import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.IntroduceHandle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -21,7 +21,7 @@ public class IntroduceMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		return event.getChannel().getIdLong() == IDAndEntities.SELF_INTRO_CHANNEL_ID;
+		return event.getChannel().getIdLong() == IDs.SELF_INTRO_CHANNEL_ID;
 	}
 
 	@Override

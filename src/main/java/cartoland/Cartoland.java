@@ -2,12 +2,11 @@ package cartoland;
 
 import cartoland.events.*;
 import cartoland.utilities.AddCommands;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-
-import static cartoland.utilities.IDAndEntities.jda;
 
 /**
  * {@code Cartoland} is the class that has the {@link #main} method, which is the entry point of the entire program. All the
@@ -18,6 +17,12 @@ import static cartoland.utilities.IDAndEntities.jda;
  */
 public class Cartoland
 {
+	private static JDA jda;
+	public static JDA getJDA()
+	{
+		return jda;
+	}
+
 	/**
 	 * The entry point of the entire program. JDA was built here. Commands was register at here also, but
 	 * source code of commands are not in here. Instead, they are in {@link AddCommands}.

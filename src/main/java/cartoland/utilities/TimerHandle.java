@@ -1,5 +1,8 @@
 package cartoland.utilities;
 
+import cartoland.Cartoland;
+import net.dv8tion.jda.api.entities.Guild;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,6 +13,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * {@code TimerHandle} is a utility class that handles schedule. Including checking if functions should execute in every
+ * hour or handle {@code /admin temp_ban} with scheduled service. Can not be instantiated or inherited.
+ *
  * @since 2.1
  * @author Alex Cai
  */
@@ -17,13 +23,16 @@ public final class TimerHandle
 {
 	private TimerHandle()
 	{
-		throw new AssertionError(IDAndEntities.YOU_SHALL_NOT_ACCESS);
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
 	private static final List<TimerEvent> timerEvents = new ArrayList<>();
 	private static final String TEMP_BAN_LIST = "serialize/temp_ban_list.ser";
 	@SuppressWarnings("unchecked")
-	public static final Map<Long, Long> tempBanList = (FileHandle.deserialize(TEMP_BAN_LIST) instanceof HashMap map) ? map : new HashMap<>(); //userID為key ban time為value
+	//userID為key ban time為value[0] ban guild為value[1]
+	public static final Map<Long, long[]> tempBanList = (FileHandle.deserialize(TEMP_BAN_LIST) instanceof HashMap map) ? map : new HashMap<>();
+	public static final byte BANNED_TIME = 0;
+	public static final byte BANNED_SERVER = 1;
 
 	//https://stackoverflow.com/questions/65984126
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -36,20 +45,30 @@ public final class TimerHandle
 		if (nowHour == 24)
 			nowHour = 0;
 
-		//根據現在的時間 決定是否解ban
-		Set<Long> bannedIDs = new HashSet<>(tempBanList.keySet()); //建立新物件 以免修改到原map
-		for (Long bannedID : bannedIDs)
-		{
-			if (tempBanList.get(bannedID) >= hoursFrom1970) //已經超過了它們要被解ban的時間
-			{
-				IDAndEntities.jda.retrieveUserById(bannedID).queue(user -> IDAndEntities.cartolandServer.unban(user).queue()); //找到這名使用者後解ban他
-				tempBanList.remove(bannedID); //不再紀錄這名使用者
-			}
-		}
-
 		for (TimerEvent event : timerEvents) //走訪被註冊的事件們
 			if (event.shouldExecute(nowHour)) //時間到了
 				event.execute(); //執行
+
+		//根據現在的時間 決定是否解ban
+		Set<Long> tempBanListKeySet = tempBanList.keySet();
+		if (tempBanListKeySet.size() == 0) //沒有人被ban
+			return; //不用執行
+		//這以下是有關解ban的程式碼
+		Set<Long> bannedIDs = new HashSet<>(tempBanListKeySet); //建立新物件 以免修改到原map
+		for (long bannedID : bannedIDs)
+		{
+			long[] bannedData = tempBanList.get(bannedID);
+			if (bannedData[BANNED_TIME] >= hoursFrom1970) //已經超過了它們要被解ban的時間
+			{
+				Cartoland.getJDA().retrieveUserById(bannedID).queue(user -> //找到這名使用者後解ban他
+				{
+					Guild bannedServer = Cartoland.getJDA().getGuildById(bannedData[BANNED_SERVER]); //找到當初ban他的群組
+					if (bannedServer != null) //群組還在
+						bannedServer.unban(user).queue(); //解ban
+				});
+				tempBanList.remove(bannedID); //不再紀錄這名使用者
+			}
+		}
 	}, secondsUntil((nowHour + 1) % 24), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	static
@@ -78,6 +97,7 @@ public final class TimerHandle
 
 	public static void stopTimer()
 	{
+		//https://stackoverflow.com/questions/34202701
 		everyHour.cancel(true);
 		executorService.shutdown();
 	}

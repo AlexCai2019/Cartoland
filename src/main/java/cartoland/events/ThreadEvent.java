@@ -1,7 +1,9 @@
 package cartoland.events;
 
-import cartoland.utilities.IDAndEntities;
+import cartoland.utilities.IDs;
 import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
@@ -32,7 +34,7 @@ public class ThreadEvent extends ListenerAdapter
 
 		long parentID = threadChannel.getParentChannel().getIdLong();
 		//關於問題論壇
-		if (parentID == IDAndEntities.QUESTIONS_CHANNEL_ID)
+		if (parentID == IDs.QUESTIONS_CHANNEL_ID)
 			QuestionForumHandle.createForumPost(threadChannel);
 	}
 
@@ -46,12 +48,19 @@ public class ThreadEvent extends ListenerAdapter
 			return;
 
 		ThreadChannel forumPost = event.getChannel().asThreadChannel();
-		if (forumPost.getParentChannel().getIdLong() != IDAndEntities.QUESTIONS_CHANNEL_ID) //不在問題論壇
+		if (forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 
-		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
-		tags.remove(IDAndEntities.resolvedForumTag); //移除resolved
-		tags.add(IDAndEntities.unresolvedForumTag); //新增unresolved
-		forumPost.getManager().setAppliedTags(tags).queue(); //開啟貼文
+		Guild cartoland = event.getGuild();
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
+			return;
+
+		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
+		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
+		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
+		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag
+		tags.remove(resolvedForumTag); //移除resolved
+		tags.add(unresolvedForumTag); //新增unresolved
+		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
 	}
 }

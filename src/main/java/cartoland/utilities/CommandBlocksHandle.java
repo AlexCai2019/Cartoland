@@ -1,9 +1,11 @@
 package cartoland.utilities;
 
 import cartoland.Cartoland;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -72,29 +74,16 @@ public final class CommandBlocksHandle
 
 	public static void initial()
 	{
-		lotteryDataMap.forEach((userID, lotteryData) ->
-			Cartoland.getJDA().retrieveUserById(userID).queue(user ->
-			{
-				String name = user.getEffectiveName();
-				if (!lotteryData.name.equals(name)) //如果名字和紀錄的名字不一樣
-					lotteryData.setName(name); //新名字
-			}));
+		Set<Long> keySet = lotteryDataMap.keySet();
+		JDA jda = Cartoland.getJDA();
+		for (long userID : keySet) //找到每位使用者
+			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.get(userID).name = user.getEffectiveName()); //更新名字
 		changed = true;
-	}
-
-	public static void optimizeMap()
-	{
-		Set<Long> userIDs = new HashSet<>(lotteryDataMap.keySet()); //避免移除的過程中影響到
-		for (long userID : userIDs) //走訪所有玩家
-		{
-			LotteryData data = lotteryDataMap.get(userID);
-			if (data.blocks == 0 && data.won == 0 && data.lost == 0) //如果沒有任何紀錄
-				lotteryDataMap.remove(userID); //移除玩家
-		}
 	}
 
 	public static class LotteryData implements Serializable
 	{
+		public static final long DAILY = 100L; //每日獎勵
 		private String name; //名字
 		private final long userID;
 		private long blocks; //方塊數
@@ -102,6 +91,10 @@ public final class CommandBlocksHandle
 		private int lost; //敗場
 		private int showHandWon; //梭哈勝
 		private int showHandLost; //梭哈敗(破產)
+		private long lastClaimSecond; //上次領每日獎勵的時間
+
+		@Serial
+		private static final long serialVersionUID = 3141592653589793238L;
 
 		public LotteryData(long userID)
 		{
@@ -111,6 +104,7 @@ public final class CommandBlocksHandle
 			lost = 0;
 			showHandWon = 0;
 			showHandLost = 0;
+			lastClaimSecond = 0L;
 		}
 
 		public void setName(String newName)
@@ -132,6 +126,11 @@ public final class CommandBlocksHandle
 		public void addBlocks(long add)
 		{
 			setBlocks(Algorithm.safeAdd(blocks, add));
+		}
+
+		public void subBlocks(long sub)
+		{
+			setBlocks(blocks > sub ? blocks - sub : 0L);
 		}
 
 		public void setBlocks(long newValue)
@@ -200,6 +199,25 @@ public final class CommandBlocksHandle
 				if (isShowHand)
 					showHandLost++;
 			}
+		}
+
+		/**
+		 * Try claim the daily reward.
+		 *
+		 * @return The difference in seconds between now and the last time daily reward was claimed.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
+		public long claimDailySeconds()
+		{
+			long nowSecond = System.currentTimeMillis() / 1000L; //現在距離1970/1/1有幾秒
+			long difference = nowSecond - lastClaimSecond; //和上次領的時間差
+			if (difference >= 60 * 60 * 24) //超過一天
+			{
+				addBlocks(DAILY); //增加每日獎勵
+				lastClaimSecond = nowSecond; //最後一次領的時間為現在
+			}
+			return difference; //差異
 		}
 	}
 }

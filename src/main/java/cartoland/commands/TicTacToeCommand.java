@@ -155,10 +155,7 @@ public class TicTacToeCommand implements ICommand
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose").formatted(PUNISH) + ticTacToe.getBoard()).queue();
 				CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
-				long newValue = lotteryData.getBlocks() - PUNISH; //懲罰PUNISH個指令方塊
-				if (newValue < 0) //資產變負了
-					newValue = 0L; //0就好
-				lotteryData.setBlocks(newValue);
+				lotteryData.subBlocks(PUNISH); //懲罰PUNISH個指令方塊
 				games.remove(userID);
 				return;
 			}

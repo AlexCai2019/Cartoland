@@ -187,7 +187,7 @@ public class AdminCommand implements ICommand
 			double duration = durationBox;
 			if (duration <= 0) //不能負時間
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_must_be_positive")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -198,8 +198,9 @@ public class AdminCommand implements ICommand
 				return;
 			}
 
-			long durationHours = (long) (duration * switch (unit) //將單位轉成小時
+			long durationHours = Math.round(duration * switch (unit) //將單位轉成小時
 			{
+				case "double_hour" -> 2;
 				case "day" -> 24;
 				case "week" -> 24 * 7;
 				case "month" -> 24 * 30;
@@ -208,10 +209,13 @@ public class AdminCommand implements ICommand
 				case "wood_rat" -> 24 * 365 * 60;
 				case "century" -> 24 * 365 * 100;
 				default -> 1;
-			});
+			}); //Math.round會處理溢位
 
-			if (durationHours <= 0) //溢位
-				durationHours = Long.MAX_VALUE;
+			if (durationHours < 1L) //時間不能小於一小時
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short")).setEphemeral(true).queue();
+				return;
+			}
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
@@ -220,26 +224,25 @@ public class AdminCommand implements ICommand
 					.formatted(
 							target.getAsMention(), bannedTime,
 							System.currentTimeMillis() / 1000 + durationHours * 60 * 60); //直到<t:> 以秒為單位
-							//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) +
-							//TimeUnit.HOURS.toSeconds(durationHours)
+							//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)
 			if (reason != null)
 				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason);
 
 			event.reply(replyString).queue(); //回覆
 
 			//回覆完再開始動作 避免超過三秒限制
-			long untilPardon = System.currentTimeMillis() / (1000 * 60 * 60) + durationHours; //計算解除時間
+			long pardonTime = TimerHandle.getHoursFrom1970() + durationHours; //計算解除時間
 			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
-			if (untilPardon <= 0) //溢位
-				untilPardon = Long.MAX_VALUE;
+			if (pardonTime <= 0) //溢位
+				pardonTime = Long.MAX_VALUE;
 
 			Guild guild = event.getGuild();
 			if (guild == null) //這是一個伺服器限定指令 應該不會通過才對
 				return;
 			long[] banData = new long[2];
-			banData[TimerHandle.BANNED_TIME] = untilPardon;
+			banData[TimerHandle.BANNED_TIME] = pardonTime;
 			banData[TimerHandle.BANNED_SERVER] = guild.getIdLong();
-			TimerHandle.tempBanList.put(target.getIdLong(), banData);
+			TimerHandle.tempBanList.put(target.getIdLong(), banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
 		}
 	}

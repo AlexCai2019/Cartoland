@@ -22,13 +22,14 @@ import java.util.regex.Pattern;
  */
 public class LotteryCommand implements ICommand
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>(3);
+	private final Map<String, ICommand> subCommands = new HashMap<>(4);
 
 	public LotteryCommand()
 	{
 		subCommands.put("get", new GetSubCommand());
 		subCommands.put("bet", new BetSubCommand());
 		subCommands.put("ranking", new RankingSubCommand());
+		subCommands.put("daily", new DailySubCommand());
 	}
 
 	@Override
@@ -165,7 +166,7 @@ public class LotteryCommand implements ICommand
 			boolean showHand = bet == nowHave; //梭哈
 			if (showHand)
 				replyMessage += "\n" + (win ? "https://www.youtube.com/watch?v=RbMjxQEZ1IQ" : JsonHandle.getStringFromJsonKey(userID, "lottery.bet.play_with_your_limit"));
-			event.reply(replyMessage).queue();
+			event.reply(replyMessage).queue(); //盡快回覆比較好
 
 			lotteryData.addGame(win, showHand); //紀錄勝場和是否梭哈
 			lotteryData.setBlocks(afterBet); //設定方塊
@@ -210,7 +211,7 @@ public class LotteryCommand implements ICommand
 				if (page != lastPage || !sameUser) //有換頁 或 不是同一位使用者
 					lastReply = replyString(userID, page, maxPage); //重新建立字串
 				event.reply(lastReply).queue();
-				return;
+				return; //省略排序
 			}
 
 			forSort = CommandBlocksHandle.toArrayList();
@@ -303,6 +304,31 @@ public class LotteryCommand implements ICommand
 					return middle + 1;
 			}
 			return 0;
+		}
+	}
+
+	/**
+	 * {@code DailySubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code /lottery daily}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private static class DailySubCommand implements ICommand
+	{
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
+		{
+			long userID = event.getUser().getIdLong();
+			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID); //獲取指令方塊資料
+			long secondsUntil = 60 * 60 * 24 - lotteryData.claimDailySeconds(); //嘗試daily 會回傳距離上次領取的秒數
+			if (secondsUntil < 0)
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY)).queue();
+			else
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.not_yet")
+									.formatted(CommandBlocksHandle.LotteryData.DAILY,secondsUntil / (60 * 60), (secondsUntil / 60) % 60, secondsUntil % 60))
+						.setEphemeral(true)
+						.queue();
 		}
 	}
 }

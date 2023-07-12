@@ -77,8 +77,6 @@ public class BotOnlineOffline extends ListenerAdapter
 	@Override
 	public void onShutdown(@NotNull ShutdownEvent event)
 	{
-		CommandBlocksHandle.optimizeMap(); //最佳化指令方塊紀錄
-
 		FileHandle.serialize(); //所有有註冊的物件
 
 		TimerHandle.stopTimer(); //停止每小時的事件執行緒

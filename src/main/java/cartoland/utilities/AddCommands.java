@@ -245,6 +245,12 @@ public final class AddCommands
 												.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
 												.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
 												.addChoices(
+														new Command.Choice("Hour", "hour")
+																.setNameLocalization(CHINESE_TAIWAN, "小時")
+																.setNameLocalization(CHINESE_CHINA, "小时"),
+														new Command.Choice("Double Hour", "double_hour")
+																.setNameLocalization(CHINESE_TAIWAN, "時辰")
+																.setNameLocalization(CHINESE_CHINA, "时辰"),
 														new Command.Choice("Day", "day")
 																.setNameLocalization(CHINESE_TAIWAN, "天")
 																.setNameLocalization(CHINESE_CHINA, "天"),
@@ -311,7 +317,10 @@ public final class AddCommands
 												.setNameLocalization(CHINESE_TAIWAN, "頁數")
 												.setNameLocalization(CHINESE_CHINA, "页数")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "排名清單的頁數")
-												.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数"))),
+												.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数")),
+						new SubcommandData("daily", "Daily rewards")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "每日獎勵")
+								.setDescriptionLocalization(CHINESE_CHINA, "每日奖励")),
 		Commands.slash(TRANSFER, "Transfer your command blocks")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 				.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")

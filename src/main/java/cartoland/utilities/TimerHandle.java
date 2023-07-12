@@ -51,29 +51,33 @@ public final class TimerHandle
 
 		//根據現在的時間 決定是否解ban
 		Set<Long> tempBanListKeySet = tempBanList.keySet();
-		if (tempBanListKeySet.size() == 0) //沒有人被ban
+		if (tempBanListKeySet.size() == 0) //沒有人被temp_ban
 			return; //不用執行
 		//這以下是有關解ban的程式碼
 		Set<Long> bannedIDs = new HashSet<>(tempBanListKeySet); //建立新物件 以免修改到原map
 		for (long bannedID : bannedIDs)
 		{
 			long[] bannedData = tempBanList.get(bannedID);
-			if (bannedData[BANNED_TIME] >= hoursFrom1970) //已經超過了它們要被解ban的時間
+			if (hoursFrom1970 < bannedData[BANNED_TIME]) //還沒到這個人要被解ban的時間
+				continue; //下面一位
+			Cartoland.getJDA().retrieveUserById(bannedID).queue(user -> //找到這名使用者後解ban他
 			{
-				Cartoland.getJDA().retrieveUserById(bannedID).queue(user -> //找到這名使用者後解ban他
-				{
-					Guild bannedServer = Cartoland.getJDA().getGuildById(bannedData[BANNED_SERVER]); //找到當初ban他的群組
-					if (bannedServer != null) //群組還在
-						bannedServer.unban(user).queue(); //解ban
-				});
-				tempBanList.remove(bannedID); //不再紀錄這名使用者
-			}
+				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedData[BANNED_SERVER]); //找到當初ban他的群組
+				if (bannedServer != null) //群組還在
+					bannedServer.unban(user).queue(); //解ban
+			});
+			tempBanList.remove(bannedID); //不再紀錄這名使用者
 		}
 	}, secondsUntil((nowHour + 1) % 24), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	static
 	{
 		FileHandle.registerSerialize(TEMP_BAN_LIST, tempBanList);
+	}
+
+	public static long getHoursFrom1970()
+	{
+		return hoursFrom1970;
 	}
 
 	private static long secondsUntil(int hour)

@@ -109,7 +109,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		keywords.put("晚安", "那我也要睡啦");
 		keywords.put("安安", "安安你好幾歲住哪");
 		keywords.put("轉生", "您好，您的目標是lv7轉生！"); //由 brick-bk 新增
-		keywords.put("美麗星期天", "https://media.discordapp.net/attachments/1119976215885922315/1124601796753621012/3_.png?width=831&height=630"); //由 brick-bk 新增
+		keywords.put("美麗星期天", "https://i.imgur.com/0nK3tcV.jpg"); //由 brick-bk 新增
 	}
 
 	@Override

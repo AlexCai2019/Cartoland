@@ -250,13 +250,11 @@ public class LotteryCommand implements ICommand
 
 			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
 			rankBuilder.setLength(0);
-			rankBuilder.append("```ansi\nCommand blocks in ")
-					.append(cartoland != null ? cartoland.getName() : "")
-					.append("\n--------------------\nYou are rank \u001B[36m#")
-					.append(forSortBinarySearch(blocks))
-					.append("\u001B[0m, with \u001B[36m")
-					.append(String.format("%,d", blocks))
-					.append("\u001B[0m command blocks.\n\n");
+			rankBuilder.append("```ansi\n")
+					.append(JsonHandle.getStringFromJsonKey(userID, "lottery.ranking.title").formatted(cartoland != null ? cartoland.getName() : ""))
+					.append("\n--------------------\n")
+					.append(JsonHandle.getStringFromJsonKey(userID, "lottery.ranking.my_rank").formatted(forSortBinarySearch(blocks), blocks))
+					.append("\n\n");
 
 			for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
 			{
@@ -316,17 +314,19 @@ public class LotteryCommand implements ICommand
 	 */
 	private static class DailySubCommand implements ICommand
 	{
+		private final int[] until = { 0,0,0 };
+
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID); //獲取指令方塊資料
-			long secondsUntil = 60 * 60 * 24 - lotteryData.claimDailySeconds(); //嘗試daily 會回傳距離上次領取的秒數
-			if (secondsUntil < 0)
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY)).queue();
+			if (lotteryData.tryClaimDaily(until)) //嘗試daily
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed")
+									.formatted(CommandBlocksHandle.LotteryData.DAILY, lotteryData.getBlocks())).queue();
 			else
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.not_yet")
-									.formatted(CommandBlocksHandle.LotteryData.DAILY,secondsUntil / (60 * 60), (secondsUntil / 60) % 60, secondsUntil % 60))
+									.formatted(CommandBlocksHandle.LotteryData.DAILY, until[0], until[1], until[2]))
 						.setEphemeral(true)
 						.queue();
 		}

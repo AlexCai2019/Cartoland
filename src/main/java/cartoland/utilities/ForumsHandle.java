@@ -21,14 +21,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * {@code QuestionForumHandle} is a utility class that has functions which controls question forum from create to
- * archive. Can not be instantiated or inherited.
+ * {@code ForumsHandle} is a utility class that has functions which controls map-discuss forum and question forum
+ * from create to archive. Can not be instantiated or inherited.
  * @since 2.0
  * @author Alex Cai
  */
-public final class QuestionForumHandle
+public final class ForumsHandle
 {
-	private QuestionForumHandle()
+	private ForumsHandle()
 	{
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
@@ -67,34 +67,48 @@ public final class QuestionForumHandle
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-	private static final Set<Long> idledForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
+	private static final Set<Long> idledQuestionForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
 			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
 	private static final Set<Long> hasStartMessageForumPosts = FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME) instanceof HashSet<?> set ?
 			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
 
 	static
 	{
-		FileHandle.registerSerialize(IDLED_QUESTIONS_SET_FILE_NAME, idledForumPosts);
+		FileHandle.registerSerialize(IDLED_QUESTIONS_SET_FILE_NAME, idledQuestionForumPosts);
 		FileHandle.registerSerialize(HAS_START_MESSAGE_FILE_NAME, hasStartMessageForumPosts);
 	}
 
-	public static boolean shouldSendStartEmbed(ThreadChannel forumPost)
+	/**
+	 * This method is being used in {@link cartoland.messages.ForumMessage} in order to check if the message event is the first message in a forum post.
+	 *
+	 * @param forumPost The forum post that needs check.
+	 * @return true if this is the first time this forum post received a message
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	public static boolean isFirstMessage(ThreadChannel forumPost)
 	{
 		return !hasStartMessageForumPosts.contains(forumPost.getIdLong());
 	}
 
-	public static void sendStartEmbed(ThreadChannel forumPost)
+	public static void startStuff(ThreadChannel forumPost)
 	{
-		forumPost.sendMessageEmbeds(startEmbed).queue();
+		long parentChannelID = forumPost.getParentChannel().getIdLong(); //貼文所在的論壇頻道
+		if (parentChannelID == IDs.MAP_DISCUSS_CHANNEL_ID) //是地圖專版
+			forumPost.retrieveStartMessage().queue(message -> message.pin().queue()); //釘選第一則訊息
+		else if (parentChannelID == IDs.QUESTIONS_CHANNEL_ID) //是問題論壇
+			forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 		hasStartMessageForumPosts.add(forumPost.getIdLong());
 	}
 
 	public static void createForumPost(ThreadChannel forumPost)
 	{
 		if (forumPost.getLatestMessageIdLong() != 0) //有初始訊息
-			sendStartEmbed(forumPost);//傳送發問指南
+			startStuff(forumPost);//傳送發問指南
 
 		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
+		if (questionsChannel.getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不是問題論壇
+			return;
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
 
@@ -134,16 +148,16 @@ public final class QuestionForumHandle
 		tags.remove(unresolvedForumTag); //移除unresolved
 		tags.add(resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).queue();
-		idledForumPosts.remove(forumPost.getIdLong());
+		idledQuestionForumPosts.remove(forumPost.getIdLong());
 
 		//移除🎗️ 並關閉貼文
-		unIdleForumPost(forumPost, true);
+		unIdleQuestionForumPost(forumPost, true);
 	}
 
-	public static void tryIdleForumPost(ThreadChannel forumPost)
+	public static void tryIdleQuestionForumPost(ThreadChannel forumPost)
 	{
-		if (forumPost.isArchived() || forumPost.isLocked()) //已經關閉 或已經鎖起來了
-			return;
+		if (forumPost.isArchived() || forumPost.isLocked() || forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID)
+			return; //已經關閉 或已經鎖起來了 或不是問題論壇
 
 		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
 		{
@@ -157,7 +171,7 @@ public final class QuestionForumHandle
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
 			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue(); //提醒開串者
 
-			idledForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
+			idledQuestionForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
 
 			//增加🎗️
 			forumPost.retrieveStartMessage().queue(message -> message.addReaction(reminder_ribbon).queue());
@@ -168,9 +182,9 @@ public final class QuestionForumHandle
 		}));
 	}
 
-	public static void unIdleForumPost(ThreadChannel forumPost, boolean archive)
+	public static void unIdleQuestionForumPost(ThreadChannel forumPost, boolean archive)
 	{
-		if (forumPost.isArchived() || forumPost.isLocked())
+		if (forumPost.isArchived() || forumPost.isLocked() || forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID)
 			return;
 
 		forumPost.retrieveStartMessage().queue(message ->
@@ -179,15 +193,15 @@ public final class QuestionForumHandle
 			if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
 				message.removeReaction(reminder_ribbon).queue();
 
-			idledForumPosts.remove(forumPost.getIdLong());
+			idledQuestionForumPosts.remove(forumPost.getIdLong());
 
 			if (archive)
 				forumPost.getManager().setArchived(true).queue(); //關閉貼文
 		});
 	}
 
-	public static boolean isIdled(ThreadChannel forumPost)
+	public static boolean questionForumPostIsIdled(ThreadChannel forumPost)
 	{
-		return idledForumPosts.contains(forumPost.getIdLong());
+		return forumPost.getParentChannel().getIdLong() == IDs.QUESTIONS_CHANNEL_ID && idledQuestionForumPosts.contains(forumPost.getIdLong());
 	}
 }

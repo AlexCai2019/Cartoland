@@ -54,7 +54,7 @@ public class BotOnlineOffline extends ListenerAdapter
 				return;
 			List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
 			for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
-				QuestionForumHandle.tryIdleForumPost(forumPost); //試著讓它們idle
+				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
 
 		TextChannel botChannel = event.getJDA().getTextChannelById(BOT_CHANNEL_ID);

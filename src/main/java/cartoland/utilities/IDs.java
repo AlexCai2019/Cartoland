@@ -18,6 +18,7 @@ public final class IDs
 
 	public static final long CARTOLAND_SERVER_ID = 886936474723950603L; //創聯
 	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
+	public static final long FORUM_CATEGORY_ID = 922892242459459657L; //創聯的論壇類別
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
 	public static final long PUBLIC_AREA_CATEGORY_ID = 922892242459459657L; //創聯的公眾區域類別
 	public static final long SHOWCASE_CATEGORY_ID = 892127357878554634L; //創聯的創作展示類別
@@ -25,6 +26,7 @@ public final class IDs
 	public static final long DANGEROUS_CATEGORY_ID = 919696732613378078L; //創聯的地下類別
 	public static final long READ_ME_CHANNEL_ID = 973898745777377330L; //創聯的解鎖須知頻道
 	public static final long SELF_INTRO_CHANNEL_ID = 892415434240950282L; //創聯的會員申請頻道
+	public static final long MAP_DISCUSS_CHANNEL_ID = 1072796680996532275L; //創聯的地圖專板
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道

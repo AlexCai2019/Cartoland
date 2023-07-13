@@ -59,14 +59,14 @@ public class ContextMenu extends ListenerAdapter
 				}
 
 				//先回覆前1992個字 以及格式
-				event.reply("```\n" + rawContent.substring(0, 1993) + "\n```").queue(interactionHook ->
+				event.reply("```\n" + rawContent.substring(0, 1992) + "\n```").queue(interactionHook ->
 					interactionHook.retrieveOriginal().queue(message ->
 					{
-						if (contentLength <= 1992 + 1992) //如果從第1993個字開始算起 長度不超過1992個字
-							message.reply("```\n" + rawContent.substring(1993) + "\n```").queue();
+						if (contentLength <= 1992 + 1992) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
+							message.reply("```\n" + rawContent.substring(1992) + "\n```").mentionRepliedUser(false).queue();
 						else
-							message.reply("```\n" + rawContent.substring(1993, 1993 + 1993) + "\n```").queue(message1 ->
-								message1.reply("```\n" + rawContent.substring(1993) + "\n```").queue());
+							message.reply("```\n" + rawContent.substring(1992, 1992 + 1992) + "\n```").mentionRepliedUser(false)
+									.queue(message1 -> message1.reply("```\n" + rawContent.substring(1992 + 1992) + "\n```").mentionRepliedUser(false).queue());
 					}));
 			}
 		}

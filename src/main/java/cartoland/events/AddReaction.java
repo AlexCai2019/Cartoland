@@ -2,7 +2,7 @@ package cartoland.events;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
-import cartoland.utilities.QuestionForumHandle;
+import cartoland.utilities.ForumsHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -35,7 +35,7 @@ public class AddReaction extends ListenerAdapter
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
 
 		//這以下是和問題論壇的resolved有關
-		if (!QuestionForumHandle.typedResolved(event.getReaction())) //不是resolved
+		if (!ForumsHandle.typedResolved(event.getReaction())) //不是resolved
 			return;
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;
@@ -47,6 +47,6 @@ public class AddReaction extends ListenerAdapter
 		if (user.getIdLong() != forumPost.getOwnerIdLong() && !member.hasPermission(Permission.MANAGE_THREADS))
 			return;
 
-		event.retrieveMessage().queue(message -> QuestionForumHandle.archiveForumPost(forumPost, message));
+		event.retrieveMessage().queue(message -> ForumsHandle.archiveForumPost(forumPost, message));
 	}
 }

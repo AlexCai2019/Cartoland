@@ -1,7 +1,7 @@
 package cartoland.events;
 
+import cartoland.utilities.ForumsHandle;
 import cartoland.utilities.IDs;
-import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -33,16 +33,16 @@ public class ThreadEvent extends ListenerAdapter
 		threadChannel.join().queue(); //加入討論串
 
 		long parentID = threadChannel.getParentChannel().getIdLong();
-		//關於問題論壇
-		if (parentID == IDs.QUESTIONS_CHANNEL_ID)
-			QuestionForumHandle.createForumPost(threadChannel);
+		//關於地圖專版和問題論壇
+		if (parentID == IDs.QUESTIONS_CHANNEL_ID || parentID == IDs.MAP_DISCUSS_CHANNEL_ID)
+			ForumsHandle.createForumPost(threadChannel);
 	}
 
 	@Override
 	public void onChannelUpdateArchived(ChannelUpdateArchivedEvent event)
 	{
-		if (!event.getChannelType().isThread())
-			return;
+		if (!event.getChannelType().isThread()) //不是討論串或論壇貼文
+			return; //不用執行
 
 		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
 			return;

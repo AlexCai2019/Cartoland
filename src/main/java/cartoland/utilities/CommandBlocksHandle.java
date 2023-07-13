@@ -94,9 +94,9 @@ public final class CommandBlocksHandle
 		private long lastClaimSecond; //上次領每日獎勵的時間
 
 		@Serial
-		private static final long serialVersionUID = 3141592653589793238L;
+		private static final long serialVersionUID = 3_141592653589793238L;
 
-		public LotteryData(long userID)
+		private LotteryData(long userID)
 		{
 			this.userID = userID;
 			blocks = 0L;
@@ -149,7 +149,7 @@ public final class CommandBlocksHandle
 				return;
 			cartoland.retrieveMemberById(userID).queue(member ->
 			{
-				Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID);
+				Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID); //賭神身分組
 				if (godOfGamblersRole == null) //找不到賭神身分組
 					return;
 				boolean hasRole = member.getRoles().contains(godOfGamblersRole);
@@ -202,22 +202,31 @@ public final class CommandBlocksHandle
 		}
 
 		/**
-		 * Try claim the daily reward.
+		 * Try claim the daily reward. Success if
 		 *
-		 * @return The difference in seconds between now and the last time daily reward was claimed.
+		 * @param until The time until next available daily reward.
+		 * @return If the difference in seconds between now and the last time daily reward was claimed is more than a day.
 		 * @since 2.1
 		 * @author Alex Cai
 		 */
-		public long claimDailySeconds()
+		public boolean tryClaimDaily(int[] until)
 		{
 			long nowSecond = System.currentTimeMillis() / 1000L; //現在距離1970/1/1有幾秒
 			long difference = nowSecond - lastClaimSecond; //和上次領的時間差
-			if (difference >= 60 * 60 * 24) //超過一天
+			if (difference >= 60 * 60 * 24) //時間差超過一天 86400秒
 			{
 				addBlocks(DAILY); //增加每日獎勵
 				lastClaimSecond = nowSecond; //最後一次領的時間為現在
+				return true;
 			}
-			return difference; //差異
+			else //不超過一天
+			{
+				int secondsUntil = 60 * 60 * 24 - (int) difference;
+				until[0] = secondsUntil / (60 * 60);
+				until[1] = (secondsUntil / 60) % 60;
+				until[2] = secondsUntil % 60;
+				return false;
+			}
 		}
 	}
 }

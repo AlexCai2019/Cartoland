@@ -1,8 +1,8 @@
 package cartoland.utilities;
 
 /**
- * {@code IDs} is a utility class that stores IDs. For example, this class has some channel IDs, role IDs. Can
- * not be instantiated or inherited.
+ * {@code IDs} is a utility class that stores IDs. For example, this class has some channel IDs, role IDs. Can not be
+ * instantiated or inherited.
  *
  * @since 1.3
  * @author Alex Cai
@@ -20,7 +20,6 @@ public final class IDs
 	public static final long GENERAL_CATEGORY_ID = 886936474723950608L; //創聯的一般類別
 	public static final long FORUM_CATEGORY_ID = 922892242459459657L; //創聯的論壇類別
 	public static final long TECH_TALK_CATEGORY_ID = 974224793727537182L; //創聯的技術討論區類別
-	public static final long PUBLIC_AREA_CATEGORY_ID = 922892242459459657L; //創聯的公眾區域類別
 	public static final long SHOWCASE_CATEGORY_ID = 892127357878554634L; //創聯的創作展示類別
 	public static final long VOICE_CATEGORY_ID = 886936475143405618L; //創聯的語音頻道類別
 	public static final long DANGEROUS_CATEGORY_ID = 919696732613378078L; //創聯的地下類別

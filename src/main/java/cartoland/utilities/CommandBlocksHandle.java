@@ -51,7 +51,7 @@ public final class CommandBlocksHandle
 	public static LotteryData getLotteryData(long userID)
 	{
 		LotteryData lotteryData = lotteryDataMap.get(userID);
-		if (lotteryData != null)
+		if (lotteryData != null) //已經有這名玩家
 			return lotteryData;
 
 		//如果沒有記錄這名玩家
@@ -81,9 +81,18 @@ public final class CommandBlocksHandle
 		changed = true;
 	}
 
+	/**
+	 * This is a data class that stores members' lottery data.
+	 *
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
 	public static class LotteryData implements Serializable
 	{
 		public static final long DAILY = 100L; //每日獎勵
+		public static final long WEEKLY = 50L; //每周獎勵
+		public static final long MONTHLY = 100L;
+		public static final long YEARLY = 1000L;
 		private String name; //名字
 		private final long userID;
 		private long blocks; //方塊數
@@ -92,6 +101,7 @@ public final class CommandBlocksHandle
 		private int showHandWon; //梭哈勝
 		private int showHandLost; //梭哈敗(破產)
 		private long lastClaimSecond; //上次領每日獎勵的時間
+		private int streak; //連續領每日獎勵
 
 		@Serial
 		private static final long serialVersionUID = 3_141592653589793238L;
@@ -105,6 +115,7 @@ public final class CommandBlocksHandle
 			showHandWon = 0;
 			showHandLost = 0;
 			lastClaimSecond = 0L;
+			streak = 0;
 		}
 
 		public void setName(String newName)
@@ -118,21 +129,38 @@ public final class CommandBlocksHandle
 		}
 
 		/**
-		 * Add command blocks to the user that has userID as ID. This method calls
-		 * {@link Algorithm#safeAdd(long, long)} in order to add without overflow.
+		 * Add command blocks to the user. This method calls {@link Algorithm#safeAdd(long, long) in
+		 * order to add without overflow.
 		 *
 		 * @param add The amount of command blocks that are going to add on this user.
+		 * @since 2.0
+		 * @author Alex Cai
 		 */
 		public void addBlocks(long add)
 		{
 			setBlocks(Algorithm.safeAdd(blocks, add));
 		}
 
+		/**
+		 * Subtract command blocks to the user. This method checks if this user has enough command
+		 * blocks in order to prevent negative command blocks.
+		 *
+		 * @param sub The amount of command blocks that are going to subtract on this user.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
 		public void subBlocks(long sub)
 		{
 			setBlocks(blocks > sub ? blocks - sub : 0L);
 		}
 
+		/**
+		 * Set command blocks to the user.
+		 *
+		 * @param newValue The amount of command blocks that are going to set on this user.
+		 * @since 2.0
+		 * @author Alex Cai
+		 */
 		public void setBlocks(long newValue)
 		{
 			changed = true; //指令方塊改變過了
@@ -213,20 +241,47 @@ public final class CommandBlocksHandle
 		{
 			long nowSecond = System.currentTimeMillis() / 1000L; //現在距離1970/1/1有幾秒
 			long difference = nowSecond - lastClaimSecond; //和上次領的時間差
-			if (difference >= 60 * 60 * 24) //時間差超過一天 86400秒
+			if (difference < 60 * 60 * 24) //時間小於一天 86400秒
 			{
-				addBlocks(DAILY); //增加每日獎勵
-				lastClaimSecond = nowSecond; //最後一次領的時間為現在
-				return true;
-			}
-			else //不超過一天
-			{
+				//不超過一天
 				int secondsUntil = 60 * 60 * 24 - (int) difference;
 				until[0] = secondsUntil / (60 * 60);
 				until[1] = (secondsUntil / 60) % 60;
 				until[2] = secondsUntil % 60;
 				return false;
 			}
+
+			addBlocks(DAILY); //增加每日獎勵
+			lastClaimSecond = nowSecond; //最後一次領的時間為現在
+			if (difference >= 60 * 60 * 24 * 2) //大於兩天 代表超過48小時沒領了
+				streak = 0; //連續歸零
+			streak++; //+1 連續領
+			return true;
+		}
+
+		public boolean tryClaimBonus(boolean[] bonus)
+		{
+			long addBonus = 0L; //獎勵的額外指令方塊
+
+			if (bonus[0] = (streak % 7 == 0)) //一週
+				addBonus += WEEKLY;
+			if (bonus[1] = (streak % 30 == 0)) //一個月
+				addBonus += MONTHLY;
+			if (bonus[2] = (streak % 365 == 0)) //一年
+				addBonus += YEARLY;
+
+			if (addBonus != 0L)
+			{
+				addBlocks(addBonus);
+				return true;
+			}
+			else
+				return false;
+		}
+
+		public int getStreak()
+		{
+			return streak;
 		}
 	}
 }

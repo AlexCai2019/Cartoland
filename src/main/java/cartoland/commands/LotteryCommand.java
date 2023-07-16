@@ -315,20 +315,41 @@ public class LotteryCommand implements ICommand
 	private static class DailySubCommand implements ICommand
 	{
 		private final int[] until = { 0,0,0 };
+		private final boolean[] bonus = { false,false,false };
+		private final StringBuilder builder = new StringBuilder();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID); //獲取指令方塊資料
-			if (lotteryData.tryClaimDaily(until)) //嘗試daily
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed")
-									.formatted(CommandBlocksHandle.LotteryData.DAILY, lotteryData.getBlocks())).queue();
-			else
+			if (!lotteryData.tryClaimDaily(until)) //嘗試daily失敗了
+			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.not_yet")
-									.formatted(CommandBlocksHandle.LotteryData.DAILY, until[0], until[1], until[2]))
-						.setEphemeral(true)
-						.queue();
+									.formatted(CommandBlocksHandle.LotteryData.DAILY, until[0], until[1], until[2])).setEphemeral(true).queue();
+				return;
+			}
+
+			builder.setLength(0);
+			builder.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY));
+
+			int streak = lotteryData.getStreak(); //連續領取天數
+			builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.streak").formatted(streak));
+			if (lotteryData.tryClaimBonus(bonus)) //有額外
+			{
+				if (bonus[0]) //週
+					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.weekly").formatted(streak / 7))
+							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.WEEKLY));
+				if (bonus[1]) //月
+					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.monthly").formatted(streak / 30))
+							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.MONTHLY));
+				if (bonus[2]) //年
+					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.yearly").formatted(streak / 365))
+							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.YEARLY));
+			}
+
+			builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.now_have").formatted(lotteryData.getBlocks()));
+			event.reply(builder.toString()).queue();
 		}
 	}
 }

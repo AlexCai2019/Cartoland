@@ -64,19 +64,19 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
+			long userID = event.getUser().getIdLong();
 			Member member = event.getMember();
 			if (member == null)
 			{
-				event.reply("Can't check if you have the permission.").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.can_t_check")).queue();
 				return;
 			}
 			if (!member.hasPermission(Permission.MODERATE_MEMBERS))
 			{
-				event.reply("You don't have a permission to time out members!").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_permission")).queue();
 				return;
 			}
 
-			long userID = member.getIdLong();
 			Member target = event.getOption("target", CommonFunctions.getAsMember); //要被禁言的成員
 			if (target == null) //找不到該成員
 			{
@@ -115,7 +115,7 @@ public class AdminCommand implements ICommand
 			}
 
 			//不用java.util.concurrent.TimeUnit 因為它不接受浮點數
-			long durationMillis = (long) (duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
+			long durationMillis = Math.round(duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
 			{
 				case "second" -> 1000;
 				case "minute" -> 1000 * 60;
@@ -124,9 +124,9 @@ public class AdminCommand implements ICommand
 				case "day" -> 1000 * 60 * 60 * 24;
 				case "week" -> 1000 * 60 * 60 * 24 * 7;
 				default -> 1;
-			});
+			}); //Math.round會處理溢位
 
-			if (durationMillis <= 0 || durationMillis > TWENTY_EIGHT_DAYS_MILLISECONDS) //小於等於0 代表溢位了
+			if (durationMillis > TWENTY_EIGHT_DAYS_MILLISECONDS) //不能禁言超過28天
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.too_long")).setEphemeral(true).queue();
 				return;
@@ -134,7 +134,7 @@ public class AdminCommand implements ICommand
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
-			String bannedTime = buildDurationString(duration) + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
+			String bannedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
 					.formatted(target.getAsMention(), bannedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			if (reason != null)
@@ -158,23 +158,28 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
+			long userID = event.getUser().getIdLong();
 			Member member = event.getMember();
 			if (member == null)
 			{
-				event.reply("Can't check if you have the permission.").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.can_t_check")).setEphemeral(true).queue();
 				return;
 			}
 			if (!member.hasPermission(Permission.BAN_MEMBERS))
 			{
-				event.reply("You don't have a permission to ban members!").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_permission")).setEphemeral(true).queue();
 				return;
 			}
 
-			long userID = member.getIdLong();
 			Member target = event.getOption("target", CommonFunctions.getAsMember);
 			if (target == null)
 			{
-				event.reply("Impossible, this is required!").queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_member")).setEphemeral(true).queue();
+				return;
+			}
+			if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.can_t_owner")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -219,7 +224,7 @@ public class AdminCommand implements ICommand
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString); //理由
 
-			String bannedTime = buildDurationString(duration) + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
+			String bannedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 					.formatted(
 							target.getAsMention(), bannedTime,

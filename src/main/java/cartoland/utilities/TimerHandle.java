@@ -82,6 +82,8 @@ public final class TimerHandle
 
 	private static long secondsUntil(int hour)
 	{
+		if (hour < 0 || hour > 23)
+			throw new IllegalArgumentException("Hour must between 0 and 23!");
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0);
 
@@ -93,10 +95,9 @@ public final class TimerHandle
 
 	public static void registerTimerEvent(byte hour, Runnable function)
 	{
-		if (0 <= hour && hour <= 23)
-			timerEvents.add(new TimerEvent(hour, function));
-		else
+		if (hour < 0 || hour > 23)
 			throw new IllegalArgumentException("Hour must between 0 and 23!");
+		timerEvents.add(new TimerEvent(hour, function));
 	}
 
 	public static void stopTimer()

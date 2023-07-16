@@ -100,7 +100,7 @@ public class BotCanTalkChannelMessage implements IMessage
 	public BotCanTalkChannelMessage()
 	{
 		canTalkCategories.add(IDs.GENERAL_CATEGORY_ID);
-		canTalkCategories.add(IDs.PUBLIC_AREA_CATEGORY_ID);
+		canTalkCategories.add(IDs.FORUM_CATEGORY_ID);
 		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
 
@@ -115,8 +115,8 @@ public class BotCanTalkChannelMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		if (!event.isFromGuild())
-			return true; //是私訊
+		if (!event.isFromGuild()) //是私訊
+			return true; //私訊可以說話
 		Category category = event.getMessage().getCategory();
 		//獲取類別失敗就不執行後面那個
 		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
@@ -157,6 +157,12 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessage.equalsIgnoreCase("lol"))
 		{
 			channel.sendMessage("LOL").queue();
+			return; //在這之下的if們 全都不可能通過
+		}
+
+		if (rawMessage.equalsIgnoreCase("owo"))
+		{
+			channel.sendMessage("OwO").queue();
 			return; //在這之下的if們 全都不可能通過
 		}
 

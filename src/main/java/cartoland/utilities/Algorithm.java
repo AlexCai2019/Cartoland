@@ -39,6 +39,27 @@ public final class Algorithm
 	}
 
 	/**
+	 * Shuffle an array.
+	 *
+	 * @param array The array that need to shuffle.
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	public static<T> void shuffle(T[] array)
+	{
+		int endIndex = array.length - 1;
+		T temp;
+		for (int i = 0, destIndex; i < endIndex; i++) //到endIndex為止 因為最後一項項沒必要交換
+		{
+			destIndex = random.nextInt(array.length - i) + i; //0會得到0~endIndex 1會得到1~endIndex 2會得到2~endIndex
+			//交換
+			temp = array[destIndex];
+			array[destIndex] = array[i];
+			array[i] = temp;
+		}
+	}
+
+	/**
 	 * Add two long integers without overflow.
 	 *
 	 * @param augend augend

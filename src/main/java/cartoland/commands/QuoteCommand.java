@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -32,7 +33,8 @@ public class QuoteCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		long userID = event.getUser().getIdLong();
+		User user = event.getUser();
+		long userID = user.getIdLong();
 		String link = event.getOption("link", CommonFunctions.getAsString);
 		if (link == null)
 		{
@@ -60,13 +62,13 @@ public class QuoteCommand implements ICommand
 			event.reply("Can't get Cartoland server").queue();
 			return; //結束
 		}
+
 		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 		if (linkChannel == null)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).queue();
 			return;
 		}
-
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同
 		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 		{
@@ -79,17 +81,20 @@ public class QuoteCommand implements ICommand
 
 			//選擇連結訊息內的第一張圖片作為embed的圖片
 			//不用add field 沒必要那麼麻煩
-			linkMessage.getAttachments()
-					.stream()
-					.filter(Message.Attachment::isImage)
-					.findFirst()
-					.ifPresentOrElse(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()),
-									 () -> embedBuilder.setImage(null)); //這個stream不能省略 否則圖片會保留下來
+			List<Message.Attachment> attachments = linkMessage.getAttachments();
+			if (attachments.size() != 0)
+				attachments.stream()
+						.filter(Message.Attachment::isImage)
+						.findFirst()
+						.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
+			else
+				embedBuilder.setImage(null);
 
-			event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))
-					.queue();
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).queue()));
+			(Boolean.TRUE.equals(event.getOption("mention_author", CommonFunctions.getAsBoolean)) ? //是否提及訊息作者
+					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention").formatted(user.getEffectiveName(), linkAuthor.getAsMention()))
+							.addEmbeds(embedBuilder.build()) : //提及訊息作者
+					event.replyEmbeds(embedBuilder.build())) //不提及訊息作者
+				.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message"))).queue();
+		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).queue()));
 	}
 }

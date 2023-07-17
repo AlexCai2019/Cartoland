@@ -61,9 +61,8 @@ public class LotteryCommand implements ICommand
 				return;
 			}
 
-			Boolean displayDetail = event.getOption("display_detail", CommonFunctions.getAsBoolean);
 			CommandBlocksHandle.LotteryData targetLotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (displayDetail == null || !displayDetail) //不顯示細節
+			if (!Boolean.TRUE.equals(event.getOption("display_detail", CommonFunctions.getAsBoolean))) //不顯示細節 null代表false 所以不使用Boolean.FALSE.equals
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
 									.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();

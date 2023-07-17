@@ -165,6 +165,7 @@
 	"quote.no_channel": "該頻道可能兼勢予刣，抑是我無權限讀取。",
 	"quote.no_message": "該訊息可能兼勢予刣，抑是我無權限讀取。",
 	"quote.jump_message": "跳到訊息",
+	"quote.mention": "%s mentioned %s",
 	"introduce.user.no_info": "我無任何有關著這位使用者的資訊。",
 	"introduce.update.no_channel": "該頻道可能兼勢予刣，抑是我無權限讀取。",
 	"introduce.update.no_message": "該訊息可能兼勢予刣，抑是我無權限讀取。",

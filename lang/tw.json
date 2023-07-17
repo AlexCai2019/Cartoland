@@ -180,6 +180,7 @@
 	"quote.no_channel": "該頻道可能已被刪除，或是我沒有權限讀取。",
 	"quote.no_message": "該訊息可能已被刪除，或是我沒有權限讀取。",
 	"quote.jump_message": "跳至訊息",
+	"quote.mention": "%s 提及了 %s",
 	"introduce.user.no_info": "我沒有任何關於這名使用者的資訊。",
 	"introduce.update.no_channel": "該頻道可能已被刪除，或是我沒有權限讀取。",
 	"introduce.update.no_message": "該訊息可能已被刪除，或是我沒有權限讀取。",

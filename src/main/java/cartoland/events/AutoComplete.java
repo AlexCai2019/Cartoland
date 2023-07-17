@@ -1,6 +1,5 @@
 package cartoland.events;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -8,7 +7,6 @@ import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static cartoland.commands.ICommand.*;
 
@@ -29,18 +27,18 @@ public class AutoComplete extends ListenerAdapter
 	{
 		GenericComplete alias;
 
-		commands.put(HELP, new JsonBasedComplete("help"));
+		commands.put(HELP, new JsonBasedComplete(HELP));
 
-		alias = new JsonBasedComplete("cmd");
+		alias = new JsonBasedComplete(CMD);
 		commands.put(CMD, alias);
 		commands.put(MCC, alias);
 		commands.put(COMMAND, alias);
 
-		alias = new JsonBasedComplete("faq");
+		alias = new JsonBasedComplete(FAQ);
 		commands.put(FAQ, alias);
 		commands.put(QUESTION, alias);
 
-		alias = new JsonBasedComplete("dtp");
+		alias = new JsonBasedComplete(DTP);
 		commands.put(DTP, alias);
 		commands.put(DATAPACK, alias);
 
@@ -83,13 +81,12 @@ abstract class GenericComplete
 class JsonBasedComplete extends GenericComplete
 {
 	private final String commandName;
-	private final Stream<String> commandStream;
+	private final List<String> commandList;
 
 	JsonBasedComplete(String commandName)
 	{
 		this.commandName = commandName;
-		//將指令選項列表轉換為字串串流
-		commandStream = JsonHandle.commandList(commandName).stream().map(CommonFunctions.stringValue);
+		commandList = JsonHandle.commandList(commandName);
 	}
 
 	@Override
@@ -100,8 +97,11 @@ class JsonBasedComplete extends GenericComplete
 			return;
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-		List<Command.Choice> choices = commandStream.filter(word -> word.startsWith(optionValue))
-				.map(word -> new Command.Choice(word, word)).toList(); //將字串串流轉換為選項列表
+		List<Command.Choice> choices = commandList
+				.stream()
+				.filter(word -> word.startsWith(optionValue))
+				.map(word -> new Command.Choice(word, word))
+				.toList(); //將字串串流轉換為選項列表
 
 		event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
 	}

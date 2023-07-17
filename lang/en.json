@@ -311,6 +311,7 @@
 	"quote.no_channel": "Error: The channel might be deleted, or I don't have permission to access it.",
 	"quote.no_message": "Error: The message might be deleted, or I don't have permission to access it.",
 	"quote.jump_message": "Jump to message",
+	"quote.mention": "%s mentioned %s",
 	"introduce.user.no_info": "I don't have any information about this user.",
 	"introduce.update.no_channel": "Error: The channel might be deleted, or I don't have permission to access it.",
 	"introduce.update.no_message": "Error: The message might be deleted, or I don't have permission to access it.",

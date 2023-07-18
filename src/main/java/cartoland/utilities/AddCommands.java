@@ -129,7 +129,12 @@ public final class AddCommands
 								.setNameLocalization(CHINESE_TAIWAN, "連結")
 								.setNameLocalization(CHINESE_CHINA, "链接")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的連結")
-								.setDescriptionLocalization(CHINESE_CHINA, "信息的链接")),
+								.setDescriptionLocalization(CHINESE_CHINA, "信息的链接"),
+						new OptionData(OptionType.BOOLEAN, "mention_author" ,"Mention the message author or not", false, false)
+								.setNameLocalization(CHINESE_TAIWAN, "提及訊息作者")
+								.setNameLocalization(CHINESE_CHINA, "提及信息作者")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "是否要提及訊息作者")
+								.setDescriptionLocalization(CHINESE_CHINA, "是否要提及信息作者")),
 
 		Commands.slash(YOUTUBER, "Send a link of a YouTube video creator channel")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "傳送一個YouTube影片創作者的頻道連結")

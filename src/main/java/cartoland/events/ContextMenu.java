@@ -66,7 +66,7 @@ public class ContextMenu extends ListenerAdapter
 							message.reply("```\n" + rawContent.substring(1992) + "\n```").mentionRepliedUser(false).queue();
 						else
 							message.reply("```\n" + rawContent.substring(1992, 1992 + 1992) + "\n```").mentionRepliedUser(false)
-									.queue(message1 -> message1.reply("```\n" + rawContent.substring(1992 + 1992) + "\n```").mentionRepliedUser(false).queue());
+								.queue(message1 -> message1.reply("```\n" + rawContent.substring(1992 + 1992) + "\n```").mentionRepliedUser(false).queue());
 					}));
 			}
 		}

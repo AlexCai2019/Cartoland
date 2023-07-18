@@ -30,7 +30,7 @@ public class GuildMessage implements IMessage
 	{
 		commandBlockCategories.add(IDs.GENERAL_CATEGORY_ID);
 		commandBlockCategories.add(IDs.TECH_TALK_CATEGORY_ID);
-		commandBlockCategories.add(IDs.PUBLIC_AREA_CATEGORY_ID);
+		commandBlockCategories.add(IDs.FORUM_CATEGORY_ID);
 		commandBlockCategories.add(IDs.SHOWCASE_CATEGORY_ID);
 		commandBlockCategories.add(IDs.VOICE_CATEGORY_ID);
 	}

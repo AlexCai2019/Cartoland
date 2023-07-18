@@ -5,6 +5,8 @@ import cartoland.utilities.Algorithm;
 
 import java.util.Arrays;
 
+import static cartoland.mini_games.TicTacToeGame.*;
+
 /**
  * {@code TicTacToeGame} is the backend of the Tic-Tac-Toe game, it can process the entire game with all fields and
  * methods. This game start with an empty {@link #BOARD_SIDE} square board, the player and the bot take turns.
@@ -33,7 +35,7 @@ public class TicTacToeGame implements IMiniGame
 	static final char CROSS = 'X';
 	static final char EMPTY = ' ';
 
-	int empty = BOARD_SIDE * BOARD_SIDE; //棋盤上還空著的格數
+	private int empty = BOARD_SIDE * BOARD_SIDE; //棋盤上還空著的格數
 	int[] notPlaced = null; //board還是EMPTY的index們 之所以不用ArrayList 是為了省效能 注意要到第三輪才會開始追蹤空棋盤
 	int round = 1;
 
@@ -226,7 +228,7 @@ class EasyBot extends DifficultyBot
 	@Override
 	protected int round1()
 	{
-		return game.board[TicTacToeGame.CENTER] == TicTacToeGame.NOUGHT ? TicTacToeGame.LEFT_CORNER : TicTacToeGame.CENTER;
+		return game.board[CENTER] == NOUGHT ? LEFT_CORNER : CENTER;
 	}
 
 	@Override
@@ -254,6 +256,9 @@ class EasyBot extends DifficultyBot
  */
 class NormalBot extends EasyBot
 {
+	private static final int[][] tryAtLeftCorner = {{1, 2}, {3, 6},{4, 8}}; //第一步下在左上角後 第二步可以下的位置
+	private static final int[][] tryAtCenter = {{0, 8}, {1, 7}, {2, 6}, {3, 5}}; //第一步下在中間後 第二步可以下的位置
+
 	NormalBot(TicTacToeGame game)
 	{
 		super(game);
@@ -262,44 +267,44 @@ class NormalBot extends EasyBot
 	@Override
 	protected int round2()
 	{
+		Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
+
 		int first, second, third;
 		char f, s, t;
-		for (int[] winLine: TicTacToeGame.winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
+		for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
 		{
 			f = game.board[first = winLine[0]];
 			s = game.board[second = winLine[1]];
 			t = game.board[third = winLine[2]];
-			if (f == TicTacToeGame.NOUGHT && s == TicTacToeGame.NOUGHT && t == TicTacToeGame.EMPTY) //[0]和[1]皆為O
+			if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
 				return third;
-			if (f == TicTacToeGame.NOUGHT && t == TicTacToeGame.NOUGHT && s == TicTacToeGame.EMPTY) //[0]和[2]皆為O
+			if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
 				return second;
-			if (s == TicTacToeGame.NOUGHT && t == TicTacToeGame.NOUGHT && f == TicTacToeGame.EMPTY) //[1]和[2]皆為O
+			if (s + t == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
 				return first;
 		}
 
+		//確認O沒有要連線後
+
 		//找出和第一手鄰近 可連成一線 且都是空的兩格 隨機挑選一格落子
 		//因為這是第二回合 O只放了兩個 代表必定能找到一組空的
-		if (game.board[TicTacToeGame.LEFT_CORNER] == TicTacToeGame.CROSS) //第一手下在左上角
+		if (game.board[LEFT_CORNER] == CROSS) //第一手下在左上角
 		{
-			if (game.board[1] == TicTacToeGame.EMPTY && game.board[2] == TicTacToeGame.EMPTY) //橫列
-				return 2; //搶角落
-			else if (game.board[3] == TicTacToeGame.EMPTY && game.board[6] == TicTacToeGame.EMPTY) //直行
-				return 6; //搶角落
-			else //if (board[4] == EMPTY && board[8] == EMPTY) //斜線
-				return 8; //搶角落
+			Algorithm.shuffle(tryAtLeftCorner);
+			for (int[] bothEmpty : tryAtLeftCorner)
+				if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
+					return bothEmpty[1]; //搶角落
 		}
 		else //如果不是下在左上角 那就肯定是下在中間了
 		{
-			if (game.board[0] == TicTacToeGame.EMPTY && game.board[8] == TicTacToeGame.EMPTY) //左上和右下
-				return Algorithm.chance(50) ? 0 : 8;
-			else if (game.board[1] == TicTacToeGame.EMPTY && game.board[7] == TicTacToeGame.EMPTY) //上和下
-				return Algorithm.chance(50) ? 1 : 7;
-			else if (game.board[2] == TicTacToeGame.EMPTY && game.board[6] == TicTacToeGame.EMPTY) //右上和左下
-				return Algorithm.chance(50) ? 2 : 6;
-			else //if (board[3] == EMPTY && board[5] == EMPTY) //左和右
-				return Algorithm.chance(50) ? 3: 5;
-
+			Algorithm.shuffle(tryAtCenter);
+			for (int[] bothEmpty : tryAtLeftCorner)
+				if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
+					return Algorithm.chance(50) ? bothEmpty[0] : bothEmpty[1];
 		}
+
+		//如果以上都不通過
+		return super.round2(); //就隨機走
 	}
 }
 
@@ -319,16 +324,30 @@ class HardBot extends NormalBot
 	{
 		int first, second, third;
 		char f, s, t;
-		for (int[] winLine: TicTacToeGame.winningCombinations) //檢查O或X是否即將連線 如果O即將連線則阻止 如果X即將連線則執行
+
+		for (int[] winLine: winningCombinations) //檢查X是否即將連線 如果是則執行
 		{
 			f = game.board[first = winLine[0]];
 			s = game.board[second = winLine[1]];
 			t = game.board[third = winLine[2]];
-			if (f == s && f != TicTacToeGame.EMPTY && t == TicTacToeGame.EMPTY) //[0]和[1]相同且不為空
+			if (f + s == CROSS + CROSS && t == EMPTY) //[0]和[1]皆為X
 				return third;
-			if (f == t && t != TicTacToeGame.EMPTY && s == TicTacToeGame.EMPTY) //[0]和[2]相同且不為空
+			if (f + t == CROSS + CROSS && s == EMPTY) //[0]和[2]皆為X
 				return second;
-			if (s == t && s != TicTacToeGame.EMPTY && f == TicTacToeGame.EMPTY) //[1]和[2]相同且不為空
+			if (t + s == CROSS + CROSS && f == EMPTY) //[1]和[2]皆為X
+				return first;
+		}
+
+		for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果是則阻止
+		{
+			f = game.board[first = winLine[0]];
+			s = game.board[second = winLine[1]];
+			t = game.board[third = winLine[2]];
+			if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
+				return third;
+			if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
+				return second;
+			if (t + s == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
 				return first;
 		}
 

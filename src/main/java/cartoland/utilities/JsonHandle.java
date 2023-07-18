@@ -3,6 +3,7 @@ package cartoland.utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public final class JsonHandle
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value
 	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(7); //語言字串為key 語言檔案為value
-	private static final Map<String, List<Object>> commandListMap = new HashMap<>(); //cmd.list等等為key 語言檔案對應的JSONArray為value
+	private static final Map<String, List<String>> commandListMap = new HashMap<>(); //cmd.list等等為key 語言檔案對應的JSONArray為value
 	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject file; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
@@ -79,9 +80,18 @@ public final class JsonHandle
 		return result.isEmpty() ? file.getString(commandName + ".fail") : result;
 	}
 
-	public static List<Object> commandList(String commandName)
+	public static List<String> commandList(String commandName)
 	{
 		return commandListMap.get(commandName + ".list");
+	}
+
+	private static List<String> buildStringListFromJsonArray(JSONArray jsonArray)
+	{
+		int length = jsonArray.length();
+		List<String> builtList = new ArrayList<>(length);
+		for (int i = 0; i < length; i++)
+			builtList.add(jsonArray.getString(i));
+		return builtList;
 	}
 
 	public static void reloadLanguageFiles()
@@ -94,10 +104,10 @@ public final class JsonHandle
 		languageFileMap.put(Languages.ESPANOL, new JSONObject(FileHandle.buildJsonStringFromFile("lang/es.json")));
 		languageFileMap.put(Languages.JAPANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/jp.json")));
 
-		commandListMap.put("help.list", englishFile.getJSONArray("help.list").toList());
-		commandListMap.put("cmd.list", englishFile.getJSONArray("cmd.list").toList());
-		commandListMap.put("faq.list", englishFile.getJSONArray("faq.list").toList());
-		commandListMap.put("dtp.list", englishFile.getJSONArray("dtp.list").toList());
+		commandListMap.put("help.list", buildStringListFromJsonArray(englishFile.getJSONArray("help.list")));
+		commandListMap.put("cmd.list", buildStringListFromJsonArray(englishFile.getJSONArray("cmd.list")));
+		commandListMap.put("faq.list", buildStringListFromJsonArray(englishFile.getJSONArray("faq.list")));
+		commandListMap.put("dtp.list", buildStringListFromJsonArray(englishFile.getJSONArray("dtp.list")));
 	}
 
 	public static String getStringFromJsonKey(long userID, String key)

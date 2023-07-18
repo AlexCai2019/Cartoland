@@ -39,8 +39,6 @@ public class PrivateMessage implements IMessage
 		Message message = event.getMessage();
 		User author = event.getAuthor();
 
-		final String can_t = ", hence you can't send message to the NSFW channel.";
-
 		Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
 		if (cartoland == null)
 		{
@@ -61,6 +59,8 @@ public class PrivateMessage implements IMessage
 			message.reply("Can't get underground channel.").mentionRepliedUser(false).queue();
 			return;
 		}
+
+		final String can_t = ", hence you can't send message to the NSFW channel.";
 
 		cartoland.retrieveMemberById(author.getIdLong()).queue(member ->
 		{

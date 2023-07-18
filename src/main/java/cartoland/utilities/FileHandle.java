@@ -95,14 +95,11 @@ public final class FileHandle
 	{
 		if (!(object instanceof Serializable))
 			return;
-		try
+		try (FileOutputStream fileStream = new FileOutputStream(fileName);
+			 ObjectOutputStream objectStream = new ObjectOutputStream(fileStream))
 		{
-			FileOutputStream fileStream = new FileOutputStream(fileName);
-			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
 			objectStream.writeObject(object);
 			objectStream.flush();
-			objectStream.close();
-			fileStream.close();
 		}
 		catch (IOException exception)
 		{
@@ -113,14 +110,11 @@ public final class FileHandle
 
 	public static Object deserialize(String fileName)
 	{
-		try
+		Object object;
+		try (FileInputStream fileStream = new FileInputStream(fileName);
+			 ObjectInputStream objectStream = new ObjectInputStream(fileStream))
 		{
-			FileInputStream fileStream = new FileInputStream(fileName);
-			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-			Object object = objectStream.readObject();
-			objectStream.close();
-			fileStream.close();
-			return object;
+			object = objectStream.readObject();
 		}
 		catch (IOException | ClassNotFoundException exception)
 		{
@@ -128,6 +122,7 @@ public final class FileHandle
 			log(exception);
 			return null;
 		}
+		return object;
 	}
 
 	public static void log(String output)

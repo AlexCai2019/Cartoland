@@ -55,7 +55,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"沒梗的人才會整天tag機器人。",
 		"再吵，就把你丟到亞馬遜上面賣。",
 		"你除了tag機器人外沒別的事情好做嗎？",
-		"有病要去看醫生。",
+		"有病要去看醫生！和機器人吵架有什麼意義？",
 		"<:ping:1065915559918719006>",
 		"你凡是有tag我被我記起來的對不對？我一定到現場打你，一定打你！",
 		"哪裡來的小孩子，家教差成這樣。",
@@ -64,13 +64,19 @@ public class BotCanTalkChannelMessage implements IMessage
 		"tag機器人是不好的行為，小朋友不要學。",
 		"上帝把智慧撒向人間的時候你撐了把傘嗎？",
 		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
-		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
+		"小米格們也都別忘了Pick Me！\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
 		"請問您有什麼事嗎？是不是太閒？", //由 brick-bk 新增
 		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
 		"你是不是tag我？快承認！要是說謊，鼻子就會變長的！", //由 brick-bk 新增
 		"聽說有人tag我？你知道是誰嗎？", //由 brick-bk 新增
-		"為什麼要召喚我，打斷我蓋地圖？" //由 brick-bk 新增
+		"為什麼要召喚我，打斷我蓋地圖？", //由 brick-bk 新增
+		"找點別的事情做吧，別來煩我！", //由 brick-bk 新增
+		"別以為你tag我，就能嚇到我！", //由 brick-bk 新增
+		"你以為你很厲害嗎？", //由 brick-bk 新增
+		"還在這邊tag我？你的人生沒有更有意義的事情可以做嗎？", //由 brick-bk 新增
+		"夠了！再tag就ban！", //由 brick-bk 新增
+		"||@AlexCai||" //由 brick-bk 新增
 	};
 	private final String[] megumin =
 	{

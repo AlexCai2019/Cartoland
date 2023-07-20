@@ -171,6 +171,66 @@ public final class AddCommands
 						new SubcommandData("delete" ,"Delete your introduction")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的自我介紹")
 								.setDescriptionLocalization(CHINESE_CHINA, "删除你的自我介绍")),
+		Commands.slash(BIRTHDAY, "Set your birthday to make the bot bless you")
+				.setDescriptionLocalization(CHINESE_TAIWAN, "設定你的生日，好讓機器人可以祝福你")
+				.setDescriptionLocalization(CHINESE_CHINA, "设置你的生日，好让机器人可以祝福你")
+				.addSubcommands(
+						new SubcommandData("set", "Set your birthday")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "設定你的生日")
+								.setDescriptionLocalization(CHINESE_CHINA, "设置你的生日")
+								.addOptions(
+										new OptionData(OptionType.INTEGER, "month", "Your birth month", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "月")
+												.setNameLocalization(CHINESE_CHINA, "月")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你的生日月份")
+												.setDescriptionLocalization(CHINESE_CHINA, "你的生日月份")
+												.addChoices(
+														new Command.Choice("January", 1)
+																.setNameLocalization(CHINESE_TAIWAN, "一月")
+																.setNameLocalization(CHINESE_CHINA, "一月"),
+														new Command.Choice("February", 2)
+																.setNameLocalization(CHINESE_TAIWAN, "二月")
+																.setNameLocalization(CHINESE_CHINA, "二月"),
+														new Command.Choice("March", 3)
+																.setNameLocalization(CHINESE_TAIWAN, "三月")
+																.setNameLocalization(CHINESE_CHINA, "三月"),
+														new Command.Choice("April", 4)
+																.setNameLocalization(CHINESE_TAIWAN, "四月")
+																.setNameLocalization(CHINESE_CHINA, "四月"),
+														new Command.Choice("May", 5)
+																.setNameLocalization(CHINESE_TAIWAN, "五月")
+																.setNameLocalization(CHINESE_CHINA, "五月"),
+														new Command.Choice("June", 6)
+																.setNameLocalization(CHINESE_TAIWAN, "六月")
+																.setNameLocalization(CHINESE_CHINA, "六月"),
+														new Command.Choice("July", 7)
+																.setNameLocalization(CHINESE_TAIWAN, "七月")
+																.setNameLocalization(CHINESE_CHINA, "七月"),
+														new Command.Choice("August", 8)
+																.setNameLocalization(CHINESE_TAIWAN, "八月")
+																.setNameLocalization(CHINESE_CHINA, "八月"),
+														new Command.Choice("September", 9)
+																.setNameLocalization(CHINESE_TAIWAN, "九月")
+																.setNameLocalization(CHINESE_CHINA, "九月"),
+														new Command.Choice("October", 10)
+																.setNameLocalization(CHINESE_TAIWAN, "十月")
+																.setNameLocalization(CHINESE_CHINA, "十月"),
+														new Command.Choice("November", 11)
+																.setNameLocalization(CHINESE_TAIWAN, "十一月")
+																.setNameLocalization(CHINESE_CHINA, "十一月"),
+														new Command.Choice("December", 12)
+																.setNameLocalization(CHINESE_TAIWAN, "十二月")
+																.setNameLocalization(CHINESE_CHINA, "十二月")),
+										new OptionData(OptionType.INTEGER, "date", "Your birthday", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "日")
+												.setNameLocalization(CHINESE_CHINA, "日")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "你的生日日期")
+												.setDescriptionLocalization(CHINESE_CHINA, "你的生日日期")),
+						new SubcommandData("delete", "Delete your birthday setting")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的生日設定")
+								.setDescriptionLocalization(CHINESE_CHINA, "删除你的生日设置")
+		),
+
 
 		Commands.slash(MEGUMIN, "The best anime girl")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")

@@ -27,6 +27,7 @@ public interface ICommand
 	String QUOTE = "quote";
 	String YOUTUBER = "youtuber";
 	String INTRODUCE = "introduce";
+	String BIRTHDAY = "birthday";
 	String MEGUMIN = "megumin";
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";

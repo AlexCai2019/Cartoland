@@ -2,6 +2,8 @@ package cartoland.events;
 
 import cartoland.Cartoland;
 import cartoland.utilities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -11,8 +13,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import static cartoland.utilities.IDs.*;
 
 /**
  * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
@@ -26,8 +26,8 @@ import static cartoland.utilities.IDs.*;
 public class BotOnlineOffline extends ListenerAdapter
 {
 	/**
-	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will initialize
-	 * entities in {@link IDs}, start schedule events and send online message to bot channel.
+	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will start
+	 * schedule events and send online message to bot channel.
 	 *
 	 * @param event The event that carries information.
 	 * @since 1.0
@@ -38,18 +38,45 @@ public class BotOnlineOffline extends ListenerAdapter
 	{
 		CommandBlocksHandle.initial(); //初始化idAndName
 
-		TimerHandle.registerTimerEvent((byte) 3, () ->
+		TimerHandle.registerTimerEvent((byte) 0, () -> //半夜12點
 		{
-			TextChannel undergroundChannel = Cartoland.getJDA().getTextChannelById(UNDERGROUND_CHANNEL_ID);
+			List<Long> birthdayMembers = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
+			if (birthdayMembers.isEmpty()) //今天沒有人生日
+				return;
+			if (birthdayMembers.size() > 100) //一次只能100人
+				birthdayMembers = birthdayMembers.subList(0, 100); //超過100人 只能取前100個
+			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
+			if (cartoland == null)
+				return;
+			TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
+			if (lobbyChannel == null)
+				return;
+			cartoland.retrieveMembersByIds(birthdayMembers).onSuccess(members -> //獲取所有的生日成員們
+			{
+				for (Member member : members) //走訪所有成員們
+				{
+					String nickname = member.getNickname(); //暱稱
+					String name = member.getUser().getEffectiveName(); //全域名稱 沒有設定的話就是名稱
+					if (nickname != null) //有設定暱稱
+						lobbyChannel.sendMessage("今天是 " + nickname + '(' + name + ") 的生日！").queue(); //後面備註全域名稱/名稱
+					else //沒有設定暱稱
+						lobbyChannel.sendMessage("今天是 " + name + " 的生日！").queue(); //直接顯示全域名稱/名稱
+				}
+			});
+		});
+
+		TimerHandle.registerTimerEvent((byte) 3, () -> //凌晨3點
+		{
+			TextChannel undergroundChannel = Cartoland.getJDA().getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
 			if (undergroundChannel == null)
 				return;
 			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
 			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
 		}); //好棒 三點了
 
-		TimerHandle.registerTimerEvent((byte) 12, () ->
+		TimerHandle.registerTimerEvent((byte) 12, () -> //中午12點
 		{
-			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(QUESTIONS_CHANNEL_ID);
+			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID);
 			if (questionsChannel == null)
 				return;
 			List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
@@ -57,7 +84,7 @@ public class BotOnlineOffline extends ListenerAdapter
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
 
-		TextChannel botChannel = event.getJDA().getTextChannelById(BOT_CHANNEL_ID);
+		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
 		if (botChannel != null)
 			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
 		String logString = "online";
@@ -67,8 +94,7 @@ public class BotOnlineOffline extends ListenerAdapter
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}. When the bot go offline normally, it will shut
-	 * down scheduled events, log "offline" to terminal & log file, serialize idle forum posts and write
-	 * JSONObject into users.json & command_blocks.json.
+	 * down scheduled events, log "offline" to terminal & log file, serialize registered objects.
 	 *
 	 * @param event Information about the shutdown.
 	 * @since 1.0

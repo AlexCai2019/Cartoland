@@ -70,7 +70,7 @@ public final class JsonHandle
 	public static String command(long userID, String commandName, String argument)
 	{
 		String result = getStringFromJsonKey(userID, commandName + ".name." + argument);
-		if (commandName.equals("lang"))
+		if ("lang".equals(commandName))
 		{
 			users.put(userID, argument);
 			return result;

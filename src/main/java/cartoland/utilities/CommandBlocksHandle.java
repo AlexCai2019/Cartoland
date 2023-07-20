@@ -90,9 +90,9 @@ public final class CommandBlocksHandle
 	public static class LotteryData implements Serializable
 	{
 		public static final long DAILY = 100L; //每日獎勵
-		public static final long WEEKLY = 50L; //每周獎勵
-		public static final long MONTHLY = 100L;
-		public static final long YEARLY = 1000L;
+		public static final long WEEKLY = 100L; //每周獎勵
+		public static final long MONTHLY = 500L;
+		public static final long YEARLY = 10000L;
 		private String name; //名字
 		private final long userID;
 		private long blocks; //方塊數

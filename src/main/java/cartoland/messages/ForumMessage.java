@@ -23,7 +23,7 @@ public class ForumMessage implements IMessage
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
 		if (!event.isFromGuild())
-			return true; //是私訊
+			return false; //是私訊 私訊不應通過
 		Category category = event.getMessage().getCategory();
 		//獲取類別失敗就不執行後面那個
 		return category != null && category.getIdLong() == IDs.FORUM_CATEGORY_ID;

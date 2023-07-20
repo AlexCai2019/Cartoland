@@ -97,8 +97,7 @@ class JsonBasedComplete extends GenericComplete
 			return;
 
 		String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-		List<Command.Choice> choices = commandList
-				.stream()
+		List<Command.Choice> choices = commandList.stream()
 				.filter(word -> word.startsWith(optionValue))
 				.map(word -> new Command.Choice(word, word))
 				.toList(); //將字串串流轉換為選項列表

@@ -5,9 +5,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class AdminHandle
 {
@@ -17,15 +18,17 @@ public final class AdminHandle
 	}
 	private static final long TWENTY_EIGHT_DAYS_MILLISECONDS = 1000L * 60 * 60 * 24 * 28;
 	private static final String TEMP_BAN_LIST = "serialize/temp_ban_list.ser";
-	@SuppressWarnings("unchecked")
-	//userID為key ban time為value[0] ban guild為value[1]
-	public static final Map<Long, long[]> tempBanList = (FileHandle.deserialize(TEMP_BAN_LIST) instanceof HashMap map) ? map : new HashMap<>();
-	public static final byte BANNED_TIME = 0;
-	public static final byte BANNED_SERVER = 1;
+
+	//userID為value[0] ban time為value[1] ban guild為value[2]
+	public static final Set<long[]> tempBanSet = (FileHandle.deserialize(TEMP_BAN_LIST) instanceof HashSet<?> set) ? set.stream()
+			.map(o -> (long[])o).collect(Collectors.toSet()) : new HashSet<>();
+	public static final byte USER_ID_INDEX = 0;
+	public static final byte BANNED_TIME = 1;
+	public static final byte BANNED_SERVER = 2;
 
 	static
 	{
-		FileHandle.registerSerialize(TEMP_BAN_LIST, tempBanList); //註冊串聯化
+		FileHandle.registerSerialize(TEMP_BAN_LIST, tempBanSet); //註冊串聯化
 	}
 
 	private static String buildDurationString(double duration)
@@ -164,10 +167,11 @@ public final class AdminHandle
 			pardonTime = Long.MAX_VALUE;
 
 		Guild guild = target.getGuild();
-		long[] banData = new long[2];
+		long[] banData = new long[3];
+		banData[USER_ID_INDEX] = target.getIdLong();
 		banData[BANNED_TIME] = pardonTime;
 		banData[BANNED_SERVER] = guild.getIdLong();
-		tempBanList.put(target.getIdLong(), banData); //紀錄ban了這個人
+		tempBanSet.add(banData); //紀錄ban了這個人
 		guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
 		return new ReturnInformation(replyString, false); //回覆
 	}

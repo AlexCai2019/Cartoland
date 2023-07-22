@@ -95,9 +95,9 @@ public class BotOnlineOffline extends ListenerAdapter
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
 
-		/*TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
+		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
 		if (botChannel != null)
-			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();*/
+			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
 		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);

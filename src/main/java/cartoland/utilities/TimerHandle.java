@@ -45,6 +45,9 @@ public final class TimerHandle
 				birthdayArray[i] = new ArrayList<>();
 			birthdayMap.clear(); //一切紀錄重來
 		}
+
+		FileHandle.registerSerialize(BIRTHDAY_MAP, birthdayMap);
+		FileHandle.registerSerialize(BIRTHDAY_ARRAY, birthdayArray);
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -63,23 +66,22 @@ public final class TimerHandle
 				event.execute(); //執行
 
 		//根據現在的時間 決定是否解ban
-		Set<Long> tempBanListKeySet = AdminHandle.tempBanList.keySet();
-		if (tempBanListKeySet.size() == 0) //沒有人被temp_ban
+		Set<long[]> tempBanSet = AdminHandle.tempBanSet;
+		if (tempBanSet.size() == 0) //沒有人被temp_ban
 			return; //不用執行
 		//這以下是有關解ban的程式碼
-		Set<Long> bannedIDs = new HashSet<>(tempBanListKeySet); //建立新物件 以免修改到原map
-		for (long bannedID : bannedIDs)
+		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原map
+		for (long[] bannedMember : bannedMembers)
 		{
-			long[] bannedData = AdminHandle.tempBanList.get(bannedID);
-			if (hoursFrom1970 < bannedData[AdminHandle.BANNED_TIME]) //還沒到這個人要被解ban的時間
+			if (hoursFrom1970 < bannedMember[AdminHandle.BANNED_TIME]) //還沒到這個人要被解ban的時間
 				continue; //下面一位
-			Cartoland.getJDA().retrieveUserById(bannedID).queue(user -> //找到這名使用者後解ban他
+			Cartoland.getJDA().retrieveUserById(bannedMember[AdminHandle.USER_ID_INDEX]).queue(user -> //找到這名使用者後解ban他
 			{
-				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedData[AdminHandle.BANNED_SERVER]); //找到當初ban他的群組
+				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedMember[AdminHandle.BANNED_SERVER]); //找到當初ban他的群組
 				if (bannedServer != null) //群組還在
 					bannedServer.unban(user).queue(); //解ban
 			});
-			AdminHandle.tempBanList.remove(bannedID); //不再紀錄這名使用者
+			AdminHandle.tempBanSet.remove(bannedMember); //不再紀錄這名使用者
 		}
 	}, secondsUntil((nowHour + 1) % 24), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 

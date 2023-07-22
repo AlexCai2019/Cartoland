@@ -15,38 +15,22 @@ public class ReceiveModal extends ListenerAdapter
 {
 	public static final String NEW_TITLE_MODAL_ID = "new_title";
 	public static final String NEW_TITLE_TEXT = "new_title";
-	public static final String MUTE_MEMBER_MODAL_ID = "mute_member";
-	public static final String TARGET_ENTITY = "target";
 
 	@Override
 	public void onModalInteraction(ModalInteractionEvent event)
 	{
-		switch (event.getModalId())
+		if (NEW_TITLE_MODAL_ID.equals(event.getModalId()))
 		{
-			case NEW_TITLE_MODAL_ID ->
+			ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
+			if (newTitle == null)
 			{
-				ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
-				if (newTitle == null)
-				{
-					event.reply("Impossible, this is required!").queue();
-					return;
-				}
-
-				String newTitleString = newTitle.getAsString(); //新標題
-				event.getChannel().asThreadChannel().getManager().setName(newTitleString).queue();
-				event.reply(event.getUser().getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
+				event.reply("Impossible, this is required!").queue();
+				return;
 			}
 
-			case MUTE_MEMBER_MODAL_ID ->
-			{
-				ModalMapping targetEntity = event.getValue(TARGET_ENTITY);
-				if (targetEntity == null)
-				{
-					event.reply("Impossible, this is required!").queue();
-					return;
-				}
-				System.out.println(targetEntity);
-			}
+			String newTitleString = newTitle.getAsString(); //新標題
+			event.getChannel().asThreadChannel().getManager().setName(newTitleString).queue();
+			event.reply(event.getUser().getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
 		}
 	}
 }

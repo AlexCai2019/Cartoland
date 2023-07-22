@@ -16,11 +16,13 @@
 - 📁`logs/`
 - 📁`serialize/`，以及下列文件：
   - 📄`all_members.ser`，从一个键为`Long`的`HashSet`序列化而来。
+  - 📄`birthday_array.ser`，从一个键为`Long`的`ArrayList[]`序列化而来。
+  - 📄`birthday_map.ser`，从一个键为`Long`、值为`Short`的`HashMap`序列化而来。
   - 📄`has_start_message.ser`，从一个键为`Long`的`HashSet`序列化而来。
   - 📄`idled_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
   - 📄`introduction.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
   - 📄`lottery_data.ser`，从一个键为`Long`、值为`cartoland.utilities.CommandBlocksHandle.LotteryData`的`HashMap`序列化而来。
-  - 📄`temp_ban_list.ser`，从一个键为`Long`、值为`long[]`的`HashMap`序列化而来。
+  - 📄`temp_ban_list.ser`，从一个值为`long[]`的`HashSet`序列化而来。
   - 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
 
 ## 激活

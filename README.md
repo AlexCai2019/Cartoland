@@ -16,11 +16,13 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
 - 📁`logs/`
 - 📁`serialize/` with these following files:
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
+  - 📄`birthday_array.ser` serialized from a `ArrayList[]` which use `Long` as value.
+  - 📄`birthday_map.ser` serialized from a `HashMap` which use `Long` as key and `Short` as value.
   - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
   - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashMap` which use `Long` as key and `long[]` as value.
+  - 📄`temp_ban_list.ser` serialized from a `HashSet` which use `long[]` as value.
   - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## Launching

@@ -444,11 +444,7 @@ public final class AddCommands
 
 		Commands.message(CODE_BLOCK)
 				.setNameLocalization(CHINESE_TAIWAN, "程式碼區塊")
-				.setNameLocalization(CHINESE_CHINA, "代码区块"),
-
-		Commands.user("mute")
-				.setNameLocalization(CHINESE_TAIWAN, "禁言")
-				.setNameLocalization(CHINESE_CHINA, "禁言")
+				.setNameLocalization(CHINESE_CHINA, "代码区块")
 	};
 
 	/*

@@ -124,9 +124,9 @@ public class CommandUsage extends ListenerAdapter
 				return;
 			}
 
-			TextChannel botChannel = cartoland.getTextChannelById(IDs.BOT_CHANNEL_ID); //創聯的機器人頻道
+			/*TextChannel botChannel = cartoland.getTextChannelById(IDs.BOT_CHANNEL_ID); //創聯的機器人頻道
 			if (botChannel != null) //找到頻道了
-				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").complete();
+				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").complete();*/
 			jda.shutdown(); //關機下線
 		});
 

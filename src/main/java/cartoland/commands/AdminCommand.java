@@ -2,7 +2,6 @@ package cartoland.commands;
 
 import cartoland.utilities.AdminHandle;
 import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class AdminCommand implements ICommand
 					event.getOption("unit", CommonFunctions.getAsString),
 					event.getOption("reason", CommonFunctions.getAsString));
 			if (returnInformation != null)
-				event.reply(JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), returnInformation.jsonKey()))
+				event.reply(returnInformation.replyMessage())
 						.setEphemeral(returnInformation.ephemeral())
 						.queue();
 			else
@@ -68,7 +67,7 @@ public class AdminCommand implements ICommand
 					event.getOption("unit", CommonFunctions.getAsString),
 					event.getOption("reason", CommonFunctions.getAsString));
 			if (returnInformation != null)
-				event.reply(JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), returnInformation.jsonKey()))
+				event.reply(returnInformation.replyMessage())
 						.setEphemeral(returnInformation.ephemeral())
 						.queue();
 			else

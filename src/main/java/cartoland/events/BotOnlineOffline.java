@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
@@ -40,18 +42,19 @@ public class BotOnlineOffline extends ListenerAdapter
 
 		TimerHandle.registerTimerEvent((byte) 0, () -> //半夜12點
 		{
-			List<Long> birthdayMembers = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
-			if (birthdayMembers.isEmpty()) //今天沒有人生日
+			List<Long> birthdayMembersID = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
+			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
-			if (birthdayMembers.size() > 100) //一次只能100人
-				birthdayMembers = birthdayMembers.subList(0, 100); //超過100人 只能取前100個
+			if (birthdayMembersID.size() > 100) //一次只能100人
+				birthdayMembersID = birthdayMembersID.subList(0, 100); //超過100人 只能取前100個
 			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
 			if (cartoland == null)
 				return;
 			TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null)
 				return;
-			cartoland.retrieveMembersByIds(birthdayMembers).onSuccess(members -> //獲取所有的生日成員們
+			final List<Long> finalBirthdayMembersID = birthdayMembersID; //lambda要用
+			cartoland.retrieveMembersByIds(birthdayMembersID).onSuccess(members -> //獲取所有的生日成員們
 			{
 				for (Member member : members) //走訪所有成員們
 				{
@@ -62,6 +65,14 @@ public class BotOnlineOffline extends ListenerAdapter
 					else //沒有設定暱稱
 						lobbyChannel.sendMessage("今天是 " + name + " 的生日！").queue(); //直接顯示全域名稱/名稱
 				}
+
+				int birthdayMembersCount = finalBirthdayMembersID.size();
+				if (members.size() == birthdayMembersCount)
+					return; //沒有人變少
+				Set<Long> membersIDSet = members.stream().map(Member::getIdLong).collect(Collectors.toSet());
+				for (int i = birthdayMembersCount - 1; i >= 0; i--)
+					if (!membersIDSet.contains(finalBirthdayMembersID.get(i)))
+						finalBirthdayMembersID.remove(i);
 			});
 		});
 
@@ -84,9 +95,9 @@ public class BotOnlineOffline extends ListenerAdapter
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
 
-		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
+		/*TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
 		if (botChannel != null)
-			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();*/
 		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);

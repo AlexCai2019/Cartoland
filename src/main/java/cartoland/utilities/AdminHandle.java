@@ -33,19 +33,19 @@ public final class AdminHandle
 		String durationString = Double.toString(duration); //將時間轉成字串
 		int dotIndex = durationString.indexOf('.'); //小數點的索引
 		int firstZero = durationString.length(); //尋找小數部分最後的一串0中 第一個0
-		int i;
-		for (i = firstZero - 1; i >= dotIndex; i--)
+		int index;
+		for (index = firstZero - 1; index >= dotIndex; index--)
 		{
-			if (durationString.charAt(i) != '0')
+			if (durationString.charAt(index) != '0')
 			{
-				firstZero = i + 1;
+				firstZero = index + 1;
 				break;
 			}
 		}
 		//結果:
 		//5.000000 => 5
 		//1.500000 => 1.5
-		return durationString.substring(0, (i == dotIndex) ? dotIndex : firstZero);
+		return durationString.substring(0, (index == dotIndex) ? dotIndex : firstZero);
 	}
 
 	/**
@@ -54,29 +54,31 @@ public final class AdminHandle
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	public static record ReturnInformation(String jsonKey, boolean ephemeral) {}
+	public static record ReturnInformation(String replyMessage, boolean ephemeral) {}
 
 	public static ReturnInformation mute(Member member, Member target, Double durationBox, String unit, String reason)
 	{
 		if (member == null)
-			return new ReturnInformation("admin.mute.can_t_check", true);
+			return null; //不可能
+
+		long userID = member.getIdLong();
 
 		if (!member.hasPermission(Permission.MODERATE_MEMBERS))
-			return new ReturnInformation("admin.mute.no_permission", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_permission"), true);
 
 		if (target == null) //找不到要被禁言的成員
-			return new ReturnInformation("admin.mute.no_member", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_member"), true);
 
 		if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
-			return new ReturnInformation("admin.mute.can_t_owner", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.can_t_owner"), true);
 		if (target.isTimedOut()) //已經被禁言了
-			return new ReturnInformation("admin.mute.already_timed_out", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.already_timed_out"), true);
 
 		if (durationBox == null)
 			return null; //不可能
 		double duration = durationBox;
 		if (duration <= 0) //不能負時間
-			return new ReturnInformation("admin.mute.duration_must_be_positive", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.duration_must_be_positive"), true);
 
 		if (unit == null) //單位
 			return null; //不可能
@@ -94,9 +96,8 @@ public final class AdminHandle
 		}); //Math.round會處理溢位
 
 		if (durationMillis > TWENTY_EIGHT_DAYS_MILLISECONDS) //不能禁言超過28天
-			return new ReturnInformation("admin.mute.too_long", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.mute.too_long"), true);
 
-		long userID = member.getIdLong();
 		String mutedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_" + unit);
 		String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
 				.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
@@ -110,20 +111,23 @@ public final class AdminHandle
 	public static ReturnInformation tempBan(Member member, Member target, Double durationBox, String unit, String reason)
 	{
 		if (member == null)
-			return new ReturnInformation("admin.temp_ban.can_t_check", true);
+			return null;
+
+		long userID = member.getIdLong();
+
 		if (!member.hasPermission(Permission.BAN_MEMBERS))
-			return new ReturnInformation("admin.temp_ban.no_permission", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_permission"), true);
 
 		if (target == null)
-			return new ReturnInformation("admin.temp_ban.no_member", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_member"), true);
 		if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
-			return new ReturnInformation("admin.temp_ban.can_t_owner", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.can_t_owner"), true);
 
 		if (durationBox == null)
 			return null;
 		double duration = durationBox;
 		if (duration <= 0) //不能負時間
-			return new ReturnInformation("admin.temp_ban.duration_too_short", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short"), true);
 
 		if (unit == null)
 			return null;
@@ -142,9 +146,8 @@ public final class AdminHandle
 		}); //Math.round會處理溢位
 
 		if (durationHours < 1L) //時間不能小於一小時
-			return new ReturnInformation("admin.temp_ban.duration_too_short", true);
+			return new ReturnInformation(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short"), true);
 
-		long userID = member.getIdLong();
 		String bannedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
 		String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 				.formatted(

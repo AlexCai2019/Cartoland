@@ -1,9 +1,19 @@
 package cartoland.events;
 
 import cartoland.utilities.FileHandle;
+import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
@@ -72,5 +82,50 @@ public class ContextMenu extends ListenerAdapter
 		}
 
 		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);
+	}
+
+	@Override
+	public void onUserContextInteraction(UserContextInteractionEvent event)
+	{
+		long userID = event.getUser().getIdLong();
+		String eventName = event.getName();
+		Member target = event.getTargetMember();
+		if (target == null)
+		{
+			event.reply("something went wrong...").queue();
+			return;
+		}
+
+		switch (eventName)
+		{
+			case "mute" ->
+			{
+				TextInput targetInput = TextInput.create("target", Long.toUnsignedString(target.getIdLong()), TextInputStyle.SHORT).build();
+				TextInput durationInput = TextInput.create("duration", JsonHandle.getStringFromJsonKey(userID, "admin.mute.duration_text"), TextInputStyle.SHORT)
+						.setRequiredRange(0, 100)
+						.build();
+				StringSelectMenu unitSelect = StringSelectMenu.create("unit")
+						.addOptions(
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_second_text"), "second"),
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_minute_text"), "minute"),
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_hour_text"), "hour"),
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_double_hour_text"), "double_hour"),
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_day_text"), "day"),
+								SelectOption.of(JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_week_text"), "week"))
+						.build();
+				TextInput reasonInput = TextInput.create("reason", JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason_text"), TextInputStyle.SHORT).setRequiredRange(0, 100).setRequired(false).build();
+				event.replyModal(
+						Modal.create(ReceiveModal.MUTE_MEMBER_MODAL_ID, JsonHandle.getStringFromJsonKey(userID, "admin.mute.target").formatted(target.getUser().getEffectiveName()))
+								.addActionRow(targetInput)
+								.addActionRow(durationInput)
+								.addActionRow(unitSelect)
+								.addActionRow(reasonInput)
+								.build()).queue();
+			}
+
+			case "temp_ban" ->
+			{
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package cartoland.utilities;
 
 import cartoland.Cartoland;
+import cartoland.commands.AdminCommand;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.time.Duration;
@@ -65,29 +66,42 @@ public final class TimerHandle
 			if (event.shouldExecute(nowHour)) //時間到了
 				event.execute(); //執行
 
-		//根據現在的時間 決定是否解ban
-		Set<long[]> tempBanSet = AdminHandle.tempBanSet;
-		if (tempBanSet.size() == 0) //沒有人被temp_ban
-			return; //不用執行
-		//這以下是有關解ban的程式碼
-		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原map
-		for (long[] bannedMember : bannedMembers)
-		{
-			if (hoursFrom1970 < bannedMember[AdminHandle.BANNED_TIME]) //還沒到這個人要被解ban的時間
-				continue; //下面一位
-			Cartoland.getJDA().retrieveUserById(bannedMember[AdminHandle.USER_ID_INDEX]).queue(user -> //找到這名使用者後解ban他
-			{
-				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedMember[AdminHandle.BANNED_SERVER]); //找到當初ban他的群組
-				if (bannedServer != null) //群組還在
-					bannedServer.unban(user).queue(); //解ban
-			});
-			AdminHandle.tempBanSet.remove(bannedMember); //不再紀錄這名使用者
-		}
+		unbanMembers();
 	}, secondsUntil((nowHour + 1) % 24), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	public static long getHoursFrom1970()
 	{
 		return hoursFrom1970;
+	}
+
+	/**
+	 * Get date of year (start with 1). This method always assume the year is a leap year, hence February has
+	 * 29 days. The value range of the method is from 1 to 366.
+	 *
+	 * @param month The month
+	 * @param date The day of the month
+	 * @return The day of year. Range: 1 ~ 366
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private static short getDateOfYear(int month, int date)
+	{
+		return (short) (switch (month) //一年中的第幾天(以0開始)
+		{
+			case 1 -> 0;
+			case 2 -> 31;
+			case 3 -> 31 + 29;
+			case 4 -> 31 + 29 + 31;
+			case 5 -> 31 + 29 + 31 + 30;
+			case 6 -> 31 + 29 + 31 + 30 + 31;
+			case 7 -> 31 + 29 + 31 + 30 + 31 + 30;
+			case 8 -> 31 + 29 + 31 + 30 + 31 + 30 + 31;
+			case 9 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31;
+			case 10 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
+			case 11 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
+			case 12 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30;
+			default -> throw new IllegalArgumentException("Month must between 1 and 12!");
+		} + date);
 	}
 
 	private static long secondsUntil(int hour)
@@ -103,13 +117,42 @@ public final class TimerHandle
 		return Duration.between(now, untilTime).getSeconds();
 	}
 
+	private static void unbanMembers()
+	{
+		//根據現在的時間 決定是否解ban
+		Set<long[]> tempBanSet = AdminCommand.tempBanSet;
+		if (tempBanSet.size() == 0) //沒有人被temp_ban
+			return; //不用執行
+		//這以下是有關解ban的程式碼
+		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原set
+		for (long[] bannedMember : bannedMembers)
+		{
+			if (hoursFrom1970 < bannedMember[AdminCommand.BANNED_TIME]) //還沒到這個人要被解ban的時間
+				continue; //下面一位
+			Cartoland.getJDA().retrieveUserById(bannedMember[AdminCommand.USER_ID_INDEX]).queue(user -> //找到這名使用者後解ban他
+			{
+				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedMember[AdminCommand.BANNED_SERVER]); //找到當初ban他的群組
+				if (bannedServer != null) //群組還在
+					bannedServer.unban(user).queue(); //解ban
+			});
+			AdminCommand.tempBanSet.remove(bannedMember); //不再紀錄這名使用者
+		}
+	}
+
 	public static void registerTimerEvent(byte hour, Runnable function)
 	{
 		if (hour < 0 || hour > 23)
 			throw new IllegalArgumentException("Hour must between 0 and 23!");
-		timerEvents.add(new TimerEvent(hour, function));
+		timerEvents.add(new TimerEvent(hour, function)); //註冊一個特定小時會發生的事件
 	}
 
+	/**
+	 * Stop the {@link #everyHour} timer. This method will be called in
+	 * {@link cartoland.events.BotOnlineOffline#onShutdown} when the bot went offline.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	public static void stopTimer()
 	{
 		//https://stackoverflow.com/questions/34202701
@@ -141,46 +184,13 @@ public final class TimerHandle
 	}
 
 	/**
-	 * Get date of year (start with 1). This method always assume the year is a leap year, hence February has 29 days.
+	 * {@code TimerEvent} is a record class that is used for register hour events.
 	 *
-	 * @param month The month
-	 * @param date The day of the month
-	 * @return The day of year
-	 */
-	private static short getDateOfYear(int month, int date)
-	{
-		return (short) (switch (month) //一年中的第幾天(以0開始)
-		{
-			default -> 0;
-			case 2 -> 31;
-			case 3 -> 31 + 29;
-			case 4 -> 31 + 29 + 31;
-			case 5 -> 31 + 29 + 31 + 30;
-			case 6 -> 31 + 29 + 31 + 30 + 31;
-			case 7 -> 31 + 29 + 31 + 30 + 31 + 30;
-			case 8 -> 31 + 29 + 31 + 30 + 31 + 30 + 31;
-			case 9 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31;
-			case 10 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
-			case 11 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
-			case 12 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30;
-		} + date);
-	}
-
-	/**
-	 * @since 2.1
 	 * @author Alex Cai
+	 * @since 2.1
 	 */
-	private static class TimerEvent
+	private record TimerEvent(byte hour, Runnable function)
 	{
-		private final byte hour;
-		private final Runnable function;
-
-		private TimerEvent(byte hour, Runnable function)
-		{
-			this.hour = hour;
-			this.function = function;
-		}
-
 		private boolean shouldExecute(byte hour)
 		{
 			return this.hour == hour;

@@ -8,6 +8,7 @@ import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,26 +22,26 @@ import java.util.Map;
  */
 public class TicTacToeCommand implements ICommand
 {
-	private final ICommand startSubCommand;
-	private final ICommand playSubCommand;
+	private final Map<String, ICommand> subCommands = new HashMap<>();
 
 	public TicTacToeCommand(CommandUsage commandUsage)
 	{
-		startSubCommand = new StartSubcommand(commandUsage);
-		playSubCommand = new PlaySubCommand(commandUsage);
+		subCommands.put("start", new StartSubcommand(commandUsage));
+		subCommands.put("play", new PlaySubCommand(commandUsage));
+		subCommands.put("board", new BoardSubcommand(commandUsage));
 	}
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		("start".equals(event.getSubcommandName()) ? startSubCommand : playSubCommand).commandProcess(event);
+		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
 
 	private static class StartSubcommand implements ICommand
 	{
 		private final CommandUsage commandCore;
 
-		public StartSubcommand(CommandUsage commandUsage)
+		private StartSubcommand(CommandUsage commandUsage)
 		{
 			commandCore = commandUsage;
 		}
@@ -83,7 +84,7 @@ public class TicTacToeCommand implements ICommand
 
 		private final CommandUsage commandCore;
 
-		public PlaySubCommand(CommandUsage commandUsage)
+		private PlaySubCommand(CommandUsage commandUsage)
 		{
 			commandCore = commandUsage;
 		}
@@ -162,6 +163,38 @@ public class TicTacToeCommand implements ICommand
 
 			event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") +
 								ticTacToe.getBoard() + "\n</tic_tac_toe play:1123462079546937485>").setEphemeral(true).queue();
+		}
+	}
+
+	private static class BoardSubcommand implements ICommand
+	{
+		private final CommandUsage commandCore;
+
+		private BoardSubcommand(CommandUsage commandUsage)
+		{
+			commandCore = commandUsage;
+		}
+
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
+		{
+			long userID = event.getUser().getIdLong();
+			Map<Long, IMiniGame> games = commandCore.getGames();
+			IMiniGame playing = games.get(userID);
+
+			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe play
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
+				return;
+			}
+
+			//已經有在玩遊戲
+			if (playing instanceof TicTacToeGame ticTacToe) //是在玩井字遊戲
+				event.reply(ticTacToe.getBoard()).setEphemeral(true).queue();
+			else
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
+					.setEphemeral(true)
+					.queue();
 		}
 	}
 }

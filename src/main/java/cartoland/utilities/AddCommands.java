@@ -405,6 +405,8 @@ public final class AddCommands
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
 				.addSubcommands(
 						new SubcommandData("start", "Start a game of Tic-Tac-Toe")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "開始一場井字遊戲")
+								.setDescriptionLocalization(CHINESE_CHINA, "开始一场井字游戏")
 								.addOptions(
 										new OptionData(OptionType.INTEGER, "difficulty", "Difficulty of the game", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "難度")
@@ -422,6 +424,8 @@ public final class AddCommands
 																.setNameLocalization(CHINESE_TAIWAN, "困難")
 																.setNameLocalization(CHINESE_CHINA, "困难"))),
 						new SubcommandData("play", "Play a game of Tic-Tac-Toe")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
+								.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
 								.addOptions(
 										new OptionData(OptionType.INTEGER, "row", "The row of the board", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "橫列")
@@ -432,7 +436,10 @@ public final class AddCommands
 												.setNameLocalization(CHINESE_TAIWAN, "直行")
 												.setNameLocalization(CHINESE_CHINA, "直列")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
-												.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列"))),
+												.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
+						new SubcommandData("board", "Get the current board")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
+								.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")

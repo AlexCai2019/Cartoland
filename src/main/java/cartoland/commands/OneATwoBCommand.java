@@ -19,25 +19,37 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 public class OneATwoBCommand implements ICommand
 {
-	private final CommandUsage commandCore;
+	private final ICommand startSubCommand;
+	private final ICommand guessSubCommand;
 	private static final int MAX_MINUTE = 2;
 	private static final int MAX_GUESSES = 7;
 	private static final byte REWARD = 100;
 
 	public OneATwoBCommand(CommandUsage commandUsage)
 	{
-		commandCore = commandUsage;
+		startSubCommand = new StartSubCommand(commandUsage);
+		guessSubCommand = new GuessSubCommand(commandUsage);
 	}
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		Integer argument = event.getOption("answer", CommonFunctions.getAsInt);
-		long userID = event.getUser().getIdLong();
-		IMiniGame playing = commandCore.getGames().get(userID);
+		("start".equals(event.getSubcommandName()) ? startSubCommand : guessSubCommand).commandProcess(event);
+	}
 
-		if (argument == null) //不帶參數
+	private static class StartSubCommand implements ICommand
+	{
+		private final CommandUsage commandCore;
+		private StartSubCommand(CommandUsage commandUsage)
 		{
+			commandCore = commandUsage;
+		}
+
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
+		{
+			long userID = event.getUser().getIdLong();
+			IMiniGame playing = commandCore.getGames().get(userID);
 			if (playing == null) //沒有在玩遊戲 開始1A2B
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
@@ -45,52 +57,66 @@ public class OneATwoBCommand implements ICommand
 			}
 			else //已經有在玩遊戲
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
-			return;
 		}
-		int answer = argument; //拆箱
-		if (answer < 0)
-			answer = -answer;
+	}
 
-		//帶參數
-		if (playing == null) //沒有在玩遊戲 但指令還是帶了引數
+	private static class GuessSubCommand implements ICommand
+	{
+		private final CommandUsage commandCore;
+		private GuessSubCommand(CommandUsage commandUsage)
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.too_much_arguments")).setEphemeral(true).queue();
-			return;
+			commandCore = commandUsage;
 		}
 
-		//已經有在玩遊戲
-		if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
-			return;
+			long userID = event.getUser().getIdLong();
+			IMiniGame playing = commandCore.getGames().get(userID);
+			Integer answerBox = event.getOption("answer", CommonFunctions.getAsInt);
+			if (answerBox == null)
+			{
+				event.reply("Impossible, this is required!").queue();
+				return;
+			}
+			int answer = answerBox; //拆箱
+			if (answer < 0)
+				answer = -answer;
+
+			//已經有在玩遊戲
+			if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
+				return;
+			}
+
+			int[] ab = oneATwoB.calculateAAndB(answer); //如果是null 代表答案不是獨一無二的數字
+			if (ab == null)
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH)).setEphemeral(true).queue();
+				return;
+			}
+
+			String shouldReply = String.format("%0" + OneATwoBGame.ANSWER_LENGTH + "d", answer) + " = " + ab[0] + " A " + ab[1] + " B";
+			if (ab[0] != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
+			{
+				event.reply(shouldReply + "\n</one_a_two_b guess:1102681768840138941>").setEphemeral(true).queue();
+				return;
+			}
+
+			//猜出ANSWER_LENGTH個A 遊戲結束
+			long second = oneATwoB.getTimePassed();
+			int guesses = oneATwoB.getGuesses();
+			String replyString = JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.game_over").formatted(shouldReply, answer, second / 60, second % 60, guesses);
+
+			if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES)
+			{
+				replyString += JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.reward").formatted(MAX_MINUTE, MAX_GUESSES, REWARD);
+				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD);
+			}
+
+			event.reply(replyString).queue();
+			commandCore.getGames().remove(userID);
 		}
-
-		int[] ab = oneATwoB.calculateAAndB(answer); //如果是null 代表答案不是獨一無二的數字
-		if (ab == null)
-		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH)).setEphemeral(true).queue();
-			return;
-		}
-
-		String shouldReply = String.format("%0" + OneATwoBGame.ANSWER_LENGTH + "d", answer) + " = " + ab[0] + " A " + ab[1] + " B";
-		if (ab[0] != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
-		{
-			event.reply(shouldReply + "\n</one_a_two_b:1102681768840138941>").setEphemeral(true).queue();
-			return;
-		}
-
-		//猜出ANSWER_LENGTH個A 遊戲結束
-		long second = oneATwoB.getTimePassed();
-		int guesses = oneATwoB.getGuesses();
-		String replyString = JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.game_over").formatted(shouldReply, answer, second / 60, second % 60, guesses);
-
-		if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES)
-		{
-			replyString += JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.reward").formatted(MAX_MINUTE, MAX_GUESSES, REWARD);
-			CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD);
-		}
-
-		event.reply(replyString).queue();
-		commandCore.getGames().remove(userID);
 	}
 }

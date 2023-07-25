@@ -33,11 +33,11 @@ public class NewMember extends ListenerAdapter
 			%%s, welcome to %%s.
 			Please read messages in <#%d>, and follow all rules.
 			""".formatted(IDs.READ_ME_CHANNEL_ID, IDs.READ_ME_CHANNEL_ID);
-	private final String ALL_MEMBERS = "serialize/all_members.ser";
-	private final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet<?> set ?
+	private static final String ALL_MEMBERS = "serialize/all_members.ser";
+	private static final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet<?> set ?
 			set.stream().map(userID -> (Long)userID).collect(Collectors.toSet()) : new HashSet<>();
 
-	public NewMember()
+	static
 	{
 		FileHandle.registerSerialize(ALL_MEMBERS, allMembers);
 	}

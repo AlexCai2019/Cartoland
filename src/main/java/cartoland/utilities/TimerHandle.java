@@ -2,6 +2,7 @@ package cartoland.utilities;
 
 import cartoland.Cartoland;
 import cartoland.commands.AdminCommand;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.time.Duration;
@@ -125,16 +126,15 @@ public final class TimerHandle
 			return; //不用執行
 		//這以下是有關解ban的程式碼
 		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原set
+		JDA jda = Cartoland.getJDA();
 		for (long[] bannedMember : bannedMembers)
 		{
 			if (hoursFrom1970 < bannedMember[AdminCommand.BANNED_TIME]) //還沒到這個人要被解ban的時間
 				continue; //下面一位
-			Cartoland.getJDA().retrieveUserById(bannedMember[AdminCommand.USER_ID_INDEX]).queue(user -> //找到這名使用者後解ban他
-			{
-				Guild bannedServer = Cartoland.getJDA().getGuildById(bannedMember[AdminCommand.BANNED_SERVER]); //找到當初ban他的群組
-				if (bannedServer != null) //群組還在
-					bannedServer.unban(user).queue(); //解ban
-			});
+			Guild bannedServer = jda.getGuildById(bannedMember[AdminCommand.BANNED_SERVER]); //找到當初ban他的群組
+			if (bannedServer != null) //群組還在
+				jda.retrieveUserById(bannedMember[AdminCommand.USER_ID_INDEX]) //找到這名使用者後解ban他
+						.queue(user -> bannedServer.unban(user).queue()); //解ban
 			AdminCommand.tempBanSet.remove(bannedMember); //不再紀錄這名使用者
 		}
 	}

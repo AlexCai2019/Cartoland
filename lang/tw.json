@@ -27,7 +27,7 @@
 	"cmd.name.clone": "https://minecraft.fandom.com/zh/wiki/命令/clone?variant=zh-tw",
 	"cmd.name.data": "https://minecraft.fandom.com/zh/wiki/命令/data?variant=zh-tw",
 	"cmd.name.datapack": "https://minecraft.fandom.com/zh/wiki/命令/datapack?variant=zh-tw",
-	"cmd.name.debug": "```ansi\n\u001B[31mdebug \u001B[0m(\u001B[34mstart\u001B[0m|\u001B[34mstop\u001B[0m)\n\u001B[31mdebug \u001B[34mfunction\u001B[33m<命名空間:函數名>\n```<https://minecraft.fandom.com/zh/wiki/命令/debug?variant=zh-tw>",
+	"cmd.name.debug": "```ansi\n\u001B[31mdebug \u001B[0m(\u001B[34mstart\u001B[0m|\u001B[34mstop\u001B[0m)\n\u001B[31mdebug \u001B[34mfunction \u001B[33m<命名空間:函數名>\n```<https://minecraft.fandom.com/zh/wiki/命令/debug?variant=zh-tw>",
 	"cmd.name.defaultgamemode": "```ansi\n\u001B[31mdefaultgamemode \u001B[0m<\u001B[34msurvival\u001B[0m|\u001B[34mcreative\u001B[0m|\u001B[34madventure\u001B[0m|\u001B[34mspectator\u001B[0m>\n```<https://minecraft.fandom.com/zh/wiki/命令/defaultgamemode?variant=zh-tw>",
 	"cmd.name.deop": "```ansi\n\u001B[31mdeop \u001B[36m<目標>\n```<https://minecraft.fandom.com/zh/wiki/命令/deop?variant=zh-tw>",
 	"cmd.name.difficulty": "```ansi\n\u001B[31mdifficulty \u001B[0m[\u001B[34mpeaceful\u001B[0m|\u001B[34measy\u001B[0m|\u001B[34mnormal\u001B[0m|\u001B[34mhard\u001B[0m]\n```<https://minecraft.fandom.com/zh/wiki/命令/difficulty?variant=zh-tw>",

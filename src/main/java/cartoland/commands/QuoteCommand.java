@@ -44,7 +44,7 @@ public class QuoteCommand implements ICommand
 
 		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.invalid_link")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
 
@@ -59,14 +59,14 @@ public class QuoteCommand implements ICommand
 			cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
 		if (cartoland == null) //找不到創聯
 		{
-			event.reply("Can't get Cartoland server").queue();
+			event.reply("Can't get Cartoland server").setEphemeral(true).queue();
 			return; //結束
 		}
 
 		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
 		if (linkChannel == null)
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).setEphemeral(true).queue();
 			return;
 		}
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同

@@ -73,8 +73,9 @@ public class QuoteCommand implements ICommand
 		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
+			String linkAuthorAvatar = linkAuthor.getEffectiveAvatarUrl();
 
-			embedBuilder.setAuthor(linkAuthor.getEffectiveName(), linkAuthor.getEffectiveAvatarUrl(), linkAuthor.getEffectiveAvatarUrl())
+			embedBuilder.setAuthor(linkAuthor.getEffectiveName(), linkAuthorAvatar, linkAuthorAvatar)
 					.setDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道
@@ -84,17 +85,17 @@ public class QuoteCommand implements ICommand
 			List<Message.Attachment> attachments = linkMessage.getAttachments();
 			if (attachments.size() != 0)
 				attachments.stream()
-						.filter(Message.Attachment::isImage)
+						.filter(CommonFunctions.isImage)
 						.findFirst()
 						.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
 			else
 				embedBuilder.setImage(null);
 
 			(Boolean.TRUE.equals(event.getOption("mention_author", CommonFunctions.getAsBoolean)) ? //是否提及訊息作者
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention").formatted(user.getEffectiveName(), linkAuthor.getAsMention()))
-							.addEmbeds(embedBuilder.build()) : //提及訊息作者
+					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention")
+										.formatted(user.getEffectiveName(), linkAuthor.getAsMention())).addEmbeds(embedBuilder.build()) : //提及訊息作者
 					event.replyEmbeds(embedBuilder.build())) //不提及訊息作者
 				.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message"))).queue();
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).queue()));
+		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).setEphemeral(true).queue()));
 	}
 }

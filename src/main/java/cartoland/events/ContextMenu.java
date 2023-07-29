@@ -1,12 +1,19 @@
 package cartoland.events;
 
+import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
+import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -21,6 +28,8 @@ public class ContextMenu extends ListenerAdapter
 	public static final String RAW_TEXT = "Raw Text";
 	public static final String REACTIONS = "Reactions";
 	public static final String CODE_BLOCK = "Code Block";
+	public static final String QUOTE = "Quote";
+	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
 	public void onMessageContextInteraction(MessageContextInteractionEvent event)
@@ -68,6 +77,34 @@ public class ContextMenu extends ListenerAdapter
 							message.reply("```\n" + rawContent.substring(1992, 1992 + 1992) + "\n```").mentionRepliedUser(false)
 								.queue(message1 -> message1.reply("```\n" + rawContent.substring(1992 + 1992) + "\n```").mentionRepliedUser(false).queue());
 					}));
+			}
+
+			case QUOTE ->
+			{
+				Message message = event.getTarget();
+				User linkAuthor = message.getAuthor(); //連結訊息的發送者
+				String linkAuthorName = linkAuthor.getEffectiveName();
+				String linkAuthorAvatar = linkAuthor.getEffectiveAvatarUrl();
+				MessageChannel channel = event.getChannel();
+
+				embedBuilder.setAuthor(linkAuthorName, linkAuthorAvatar, linkAuthorAvatar)
+						.setDescription(message.getContentRaw()) //訊息的內容
+						.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
+						.setFooter(channel != null ? channel.getName() : linkAuthorName, null); //訊息的發送頻道
+
+				//選擇連結訊息內的第一張圖片作為embed的圖片
+				//不用add field 沒必要那麼麻煩
+				List<Message.Attachment> attachments = message.getAttachments();
+				if (attachments.size() != 0)
+					attachments.stream()
+							.filter(CommonFunctions.isImage)
+							.findFirst()
+							.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
+				else
+					embedBuilder.setImage(null);
+				event.replyEmbeds(embedBuilder.build())
+					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message")))
+					.queue();
 			}
 		}
 

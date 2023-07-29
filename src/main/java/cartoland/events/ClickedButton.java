@@ -49,8 +49,9 @@ public class ClickedButton extends ListenerAdapter
 					return;
 				}
 
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.archived").formatted(member.getEffectiveName()))
-						.queue(interactionHook -> channel.getManager().setArchived(true).queue()); //在回呼函式內執行 才不會導致討論串被關了後才回覆
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.archived")
+									.formatted(member.getEffectiveName())).complete(); //complete 才不會導致討論串被關了後才回覆
+				channel.getManager().setArchived(true).queue();
 			}
 
 			case RENAME_THREAD ->

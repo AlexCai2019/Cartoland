@@ -57,11 +57,11 @@ public class BirthdayCommand implements ICommand
 				return;
 			}
 
-			TimerHandle.setBirthday(event.getUser().getIdLong(), month, date);
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.result")
 								.formatted(
 										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + month),
 										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + date))).queue();
+			TimerHandle.setBirthday(event.getUser().getIdLong(), month, date);
 		}
 
 		private boolean isWrongDate(int month, int date)

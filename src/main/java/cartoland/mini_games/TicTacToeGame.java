@@ -5,8 +5,6 @@ import cartoland.utilities.Algorithm;
 
 import java.util.Arrays;
 
-import static cartoland.mini_games.TicTacToeGame.*;
-
 /**
  * {@code TicTacToeGame} is the backend of the Tic-Tac-Toe game, it can process the entire game with all fields and
  * methods. This game start with an empty {@link #BOARD_SIDE} square board, the player and the bot take turns.
@@ -39,7 +37,6 @@ public class TicTacToeGame implements IMiniGame
 	int[] notPlaced = null; //board還是EMPTY的index們 之所以不用ArrayList 是為了省效能 注意要到第三輪才會開始追蹤空棋盤
 	int round = 1;
 
-	private final int difficulty;
 	private final DifficultyBot difficultyBot;
 
 	private static final int ROW_LENGTH = (BOARD_SIDE << 2) + 3; //3 * (BOARD_SIDE + 1) + BOARD_SIDE
@@ -60,12 +57,12 @@ public class TicTacToeGame implements IMiniGame
 		}
 		boardBuilder.append("\n```");
 
-		this.difficulty = difficulty;
 		difficultyBot = switch (difficulty)
 		{
-			case 1 -> new EasyBot(this);
-			case 2 -> new NormalBot(this);
-			default -> new HardBot(this); //case 3
+			case 1 -> new EasyBot();
+			case 2 -> new NormalBot();
+			case 3 -> new HardBot(); //case 3
+			default -> throw new IllegalArgumentException("How can you create this difficulty?");
 		};
 	}
 
@@ -109,7 +106,7 @@ public class TicTacToeGame implements IMiniGame
 
 	public boolean aiPlaced()
 	{
-		int index = difficultyBot.botMove();
+		int index = difficultyBot.botMove(); //機器人落子
 		int[] co = arrayOfRowAndColumn(index); // co[0] = row, co[1] = column
 		board[index] = CROSS;
 		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * co[0] + 2 + (co[1] << 2), CROSS);
@@ -122,9 +119,9 @@ public class TicTacToeGame implements IMiniGame
 		return boardBuilder.toString();
 	}
 
-	public int getDifficulty()
+	public int getReward()
 	{
-		return difficulty;
+		return difficultyBot.getReward();
 	}
 
 	void updateNotPlaced()
@@ -175,183 +172,192 @@ public class TicTacToeGame implements IMiniGame
 	{
 		return empty == 0; //沒地方可以走了
 	}
-}
-
-/**
- * @since 2.1
- * @author Alex Cai
- */
-abstract class DifficultyBot
-{
-	protected final TicTacToeGame game;
-
-	DifficultyBot(TicTacToeGame game)
-	{
-		this.game = game;
-	}
-
-	int botMove()
-	{
-		return switch (game.round)
-		{
-			case 1 -> round1(); //第一回合
-			case 2 -> round2(); //第二回合
-			default -> round3AndMore(); //第三回合和以上
-		};
-	}
 
 	/**
-	 * Based on the user's move on round 1. If the user put the piece at center, the bot put its one at upper-
-	 * left; otherwise, the bot put its piece at center of the board. Notice that <b>this method assumed that
-	 * {@link TicTacToeGame#BOARD_SIDE} is 3.</b>
+	 * The core of the AI that plays Tic-Tac-Toe.
 	 *
-	 * @return Bot's move.
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	protected abstract int round1();
-	protected abstract int round2();
-	protected abstract int round3AndMore();
-}
-
-/**
- * @since 2.1
- * @author Alex Cai
- */
-class EasyBot extends DifficultyBot
-{
-	EasyBot(TicTacToeGame game)
+	private abstract class DifficultyBot
 	{
-		super(game);
-	}
-
-	@Override
-	protected int round1()
-	{
-		return game.board[CENTER] == NOUGHT ? LEFT_CORNER : CENTER;
-	}
-
-	@Override
-	protected int round2()
-	{
-		return randomPlace();
-	}
-
-	@Override
-	protected int round3AndMore()
-	{
-		return randomPlace();
-	}
-
-	private int randomPlace()
-	{
-		game.updateNotPlaced(); //更新空棋盤清單
-		return Algorithm.randomElement(game.notPlaced); //隨機選一個地方放X
-	}
-}
-
-/**
- * @since 2.1
- * @author Alex Cai
- */
-class NormalBot extends EasyBot
-{
-	private static final int[][] tryAtLeftCorner = {{1, 2}, {3, 6},{4, 8}}; //第一步下在左上角後 第二步可以下的位置
-	private static final int[][] tryAtCenter = {{0, 8}, {1, 7}, {2, 6}, {3, 5}}; //第一步下在中間後 第二步可以下的位置
-
-	NormalBot(TicTacToeGame game)
-	{
-		super(game);
-	}
-
-	@Override
-	protected int round2()
-	{
-		Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
-
-		int first, second, third;
-		char f, s, t;
-		for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
+		private int botMove()
 		{
-			f = game.board[first = winLine[0]];
-			s = game.board[second = winLine[1]];
-			t = game.board[third = winLine[2]];
-			if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
-				return third;
-			if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
-				return second;
-			if (s + t == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
-				return first;
+			return switch (round)
+			{
+				case 1 -> round1(); //第一回合
+				case 2 -> round2(); //第二回合
+				default -> round3AndMore(); //第三回合和以上
+			};
 		}
 
-		//確認O沒有要連線後
+		protected abstract int getReward();
 
-		//找出和第一手鄰近 可連成一線 且都是空的兩格 隨機挑選一格落子
-		//因為這是第二回合 O只放了兩個 代表必定能找到一組空的
-		if (game.board[LEFT_CORNER] == CROSS) //第一手下在左上角
-		{
-			Algorithm.shuffle(tryAtLeftCorner);
-			for (int[] bothEmpty : tryAtLeftCorner)
-				if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
-					return bothEmpty[1]; //搶角落
-		}
-		else //如果不是下在左上角 那就肯定是下在中間了
-		{
-			Algorithm.shuffle(tryAtCenter);
-			for (int[] bothEmpty : tryAtLeftCorner)
-				if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
-					return Algorithm.chance(50) ? bothEmpty[0] : bothEmpty[1];
-		}
-
-		//如果以上都不通過
-		return super.round2(); //就隨機走
-	}
-}
-
-/**
- * @since 2.1
- * @author Alex Cai
- */
-class HardBot extends NormalBot
-{
-	HardBot(TicTacToeGame game)
-	{
-		super(game);
+		/**
+		 * Based on the user's move on round 1. If the user put the piece at center, the bot put its one at upper-
+		 * left; otherwise, the bot put its piece at center of the board. Notice that <b>this method assumed that
+		 * {@link TicTacToeGame#BOARD_SIDE} is 3.</b>
+		 *
+		 * @return Bot's move.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
+		protected abstract int round1();
+		protected abstract int round2();
+		protected abstract int round3AndMore();
 	}
 
-	@Override
-	protected int round3AndMore()
+	/**
+	 * Easy mode. Put the piece at left corner if the center is occupied or put it at center if not in the first round.
+	 * Put pieces randomly when round turns to second and more.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private class EasyBot extends DifficultyBot
 	{
-		int first, second, third;
-		char f, s, t;
-
-		for (int[] winLine: winningCombinations) //檢查X是否即將連線 如果是則執行
+		@Override
+		protected int getReward()
 		{
-			f = game.board[first = winLine[0]];
-			s = game.board[second = winLine[1]];
-			t = game.board[third = winLine[2]];
-			if (f + s == CROSS + CROSS && t == EMPTY) //[0]和[1]皆為X
-				return third;
-			if (f + t == CROSS + CROSS && s == EMPTY) //[0]和[2]皆為X
-				return second;
-			if (t + s == CROSS + CROSS && f == EMPTY) //[1]和[2]皆為X
-				return first;
+			return 5;
 		}
 
-		for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果是則阻止
+		@Override
+		protected int round1()
 		{
-			f = game.board[first = winLine[0]];
-			s = game.board[second = winLine[1]];
-			t = game.board[third = winLine[2]];
-			if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
-				return third;
-			if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
-				return second;
-			if (t + s == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
-				return first;
+			return board[CENTER] == NOUGHT ? LEFT_CORNER : CENTER;
 		}
 
-		//以上都不通過
-		return super.round3AndMore(); //就隨機走
+		@Override
+		protected int round2()
+		{
+			return randomPlace();
+		}
+
+		@Override
+		protected int round3AndMore()
+		{
+			return randomPlace();
+		}
+
+		private int randomPlace()
+		{
+			updateNotPlaced(); //更新空棋盤清單
+			return Algorithm.randomElement(notPlaced); //隨機選一個地方放X
+		}
+	}
+
+	/**
+	 * Normal mode. Inherited {@link EasyBot}, but will try to prevent human from win and find a
+	 * way of wining in the second round. Still put pieces randomly after the third round.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private class NormalBot extends EasyBot
+	{
+		private static final int[][] tryAtLeftCorner = {{1, 2}, {3, 6},{4, 8}}; //第一步下在左上角後 第二步可以下的位置
+		private static final int[][] tryAtCenter = {{0, 8}, {1, 7}, {2, 6}, {3, 5}}; //第一步下在中間後 第二步可以下的位置
+
+		@Override
+		protected int getReward()
+		{
+			return 50;
+		}
+
+		@Override
+		protected int round2()
+		{
+			Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
+
+			int first, second, third;
+			char f, s, t;
+			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
+			{
+				f = board[first = winLine[0]];
+				s = board[second = winLine[1]];
+				t = board[third = winLine[2]];
+				if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
+					return third;
+				if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
+					return second;
+				if (s + t == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
+					return first;
+			}
+
+			//確認O沒有要連線後
+
+			//找出和第一手鄰近 可連成一線 且都是空的兩格 隨機挑選一格落子
+			//因為這是第二回合 O只放了兩個 代表必定能找到一組空的
+			if (board[LEFT_CORNER] == CROSS) //第一手下在左上角
+			{
+				Algorithm.shuffle(tryAtLeftCorner);
+				for (int[] bothEmpty : tryAtLeftCorner)
+					if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
+						return bothEmpty[1]; //搶角落
+			}
+			else //如果不是下在左上角 那就肯定是下在中間了
+			{
+				Algorithm.shuffle(tryAtCenter);
+				for (int[] bothEmpty : tryAtLeftCorner)
+					if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
+						return Algorithm.chance(50) ? bothEmpty[0] : bothEmpty[1];
+			}
+
+			//如果以上都不通過
+			return super.round2(); //就隨機走
+		}
+	}
+
+	/**
+	 * Hard mode. Inherited {@link NormalBot}, but will try to prevent human from win and find a
+	 * way of wining in the second round. Still put pieces randomly after the third round.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private class HardBot extends NormalBot
+	{
+		@Override
+		protected int getReward()
+		{
+			return 100;
+		}
+
+		@Override
+		protected int round3AndMore()
+		{
+			int first, second, third;
+			char f, s, t;
+
+			for (int[] winLine: winningCombinations) //檢查X是否即將連線 如果是則執行
+			{
+				f = board[first = winLine[0]];
+				s = board[second = winLine[1]];
+				t = board[third = winLine[2]];
+				if (f + s == CROSS + CROSS && t == EMPTY) //[0]和[1]皆為X
+					return third;
+				if (f + t == CROSS + CROSS && s == EMPTY) //[0]和[2]皆為X
+					return second;
+				if (t + s == CROSS + CROSS && f == EMPTY) //[1]和[2]皆為X
+					return first;
+			}
+
+			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果是則阻止
+			{
+				f = board[first = winLine[0]];
+				s = board[second = winLine[1]];
+				t = board[third = winLine[2]];
+				if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
+					return third;
+				if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
+					return second;
+				if (t + s == NOUGHT + NOUGHT && f == EMPTY) //[1]和[2]皆為O
+					return first;
+			}
+
+			//以上都不通過
+			return super.round3AndMore(); //就隨機走
+		}
 	}
 }

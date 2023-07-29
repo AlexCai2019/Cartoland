@@ -1,10 +1,11 @@
 package cartoland.messages;
 
-import cartoland.utilities.IDs;
 import cartoland.utilities.ForumsHandle;
+import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -24,7 +25,12 @@ public class ForumMessage implements IMessage
 	{
 		if (!event.isFromGuild())
 			return false; //是私訊 私訊不應通過
-		Category category = event.getMessage().getCategory();
+
+		Channel channel = event.getChannel();
+		if (!channel.getType().isThread())
+			return false;
+
+		Category category = ((ThreadChannel) channel).getParentChannel().asStandardGuildChannel().getParentCategory();
 		//獲取類別失敗就不執行後面那個
 		return category != null && category.getIdLong() == IDs.FORUM_CATEGORY_ID;
 	}

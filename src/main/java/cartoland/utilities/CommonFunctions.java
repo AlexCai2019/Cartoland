@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Common lambda functions for use. Including method references in {@link OptionMapping},
@@ -20,6 +21,7 @@ public final class CommonFunctions
 	{
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
+
 	public static final Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
 	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
 	public static final Function<OptionMapping, Double> getAsDouble = OptionMapping::getAsDouble;
@@ -28,4 +30,5 @@ public final class CommonFunctions
 	public static final Function<OptionMapping, Member> getAsMember = OptionMapping::getAsMember;
 	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
 	public static final Function<Object, String> stringValue = String::valueOf;
+	public static final Predicate<Message.Attachment> isImage = Message.Attachment::isImage;
 }

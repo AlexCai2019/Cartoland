@@ -5,7 +5,9 @@ import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -50,6 +52,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"吃屎比較快。",
 		"你是怎麼樣？",
 		"在那叫什麼？",
+		"https://imgur.com/n1rEBO9", //在那叫什麼
 		"我知道我很帥，不用一直tag我",
 		"tag我該女裝負責吧。",
 		"沒梗的人才會整天tag機器人。",
@@ -91,7 +94,7 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	private final Set<Long> canTalkCategories = new HashSet<>(4);
 
-	private final Map<String, String> keywords = new HashMap<>(4);
+	private final Map<String, String[]> keywords = new HashMap<>(4);
 
 	public BotCanTalkChannelMessage()
 	{
@@ -100,10 +103,10 @@ public class BotCanTalkChannelMessage implements IMessage
 		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
 
-		keywords.put("早安", "早上好中國 現在我有 Bing Chilling");
-		keywords.put("午安", "午安你好，記得天下沒有白吃的午餐"); //後面那句由 brick-bk 新增
-		keywords.put("晚安", "那我也要睡啦");
-		keywords.put("安安", "安安你好幾歲住哪");
+		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯" });
+		keywords.put("午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }); //後面那句由 brick-bk 新增
+		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706" });
+		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好" });
 	}
 
 	@Override
@@ -111,8 +114,11 @@ public class BotCanTalkChannelMessage implements IMessage
 	{
 		if (!event.isFromGuild()) //是私訊
 			return true; //私訊可以說話
-		Category category = event.getMessage().getCategory();
-		//獲取類別失敗就不執行後面那個
+
+		Channel channel = event.getChannel();
+		Category category = (channel.getType().isThread()) ? //討論串無法被歸類在有類別的頻道
+				((ThreadChannel) channel).getParentChannel().asStandardGuildChannel().getParentCategory() //但是它的原始頻道算
+				: event.getMessage().getCategory(); //有類別就獲取類別 沒有就嘗試從訊息獲取
 		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
 	}
 
@@ -167,10 +173,10 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
 		{
-			String sendString = keywords.get(rawMessage); //尋找完全相同的字串
-			if (sendString != null) //如果找到了
+			String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
+			if (sendStrings != null) //如果找到了
 			{
-				channel.sendMessage(sendString).queue();
+				channel.sendMessage(Algorithm.randomElement(sendStrings)).queue();
 				return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
 			}
 		}

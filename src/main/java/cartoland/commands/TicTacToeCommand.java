@@ -79,7 +79,6 @@ public class TicTacToeCommand implements ICommand
 	 */
 	public static class PlaySubCommand implements ICommand
 	{
-		private static final int[] REWARDS = { 5, 50, 100 };
 		private static final byte PUNISH = 100;
 
 		private final CommandUsage commandCore;
@@ -135,7 +134,7 @@ public class TicTacToeCommand implements ICommand
 			//玩家下
 			if (ticTacToe.humanPlace(row, column)) //玩家贏
 			{
-				int reward = REWARDS[ticTacToe.getDifficulty() - 1]; //簡單從1開始
+				int reward = ticTacToe.getReward();
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win").formatted(reward) + ticTacToe.getBoard()).queue();
 				CommandBlocksHandle.getLotteryData(userID).addBlocks(reward);
 				games.remove(userID);
@@ -149,7 +148,7 @@ public class TicTacToeCommand implements ICommand
 				return;
 			}
 
-			String playerMove = JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + ticTacToe.getBoard();
+			String playerMove = JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + ticTacToe.getBoard(); //先獲得棋盤
 
 			//機器人下
 			if (ticTacToe.aiPlaced()) //機器人贏
@@ -182,7 +181,7 @@ public class TicTacToeCommand implements ICommand
 			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
 
-			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe play
+			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe board
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
 				return;

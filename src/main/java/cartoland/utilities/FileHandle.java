@@ -5,8 +5,6 @@ import cartoland.Cartoland;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,23 +24,7 @@ public final class FileHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static LocalDate lastDateHasLog; //上一次有寫log的日期
 	private static FileWriter logger;
-
-	static
-	{
-		lastDateHasLog = LocalDate.now();
-		try
-		{
-			//一定要事先備好logs資料夾
-			logger = new FileWriter("logs/" + lastDateHasLog, true);
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)
@@ -125,28 +107,24 @@ public final class FileHandle
 		return object;
 	}
 
+	public static void changeLogDate()
+	{
+		try
+		{
+			closeLog0();
+			startLog0();
+		}
+		catch (IOException exception)
+		{
+			exception.printStackTrace();
+			Cartoland.getJDA().shutdownNow();
+		}
+	}
+
 	public static void log(String output)
 	{
-		LocalDate today = LocalDate.now(); //今天
-		if (!today.isEqual(lastDateHasLog)) //如果今天跟上次有寫log的日期不同
-		{
-			lastDateHasLog = today;
-			try
-			{
-				closeLog0();
-				//一定要事先備好logs資料夾
-				logger = new FileWriter("logs/" + today, true);
-			}
-			catch (IOException exception)
-			{
-				exception.printStackTrace();
-				Cartoland.getJDA().shutdownNow();
-			}
-		}
-
-		LocalTime now = LocalTime.now(); //現在
 		//時間 內容
-		String logString = String.format("%02d:%02d:%02d\t%s\n", now.getHour(), now.getMinute(), now.getSecond(), output);
+		String logString = TimerHandle.getTimeString() + '\t' + output + '\n';
 		try
 		{
 			logger.write(logString);
@@ -163,6 +141,25 @@ public final class FileHandle
 		log(Arrays.stream(exception.getStackTrace())
 					.map(CommonFunctions.stringValue)
 					.collect(Collectors.joining("\n")));
+	}
+
+	private static void startLog0() throws IOException
+	{
+		//一定要事先備好logs資料夾
+		logger = new FileWriter("logs/" + TimerHandle.getDateString(), true);
+	}
+
+	public static void startLog()
+	{
+		try
+		{
+			startLog0();
+		}
+		catch (IOException exception)
+		{
+			exception.printStackTrace();
+			Cartoland.getJDA().shutdownNow();
+		}
 	}
 
 	private static void closeLog0() throws IOException

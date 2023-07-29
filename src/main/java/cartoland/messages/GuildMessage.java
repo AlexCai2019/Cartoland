@@ -4,7 +4,9 @@ import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -21,9 +23,6 @@ import java.util.Set;
  */
 public class GuildMessage implements IMessage
 {
-	private final Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
-	private final Emoji wow = Emoji.fromCustom("wow", 893499112228519996L, false);
-	private final Emoji worship_a = Emoji.fromCustom("worship_a", 935135593527128104L, true);
 	private final Set<Long> commandBlockCategories = new HashSet<>(5);
 
 	public GuildMessage()
@@ -66,20 +65,21 @@ public class GuildMessage implements IMessage
 		String rawMessage = message.getContentRaw(); //獲取訊息字串
 
 		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
-			message.addReaction(learned).queue();
+			message.addReaction(Emoji.fromCustom("learned", 892406442622083143L, false)).queue();
 		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
-			message.addReaction(wow).queue();
+			message.addReaction(Emoji.fromCustom("wow", 893499112228519996L, false)).queue();
 		if (rawMessage.contains("貓們"))
 		{
-			message.addReaction(learned).queue();
-			message.addReaction(worship_a).queue();
+			message.addReaction(Emoji.fromCustom("learned", 892406442622083143L, false)).queue();
+			message.addReaction(Emoji.fromCustom("worship_a", 935135593527128104L, true)).queue();
 		}
 
-		Category category = message.getCategory();
-		if (category == null) //獲取類別失敗
-			return; //不用執行
-		//在一般、技術討論區或公眾區域類別 且不是在機器人專區
-		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && commandBlockCategories.contains(category.getIdLong()))
+		Channel channel = event.getChannel();
+		Category category = channel.getType().isThread() ? //討論串無法被歸類在有類別的頻道
+				((ThreadChannel) channel).getParentChannel().asStandardGuildChannel().getParentCategory() //但是它的原始頻道算
+				: event.getMessage().getCategory(); //嘗試從訊息獲取
+		//在一般、技術討論區、創作展示或公眾區域類別 且不是在機器人專區
+		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && category != null && commandBlockCategories.contains(category.getIdLong()))
 			CommandBlocksHandle.getLotteryData(event.getAuthor().getIdLong())
 					.addBlocks(rawMessage.length() + 1 + message.getAttachments().size() + message.getStickers().size()); //說話加等級 +1當作加上\0 附加一個檔案或貼圖算1個
 	}

@@ -160,6 +160,17 @@ public final class TimerHandle
 		executorService.shutdown();
 	}
 
+	static String getTimeString()
+	{
+		LocalTime now = LocalTime.now(); //現在
+		return String.format("%02d:%02d:%02d", now.getHour(), now.getMinute(), now.getSecond());
+	}
+
+	public static String getDateString()
+	{
+		return LocalDate.now().toString();
+	}
+
 	public static List<Long> todayBirthdayMembers()
 	{
 		LocalDate today = LocalDate.now();
@@ -171,8 +182,8 @@ public final class TimerHandle
 		Short oldBirthday = birthdayMap.get(userID); //獲取舊生日
 		if (oldBirthday != null) //如果確實設定過舊生日
 			birthdayArray[oldBirthday].remove(userID); //移除設定
-		short dateOfYear = getDateOfYear(month, date);
-		birthdayArray[dateOfYear- 1].add(userID); //將該使用者增加到那天生日的清單中
+		short dateOfYear = getDateOfYear(month, date); //一年中的第幾天 1月1號為1 12月31號為366
+		birthdayArray[dateOfYear - 1].add(userID); //將該使用者增加到那天生日的清單中
 		birthdayMap.put(userID, dateOfYear); //設定使用者的生日
 	}
 

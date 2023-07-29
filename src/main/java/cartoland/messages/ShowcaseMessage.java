@@ -2,12 +2,12 @@ package cartoland.messages;
 
 import cartoland.events.ClickedButton;
 import cartoland.utilities.IDs;
+import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-
-import java.time.LocalDate;
 
 /**
  * {@code ShowcaseMessage} is a listener that triggers when a user types anything in text channels (excluding thread
@@ -28,7 +28,7 @@ public class ShowcaseMessage implements IMessage
 	{
 		if (!event.isFromGuild() || event.isFromThread())
 			return false; //是私訊或在討論串內
-		Category category = event.getMessage().getCategory();
+		Category category = event.getMessage().getCategory(); //嘗試獲取類別
 		return category != null && category.getIdLong() == IDs.SHOWCASE_CATEGORY_ID;
 	}
 
@@ -36,7 +36,7 @@ public class ShowcaseMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		String name = event.getAuthor().getEffectiveName();
-		event.getMessage().createThreadChannel(name + '(' + LocalDate.now() + ')').queue(threadChannel ->
+		event.getMessage().createThreadChannel(name + '(' + TimerHandle.getDateString() + ')').queue(threadChannel ->
 			threadChannel.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention())
 					.addActionRow(archiveButton, renameButton).queue(message -> message.pin().queue()));
 	}

@@ -3,7 +3,6 @@ package cartoland.utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,11 +86,10 @@ public final class JsonHandle
 
 	private static List<String> buildStringListFromJsonArray(JSONArray jsonArray)
 	{
-		int length = jsonArray.length();
-		List<String> builtList = new ArrayList<>(length);
-		for (int i = 0; i < length; i++)
-			builtList.add(jsonArray.getString(i));
-		return builtList;
+		return jsonArray.toList()
+				.stream()
+				.map(CommonFunctions.stringValue)
+				.toList();
 	}
 
 	public static void reloadLanguageFiles()

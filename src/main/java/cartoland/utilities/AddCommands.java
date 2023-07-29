@@ -1,6 +1,8 @@
 package cartoland.utilities;
 
+import cartoland.commands.ICommand;
 import cartoland.commands.ToolCommand;
+import cartoland.events.ContextMenu;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -121,7 +123,7 @@ public final class AddCommands
 		Lang.lang,
 		Lang.language,
 
-		Commands.slash(QUOTE, "Display content from a message link")
+		Commands.slash(ICommand.QUOTE, "Display content from a message link")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
 				.setDescriptionLocalization(CHINESE_CHINA, "显示一个信息链接的内容")
 				.addOptions(
@@ -459,7 +461,11 @@ public final class AddCommands
 
 		Commands.message(CODE_BLOCK)
 				.setNameLocalization(CHINESE_TAIWAN, "程式碼區塊")
-				.setNameLocalization(CHINESE_CHINA, "代码区块")
+				.setNameLocalization(CHINESE_CHINA, "代码区块"),
+
+		Commands.message(ContextMenu.QUOTE)
+				.setNameLocalization(CHINESE_TAIWAN, "引用")
+				.setNameLocalization(CHINESE_CHINA, "引用")
 	};
 
 	/*

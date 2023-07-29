@@ -42,13 +42,16 @@ public class BotOnlineOffline extends ListenerAdapter
 
 		TimerHandle.registerTimerEvent((byte) 0, () -> //半夜12點
 		{
+			FileHandle.changeLogDate(); //更換log的日期
+
+			//這以下是和生日有關的
 			List<Long> birthdayMembersID = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
 			if (birthdayMembersID.size() > 100) //一次只能100人
 				birthdayMembersID = birthdayMembersID.subList(0, 100); //超過100人 只能取前100個
 			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
-			if (cartoland == null)
+			if (cartoland == null) //找不到創聯
 				return;
 			TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null)
@@ -100,6 +103,7 @@ public class BotOnlineOffline extends ListenerAdapter
 			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
 		String logString = "online";
 		System.out.println(logString);
+		FileHandle.startLog();
 		FileHandle.log(logString);
 	}
 

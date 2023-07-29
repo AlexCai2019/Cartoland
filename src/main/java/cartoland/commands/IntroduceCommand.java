@@ -132,7 +132,6 @@ public class IntroduceCommand implements ICommand
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();
 				IntroduceHandle.updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
 			}));
-
 		}
 	}
 }

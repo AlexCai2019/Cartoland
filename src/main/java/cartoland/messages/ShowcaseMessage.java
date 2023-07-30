@@ -3,7 +3,6 @@ package cartoland.messages;
 import cartoland.events.ClickedButton;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
-import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -26,8 +25,8 @@ public class ShowcaseMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		if (!event.isFromGuild() || event.isFromThread())
-			return false; //是私訊或在討論串內
+		if (!event.isFromGuild() || event.isFromThread()) //是私訊或在討論串內
+			return false; //不應通過
 		Category category = event.getMessage().getCategory(); //嘗試獲取類別
 		return category != null && category.getIdLong() == IDs.SHOWCASE_CATEGORY_ID;
 	}

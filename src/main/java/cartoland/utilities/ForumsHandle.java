@@ -93,7 +93,7 @@ public final class ForumsHandle
 
 	public static void startStuff(ThreadChannel forumPost)
 	{
-		long parentChannelID = forumPost.getParentChannel().getIdLong(); //貼文所在的論壇頻道
+		long parentChannelID = forumPost.getParentChannel().getIdLong(); //貼文所在的論壇頻道ID
 		if (parentChannelID == IDs.MAP_DISCUSS_CHANNEL_ID) //是地圖專版
 			forumPost.retrieveStartMessage().queue(message -> message.pin().queue()); //釘選第一則訊息
 		else if (parentChannelID == IDs.QUESTIONS_CHANNEL_ID) //是問題論壇
@@ -104,13 +104,15 @@ public final class ForumsHandle
 	public static void createForumPost(ThreadChannel forumPost)
 	{
 		if (forumPost.getLatestMessageIdLong() != 0) //有初始訊息
-			startStuff(forumPost);//傳送發問指南
+			startStuff(forumPost);//釘選第一則訊息 或是傳送發問指南
 
-		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
-		if (questionsChannel.getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不是問題論壇
+		ForumChannel parentChannel = forumPost.getParentChannel().asForumChannel(); //貼文所在的論壇頻道
+		if (parentChannel.getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不是問題論壇
 			return;
-		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
-		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
+
+		//這以下是和發問專區(問題論壇)有關的
+		ForumTag resolvedForumTag = parentChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
+		ForumTag unresolvedForumTag = parentChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
 
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
 		tags.remove(resolvedForumTag); //避免使用者自己加resolved
@@ -120,6 +122,7 @@ public final class ForumsHandle
 			return;
 		}
 
+		//如果使用者沒有自己加unresolved
 		if (tags.size() >= MAX_TAG) //不可以超過MAX_TAG個tag
 			tags.remove(MAX_TAG - 1); //移除最後一個 空出位置給unresolved
 		tags.add(unresolvedForumTag);

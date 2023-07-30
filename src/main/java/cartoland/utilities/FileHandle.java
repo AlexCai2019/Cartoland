@@ -24,7 +24,7 @@ public final class FileHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static FileWriter logger;
+	private static FileWriter logger = null;
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)
@@ -127,6 +127,8 @@ public final class FileHandle
 		String logString = TimerHandle.getTimeString() + '\t' + output + '\n';
 		try
 		{
+			if (logger == null)
+				startLog0();
 			logger.write(logString);
 		}
 		catch (IOException exception)
@@ -164,7 +166,8 @@ public final class FileHandle
 
 	private static void closeLog0() throws IOException
 	{
-		logger.close();
+		if (logger != null)
+			logger.close();
 	}
 
 	public static void closeLog()

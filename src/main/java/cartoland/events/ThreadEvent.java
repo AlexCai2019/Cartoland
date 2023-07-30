@@ -32,9 +32,8 @@ public class ThreadEvent extends ListenerAdapter
 		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
 		threadChannel.join().queue(); //加入討論串
 
-		long parentID = threadChannel.getParentChannel().getIdLong();
 		//關於地圖專版和問題論壇
-		if (parentID == IDs.QUESTIONS_CHANNEL_ID || parentID == IDs.MAP_DISCUSS_CHANNEL_ID)
+		if (threadChannel.getParentChannel().asStandardGuildChannel().getParentCategoryIdLong() == IDs.FORUM_CATEGORY_ID)
 			ForumsHandle.createForumPost(threadChannel);
 	}
 
@@ -60,7 +59,8 @@ public class ThreadEvent extends ListenerAdapter
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
 		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag
 		tags.remove(resolvedForumTag); //移除resolved
-		tags.add(unresolvedForumTag); //新增unresolved
+		if (!tags.contains(unresolvedForumTag))
+			tags.add(unresolvedForumTag); //新增unresolved
 		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
 	}
 }

@@ -338,7 +338,46 @@ public final class AddCommands
 																.setNameLocalization(CHINESE_CHINA, "甲子"),
 														new Command.Choice("Century", "century")
 																.setNameLocalization(CHINESE_TAIWAN, "世紀")
-																.setNameLocalization(CHINESE_CHINA, "世纪")))),
+																.setNameLocalization(CHINESE_CHINA, "世纪"))),
+						new SubcommandData("slow_mode", "Set the slow mode of a channel")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
+								.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")
+								.addOptions(
+										new OptionData(OptionType.CHANNEL, "channel", "The channel that you want to modify", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "頻道")
+												.setNameLocalization(CHINESE_CHINA, "频道")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "要修改的頻道")
+												.setDescriptionLocalization(CHINESE_CHINA, "要修改的频道"),
+										new OptionData(OptionType.NUMBER, "time", "The time that you want to delay", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "時間")
+												.setNameLocalization(CHINESE_CHINA, "时间")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "要延遲的時間")
+												.setDescriptionLocalization(CHINESE_CHINA, "要延迟的时间"),
+										new OptionData(OptionType.STRING, "unit" ,"The time unit of delay", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "單位")
+												.setNameLocalization(CHINESE_CHINA, "单位")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+												.setDescriptionLocalization(CHINESE_CHINA, "时间的单位")
+												.addChoices(
+														new Command.Choice("Second", "second")
+																.setNameLocalization(CHINESE_TAIWAN, "秒")
+																.setNameLocalization(CHINESE_CHINA, "秒"),
+														new Command.Choice("Minute", "minute")
+																.setNameLocalization(CHINESE_TAIWAN, "分鐘")
+																.setNameLocalization(CHINESE_CHINA, "分钟"),
+														new Command.Choice("Hour", "hour")
+																.setNameLocalization(CHINESE_TAIWAN, "小時")
+																.setNameLocalization(CHINESE_CHINA, "小时"),
+														new Command.Choice("Double Hour", "double_hour")
+																.setNameLocalization(CHINESE_TAIWAN, "時辰")
+																.setNameLocalization(CHINESE_CHINA, "时辰"),
+														new Command.Choice("Day", "day")
+																.setNameLocalization(CHINESE_TAIWAN, "天")
+																.setNameLocalization(CHINESE_CHINA, "天"),
+														new Command.Choice("Week", "week")
+																.setNameLocalization(CHINESE_TAIWAN, "星期")
+																.setNameLocalization(CHINESE_CHINA, "星期")))
+								),
 
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")

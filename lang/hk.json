@@ -274,7 +274,7 @@
 	"lottery.ranking.my_rank": "You are rank \u001B[36m#%d\u001B[0m, with \u001B[36m%,d\u001B[0m command blocks.",
 	"lottery.daily.not_yet": "You can't claim your daily %d command blocks yet, there are still %02d hours %02d minutes and %02d seconds left.",
 	"lottery.daily.claimed": "You claimed %d command blocks for daily reward!",
-	"lottery.daily.now_have": "You now have %d command blocks.",
+	"lottery.daily.now_have": "You now have %,d command blocks.",
 	"lottery.daily.streak": "Current streak: %d days.",
 	"lottery.daily.weekly": "You have a streak of %d weeks, ",
 	"lottery.daily.monthly": "You have a streak of %d months, ",

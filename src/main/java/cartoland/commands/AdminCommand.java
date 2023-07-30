@@ -42,6 +42,8 @@ public class AdminCommand implements ICommand
 	{
 		subCommands.put("mute", new MuteSubCommand());
 		subCommands.put("temp_ban", new TempBanSubCommand());
+		//TODO: complete /admin slow_mode
+		subCommands.put("slow_mode", event -> event.reply("Under construction...").queue());
 	}
 
 	@Override

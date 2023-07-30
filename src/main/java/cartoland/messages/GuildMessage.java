@@ -4,9 +4,7 @@ import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -74,9 +72,12 @@ public class GuildMessage implements IMessage
 			message.addReaction(Emoji.fromCustom("worship_a", 935135593527128104L, true)).queue();
 		}
 
-		Channel channel = event.getChannel();
-		Category category = channel.getType().isThread() ? //討論串無法被歸類在有類別的頻道
-				((ThreadChannel) channel).getParentChannel().asStandardGuildChannel().getParentCategory() //但是它的原始頻道算
+		Category category = event.getChannelType().isThread() ? //討論串無法被歸類在有類別的頻道 但是它的原始頻道算
+				event.getChannel()
+					.asThreadChannel()
+					.getParentChannel()
+					.asStandardGuildChannel()
+					.getParentCategory()
 				: event.getMessage().getCategory(); //嘗試從訊息獲取
 		//在一般、技術討論區、創作展示或公眾區域類別 且不是在機器人專區
 		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && category != null && commandBlockCategories.contains(category.getIdLong()))

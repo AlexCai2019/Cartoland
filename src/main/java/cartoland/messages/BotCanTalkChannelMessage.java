@@ -5,9 +5,8 @@ import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -92,7 +91,7 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
-	private final Set<Long> canTalkCategories = new HashSet<>(4);
+	private final Set<Long> canTalkCategories = new HashSet<>();
 
 	private final Map<String, String[]> keywords = new HashMap<>(4);
 
@@ -105,20 +104,24 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯" });
 		keywords.put("午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }); //後面那句由 brick-bk 新增
-		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706" });
-		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好" });
+		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/goodnight-gif-8996096" });
+		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好","https://static.wikia.nocookie.net/theamazingworldofgumball/images/1/10/Season_3_Anais.png/" });
 	}
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		if (!event.isFromGuild()) //是私訊
+		ChannelType channelType = event.getChannelType();
+		if (!channelType.isGuild()) //是私訊
 			return true; //私訊可以說話
 
-		Channel channel = event.getChannel();
-		Category category = (channel.getType().isThread()) ? //討論串無法被歸類在有類別的頻道
-				((ThreadChannel) channel).getParentChannel().asStandardGuildChannel().getParentCategory() //但是它的原始頻道算
-				: event.getMessage().getCategory(); //有類別就獲取類別 沒有就嘗試從訊息獲取
+		Category category = channelType.isThread() ? //討論串無法被歸類在有類別的頻道 但是它的原始頻道算
+				event.getChannel()
+					.asThreadChannel()
+					.getParentChannel()
+					.asStandardGuildChannel()
+					.getParentCategory()
+				: event.getMessage().getCategory(); //嘗試從訊息獲取類別
 		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
 	}
 

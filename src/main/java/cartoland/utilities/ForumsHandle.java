@@ -37,7 +37,7 @@ public final class ForumsHandle
 	private static final String resolvedFormat = resolved.getFormatted();
 	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
 	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
-	private static final int MAX_TAG = 5;
+	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;
 	private static final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
@@ -114,7 +114,7 @@ public final class ForumsHandle
 		ForumTag resolvedForumTag = parentChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = parentChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
 
-		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
+		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags());
 		tags.remove(resolvedForumTag); //避免使用者自己加resolved
 		if (tags.contains(unresolvedForumTag)) //如果使用者有加unresolved
 		{
@@ -123,15 +123,16 @@ public final class ForumsHandle
 		}
 
 		//如果使用者沒有自己加unresolved
-		if (tags.size() >= MAX_TAG) //不可以超過MAX_TAG個tag
-			tags.remove(MAX_TAG - 1); //移除最後一個 空出位置給unresolved
-		tags.add(unresolvedForumTag);
-		forumPost.getManager().setAppliedTags(tags).queue();
+		tags.add(unresolvedForumTag); //直接加上去 反正前面有檢測過了 況且這是set 不會有重複的情況
+		forumPost.getManager()
+				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : new ArrayList<>(tags).subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
+				.queue(); //貼文狀態為未解決
 	}
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted") //IntelliJ IDEA 閉嘴
 	public static boolean typedResolved(Object withReaction)
 	{
+		//TODO: 升級到Java 21後 用Pattern matching for switch取代
 		if (withReaction instanceof Message message)
 			return message.getContentRaw().equals(resolvedFormat);
 		else if (withReaction instanceof MessageReaction reaction)

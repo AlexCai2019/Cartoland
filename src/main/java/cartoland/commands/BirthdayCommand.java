@@ -5,6 +5,14 @@ import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * {@code BirthdayCommand} is an execution when a user uses /birthday command. This class implements {@link ICommand}
+ * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
+ * handle sub commands, but call other classes to deal with it.
+ *
+ * @since 2.1
+ * @author Alex Cai
+ */
 public class BirthdayCommand implements ICommand
 {
 	private final ICommand setSubCommand = new SetSubCommand();
@@ -21,6 +29,13 @@ public class BirthdayCommand implements ICommand
 		("set".equals(event.getSubcommandName()) ? setSubCommand : deleteSubCommand).commandProcess(event);
 	}
 
+	/**
+	 * {@code SetSubCommand} is a class that handles one of the sub commands of {@code /birthday} command, which is
+	 * {@code /birthday set}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	private static class SetSubCommand implements ICommand
 	{
 		@Override

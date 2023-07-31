@@ -11,7 +11,8 @@ import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@code ThreadEvent} is a listener that triggers when a user create a thread or a thread archived. For now, this only
@@ -44,23 +45,24 @@ public class ThreadEvent extends ListenerAdapter
 			return; //不用執行
 
 		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
-			return;
+			return; //不用執行
 
 		ThreadChannel forumPost = event.getChannel().asThreadChannel();
 		if (forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不在問題論壇
-			return;
+			return; //不用執行
 
 		Guild cartoland = event.getGuild();
-		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
-			return;
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不在創聯
+			return; //不用執行
 
 		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
-		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag
+		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
 		tags.remove(resolvedForumTag); //移除resolved
-		if (!tags.contains(unresolvedForumTag))
-			tags.add(unresolvedForumTag); //新增unresolved
-		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
+		tags.add(unresolvedForumTag); //新增unresolved 因為是set所以不用擔心重複
+		forumPost.getManager()
+				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : new ArrayList<>(tags).subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
+				.queue(); //貼文狀態為未解決
 	}
 }

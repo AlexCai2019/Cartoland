@@ -61,23 +61,23 @@ public class NewMember extends ListenerAdapter
 	{
 		User user = event.getUser();
 		long userID = user.getIdLong();
-		if (allMembers.contains(userID))
+		if (allMembers.contains(userID)) //群內已經有這個人了
 			return;
 
 		Guild cartoland = event.getGuild();
-		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不是在創聯
 			return;
 
 		Role memberRole = cartoland.getRoleById(IDs.MEMBER_ROLE_ID);
-		if (memberRole == null)
+		if (memberRole == null) //找不到會員身分組
 			return;
-		if (!event.getRoles().contains(memberRole))
+		if (!event.getRoles().contains(memberRole)) //不是因為會員身分組
 			return;
 
 		allMembers.add(userID);
 
 		TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID);
-		if (lobbyChannel == null)
+		if (lobbyChannel == null) //找不到大廳頻道
 			return;
 		String mentionUser = user.getAsMention();
 		String serverName = cartoland.getName();

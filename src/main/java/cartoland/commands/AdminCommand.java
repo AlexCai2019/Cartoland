@@ -18,6 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ * {@code AdminCommand} is an execution when a moderator uses /admin command. This class implements {@link ICommand}
+ * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
+ * handle sub commands, but call other classes to deal with it.
+ *
  * @since 2.1
  * @author Alex Cai
  */
@@ -42,8 +46,7 @@ public class AdminCommand implements ICommand
 	{
 		subCommands.put("mute", new MuteSubCommand());
 		subCommands.put("temp_ban", new TempBanSubCommand());
-		//TODO: complete /admin slow_mode
-		subCommands.put("slow_mode", event -> event.reply("Under construction...").queue());
+		subCommands.put("slow_mode", new SlowModeSubCommand());
 	}
 
 	@Override
@@ -73,6 +76,9 @@ public class AdminCommand implements ICommand
 	}
 
 	/**
+	 * {@code MuteSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code /admin mute}.
+	 *
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
@@ -167,6 +173,9 @@ public class AdminCommand implements ICommand
 	}
 
 	/**
+	 * {@code TempBanSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code /admin temp_ban}.
+	 *
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
@@ -267,6 +276,23 @@ public class AdminCommand implements ICommand
 			banData[BANNED_SERVER] = guild.getIdLong();
 			tempBanSet.add(banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
+		}
+	}
+
+	/**
+	 * {@code SlowModeSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code /admin slow_mode}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private static class SlowModeSubCommand implements ICommand
+	{
+		@Override
+		public void commandProcess(SlashCommandInteractionEvent event)
+		{
+			//TODO: complete /admin slow_mode
+			event.reply("Under construction...").queue();
 		}
 	}
 }

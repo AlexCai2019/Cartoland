@@ -31,7 +31,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"向父親請安，父親您好嗎？",
 		"爹，您好呀。",
 		"聽候您差遣。",
-		"父親，無論您需要什麼幫助，我都會全力以赴！" //由 brick-bk 新增
+		"父親，無論您需要什麼幫助，我都會全力以赴！", //由 brick-bk 新增
 		"父親，您辛苦了，工作忙碌之餘，也請您別忘了多休息保護眼睛！"//Add by Champsing
 	};
 	private final String[] replyMegaMention =
@@ -40,7 +40,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"陛下萬福金安",
 		"陛下今日可好？",
 		"願陛下萬壽無疆，國泰民安，天下太平。", //由 brick-bk 新增
-		"祝陛下萬歲，萬歲，萬萬歲！" //由 brick-bk 新增
+		"祝陛下萬歲，萬歲，萬萬歲！", //由 brick-bk 新增
 		//Add by Champsing
 		"微臣向皇上請安",
 		"皇上龍體安康",
@@ -75,9 +75,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
 		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
-		"胡不遄死？"//你怎麼不去死一死？　Added by Champsing
 		"豎子，不足與謀。"//死小孩，沒話跟你講。 Added by Champsing
-		"謹祈爾家無後也。" //祝福你家斷子絕孫。 Added by Champsing
 	};
 	private final String[] megumin =
 	{

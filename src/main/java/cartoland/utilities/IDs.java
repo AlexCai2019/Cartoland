@@ -38,3 +38,25 @@ public final class IDs
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
 }
+
+/**
+ * Language constants. Can not be instantiated or inherited.
+ *
+ * @since 1.0
+ * @author Alex Cai
+ */
+final class Languages
+{
+	private Languages()
+	{
+		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
+	}
+
+	public static final String ENGLISH = "en";
+	public static final String TW_MANDARIN = "tw";
+	public static final String TAIWANESE = "ta";
+	public static final String CANTONESE = "hk";
+	public static final String CHINESE = "cn";
+	public static final String ESPANOL = "es";
+	public static final String JAPANESE = "jp";
+}

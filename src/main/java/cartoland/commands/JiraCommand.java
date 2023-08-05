@@ -46,7 +46,7 @@ public class JiraCommand implements ICommand
 			return;
 		}
 
-		String bugID; //MC-87984
+		String bugID; //將會變成像"MC-87984"那樣的bug ID
 		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984
 			bugID = link.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 		else if (bugIDRegex.matcher(link).matches()) //MC-87984
@@ -90,7 +90,7 @@ public class JiraCommand implements ICommand
 		bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
 		bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
 		bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
-		hook.sendMessageEmbeds(bugEmbed.build()).addActionRow(Button.link(link, "Jira")).queue();
+		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
 
 	private void bugEmbedAddField(String fieldName, Element fieldValue)

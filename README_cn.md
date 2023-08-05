@@ -5,7 +5,7 @@
 # Cartoland Bot
 #### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / [粵語漢字](https://github.com/AlexCai2019/Cartoland/blob/master/README_hk.md) / 简体中文
 
-<img src="https://discord.com/api/guilds/886936474723950603/widget.png">
+![在线成员](https://discord.com/api/guilds/886936474723950603/widget.png)
 
 ## 简介
 属于名为创世联邦的Discord服务器的Cartoland Bot的源代码。通过此连结加入创世联邦：https://discord.gg/UMYxwHyRNE

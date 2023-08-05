@@ -1,10 +1,7 @@
 package cartoland.commands;
 
 import cartoland.Cartoland;
-import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.IDs;
-import cartoland.utilities.IntroduceHandle;
-import cartoland.utilities.JsonHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -29,10 +26,17 @@ import java.util.stream.Collectors;
  */
 public class IntroduceCommand implements ICommand
 {
+	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";
+
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+
 	private final Map<String, ICommand> subCommands = new HashMap<>(3);
 
 	public IntroduceCommand()
 	{
+		FileHandle.registerSerialize(INTRODUCTION_FILE_NAME, introduction);
+
 		subCommands.put("user", event ->
 		{
 			User user = event.getUser();
@@ -40,7 +44,7 @@ public class IntroduceCommand implements ICommand
 			if (target == null) //沒有填 預設是自己
 				target = user;
 
-			String content = IntroduceHandle.getIntroduction(target.getIdLong());
+			String content = introduction.get(target.getIdLong());
 			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
 		});
 		subCommands.put("update", new UpdateSubCommand());
@@ -48,8 +52,22 @@ public class IntroduceCommand implements ICommand
 		{
 			long userID = event.getUser().getIdLong();
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
-			IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+			introduction.remove(userID); //刪除自我介紹
 		});
+	}
+
+	/**
+	 * Update the user introduction. Whenever user typed anything in the elf-intro channel, the message will
+	 * be store into {@link #introduction}.
+	 *
+	 * @param userID The ID of the user that are going to update his/her introduction.
+	 * @param content The content of the introduction that the user want to replace the old one.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	public static void updateIntroduction(long userID, String content)
+	{
+		introduction.put(userID, content);
 	}
 
 	/**
@@ -87,14 +105,14 @@ public class IntroduceCommand implements ICommand
 			if (content == null)
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
-				IntroduceHandle.deleteIntroduction(userID); //刪除自我介紹
+				introduction.remove(userID); //刪除自我介紹
 				return;
 			}
 
 			if (!linkRegex.matcher(content).matches()) //如果內容不是創聯群組連結
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
-				IntroduceHandle.updateIntroduction(userID, content);
+				updateIntroduction(userID, content);
 				return;
 			}
 
@@ -126,11 +144,11 @@ public class IntroduceCommand implements ICommand
 				List<Message.Attachment> attachments = linkMessage.getAttachments(); //副件
 				if (!attachments.isEmpty())
 					rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-				IntroduceHandle.updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage); //更新介紹
+				updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage); //更新介紹
 			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();
-				IntroduceHandle.updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
+				updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
 			}));
 		}
 	}

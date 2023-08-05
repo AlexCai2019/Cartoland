@@ -90,9 +90,4 @@ public final class Algorithm
 	{
 		return array[random.nextInt(array.length)];
 	}
-
-	public static long randomElement(long[] array)
-	{
-		return array[random.nextInt(array.length)];
-	}
 }

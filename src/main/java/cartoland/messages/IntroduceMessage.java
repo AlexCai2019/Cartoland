@@ -1,8 +1,8 @@
 package cartoland.messages;
 
+import cartoland.commands.IntroduceCommand;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDs;
-import cartoland.utilities.IntroduceHandle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -32,6 +32,6 @@ public class IntroduceMessage implements IMessage
 		List<Message.Attachment> attachments = message.getAttachments();
 		if (!attachments.isEmpty())
 			introduction += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-		IntroduceHandle.updateIntroduction(message.getAuthor().getIdLong(), introduction); //將自介頻道內的訊息設為/introduce的內容
+		IntroduceCommand.updateIntroduction(message.getAuthor().getIdLong(), introduction); //將自介頻道內的訊息設為/introduce的內容
 	}
 }

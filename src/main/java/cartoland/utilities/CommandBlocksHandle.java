@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Role;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
@@ -32,12 +33,36 @@ public final class CommandBlocksHandle
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
-	private static final List<LotteryData> lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list
+	public static final List<LotteryData> lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list
 	//因為每次修改的是LotteryData的內容 而不是參考本身 所以可以事先建好
+	//它唯一的用處是ranking時的排序 相對來說風險比較小 因此直接設成public
 
 	static
 	{
 		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
+	}
+
+	public static final byte WRONG_PERCENT = -1;
+	public static final byte WRONG_ARGUMENT = -2;
+
+	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
+	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
+
+	public static long analyzeCommandString(String betString, long nowHave)
+	{
+		if (NUMBER_REGEX.matcher(betString).matches()) //賭數字
+			return Long.parseLong(betString);
+		else if (PERCENT_REGEX.matcher(betString).matches()) //賭%數
+		{
+			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
+			return (percentage <= 100) ? nowHave * percentage / 100 : WRONG_PERCENT; //不能賭超過100%
+		}
+		else if ("all".equalsIgnoreCase(betString))
+			return nowHave;
+		else if ("half".equalsIgnoreCase(betString))
+			return nowHave >> 1;
+		else //都不是
+			return WRONG_ARGUMENT;
 	}
 
 	/**
@@ -67,11 +92,6 @@ public final class CommandBlocksHandle
 		return lotteryDataMap.size();
 	}
 
-	public static List<LotteryData> toArrayList()
-	{
-		return lotteryDataList;
-	}
-
 	public static void initial()
 	{
 		Set<Long> keySet = lotteryDataMap.keySet();
@@ -96,10 +116,14 @@ public final class CommandBlocksHandle
 		private String name; //名字
 		private final long userID;
 		private long blocks; //方塊數
-		private int won; //勝場
-		private int lost; //敗場
-		private int showHandWon; //梭哈勝
-		private int showHandLost; //梭哈敗(破產)
+		private int betWon; //勝場
+		private int betLost; //敗場
+		private int betShowHandWon; //梭哈勝
+		private int betShowHandLost; //梭哈敗(破產)
+		private int slotWon; //角子機勝
+		private int slotLost; //角子機敗
+		private int slotShowHandWon; //角子機梭哈勝
+		private int slotShowHandLost; //角子機梭哈敗(破產)
 		private long lastClaimSecond; //上次領每日獎勵的時間
 		private int streak; //連續領每日獎勵
 
@@ -110,10 +134,14 @@ public final class CommandBlocksHandle
 		{
 			this.userID = userID;
 			blocks = 0L;
-			won = 0;
-			lost = 0;
-			showHandWon = 0;
-			showHandLost = 0;
+			betWon = 0;
+			betLost = 0;
+			betShowHandWon = 0;
+			betShowHandLost = 0;
+			slotWon = 0;
+			slotLost = 0;
+			slotShowHandWon = 0;
+			slotShowHandLost = 0;
 			lastClaimSecond = 0L;
 			streak = 0;
 		}
@@ -193,39 +221,75 @@ public final class CommandBlocksHandle
 			return blocks;
 		}
 
-		public int getWon()
+		public int getBetWon()
 		{
-			return won;
+			return betWon;
 		}
 
-		public int getLost()
+		public int getBetLost()
 		{
-			return lost;
+			return betLost;
 		}
 
-		public int getShowHandWon()
+		public int getBetShowHandWon()
 		{
-			return showHandWon;
+			return betShowHandWon;
 		}
 
-		public int getShowHandLost()
+		public int getBetShowHandLost()
 		{
-			return showHandLost;
+			return betShowHandLost;
+		}
+
+		public int getSlotWon()
+		{
+			return slotWon;
+		}
+
+		public int getSlotLost()
+		{
+			return slotLost;
+		}
+
+		public int getSlotShowHandWon()
+		{
+			return slotShowHandWon;
+		}
+
+		public int getSlotShowHandLost()
+		{
+			return slotShowHandLost;
 		}
 
 		public void addGame(boolean isWon, boolean isShowHand)
 		{
 			if (isWon)
 			{
-				won++;
+				betWon++;
 				if (isShowHand)
-					showHandWon++;
+					betShowHandWon++;
 			}
 			else
 			{
-				lost++;
+				betLost++;
 				if (isShowHand)
-					showHandLost++;
+					betShowHandLost++;
+			}
+		}
+
+		public void addSlot(boolean isWon, boolean isShowHand)
+		{
+			if (isWon)
+			{
+				slotWon++;
+				if (isShowHand)
+					slotShowHandWon++;
+			}
+			else
+			{
+				slotLost++;
+				if (isShowHand)
+					slotShowHandLost++;
 			}
 		}
 

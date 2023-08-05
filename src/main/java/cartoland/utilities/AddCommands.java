@@ -239,12 +239,6 @@ public final class AddCommands
 				.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")
 				.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
 		
-		//Added by Champsing
-		Commands.slash(VILLAGERS, "Check out all enchantment books sold by villagers in every biome")
-		.setDescriptionLocalization(CHINESE_TAIWAN, "查看每種生態域的村民賣的附魔書")
-		.setDescriptionLocalization(CHINESE_CHINA, "查看每种生态域的村民买的附魔书")
-		.setDescriptionLocalization(JAPANESE, "色んなバイオームの村人が売れる全てのエンチャントの本を見る"),	
-		
 
 		Commands.slash(SHUTDOWN, "Use this to shut down the bot")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
@@ -253,7 +247,7 @@ public final class AddCommands
 		Commands.slash(ADMIN, "Admin commands")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "管理員專用指令")
 				.setDescriptionLocalization(CHINESE_CHINA, "管理员专用命令")
-				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS,Permission.BAN_MEMBERS,Permission.MODERATE_MEMBERS))
+				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS,Permission.BAN_MEMBERS,Permission.MODERATE_MEMBERS,Permission.MANAGE_CHANNEL))
 				.setGuildOnly(true)
 				.addSubcommands(
 						new SubcommandData("mute", "Mute a user")
@@ -383,8 +377,7 @@ public final class AddCommands
 																.setNameLocalization(CHINESE_CHINA, "天"),
 														new Command.Choice("Week", "week")
 																.setNameLocalization(CHINESE_TAIWAN, "星期")
-																.setNameLocalization(CHINESE_CHINA, "星期")))
-								),
+																.setNameLocalization(CHINESE_CHINA, "星期")))),
 
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
@@ -441,7 +434,16 @@ public final class AddCommands
 												.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数")),
 						new SubcommandData("daily", "Daily rewards")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "每日獎勵")
-								.setDescriptionLocalization(CHINESE_CHINA, "每日奖励")),
+								.setDescriptionLocalization(CHINESE_CHINA, "每日奖励"),
+						new SubcommandData("slot", "Play the slot machine once")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "玩一次角子老虎機")
+								.setDescriptionLocalization(CHINESE_CHINA, "玩一次角子老虎机")
+								.addOptions(
+										new OptionData(OptionType.STRING, "bet", "The amount of your command blocks you want to bet", true, false)
+												.setNameLocalization(CHINESE_TAIWAN, "賭注")
+												.setNameLocalization(CHINESE_CHINA, "賭注")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "想賭上的數量")
+												.setDescriptionLocalization(CHINESE_CHINA, "想赌上的数量"))),
 		Commands.slash(TRANSFER, "Transfer your command blocks")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "轉帳你的指令方塊")
 				.setDescriptionLocalization(CHINESE_CHINA, "转帐你的命令方块")
@@ -511,7 +513,11 @@ public final class AddCommands
 
 		Commands.message(ContextMenu.QUOTE)
 				.setNameLocalization(CHINESE_TAIWAN, "引用")
-				.setNameLocalization(CHINESE_CHINA, "引用")
+				.setNameLocalization(CHINESE_CHINA, "引用"),
+
+		Commands.message(PIN)
+				.setNameLocalization(CHINESE_TAIWAN, "釘選/解釘")
+				.setNameLocalization(CHINESE_CHINA, "标注/移除")
 	};
 
 	/*

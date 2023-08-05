@@ -40,7 +40,7 @@ public class ForumMessage implements IMessage
 		ThreadChannel forumPost = event.getChannel().asThreadChannel();
 		Message message = event.getMessage();
 
-		if (ForumsHandle.questionForumPostIsIdled(forumPost)) //是問題貼文 且處在關閉狀態
+		if (ForumsHandle.questionForumPostIsIdled(forumPost)) //是問題貼文 且處在閒置狀態
 			ForumsHandle.unIdleQuestionForumPost(forumPost, false);
 
 		if (ForumsHandle.isFirstMessage(forumPost)) //如果是第一次傳送初始訊息

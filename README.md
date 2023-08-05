@@ -5,7 +5,7 @@
 # Cartoland Bot
 #### English / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / [粵語漢字](https://github.com/AlexCai2019/Cartoland/blob/master/README_hk.md) / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_cn.md)
 
-<img src="https://discord.com/api/guilds/886936474723950603/widget.png">
+![Online Members](https://discord.com/api/guilds/886936474723950603/widget.png)
 
 ## Description
 The source code of Cartoland Bot, a discord bot developed for a server named Cartoland. Join Cartoland here: https://discord.gg/UMYxwHyRNE

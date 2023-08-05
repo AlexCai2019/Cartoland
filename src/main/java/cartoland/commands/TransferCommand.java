@@ -7,8 +7,6 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.regex.Pattern;
-
 /**
  * {@code TransferCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link CommandUsage}.
@@ -18,9 +16,6 @@ import java.util.regex.Pattern;
  */
 public class TransferCommand implements ICommand
 {
-	private final Pattern numberRegex = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
-	private final Pattern percentRegex = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
-
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -56,20 +51,13 @@ public class TransferCommand implements ICommand
 		CommandBlocksHandle.LotteryData targetData = CommandBlocksHandle.getLotteryData(targetID);
 
 		long nowHave = myData.getBlocks();
-		long transferAmount;
-		if (numberRegex.matcher(transferAmountString).matches())
-			transferAmount = Long.parseLong(transferAmountString);
-		else if (percentRegex.matcher(transferAmountString).matches())
+		long transferAmount = CommandBlocksHandle.analyzeCommandString(transferAmountString, nowHave);
+		if (transferAmount == CommandBlocksHandle.WRONG_PERCENT)
 		{
-			short percentage = Short.parseShort(transferAmountString.substring(0, transferAmountString.length() - 1));
-			if (percentage > 100) //超過100%
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(percentage)).queue();
-				return;
-			}
-			transferAmount = nowHave * percentage / 100;
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(transferAmountString)).queue();
+			return;
 		}
-		else
+		if (transferAmount == CommandBlocksHandle.WRONG_ARGUMENT)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
 			return;

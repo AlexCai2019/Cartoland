@@ -26,42 +26,34 @@ public class BotOnlineOffline extends ListenerAdapter
 {
 	private void birthdayMembers(List<Long> birthdayMembersIDs, TextChannel lobbyChannel)
 	{
+		final int MAX_MEMBERS_AT_ONCE = 60; //由於ID最長應該是18446744073709551615 因此每個人最多會占用33個字元 而Discord一次輸入的上限是2000字 33 * 60 = 1980
+
 		lobbyChannel.getGuild().retrieveMembersByIds(birthdayMembersIDs).onSuccess(members -> //獲取所有的生日成員們
 		{
 			StringBuilder builder = new StringBuilder();
 			int membersCount = members.size();
 			//最後把剛剛沒說的寄出去
-			if (membersCount <= 25) //由於Discord取名最多可以到32個字 因此每個人最多會占用77個字元 而Discord一次輸入的上限是2000字 77 * 25 = 1925
+			if (membersCount <= MAX_MEMBERS_AT_ONCE)
 			{
 				for (Member member : members) //走訪所有成員們
-					buildBirthdayString(member, builder);
+					builder.append("今天是 ").append(member.getAsMention()).append(" 的生日！\n");
 				lobbyChannel.sendMessage(builder).queue(); //將生日祝賀合併為一則訊息
-				return;
+				return; //提前結束
 			}
 
-			//這以下是人數超過25人的應對方法
+			//這以下是人數超過60人的應對方法
 			for (int i = 0, j = 0; i < membersCount; i++, j++)
 			{
-				if (j == 25) //當到第26人時 先把第1到第25人寄出 但陣列是從0開始的
+				if (j == MAX_MEMBERS_AT_ONCE) //當到第61人時 先把第1到第60人寄出 但陣列是從0開始的
 				{
 					lobbyChannel.sendMessage(builder).complete(); //先送出一次生日祝賀 要等它完成後才能重設builder
 					builder.setLength(0); //重設builder
 					j = 0;
 				}
-				buildBirthdayString(members.get(i), builder);
+				builder.append("今天是 ").append(members.get(i).getAsMention()).append(" 的生日！\n");
 			}
 			lobbyChannel.sendMessage(builder).queue(); //把剛剛有累積到 不滿26人的寄出
 		});
-	}
-
-	private void buildBirthdayString(Member member, StringBuilder builder)
-	{
-		String nickname = member.getNickname(); //暱稱
-		String name = member.getUser().getEffectiveName(); //全域名稱 沒有設定的話就是名稱
-		if (nickname != null) //有設定暱稱
-			builder.append("今天是 ").append(nickname).append('(').append(name).append(") 的生日！\n"); //後面備註全域名稱/名稱
-		else //沒有設定暱稱
-			builder.append("今天是 ").append(name).append(" 的生日！\n"); //直接顯示全域名稱/名稱
 	}
 
 	/**
@@ -88,17 +80,17 @@ public class BotOnlineOffline extends ListenerAdapter
 			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null) //找不到大廳頻道
 				return;
-			int totalMembers = birthdayMembersID.size();
-			if (totalMembers <= 100) //小於等於100人
+			int birthdayMembersCount = birthdayMembersID.size(); //今天生日的人數
+			if (birthdayMembersCount <= 100) //小於等於100人
 			{
 				birthdayMembers(birthdayMembersID, lobbyChannel); //直接放下去跑就好
 				return;
 			}
 
 			int membersRange;
-			for (membersRange = 0; membersRange + 100 < totalMembers; membersRange += 100) //一次只能100人
+			for (membersRange = 0; membersRange + 100 < birthdayMembersCount; membersRange += 100) //一次只能100人
 				birthdayMembers(birthdayMembersID.subList(membersRange, membersRange + 100), lobbyChannel); //每次取100個
-			birthdayMembers(birthdayMembersID.subList(membersRange, totalMembers), lobbyChannel); //最後不滿100人
+			birthdayMembers(birthdayMembersID.subList(membersRange, birthdayMembersCount), lobbyChannel); //最後不滿100人
 		});
 
 		TimerHandle.registerTimerEvent((byte) 3, () -> //凌晨3點

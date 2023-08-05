@@ -7,6 +7,7 @@ import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
@@ -291,6 +292,11 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
+			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof GuildMessageChannel messageChannel))
+			{
+				event.reply("Please select a message channel").setEphemeral(true).queue();
+				return;
+			}
 			//TODO: complete /admin slow_mode
 			event.reply("Under construction...").queue();
 		}

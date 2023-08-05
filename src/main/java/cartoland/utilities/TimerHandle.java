@@ -200,7 +200,7 @@ public final class TimerHandle
 	 * @author Alex Cai
 	 * @since 2.1
 	 */
-	private record TimerEvent(byte hour, Runnable function)
+	private static record TimerEvent(byte hour, Runnable function)
 	{
 		private boolean shouldExecute(byte hour)
 		{

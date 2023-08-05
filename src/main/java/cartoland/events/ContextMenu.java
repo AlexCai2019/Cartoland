@@ -29,6 +29,7 @@ public class ContextMenu extends ListenerAdapter
 	public static final String REACTIONS = "Reactions";
 	public static final String CODE_BLOCK = "Code Block";
 	public static final String QUOTE = "Quote";
+	public static final String PIN = "Pin";
 	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
@@ -106,6 +107,9 @@ public class ContextMenu extends ListenerAdapter
 					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message")))
 					.queue();
 			}
+
+			//TODO: finish pin
+			case PIN -> event.reply("Under construction...").setEphemeral(true).queue();
 		}
 
 		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);

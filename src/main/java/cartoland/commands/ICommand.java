@@ -28,7 +28,6 @@ public interface ICommand
 	String YOUTUBER = "youtuber";
 	String INTRODUCE = "introduce";
 	String BIRTHDAY = "birthday";
-	String VILLAGERS = "villagers";//Added by Champsing
 	String MEGUMIN = "megumin";
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";

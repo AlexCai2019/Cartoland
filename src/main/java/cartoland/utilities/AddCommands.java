@@ -238,6 +238,13 @@ public final class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 				.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")
 				.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
+		
+		//Added by Champsing
+		Commands.slash(VILLAGERS, "Check out all enchantment books sold by villagers in every biome")
+		.setDescriptionLocalization(CHINESE_TAIWAN, "查看每種生態域的村民賣的附魔書")
+		.setDescriptionLocalization(CHINESE_CHINA, "查看每种生态域的村民买的附魔书")
+		.setDescriptionLocalization(JAPANESE, "色んなバイオームの村人が売れる全てのエンチャントの本を見る"),	
+		
 
 		Commands.slash(SHUTDOWN, "Use this to shut down the bot")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
@@ -575,22 +582,22 @@ final class Faq
 
 	static
 	{
-		faqDescriptions.put(CHINESE_TAIWAN, "獲得地圖製作的協助");
-		faqDescriptions.put(CHINESE_CHINA, "获得地图制作的协助");
+		faqDescriptions.put(CHINESE_TAIWAN, "獲得地圖製作或遊戲資訊的協助");
+		faqDescriptions.put(CHINESE_CHINA, "获得地图制作或游戏资讯的协助");
 	}
 
 	private static final OptionData faqOption =
-			new OptionData(OptionType.STRING, "faq_name", "A question about map making.", false, true)
+			new OptionData(OptionType.STRING, "faq_name", "A question about map making or game information.", false, true)
 					.setNameLocalization(CHINESE_TAIWAN, "問題")
 					.setNameLocalization(CHINESE_CHINA, "问题")
-					.setDescriptionLocalization(CHINESE_TAIWAN, "地圖製作的問題")
-					.setDescriptionLocalization(CHINESE_CHINA, "地图制作的问题");
+					.setDescriptionLocalization(CHINESE_TAIWAN, "地圖製作或遊戲資訊的問題")
+					.setDescriptionLocalization(CHINESE_CHINA, "地图制作或游戏资讯的问题");
 
-	static final SlashCommandData faq = Commands.slash(FAQ, "Find answers to map making questions")
+	static final SlashCommandData faq = Commands.slash(FAQ, "Find answers to map making or game information questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 
-	static final SlashCommandData question = Commands.slash(QUESTION, "Find answers to map making questions")
+	static final SlashCommandData question = Commands.slash(QUESTION, "Find answers to map making or game information questions")
 			.setDescriptionLocalizations(faqDescriptions)
 			.addOptions(faqOption);
 }

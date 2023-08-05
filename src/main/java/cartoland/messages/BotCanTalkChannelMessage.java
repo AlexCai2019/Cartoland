@@ -32,6 +32,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"爹，您好呀。",
 		"聽候您差遣。",
 		"父親，無論您需要什麼幫助，我都會全力以赴！" //由 brick-bk 新增
+		"父親，您辛苦了，工作忙碌之餘，也請您別忘了多休息保護眼睛！"//Add by Champsing
 	};
 	private final String[] replyMegaMention =
 	{
@@ -40,6 +41,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		"陛下今日可好？",
 		"願陛下萬壽無疆，國泰民安，天下太平。", //由 brick-bk 新增
 		"祝陛下萬歲，萬歲，萬萬歲！" //由 brick-bk 新增
+		//Add by Champsing
+		"微臣向皇上請安",
+		"皇上龍體安康",
+		"微臣參見陛下",
+		"皇上威震四海、聲赫五洲",
 	};
 	private final String[] replyMention =
 	{
@@ -68,7 +74,10 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
 		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
 		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
-		"你再tag我啊，再tag啊，沒被禁言過是不是？" //由 brick-bk 新增，經 Alex Cai 大幅修改
+		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
+		"胡不遄死？"//你怎麼不去死一死？　Added by Champsing
+		"豎子，不足與謀。"//死小孩，沒話跟你講。 Added by Champsing
+		"謹祈爾家無後也。" //祝福你家斷子絕孫。 Added by Champsing
 	};
 	private final String[] megumin =
 	{
@@ -186,7 +195,8 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		if (rawMessage.contains("惠惠") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()) || rawMessage.contains("めぐみん"))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
-
+		if (rawMessage.contains("鬼島交通"))//Added by Champsing
+			channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
 		if (rawMessage.contains("賺爛"))

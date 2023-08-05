@@ -89,6 +89,10 @@ public class CommandUsage extends ListenerAdapter
 		//quote
 		commands.put(QUOTE, new QuoteCommand());
 
+		//villager //Added by Champsing
+		commands.put(VILLAGER, event -> event.reply("https://media.discordapp.net/attachments/838398000866131992/1137308261104762951/1.20.2_villager_enchantments.png?width=1440&height=371").queue();)
+
+
 		//youtuber
 		commands.put(YOUTUBER, event -> event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", CommonFunctions.getAsString)).queue());
 

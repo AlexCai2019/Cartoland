@@ -238,6 +238,13 @@ public final class AddCommands
 				.setDescriptionLocalization(CHINESE_TAIWAN, "最讚的動漫女孩")
 				.setDescriptionLocalization(CHINESE_CHINA, "最赞的动漫女孩")
 				.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
+		
+		//Added by Champsing
+		Commands.slash(VILLAGER, "Check out all enchantment books sold by villagers in every biome")
+		.setDescriptionLocalization(CHINESE_TAIWAN, "查看每種生態域的村民賣的附魔書")
+		.setDescriptionLocalization(CHINESE_CHINA, "查看每种生态域的村民买的附魔书")
+		.setDescriptionLocalization(JAPANESE, "色んなバイオームの村人が売れる全てのエンチャントの本を見る"),	
+		
 
 		Commands.slash(SHUTDOWN, "Use this to shut down the bot")
 				.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),

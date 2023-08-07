@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Role;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
@@ -40,29 +39,6 @@ public final class CommandBlocksHandle
 	static
 	{
 		FileHandle.registerSerialize(LOTTERY_DATA_FILE_NAME, lotteryDataMap);
-	}
-
-	public static final byte WRONG_PERCENT = -1;
-	public static final byte WRONG_ARGUMENT = -2;
-
-	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
-	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
-
-	public static long analyzeCommandString(String betString, long nowHave)
-	{
-		if (NUMBER_REGEX.matcher(betString).matches()) //賭數字
-			return Long.parseLong(betString);
-		else if (PERCENT_REGEX.matcher(betString).matches()) //賭%數
-		{
-			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
-			return (percentage <= 100) ? nowHave * percentage / 100 : WRONG_PERCENT; //不能賭超過100%
-		}
-		else if ("all".equalsIgnoreCase(betString))
-			return nowHave;
-		else if ("half".equalsIgnoreCase(betString))
-			return nowHave >> 1;
-		else //都不是
-			return WRONG_ARGUMENT;
 	}
 
 	/**
@@ -301,7 +277,7 @@ public final class CommandBlocksHandle
 		 * @since 2.1
 		 * @author Alex Cai
 		 */
-		public boolean tryClaimDaily(int[] until)
+		public boolean tryClaimDaily(byte[] until)
 		{
 			long nowSecond = System.currentTimeMillis() / 1000L; //現在距離1970/1/1有幾秒
 			long difference = nowSecond - lastClaimSecond; //和上次領的時間差
@@ -309,9 +285,9 @@ public final class CommandBlocksHandle
 			{
 				//不超過一天
 				int secondsUntil = 60 * 60 * 24 - (int) difference;
-				until[0] = secondsUntil / (60 * 60);
-				until[1] = (secondsUntil / 60) % 60;
-				until[2] = secondsUntil % 60;
+				until[0] = (byte) (secondsUntil / (60 * 60));
+				until[1] = (byte) ((secondsUntil / 60) % 60);
+				until[2] = (byte) (secondsUntil % 60);
 				return false;
 			}
 

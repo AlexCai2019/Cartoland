@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
@@ -24,6 +25,9 @@ public class LotteryCommand implements ICommand
 	private final Map<String, ICommand> subCommands = new HashMap<>(5);
 	private static final Random random = new Random(); //不使用Algorithm.chance
 	private static final long MAXIMUM = 1000000L;
+	private static final byte INVALID_BET = -1;
+	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
+	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
 
 	public LotteryCommand()
 	{
@@ -38,6 +42,58 @@ public class LotteryCommand implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
+	}
+
+	private static long createValidBet(SlashCommandInteractionEvent event, long userID, long nowHave)
+	{
+		String betString = event.getOption("bet", CommonFunctions.getAsString); //注意指令參數名一定要是bet 也許未來會變 但目前就是bet
+
+		if (betString == null) //不帶參數
+		{
+			event.reply("Impossible, this is required!").queue();
+			return INVALID_BET;
+		}
+
+		long bet;
+		if (NUMBER_REGEX.matcher(betString).matches()) //賭數字
+			bet = Long.parseLong(betString);
+		else if (PERCENT_REGEX.matcher(betString).matches()) //賭%數
+		{
+			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
+			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_percent").formatted(betString)).setEphemeral(true).queue();
+				return INVALID_BET;
+			}
+			bet = nowHave * percentage / 100;
+		}
+		else if ("all".equalsIgnoreCase(betString))
+			bet = nowHave;
+		else if ("half".equalsIgnoreCase(betString))
+			bet = nowHave >> 1;
+		else //都不是
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue(); //格式錯誤
+			return INVALID_BET;
+		}
+
+		if (bet == 0L) //不能賭0
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
+			return INVALID_BET;
+		}
+		if (bet > MAXIMUM) //限紅
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).setEphemeral(true).queue();
+			return INVALID_BET;
+		}
+		if (nowHave < bet) //如果現有的比要賭的還少
+		{
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.not_enough").formatted(bet, nowHave)).setEphemeral(true).queue();
+			return INVALID_BET;
+		}
+
+		return bet;
 	}
 
 	/**
@@ -63,24 +119,24 @@ public class LotteryCommand implements ICommand
 				return;
 			}
 
-			CommandBlocksHandle.LotteryData targetLotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
+			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
 			if (!Boolean.TRUE.equals(event.getOption("display_detail", CommonFunctions.getAsBoolean))) //不顯示細節 null代表false 所以不使用Boolean.FALSE.equals
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
-									.formatted(targetLotteryData.getName(), targetLotteryData.getBlocks())).queue();
+									.formatted(lotteryData.getName(), lotteryData.getBlocks())).queue();
 				return;
 			}
-			int betWon = targetLotteryData.getBetWon();
-			int betLost = targetLotteryData.getBetLost();
-			int betShowHandWon = targetLotteryData.getBetShowHandWon();
-			int betShowHandLost = targetLotteryData.getBetShowHandLost();
-			int slotWon = targetLotteryData.getSlotWon();
-			int slotLost = targetLotteryData.getSlotLost();
-			int slotShowHandWon = targetLotteryData.getSlotShowHandWon();
-			int slotShowHandLost = targetLotteryData.getSlotShowHandLost();
+			int betWon = lotteryData.getBetWon(); //贏的次數
+			int betLost = lotteryData.getBetLost(); //輸的次數
+			int betShowHandWon = lotteryData.getBetShowHandWon(); //梭哈贏的次數
+			int betShowHandLost = lotteryData.getBetShowHandLost(); //梭哈輸的次數
+			int slotWon = lotteryData.getSlotWon(); //拉霸機贏的次數
+			int slotLost = lotteryData.getSlotLost(); //拉霸機輸的次數
+			int slotShowHandWon = lotteryData.getSlotShowHandWon(); //拉霸機梭哈贏的次數
+			int slotShowHandLost = lotteryData.getSlotShowHandLost(); //拉霸機梭哈輸的次數
 			event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query_detail")
 								.formatted(
-										targetLotteryData.getName(), targetLotteryData.getBlocks(),
+										lotteryData.getName(), lotteryData.getBlocks(),
 										betWon + betLost, betWon, betLost,
 										betShowHandWon + betShowHandLost, betShowHandWon, betShowHandLost,
 										slotWon + slotLost, slotWon, slotLost,
@@ -105,41 +161,10 @@ public class LotteryCommand implements ICommand
 			long userID = event.getUser().getIdLong();
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
-			String betString = event.getOption("bet", CommonFunctions.getAsString);
 
-			if (betString == null) //不帶參數
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-
-			long bet = CommandBlocksHandle.analyzeCommandString(betString, nowHave);
-			if (bet == CommandBlocksHandle.WRONG_PERCENT) //百分比格式錯誤
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_percent").formatted(betString)).setEphemeral(true).queue();
-				return;
-			}
-			if (bet == CommandBlocksHandle.WRONG_ARGUMENT) //格式錯誤
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
-				return;
-			}
-
-			if (bet == 0L) //不能賭0
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
-				return;
-			}
-			if (bet > MAXIMUM) //限紅
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).setEphemeral(true).queue();
-				return;
-			}
-			if (nowHave < bet) //如果現有的比要賭的還少
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.not_enough").formatted(bet, nowHave)).setEphemeral(true).queue();
-				return;
-			}
+			long bet = createValidBet(event, userID, nowHave);
+			if (bet == INVALID_BET) //輸入有誤
+				return; //直接結束 createValidBet方法內已經reply過了
 
 			long afterBet;
 			String result;
@@ -314,9 +339,9 @@ public class LotteryCommand implements ICommand
 	 */
 	private static class DailySubCommand implements ICommand
 	{
-		private final int[] until = { 0,0,0 };
+		private final byte[] until = { 0,0,0 }; //until[0]為小時 [1]為分鐘 [2]為秒
 		private final boolean[] bonus = { false,false,false };
-		private final StringBuilder builder = new StringBuilder();
+		private final StringBuilder replyBuilder = new StringBuilder();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -330,41 +355,50 @@ public class LotteryCommand implements ICommand
 				return;
 			}
 
-			builder.setLength(0);
-			builder.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY));
+			replyBuilder.setLength(0);
+			replyBuilder.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY));
 
 			int streak = lotteryData.getStreak(); //連續領取天數
-			builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.streak").formatted(streak));
+			replyBuilder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.streak").formatted(streak));
 			if (lotteryData.tryClaimBonus(bonus)) //有額外
 			{
 				if (bonus[0]) //週
-					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.weekly").formatted(streak / 7))
+					replyBuilder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.weekly").formatted(streak / 7))
 							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.WEEKLY));
 				if (bonus[1]) //月
-					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.monthly").formatted(streak / 30))
+					replyBuilder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.monthly").formatted(streak / 30))
 							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.MONTHLY));
 				if (bonus[2]) //年
-					builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.yearly").formatted(streak / 365))
+					replyBuilder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.yearly").formatted(streak / 365))
 							.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.bonus").formatted(CommandBlocksHandle.LotteryData.YEARLY));
 			}
 
-			builder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.now_have").formatted(lotteryData.getBlocks()));
-			event.reply(builder.toString()).queue();
+			event.reply(replyBuilder.append('\n')
+								.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.now_have").formatted(lotteryData.getBlocks()))
+								.toString()).queue();
 		}
 	}
 
+	/**
+	 * {@code SlotSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code /lottery slot}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	private static class SlotSubCommand implements ICommand
 	{
 		private final EmojiData[] emojis =
 		{
-			new EmojiData("learned", 892406442622083143L),
-			new EmojiData("wow", 893499112228519996L),
-			new EmojiData("cartoland_logo", 949332057258070036L),
-			new EmojiData("haha", 900717110488084530L),
-			new EmojiData("pika", 891713649926869003L),
-			new EmojiData("cool_pika", 891714126424985610L),
-			new EmojiData("ya", 920200649830989825L)
+			new EmojiData("learned",        892406442622083143L), //宇宙貓貓
+			new EmojiData("chaowendela",    967305472950542336L), //超穩的啦
+			new EmojiData("cartoland_logo", 949332057258070036L), //創聯logo
+			new EmojiData("haha",           900717110488084530L), //海綿寶寶笑
+			new EmojiData("pika",           891713649926869003L), //驚訝皮卡丘
+			new EmojiData("cool_pika",      891714126424985610L), //墨鏡皮卡丘
+			new EmojiData("ya",             920200649830989825L)  //好耶
 		};
+
 		private final StringBuilder replyBuilder = new StringBuilder();
 
 		@Override
@@ -373,41 +407,10 @@ public class LotteryCommand implements ICommand
 			long userID = event.getUser().getIdLong();
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
-			String betString = event.getOption("bet", CommonFunctions.getAsString);
 
-			if (betString == null) //不帶參數
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-
-			long bet = CommandBlocksHandle.analyzeCommandString(betString, nowHave);
-			if (bet == CommandBlocksHandle.WRONG_PERCENT) //百分比格式錯誤
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_percent").formatted(betString)).setEphemeral(true).queue();
-				return;
-			}
-			if (bet == CommandBlocksHandle.WRONG_ARGUMENT) //格式錯誤
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
-				return;
-			}
-
-			if (bet == 0L) //不能賭0
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
-				return;
-			}
-			if (bet > MAXIMUM) //限紅
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.too_much").formatted(bet, MAXIMUM)).setEphemeral(true).queue();
-				return;
-			}
-			if (nowHave < bet) //如果現有的比要賭的還少
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.not_enough").formatted(bet, nowHave)).setEphemeral(true).queue();
-				return;
-			}
+			long bet = createValidBet(event, userID, nowHave);
+			if (bet == INVALID_BET) //輸入有誤
+				return; //直接結束 createValidBet方法內已經reply過了
 
 			EmojiData[] slotResults =
 			{
@@ -423,6 +426,8 @@ public class LotteryCommand implements ICommand
 			if (win) //賭贏
 			{
 				afterBet = Algorithm.safeAdd(nowHave, bet * 49); //機率 1 / 49
+				//應該要先減去籌碼後獲得49倍 * 48才對
+				//但是最一開始寫錯了 乾脆將錯就錯 改成50倍 當作福利
 				result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
 			}
 			else //賭輸
@@ -433,11 +438,11 @@ public class LotteryCommand implements ICommand
 
 			replyBuilder.setLength(0);
 			replyBuilder.append("--------------\n| ")
-					.append(slotResults[0])
+					.append(slotResults[0].emojiFormat)
 					.append(" | ")
-					.append(slotResults[1])
+					.append(slotResults[1].emojiFormat)
 					.append(" | ")
-					.append(slotResults[2])
+					.append(slotResults[2].emojiFormat)
 					.append(" |\n--------------\n")
 					.append(JsonHandle.getStringFromJsonKey(userID, "lottery.bet.result").formatted(bet, result, afterBet));
 			if (showHand)
@@ -453,12 +458,14 @@ public class LotteryCommand implements ICommand
 			lotteryData.setBlocks(afterBet); //設定方塊
 		}
 
-		private static record EmojiData(String name, long ID)
+		private static class EmojiData
 		{
-			@Override
-			public String toString()
+			private final long ID;
+			private final String emojiFormat;
+
+			private EmojiData(String name, long ID)
 			{
-				return "<:" + name + ':' + ID + '>';
+				emojiFormat = "<:" + name + ':' + (this.ID = ID) + '>';
 			}
 		}
 	}

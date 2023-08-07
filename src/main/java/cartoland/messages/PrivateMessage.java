@@ -1,7 +1,6 @@
 package cartoland.messages;
 
 import cartoland.Cartoland;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,7 +15,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This
@@ -27,6 +25,8 @@ import java.util.stream.Collectors;
  */
 public class PrivateMessage implements IMessage
 {
+	private final StringBuilder messageBuilder = new StringBuilder();
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -78,14 +78,16 @@ public class PrivateMessage implements IMessage
 				return;
 			}
 
-			String rawMessage = message.getContentRaw();
+			messageBuilder.setLength(0);
+			messageBuilder.append(message.getContentRaw());
 			List<Message.Attachment> attachments = message.getAttachments();
-			if (!attachments.isEmpty())
-				rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
+			for (Message.Attachment attachment : attachments)
+				messageBuilder.append('\n').append(attachment.getUrl());
 			List<StickerItem> stickerItems = message.getStickers();
-			if (!stickerItems.isEmpty())
-				rawMessage += stickerItems.stream().map(Sticker::getIconUrl).collect(Collectors.joining("\n", "\n", ""));
+			for (Sticker sticker : stickerItems)
+				messageBuilder.append('\n').append(sticker.getIconUrl());
 
+			String rawMessage = messageBuilder.toString();
 			undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
 			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MEMBER, e ->

@@ -30,7 +30,6 @@ public final class CommonFunctions
 	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
 	public static final Function<OptionMapping, Member> getAsMember = OptionMapping::getAsMember;
 	public static final Function<OptionMapping, GuildChannelUnion> getAsChannel = OptionMapping::getAsChannel;
-	public static final Function<Message.Attachment, String> getUrl = Message.Attachment::getUrl;
 	public static final Function<Object, String> stringValue = String::valueOf;
 	public static final Predicate<Message.Attachment> isImage = Message.Attachment::isImage;
 }

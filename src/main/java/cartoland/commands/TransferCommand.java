@@ -7,6 +7,8 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.util.regex.Pattern;
+
 /**
  * {@code TransferCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link CommandUsage}.
@@ -16,6 +18,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 public class TransferCommand implements ICommand
 {
+	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
+	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
+
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -51,15 +56,26 @@ public class TransferCommand implements ICommand
 		CommandBlocksHandle.LotteryData targetData = CommandBlocksHandle.getLotteryData(targetID);
 
 		long nowHave = myData.getBlocks();
-		long transferAmount = CommandBlocksHandle.analyzeCommandString(transferAmountString, nowHave);
-		if (transferAmount == CommandBlocksHandle.WRONG_PERCENT)
+		long transferAmount;
+		if (NUMBER_REGEX.matcher(transferAmountString).matches()) //轉數字
+			transferAmount = Long.parseLong(transferAmountString);
+		else if (PERCENT_REGEX.matcher(transferAmountString).matches()) //轉%數
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(transferAmountString)).queue();
-			return;
+			short percentage = Short.parseShort(transferAmountString.substring(0, transferAmountString.length() - 1));
+			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(transferAmountString)).setEphemeral(true).queue();
+				return;
+			}
+			transferAmount = nowHave * percentage / 100;
 		}
-		if (transferAmount == CommandBlocksHandle.WRONG_ARGUMENT)
+		else if ("all".equalsIgnoreCase(transferAmountString))
+			transferAmount = nowHave;
+		else if ("half".equalsIgnoreCase(transferAmountString))
+			transferAmount = nowHave >> 1;
+		else //都不是
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).setEphemeral(true).queue(); //格式錯誤
 			return;
 		}
 

@@ -371,13 +371,7 @@ public final class AddCommands
 																.setNameLocalization(CHINESE_CHINA, "小时"),
 														new Command.Choice("Double Hour", "double_hour")
 																.setNameLocalization(CHINESE_TAIWAN, "時辰")
-																.setNameLocalization(CHINESE_CHINA, "时辰"),
-														new Command.Choice("Day", "day")
-																.setNameLocalization(CHINESE_TAIWAN, "天")
-																.setNameLocalization(CHINESE_CHINA, "天"),
-														new Command.Choice("Week", "week")
-																.setNameLocalization(CHINESE_TAIWAN, "星期")
-																.setNameLocalization(CHINESE_CHINA, "星期")))),
+																.setNameLocalization(CHINESE_CHINA, "时辰")))),
 
 		Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")

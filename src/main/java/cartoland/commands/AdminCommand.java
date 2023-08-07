@@ -1,13 +1,10 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.FileHandle;
-import cartoland.utilities.JsonHandle;
-import cartoland.utilities.TimerHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
@@ -56,26 +53,6 @@ public class AdminCommand implements ICommand
 		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
 
-	private static String buildDurationString(double duration)
-	{
-		String durationString = Double.toString(duration); //將時間轉成字串
-		int dotIndex = durationString.indexOf('.'); //小數點的索引
-		int firstZero = durationString.length(); //尋找小數部分最後的一串0中 第一個0
-		int index;
-		for (index = firstZero - 1; index >= dotIndex; index--)
-		{
-			if (durationString.charAt(index) != '0')
-			{
-				firstZero = index + 1;
-				break;
-			}
-		}
-		//結果:
-		//5.000000 => 5
-		//1.500000 => 1.5
-		return durationString.substring(0, (index == dotIndex) ? dotIndex : firstZero);
-	}
-
 	/**
 	 * {@code MuteSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
 	 * {@code /admin mute}.
@@ -85,19 +62,19 @@ public class AdminCommand implements ICommand
 	 */
 	private static class MuteSubCommand implements ICommand
 	{
-		private static final long TWENTY_EIGHT_DAYS_MILLISECONDS = 1000L * 60 * 60 * 24 * 28;
+		private static final long MAX_TIME_OUT_LENGTH_MILLIS = 1000L * 60 * 60 * 24 * Member.MAX_TIME_OUT_LENGTH;
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Member member = event.getMember();
+			Member member = event.getMember(); //使用指令的成員
 			if (member == null)
 			{
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
 
-			long userID = member.getIdLong();
+			long userID = member.getIdLong(); //使用指令的成員ID
 
 			if (!member.hasPermission(Permission.MODERATE_MEMBERS))
 			{
@@ -155,13 +132,13 @@ public class AdminCommand implements ICommand
 				default -> 1;
 			}); //Math.round會處理溢位
 
-			if (durationMillis > TWENTY_EIGHT_DAYS_MILLISECONDS) //不能禁言超過28天
+			if (durationMillis > MAX_TIME_OUT_LENGTH_MILLIS) //不能禁言超過28天
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.too_long")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.too_long").formatted(Member.MAX_TIME_OUT_LENGTH)).setEphemeral(true).queue();
 				return;
 			}
 
-			String mutedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.mute.unit_" + unit);
+			String mutedTime = Algorithm.buildCleanFloatingString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
 					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
@@ -185,14 +162,14 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Member member = event.getMember();
+			Member member = event.getMember(); //使用指令的成員
 			if (member == null)
 			{
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
 
-			long userID = member.getIdLong();
+			long userID = member.getIdLong(); //使用指令的成員ID
 
 			if (!member.hasPermission(Permission.BAN_MEMBERS))
 			{
@@ -242,7 +219,7 @@ public class AdminCommand implements ICommand
 				case "year" -> 24 * 365;
 				case "wood_rat" -> 24 * 365 * 60;
 				case "century" -> 24 * 365 * 100;
-				default -> 1;
+				default -> 1; //其實unit一定等於上述那些或second 但是default必須的
 			}); //Math.round會處理溢位
 
 			if (durationHours < 1L) //時間不能小於一小時
@@ -251,7 +228,7 @@ public class AdminCommand implements ICommand
 				return;
 			}
 
-			String bannedTime = buildDurationString(duration) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.unit_" + unit);
+			String bannedTime = Algorithm.buildCleanFloatingString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 					.formatted(
 							target.getAsMention(), bannedTime,
@@ -272,9 +249,9 @@ public class AdminCommand implements ICommand
 
 			Guild guild = target.getGuild();
 			long[] banData = new long[3];
-			banData[USER_ID_INDEX] = target.getIdLong();
-			banData[BANNED_TIME] = pardonTime;
-			banData[BANNED_SERVER] = guild.getIdLong();
+			banData[USER_ID_INDEX] = target.getIdLong(); //紀錄被ban的人的ID
+			banData[BANNED_TIME] = pardonTime; //紀錄被ban的人的時間
+			banData[BANNED_SERVER] = guild.getIdLong(); //紀錄被ban的人的群組
 			tempBanSet.add(banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
 		}
@@ -292,13 +269,67 @@ public class AdminCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof GuildMessageChannel messageChannel))
+			Member member = event.getMember(); //使用指令的成員
+			if (member == null)
 			{
-				event.reply("Please select a message channel").setEphemeral(true).queue();
+				event.reply("Impossible, this is required!").queue();
 				return;
 			}
-			//TODO: complete /admin slow_mode
-			event.reply("Under construction...").queue();
+
+			long userID = member.getIdLong(); //使用指令的成員ID
+
+			if (!member.hasPermission(Permission.MANAGE_CHANNEL))
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.no_permission")).setEphemeral(true).queue();
+				return;
+			}
+
+			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof ISlowmodeChannel channel))
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.wrong_channel")).setEphemeral(true).queue();
+				return;
+			}
+
+			Double timeBox = event.getOption("time", CommonFunctions.getAsDouble); //可惜沒有getAsFloat
+			if (timeBox == null)
+			{
+				event.reply("Impossible, this is required!").queue();
+				return;
+			}
+			float time = (float) timeBox.doubleValue();
+			if (time < 0) //不能負時間 可以0 0代表取消慢速
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
+				return;
+			}
+
+			String unit = event.getOption("unit", CommonFunctions.getAsString); //單位字串
+			if (unit == null)
+			{
+				event.reply("Impossible, this is required!").queue();
+				return;
+			}
+
+			int timeSecond = Math.round(time * switch (unit) //將單位轉成秒
+			{
+				case "minute" -> 60;
+				case "hour" -> 60 * 60;
+				case "double_hour" -> 60 * 60 * 2;
+				default -> 1;
+			});
+			if (timeSecond > ISlowmodeChannel.MAX_SLOWMODE) //不能超過18小時 21600秒
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.too_long").formatted(ISlowmodeChannel.MAX_SLOWMODE / (60 * 60)))
+						.setEphemeral(true).queue();
+				return;
+			}
+
+			String slowTime = Algorithm.buildCleanFloatingString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			if (timeSecond > 0)
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.success").formatted(channel.getAsMention(), slowTime)).queue();
+			else //一定是等於0 前面過濾掉小於0的情況了
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.cancel").formatted(channel.getAsMention())).queue();
+			channel.getManager().setSlowmode(timeSecond).queue(); //設定慢速時間
 		}
 	}
 }

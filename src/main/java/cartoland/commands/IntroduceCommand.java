@@ -1,7 +1,10 @@
 package cartoland.commands;
 
 import cartoland.Cartoland;
-import cartoland.utilities.*;
+import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.FileHandle;
+import cartoland.utilities.IDs;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -14,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * {@code IntroduceCommand} is an execution when a user uses /introduce command. This class implements
@@ -96,6 +98,7 @@ public class IntroduceCommand implements ICommand
 	{
 		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
+		private final StringBuilder introduceBuilder = new StringBuilder();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -140,11 +143,12 @@ public class IntroduceCommand implements ICommand
 			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
-				String rawMessage = linkMessage.getContentRaw(); //訊息內容
+				introduceBuilder.setLength(0);
+				introduceBuilder.append(linkMessage.getContentRaw()); //訊息內容
 				List<Message.Attachment> attachments = linkMessage.getAttachments(); //副件
-				if (!attachments.isEmpty())
-					rawMessage += attachments.stream().map(CommonFunctions.getUrl).collect(Collectors.joining("\n", "\n", ""));
-				updateIntroduction(linkMessage.getAuthor().getIdLong(), rawMessage); //更新介紹
+				for (Message.Attachment attachment : attachments)
+					introduceBuilder.append('\n').append(attachment.getUrl());
+				updateIntroduction(linkMessage.getAuthor().getIdLong(), introduceBuilder.toString()); //更新介紹
 			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();

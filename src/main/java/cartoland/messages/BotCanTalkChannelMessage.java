@@ -45,7 +45,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"微臣向皇上請安",
 		"皇上龍體安康",
 		"微臣參見陛下",
-		"皇上威震四海、聲赫五洲",
+		"皇上威震四海、聲赫五洲"
 	};
 	private final String[] replyMention =
 	{

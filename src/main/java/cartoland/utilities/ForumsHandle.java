@@ -16,7 +16,6 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -148,7 +147,7 @@ public final class ForumsHandle
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
 
-		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags());
+		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags());
 		tags.remove(unresolvedForumTag); //移除unresolved
 		tags.add(resolvedForumTag); //新增resolved
 		forumPost.getManager().setAppliedTags(tags).queue();
@@ -193,11 +192,10 @@ public final class ForumsHandle
 
 		forumPost.retrieveStartMessage().queue(message ->
 		{
-			//移除🎗️
-			if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon)))
-				message.removeReaction(reminder_ribbon).queue();
+			if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon))) //如果第一則訊息有🎗️
+				message.removeReaction(reminder_ribbon).queue(); //移除🎗️
 
-			idledQuestionForumPosts.remove(forumPost.getIdLong());
+			idledQuestionForumPosts.remove(forumPost.getIdLong()); //將貼文從idle列表中移除
 
 			if (archive)
 				forumPost.getManager().setArchived(true).queue(); //關閉貼文

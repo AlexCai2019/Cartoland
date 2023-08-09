@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.HashMap;
@@ -122,13 +123,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (!channelType.isGuild()) //是私訊
 			return true; //私訊可以說話
 
-		Category category = channelType.isThread() ? //討論串無法被歸類在有類別的頻道 但是它的原始頻道算
-				event.getChannel()
-					.asThreadChannel()
-					.getParentChannel()
-					.asStandardGuildChannel()
-					.getParentCategory()
-				: event.getMessage().getCategory(); //嘗試從訊息獲取類別
+		Category category = event.getMessage().getCategory(); //嘗試從訊息獲取類別
 		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
 	}
 
@@ -143,22 +138,20 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (message.getMentions().isMentioned(Cartoland.getJDA().getSelfUser(), botType)) //有人tag機器人
 		{
 			long userID = author.getIdLong();
-			String replyString;
+			long channelID = channel.getIdLong();
 
 			//不要再想著用switch了 Java的switch不支援long
 			if (userID == IDs.AC_ID) //是AC
-				replyString = Algorithm.randomElement(replyACMention);
+				message.reply(Algorithm.randomElement(replyACMention)).mentionRepliedUser(false).queue();
 			else if (userID == IDs.MEGA_ID) //是米格
-				replyString = Algorithm.randomElement(replyMegaMention);
-			else //都不是
+				message.reply(Algorithm.randomElement(replyMegaMention)).mentionRepliedUser(false).queue();
+			else //是其他人
 			{
-				long channelID = channel.getIdLong();
-				//如果頻道在機器人或地下 就正常地回傳replyMention 反之就說 蛤，我地盤在#bot專區｜bots啦
-				replyString = (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) ?
-						Algorithm.randomElement(replyMention) : "蛤，我地盤在<#" + IDs.BOT_CHANNEL_ID + ">啦";
+				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) //如果頻道在機器人或地下 就正常地回傳replyMention
+					message.reply(Algorithm.randomElement(replyMention)).mentionRepliedUser(false).queue();
+				else //在其他地方ping就固定加一個ping的emoji
+					message.addReaction(Emoji.fromCustom("ping", 1065915559918719006L, false)).queue();
 			}
-
-			message.reply(replyString).mentionRepliedUser(false).queue();
 		}
 
 		int rawMessageLength = rawMessage.length(); //訊息的字數
@@ -177,6 +170,12 @@ public class BotCanTalkChannelMessage implements IMessage
 			if (rawMessage.equalsIgnoreCase("owo"))
 			{
 				channel.sendMessage("OwO").queue();
+				return; //在這之下的if們 全都不可能通過
+			}
+
+			if (rawMessage.equalsIgnoreCase("ouo"))
+			{
+				channel.sendMessage("OuO").queue();
 				return; //在這之下的if們 全都不可能通過
 			}
 		}

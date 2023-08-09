@@ -72,13 +72,7 @@ public class GuildMessage implements IMessage
 			message.addReaction(Emoji.fromCustom("worship_a", 935135593527128104L, true)).queue();
 		}
 
-		Category category = event.getChannelType().isThread() ? //討論串無法被歸類在有類別的頻道 但是它的原始頻道算
-				event.getChannel()
-					.asThreadChannel()
-					.getParentChannel()
-					.asStandardGuildChannel()
-					.getParentCategory()
-				: event.getMessage().getCategory(); //嘗試從訊息獲取
+		Category category = event.getMessage().getCategory(); //嘗試從訊息獲取類別
 		//在一般、技術討論區、創作展示或公眾區域類別 且不是在機器人專區
 		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && category != null && commandBlockCategories.contains(category.getIdLong()))
 			CommandBlocksHandle.getLotteryData(event.getAuthor().getIdLong())

@@ -42,28 +42,28 @@ public final class JsonHandle
 	private static void lastUse(long userID)
 	{
 		//獲取使用者設定的語言
-		//找不到設定的語言就放英文進去
-		file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.ENGLISH));
+		//找不到設定的語言就放台灣正體進去
+		file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.TW_MANDARIN));
 	}
 
 	public static String command(long userID, String commandName)
 	{
 		lastUse(userID);
 		builder.setLength(0);
-		builder.append(file.getString(commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會擲出JSONException
+		builder.append(file.opt(commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list"); //中間的資料 注意每個語言檔的指令裡一定要有.list 否則會擲出JSONException
 		int dotListLength = dotListArray.length();
 		if (dotListLength != 0) //建立回覆字串
 		{
 			for (int i = 0; ; i++)
 			{
-				builder.append(dotListArray.getString(i));
+				builder.append(dotListArray.opt(i)); //如果超出JSON陣列的範圍 會出現"null"
 				if (i + 1 == dotListLength) //已經是最後一個了
 					break;
 				builder.append(", ");
 			}
 		}
-		return builder.append(file.getString(commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會擲出JSONException
+		return builder.append(file.opt(commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會出現"null"
 	}
 
 	public static String command(long userID, String commandName, String argument)
@@ -113,22 +113,22 @@ public final class JsonHandle
 		//程式設計原則 make the common case fast
 		//這個函式還能再最佳化嗎?
 		lastUse(userID);
+		Object optionalValue; //要獲得的字串(物件型態)
 		String result; //要獲得的字串
 		while (true)
 		{
-			result = file.optString(key, ""); //之所以使用optString 是為了更快一些 getString還要檢查has isEmpty只需檢查字串長度 == 0
-			if (result.isEmpty()) //如果沒有這個key
-				result = englishFile.optString(key, ""); //預設使用英文
+			optionalValue = file.opt(key); //之所以使用optString 是為了更快一些 getString還要檢查has
+
+			//如果使用者的語言檔沒有這個key 就預設使用英文
+			//之所以不用String.valueOf包住全部 而是只包englishFile.opt(key) 是因為只有它才需要valueOf optionalValue只需一個轉字串即可
+			result = optionalValue != null ? optionalValue.toString() : String.valueOf(englishFile.opt(key));
 
 			//注意.json檔內一定不能有空字串 否則charAt會擲出StringIndexOutOfBoundsException
-			//為了讓機器人省去檢查 辛苦一下我們人類了
-			if (result.isEmpty() || result.charAt(0) != '&') //連英文都找不到 或 找到了且不是以&開頭 (&開頭代表reference)
-				break; //結束
-
-			//以&開頭的json key 代表要去那個地方找
-			key = result.substring(1);
+			//為了讓機器人省去檢查 也為了省去動用result.startsWith 辛苦一下我們人類了
+			if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找 (&在C/C++中代表reference)
+				key = result.substring(1); //獲得新的key 進入下一輪迴圈
+			else //並不是以&開頭
+				return result; //result就是最終找到的結果了 直接結束 注意若沒找到 會回傳內容為"null"的字串
 		}
-
-		return result; //最終找到的結果 注意若沒找到 會回傳空字串
 	}
 }

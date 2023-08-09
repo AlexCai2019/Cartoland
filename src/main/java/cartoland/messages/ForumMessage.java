@@ -25,11 +25,7 @@ public class ForumMessage implements IMessage
 		if (!event.getChannelType().isThread())
 			return false; //非討論串者 不得通過
 
-		Category category = event.getChannel()
-				.asThreadChannel()
-				.getParentChannel()
-				.asStandardGuildChannel()
-				.getParentCategory();
+		Category category = event.getMessage().getCategory();
 		//獲取類別失敗就不執行後面那個
 		return category != null && category.getIdLong() == IDs.FORUM_CATEGORY_ID;
 	}

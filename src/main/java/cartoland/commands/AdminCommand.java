@@ -284,7 +284,7 @@ public class AdminCommand implements ICommand
 				return;
 			}
 
-			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof ISlowmodeChannel channel))
+			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof ISlowmodeChannel channel)) //不是可以設慢速模式的頻道
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.wrong_channel")).setEphemeral(true).queue();
 				return;
@@ -296,7 +296,7 @@ public class AdminCommand implements ICommand
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
-			float time = (float) timeBox.doubleValue();
+			float time = (float) timeBox.doubleValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
@@ -312,12 +312,13 @@ public class AdminCommand implements ICommand
 
 			int timeSecond = Math.round(time * switch (unit) //將單位轉成秒
 			{
+				case "second" -> 1;
 				case "minute" -> 60;
 				case "hour" -> 60 * 60;
 				case "double_hour" -> 60 * 60 * 2;
-				default -> 1;
+				default -> 0;
 			});
-			if (timeSecond > ISlowmodeChannel.MAX_SLOWMODE) //不能超過18小時 21600秒
+			if (timeSecond > ISlowmodeChannel.MAX_SLOWMODE) //不能超過6小時 21600秒
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.too_long").formatted(ISlowmodeChannel.MAX_SLOWMODE / (60 * 60)))
 						.setEphemeral(true).queue();

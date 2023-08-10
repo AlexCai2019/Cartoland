@@ -245,6 +245,7 @@
 	"admin.unit_seasons": "季",
 	"admin.unit_years": "年",
 	"admin.unit_wood_rat": "甲子",
+	"admin.unit_century": "世紀",
 	"admin.mute.no_permission": "你並冇權限去mute其他成員！",
 	"admin.mute.no_member": "揾唔到呢位成員！",
 	"admin.mute.can_t_owner": "膽大包天！你竟然敢mute群主？",

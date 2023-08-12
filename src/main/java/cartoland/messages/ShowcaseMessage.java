@@ -25,7 +25,7 @@ public class ShowcaseMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		if (!event.isFromGuild() || event.isFromThread()) //是私訊或在討論串內
+		if (event.isFromThread()) //是在討論串內
 			return false; //不應通過
 		Category category = event.getMessage().getCategory(); //嘗試獲取類別
 		return category != null && category.getIdLong() == IDs.SHOWCASE_CATEGORY_ID;

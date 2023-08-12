@@ -4,6 +4,10 @@ import cartoland.Cartoland;
 import cartoland.commands.AdminCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -50,6 +54,81 @@ public final class TimerHandle
 
 		FileHandle.registerSerialize(BIRTHDAY_MAP, birthdayMap);
 		FileHandle.registerSerialize(BIRTHDAY_ARRAY, birthdayArray);
+
+		TimerHandle.registerTimerEvent((byte) 0, () -> //半夜12點
+		{
+			FileHandle.changeLogDate(); //更換log的日期
+
+			//這以下是和生日有關的
+			List<Long> birthdayMembersID = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
+			if (birthdayMembersID.isEmpty()) //今天沒有人生日
+				return;
+			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
+			if (lobbyChannel == null) //找不到大廳頻道
+				return;
+			int birthdayMembersCount = birthdayMembersID.size(); //今天生日的人數
+			if (birthdayMembersCount <= 100) //小於等於100人
+			{
+				birthdayMembers(birthdayMembersID, lobbyChannel); //直接放下去跑就好
+				return;
+			}
+
+			int membersRange;
+			for (membersRange = 0; membersRange + 100 < birthdayMembersCount; membersRange += 100) //一次只能100人
+				birthdayMembers(birthdayMembersID.subList(membersRange, membersRange + 100), lobbyChannel); //每次取100個
+			birthdayMembers(birthdayMembersID.subList(membersRange, birthdayMembersCount), lobbyChannel); //最後不滿100人
+		});
+
+		TimerHandle.registerTimerEvent((byte) 3, () -> //凌晨3點
+		{
+			TextChannel undergroundChannel = Cartoland.getJDA().getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
+			if (undergroundChannel == null)
+				return;
+			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
+			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
+		}); //好棒 三點了
+
+		TimerHandle.registerTimerEvent((byte) 12, () -> //中午12點
+		{
+			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID);
+			if (questionsChannel == null)
+				return;
+			List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
+			for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
+				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
+		}); //中午十二點時處理並提醒未解決的論壇貼文
+	}
+
+	private static final int MAX_MEMBERS_AT_ONCE = 60; //由於ID最長應該是18446744073709551615 因此每個人最多會占用33個字元 而Discord一次輸入的上限是2000字 33 * 60 = 1980
+
+	private static void birthdayMembers(List<Long> birthdayMembersIDs, TextChannel lobbyChannel)
+	{
+		lobbyChannel.getGuild().retrieveMembersByIds(birthdayMembersIDs).onSuccess(members -> //獲取所有的生日成員們
+		{
+			StringBuilder builder = new StringBuilder();
+			int membersCount = members.size();
+			//最後把剛剛沒說的寄出去
+			if (membersCount <= MAX_MEMBERS_AT_ONCE)
+			{
+				for (Member member : members) //走訪所有成員們
+					builder.append("今天是 ").append(member.getAsMention()).append(" 的生日！\n");
+				lobbyChannel.sendMessage(builder).queue(); //將生日祝賀合併為一則訊息
+				return; //提前結束
+			}
+
+			//這以下是人數超過60人的應對方法
+			for (int i = 0, j = 0; i < membersCount; i++, j++)
+			{
+				if (j == MAX_MEMBERS_AT_ONCE) //當到第61人時 先把第1到第60人寄出 但陣列是從0開始的
+				{
+					lobbyChannel.sendMessage(builder).complete(); //先送出一次生日祝賀 要等它完成後才能重設builder
+					builder.setLength(0); //重設builder
+					j = 0;
+				}
+				builder.append("今天是 ").append(members.get(i).getAsMention()).append(" 的生日！\n");
+			}
+			lobbyChannel.sendMessage(builder).queue(); //把剛剛有累積到 不滿26人的寄出
+		});
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -109,11 +188,11 @@ public final class TimerHandle
 	{
 		if (hour < 0 || hour > 23)
 			throw new IllegalArgumentException("Hour must between 0 and 23!");
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0);
+		LocalDateTime now = LocalDateTime.now(); //現在的時間
+		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0); //目標時間
 
-		if (now.compareTo(untilTime) > 0)
-			untilTime = untilTime.plusDays(1L);
+		if (now.compareTo(untilTime) > 0) //如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了
+			untilTime = untilTime.plusDays(1L); //明天再執行
 
 		return Duration.between(now, untilTime).getSeconds();
 	}

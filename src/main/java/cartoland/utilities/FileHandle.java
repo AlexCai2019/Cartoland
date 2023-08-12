@@ -127,8 +127,6 @@ public final class FileHandle
 		String logString = TimerHandle.getTimeString() + '\t' + output + '\n';
 		try
 		{
-			if (logger == null)
-				startLog0();
 			logger.write(logString);
 		}
 		catch (IOException exception)

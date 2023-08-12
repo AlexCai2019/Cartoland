@@ -466,6 +466,9 @@ public final class AddCommands
 												.setDescriptionLocalization(CHINESE_TAIWAN, "遊戲的難度")
 												.setDescriptionLocalization(CHINESE_CHINA, "游戏的难度")
 												.addChoices(
+														new Command.Choice("Baby", 0)
+																.setNameLocalization(CHINESE_TAIWAN, "寶寶")
+																.setNameLocalization(CHINESE_CHINA, "宝宝"),
 														new Command.Choice("Easy", 1)
 																.setNameLocalization(CHINESE_TAIWAN, "簡單")
 																.setNameLocalization(CHINESE_CHINA, "简单"),
@@ -474,7 +477,10 @@ public final class AddCommands
 																.setNameLocalization(CHINESE_CHINA, "普通"),
 														new Command.Choice("Hard", 3)
 																.setNameLocalization(CHINESE_TAIWAN, "困難")
-																.setNameLocalization(CHINESE_CHINA, "困难"))),
+																.setNameLocalization(CHINESE_CHINA, "困难"),
+														new Command.Choice("Hell", 4)
+																.setNameLocalization(CHINESE_TAIWAN, "地獄")
+																.setNameLocalization(CHINESE_CHINA, "地狱"))),
 						new SubcommandData("play", "Play a game of Tic-Tac-Toe")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
 								.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")

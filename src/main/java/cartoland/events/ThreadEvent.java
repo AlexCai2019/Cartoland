@@ -27,8 +27,8 @@ public class ThreadEvent extends ListenerAdapter
 	@Override
 	public void onChannelCreate(ChannelCreateEvent event)
 	{
-		if (!event.getChannelType().isThread())
-			return;
+		if (!event.getChannelType().isThread()) //如果不是討論串
+			return; //bye have a great time
 
 		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
 		threadChannel.join().queue(); //加入討論串

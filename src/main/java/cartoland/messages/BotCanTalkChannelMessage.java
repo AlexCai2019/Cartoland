@@ -5,7 +5,6 @@ import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -119,8 +118,7 @@ public class BotCanTalkChannelMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		ChannelType channelType = event.getChannelType();
-		if (!channelType.isGuild()) //是私訊
+		if (!event.isFromGuild()) //是私訊
 			return true; //私訊可以說話
 
 		Category category = event.getMessage().getCategory(); //嘗試從訊息獲取類別

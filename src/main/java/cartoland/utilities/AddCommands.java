@@ -498,6 +498,20 @@ public final class AddCommands
 						new SubcommandData("board", "Get the current board")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
 								.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
+		Commands.slash(CONNECT_FOUR, "Play a game of Connect Four")
+				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場四子棋")
+				.setDescriptionLocalization(CHINESE_CHINA, "玩一场四子棋")
+				.addSubcommands(
+						new SubcommandData("start", "Start a game of Connect Four")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "開始一場四子棋")
+								.setDescriptionLocalization(CHINESE_CHINA, "开始一场四子棋"),
+						new SubcommandData("play", "Play a game of Connect Four")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場四子棋")
+								.setDescriptionLocalization(CHINESE_CHINA, "玩一场四子棋")
+								.addOptions(
+										new OptionData(OptionType.INTEGER, "column", "The column that is going to place piece", true, false)
+								)),
+
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")

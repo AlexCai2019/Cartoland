@@ -35,7 +35,7 @@ public class ClickedButton extends ListenerAdapter
 		{
 			case ARCHIVE_THREAD ->
 			{
-				ThreadChannel channel = event.getChannel().asThreadChannel();
+				ThreadChannel channel = (ThreadChannel) event.getChannel();
 				if (channel.isArchived())
 				{
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.already_archived")).setEphemeral(true).queue();
@@ -56,7 +56,7 @@ public class ClickedButton extends ListenerAdapter
 
 			case RENAME_THREAD ->
 			{
-				ThreadChannel channel = event.getChannel().asThreadChannel();
+				ThreadChannel channel = (ThreadChannel) event.getChannel();
 
 				Member member = event.getMember();
 				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong())) //獲取失敗 或 沒有權限

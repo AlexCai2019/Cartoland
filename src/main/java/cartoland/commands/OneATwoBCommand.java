@@ -8,6 +8,8 @@ import cartoland.utilities.JsonHandle;
 import cartoland.utilities.CommonFunctions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.util.Map;
+
 /**
  * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This class implements
  * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
@@ -27,8 +29,8 @@ public class OneATwoBCommand implements ICommand
 
 	public OneATwoBCommand(CommandUsage commandUsage)
 	{
-		startSubCommand = new StartSubCommand(commandUsage);
-		guessSubCommand = new GuessSubCommand(commandUsage);
+		startSubCommand = new StartSubcommand(commandUsage);
+		guessSubCommand = new PlaySubcommand(commandUsage);
 	}
 
 	@Override
@@ -37,10 +39,10 @@ public class OneATwoBCommand implements ICommand
 		("start".equals(event.getSubcommandName()) ? startSubCommand : guessSubCommand).commandProcess(event);
 	}
 
-	private static class StartSubCommand implements ICommand
+	private static class StartSubcommand implements ICommand
 	{
 		private final CommandUsage commandCore;
-		private StartSubCommand(CommandUsage commandUsage)
+		private StartSubcommand(CommandUsage commandUsage)
 		{
 			commandCore = commandUsage;
 		}
@@ -49,21 +51,26 @@ public class OneATwoBCommand implements ICommand
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = commandCore.getGames().get(userID);
-			if (playing == null) //沒有在玩遊戲 開始1A2B
+			Map<Long, IMiniGame> games = commandCore.getGames();
+			IMiniGame playing = games.get(userID);
+			if (playing != null) //已經有在玩遊戲
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
-				commandCore.getGames().put(userID, new OneATwoBGame());
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+						.setEphemeral(true)
+						.queue();
+				return;
 			}
-			else //已經有在玩遊戲
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
+
+			//沒有在玩遊戲 開始1A2B
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
+			games.put(userID, new OneATwoBGame());
 		}
 	}
 
-	private static class GuessSubCommand implements ICommand
+	private static class PlaySubcommand implements ICommand
 	{
 		private final CommandUsage commandCore;
-		private GuessSubCommand(CommandUsage commandUsage)
+		private PlaySubcommand(CommandUsage commandUsage)
 		{
 			commandCore = commandUsage;
 		}

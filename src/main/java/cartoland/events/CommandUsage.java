@@ -2,6 +2,7 @@ package cartoland.events;
 
 import cartoland.Cartoland;
 import cartoland.commands.*;
+import cartoland.commands.TicTacToeCommand;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.JDA;
@@ -157,6 +158,9 @@ public class CommandUsage extends ListenerAdapter
 
 		//tic_tac_toe
 		commands.put(TIC_TAC_TOE, new TicTacToeCommand(this));
+
+		//connect_four
+		commands.put(CONNECT_FOUR, new ConnectFourCommand(this));
 	}
 
 	/**

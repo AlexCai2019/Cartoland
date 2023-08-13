@@ -8,7 +8,6 @@ import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,21 +19,20 @@ import java.util.Map;
  * @see TicTacToeGame The backend of the Tic-Tac-Toe game.
  * @author Alex Cai
  */
-public class TicTacToeCommand implements ICommand
+public class TicTacToeCommand extends HasSubcommands
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>();
-
 	public TicTacToeCommand(CommandUsage commandUsage)
 	{
-		subCommands.put("start", new StartSubcommand(commandUsage));
-		subCommands.put("play", new PlaySubCommand(commandUsage));
-		subCommands.put("board", new BoardSubcommand(commandUsage));
+		super(3);
+		subcommands.put("start", new StartSubcommand(commandUsage));
+		subcommands.put("play", new PlaySubCommand(commandUsage));
+		subcommands.put("board", new BoardSubcommand(commandUsage));
 	}
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
+		super.commandProcess(event);
 	}
 
 	private static class StartSubcommand implements ICommand
@@ -52,9 +50,9 @@ public class TicTacToeCommand implements ICommand
 			long userID = event.getUser().getIdLong();
 			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
-			if (playing != null)
+			if (playing != null) //已經有在玩遊戲
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -151,7 +149,7 @@ public class TicTacToeCommand implements ICommand
 			String playerMove = JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + ticTacToe.getBoard(); //先獲得棋盤
 
 			//機器人下
-			if (ticTacToe.aiPlaced()) //機器人贏
+			if (ticTacToe.aiPlace()) //機器人贏
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose").formatted(PUNISH) + ticTacToe.getBoard()).queue();
 				CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);

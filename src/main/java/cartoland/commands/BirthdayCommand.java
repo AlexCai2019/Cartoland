@@ -8,7 +8,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 /**
  * {@code BirthdayCommand} is an execution when a user uses /birthday command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
- * handle sub commands, but call other classes to deal with it.
+ * handle sub commands, but call other classes to deal with it. Thought this command has subcommands, it
+ * doesn't extend {@link HasSubcommands} class, this is because this command only has 2 subcommands, which can
+ * be determined using a single {@link String#equals(Object)} method.
  *
  * @since 2.1
  * @author Alex Cai
@@ -23,6 +25,15 @@ public class BirthdayCommand implements ICommand
 		event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.delete")).queue();
 	};
 
+	/**
+	 * The execution of a slash command. Unlike other commands that has sub commands, since this
+	 * command only has 2 subcommands, it uses a single ternary operation instead of HashMap to call the
+	 * class that handles the subcommand.
+	 *
+	 * @param event The event that carries information of the user and the command.
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{

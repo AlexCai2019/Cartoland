@@ -38,7 +38,7 @@ public class AddReaction extends ListenerAdapter
 			return;
 		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
 			return;
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		ThreadChannel forumPost = (ThreadChannel) event.getChannel();
 		if (forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不在問題論壇
 			return;
 		if (forumPost.isArchived()) //關閉著的

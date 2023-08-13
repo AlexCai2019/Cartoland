@@ -26,20 +26,20 @@ import java.util.regex.Pattern;
  * @since 2.0
  * @author Alex Cai
  */
-public class IntroduceCommand implements ICommand
+public class IntroduceCommand extends HasSubcommands
 {
 	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";
 
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
-	private final Map<String, ICommand> subCommands = new HashMap<>(3);
-
 	public IntroduceCommand()
 	{
+		super(3);
+
 		FileHandle.registerSerialize(INTRODUCTION_FILE_NAME, introduction);
 
-		subCommands.put("user", event ->
+		subcommands.put("user", event ->
 		{
 			User user = event.getUser();
 			User target = event.getOption("user", CommonFunctions.getAsUser);
@@ -49,8 +49,8 @@ public class IntroduceCommand implements ICommand
 			String content = introduction.get(target.getIdLong());
 			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
 		});
-		subCommands.put("update", new UpdateSubCommand());
-		subCommands.put("delete", event ->
+		subcommands.put("update", new UpdateSubCommand());
+		subcommands.put("delete", event ->
 		{
 			long userID = event.getUser().getIdLong();
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
@@ -70,21 +70,6 @@ public class IntroduceCommand implements ICommand
 	public static void updateIntroduction(long userID, String content)
 	{
 		introduction.put(userID, content);
-	}
-
-	/**
-	 * The execution of a slash command. Unlike other commands that has sub commands, since this
-	 * command only has 2 sub commands, it uses a single ternary operation instead of HashMap to call the
-	 * class that handles the sub command.
-	 *
-	 * @param event The event that carries information of the user and the command.
-	 * @since 2.0
-	 * @author Alex Cai
-	 */
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
 	}
 
 	/**

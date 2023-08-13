@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
@@ -29,7 +30,7 @@ public class ReceiveModal extends ListenerAdapter
 			}
 
 			String newTitleString = newTitle.getAsString(); //新標題
-			event.getChannel().asThreadChannel().getManager().setName(newTitleString).queue();
+			((ThreadChannel) event.getChannel()).getManager().setName(newTitleString).queue();
 			event.reply(event.getUser().getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
 		}
 	}

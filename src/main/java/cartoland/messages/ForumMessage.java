@@ -30,7 +30,7 @@ public class ForumMessage implements IMessage
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		ThreadChannel forumPost = event.getChannel().asThreadChannel();
+		ThreadChannel forumPost = (ThreadChannel) event.getChannel();
 		Message message = event.getMessage();
 
 		if (ForumsHandle.questionForumPostIsIdled(forumPost)) //是問題貼文 且處在閒置狀態

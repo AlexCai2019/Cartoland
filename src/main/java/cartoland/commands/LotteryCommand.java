@@ -6,9 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -20,9 +18,8 @@ import java.util.regex.Pattern;
  * @since 1.4
  * @author Alex Cai
  */
-public class LotteryCommand implements ICommand
+public class LotteryCommand extends HasSubcommands
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>(5);
 	private static final Random random = new Random(); //不使用Algorithm.chance
 	private static final long MAXIMUM = 1000000L;
 	private static final byte INVALID_BET = -1;
@@ -31,17 +28,12 @@ public class LotteryCommand implements ICommand
 
 	public LotteryCommand()
 	{
-		subCommands.put("get", new GetSubCommand());
-		subCommands.put("bet", new BetSubCommand());
-		subCommands.put("ranking", new RankingSubCommand());
-		subCommands.put("daily", new DailySubCommand());
-		subCommands.put("slot", new SlotSubCommand());
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
+		super(5);
+		subcommands.put("get", new GetSubCommand());
+		subcommands.put("bet", new BetSubCommand());
+		subcommands.put("ranking", new RankingSubCommand());
+		subcommands.put("daily", new DailySubCommand());
+		subcommands.put("slot", new SlotSubCommand());
 	}
 
 	private static long createValidBet(SlashCommandInteractionEvent event, long userID, long nowHave)

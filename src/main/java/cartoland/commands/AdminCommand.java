@@ -8,22 +8,21 @@ import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * {@code AdminCommand} is an execution when a moderator uses /admin command. This class implements {@link ICommand}
- * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
- * handle sub commands, but call other classes to deal with it.
+ * {@code AdminCommand} is an execution when a moderator uses /admin command. This class extends
+ * {@link HasSubcommands} class which implements {@link ICommand} interface, which is for the commands HashMap in
+ * {@link cartoland.events.CommandUsage}. This class doesn't handle sub commands, but call other classes to
+ * deal with it.
  *
  * @since 2.1
  * @author Alex Cai
  */
-public class AdminCommand implements ICommand
+public class AdminCommand extends HasSubcommands
 {
 	private static final String TEMP_BAN_SET = "serialize/temp_ban_set.ser";
 
@@ -33,7 +32,6 @@ public class AdminCommand implements ICommand
 	public static final byte USER_ID_INDEX = 0;
 	public static final byte BANNED_TIME = 1;
 	public static final byte BANNED_SERVER = 2;
-	private final Map<String, ICommand> subCommands = new HashMap<>();
 
 	static
 	{
@@ -42,15 +40,10 @@ public class AdminCommand implements ICommand
 
 	public AdminCommand()
 	{
-		subCommands.put("mute", new MuteSubCommand());
-		subCommands.put("temp_ban", new TempBanSubCommand());
-		subCommands.put("slow_mode", new SlowModeSubCommand());
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
+		super(3);
+		subcommands.put("mute", new MuteSubcommand());
+		subcommands.put("temp_ban", new TempBanSubcommand());
+		subcommands.put("slow_mode", new SlowModeSubcommand());
 	}
 
 	/**
@@ -60,7 +53,7 @@ public class AdminCommand implements ICommand
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	private static class MuteSubCommand implements ICommand
+	private static class MuteSubcommand implements ICommand
 	{
 		private static final long MAX_TIME_OUT_LENGTH_MILLIS = 1000L * 60 * 60 * 24 * Member.MAX_TIME_OUT_LENGTH;
 
@@ -157,7 +150,7 @@ public class AdminCommand implements ICommand
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	private static class TempBanSubCommand implements ICommand
+	private static class TempBanSubcommand implements ICommand
 	{
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -264,7 +257,7 @@ public class AdminCommand implements ICommand
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	private static class SlowModeSubCommand implements ICommand
+	private static class SlowModeSubcommand implements ICommand
 	{
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)

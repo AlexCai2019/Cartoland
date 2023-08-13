@@ -1,12 +1,10 @@
 package cartoland.commands;
 
-import cartoland.utilities.JsonHandle;
 import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -17,9 +15,8 @@ import java.util.regex.Pattern;
  * @since 1.4
  * @author Alex Cai
  */
-public class ToolCommand implements ICommand
+public class ToolCommand extends HasSubcommands
 {
-	private final Map<String, ICommand> subCommands = new HashMap<>(5);
 	public static final String UUID_STRING = "uuid_string";
 	public static final String UUID_ARRAY = "uuid_array";
 	public static final String COLOR_RGBA = "color_rgba";
@@ -28,17 +25,12 @@ public class ToolCommand implements ICommand
 
 	public ToolCommand()
 	{
-		subCommands.put(UUID_STRING, new UUIDStringSubCommand()); //tool uuid_string
-		subCommands.put(UUID_ARRAY, new UUIDArraySubCommand()); //tool uuid_array
-		subCommands.put(COLOR_RGBA, new ColorRGBASubCommand()); //tool color_rgba
-		subCommands.put(COLOR_INTEGER, new ColorIntegerSubCommand()); //tool color_rgb
-		subCommands.put(PACK_MCMETA, new PackMcmetaSubCommand()); //tool pack_mcmeta
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		subCommands.get(event.getSubcommandName()).commandProcess(event);
+		super(5);
+		subcommands.put(UUID_STRING, new UUIDStringSubCommand()); //tool uuid_string
+		subcommands.put(UUID_ARRAY, new UUIDArraySubCommand()); //tool uuid_array
+		subcommands.put(COLOR_RGBA, new ColorRGBASubCommand()); //tool color_rgba
+		subcommands.put(COLOR_INTEGER, new ColorIntegerSubCommand()); //tool color_rgb
+		subcommands.put(PACK_MCMETA, new PackMcmetaSubCommand()); //tool pack_mcmeta
 	}
 
 	/**

@@ -105,7 +105,7 @@ public class TicTacToeGame implements IMiniGame
 		return round > 2 && checkWin(NOUGHT); //進行到第三回合才有可能有輸贏
 	}
 
-	public boolean aiPlaced()
+	public boolean aiPlace()
 	{
 		int index = switch (round)
 		{
@@ -343,20 +343,17 @@ public class TicTacToeGame implements IMiniGame
 
 			//找出和第一手鄰近 可連成一線 且都是空的兩格 隨機挑選一格落子
 			//因為這是第二回合 O只放了兩個 代表必定能找到一組空的
-			if (game.board[LEFT_CORNER] == CROSS) //第一手下在左上角
-			{
-				Algorithm.shuffle(tryAtLeftCorner);
-				for (int[] bothEmpty : tryAtLeftCorner)
-					if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
-						return bothEmpty[1]; //搶角落
-			}
+			int[][] possibleWays;
+			if (game.board[LEFT_CORNER] == CROSS) //第一手下在左上角 只有玩家第一手下中間才有可能
+				possibleWays = tryAtLeftCorner;
 			else //如果不是下在左上角 那就肯定是下在中間了
-			{
-				Algorithm.shuffle(tryAtCenter);
-				for (int[] bothEmpty : tryAtCenter)
-					if (bothEmpty[0] + bothEmpty[1] == EMPTY << 1) //bothEmpty[0] == TicTacToeGame.EMPTY && bothEmpty[1] == TicTacToeGame.EMPTY
-						return Algorithm.chance(50) ? bothEmpty[0] : bothEmpty[1];
-			}
+				possibleWays = tryAtCenter;
+
+			Algorithm.shuffle(possibleWays);
+			for (int[] co : possibleWays)
+				if (game.board[co[0]] + game.board[co[1]] == EMPTY + EMPTY)
+					return Algorithm.chance(50) ? co[0] : co[1]; //game.board[co[0]] == EMPTY && game.board[co[1]] == EMPTY
+			//對第一手下左上角而言 搶角落比較有勝算 可是總要給點🐔會
 
 			//如果以上都不通過
 			return super.round2(); //就隨機走

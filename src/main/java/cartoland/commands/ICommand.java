@@ -36,6 +36,7 @@ public interface ICommand
 	String LOTTERY = "lottery";
 	String TRANSFER = "transfer";
 	String TIC_TAC_TOE = "tic_tac_toe";
+	String CONNECT_FOUR = "connect_four";
 
 	/**
 	 * The execution of a slash command.

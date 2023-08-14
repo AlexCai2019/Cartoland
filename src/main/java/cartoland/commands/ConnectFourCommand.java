@@ -108,9 +108,19 @@ public class ConnectFourCommand implements ICommand
 
 			if (connectFour.humanPlace(column))
 			{
-				event.reply("You won!").queue();
+				event.reply("You won!\n" + connectFour.getBoard()).queue();
 				return;
 			}
+
+			String playerMove = connectFour.getBoard();
+
+			if (connectFour.aiPlace())
+			{
+				event.reply("You lost...\n" + connectFour.getBoard()).queue();
+				return;
+			}
+
+			event.reply("Your move:\n" + playerMove + "\nBot's move:\n" + connectFour.getBoard()).setEphemeral(true).queue();
 		}
 	}
 }

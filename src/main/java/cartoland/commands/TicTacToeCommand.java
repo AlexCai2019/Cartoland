@@ -3,7 +3,6 @@ package cartoland.commands;
 import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.TicTacToeGame;
-import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -27,12 +26,6 @@ public class TicTacToeCommand extends HasSubcommands
 		subcommands.put("start", new StartSubcommand(commandUsage));
 		subcommands.put("play", new PlaySubCommand(commandUsage));
 		subcommands.put("board", new BoardSubcommand(commandUsage));
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		super.commandProcess(event);
 	}
 
 	private static class StartSubcommand implements ICommand
@@ -77,8 +70,6 @@ public class TicTacToeCommand extends HasSubcommands
 	 */
 	public static class PlaySubCommand implements ICommand
 	{
-		private static final byte PUNISH = 100;
-
 		private final CommandUsage commandCore;
 
 		private PlaySubCommand(CommandUsage commandUsage)
@@ -132,9 +123,7 @@ public class TicTacToeCommand extends HasSubcommands
 			//玩家下
 			if (ticTacToe.humanPlace(row, column)) //玩家贏
 			{
-				int reward = ticTacToe.getReward();
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win").formatted(reward) + ticTacToe.getBoard()).queue();
-				CommandBlocksHandle.getLotteryData(userID).addBlocks(reward);
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.win") + ticTacToe.getBoard()).queue();
 				games.remove(userID);
 				return;
 			}
@@ -151,9 +140,7 @@ public class TicTacToeCommand extends HasSubcommands
 			//機器人下
 			if (ticTacToe.aiPlace()) //機器人贏
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose").formatted(PUNISH) + ticTacToe.getBoard()).queue();
-				CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
-				lotteryData.subBlocks(PUNISH); //懲罰PUNISH個指令方塊
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.lose") + ticTacToe.getBoard()).queue();
 				games.remove(userID);
 				return;
 			}

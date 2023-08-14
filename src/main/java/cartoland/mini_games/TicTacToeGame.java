@@ -20,7 +20,7 @@ public class TicTacToeGame implements IMiniGame
 	private static final int CENTER = BOARD_SIDE * BOARD_SIDE >> 1;
 
 	private final char[] board = new char[9];
-	private final StringBuilder boardBuilder = new StringBuilder();
+	private final StringBuilder boardBuilder = new StringBuilder("```\nr\\c");
 
 	private static final int[][] winningCombinations =
 	{
@@ -45,7 +45,6 @@ public class TicTacToeGame implements IMiniGame
 	public TicTacToeGame(int difficulty)
 	{
 		Arrays.fill(board, ' ');
-		boardBuilder.append("```\nr\\c");
 		int r, c;
 		for (c = 1; c <= BOARD_SIDE; c++)
 			boardBuilder.append("| ").append(c).append(' ');
@@ -59,11 +58,11 @@ public class TicTacToeGame implements IMiniGame
 
 		difficultyBot = switch (difficulty)
 		{
-			case 0 -> new BabyBot(this);
-			case 1 -> new EasyBot(this);
-			case 2 -> new NormalBot(this);
-			case 3 -> new HardBot(this);
-			case 4 -> new HellBot(this);
+			case 0 -> new BabyBot(this); //寶寶模式
+			case 1 -> new EasyBot(this); //簡單模式
+			case 2 -> new NormalBot(this); //普通模式
+			case 3 -> new HardBot(this); //困難模式
+			case 4 -> new HellBot(this); //地獄模式
 			default -> throw new IllegalArgumentException("How can you create this difficulty?");
 		};
 	}
@@ -90,13 +89,13 @@ public class TicTacToeGame implements IMiniGame
 
 	public static boolean isInBounds(int row, int column)
 	{
-		int co = boardCoordinate(row, column);
-		return 0 <= co && co < BOARD_SIDE * BOARD_SIDE;
+		int co = boardCoordinate(row, column); //將列和行轉換為0 ~ 8之間的index
+		return 0 <= co && co < BOARD_SIDE * BOARD_SIDE; //在範圍內
 	}
 
 	public boolean humanPlace(int row, int column)
 	{
-		board[boardCoordinate(row, column)] = NOUGHT;
+		board[boardCoordinate(row, column)] = NOUGHT; //人類放置棋子
 		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), NOUGHT);
 		//省略 開頭的四個字元 (頭上的列 = -符號 和 其他棋盤列) + 2 等差數列 注意row和column從1開始
 		//上一列加上換行字元 有ROW_LENGTH個字元 -符號有ROW_LENGTH個 加上換行字元
@@ -107,28 +106,30 @@ public class TicTacToeGame implements IMiniGame
 
 	public boolean aiPlace()
 	{
-		int index = switch (round)
+		int index = switch (round) //根據回合決定行動
 		{
 			case 1 -> difficultyBot.round1(); //第一回合
 			case 2 -> difficultyBot.round2(); //第二回合
 			case 3 -> difficultyBot.round3(); //第三回合
 			default -> difficultyBot.round4AndMore(); //第四回合和以上
 		}; //機器人落子
-		board[index] = CROSS;
+		board[index] = CROSS; //機器人放置棋子
 		int[] co = arrayOfRowAndColumn(index); // co[0] = row, co[1] = column
 		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * co[0] + 2 + (co[1] << 2), CROSS);
 		spaces--; //空棋盤少一格
 		return round++ > 2 && checkWin(CROSS); //進行到第三回合才有可能有輸贏
 	}
 
+	/**
+	 * Get the current board.
+	 *
+	 * @return The current board. Displayed as Discord code block.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
 	public String getBoard()
 	{
 		return boardBuilder.toString();
-	}
-
-	public int getReward()
-	{
-		return difficultyBot.getReward();
 	}
 
 	private void updateNotPlaced()
@@ -156,23 +157,23 @@ public class TicTacToeGame implements IMiniGame
 
 	private static int[] arrayOfRowAndColumn(int index)
 	{
-		return new int[] { index / BOARD_SIDE + 1, index % BOARD_SIDE + 1 };
+		return new int[] { index / BOARD_SIDE + 1, index % BOARD_SIDE + 1 }; //將棋盤的index轉換成row和column
 	}
 
 	private boolean checkWin(char symbol)
 	{
-		for (int[] winLine : winningCombinations)
+		for (int[] winLine : winningCombinations) //檢查所有勝利的可能性
 			if (matchWinLine(winLine, symbol)) //如果有任何一條中了勝利的組合
-				return true;
-		return false;
+				return true; //勝利
+		return false; //尚未勝利
 	}
 
 	private boolean matchWinLine(int[] winLine, char symbol)
 	{
-		for (int w : winLine)
-			if (board[w] != symbol)
-				return false;
-		return true;
+		for (int w : winLine) //檢查一條可能的勝利途徑上的每個棋子
+			if (board[w] != symbol) //有一個棋子和預期的不同
+				return false; //這條路廢了
+		return true; //贏了
 	}
 
 	public boolean isTie()
@@ -188,25 +189,52 @@ public class TicTacToeGame implements IMiniGame
 	 */
 	private static abstract class DifficultyBot
 	{
-		protected final TicTacToeGame game;
+		protected final TicTacToeGame game; //遊戲核心
 
 		private DifficultyBot(TicTacToeGame game)
 		{
 			this.game = game;
 		}
 
-		protected abstract int getReward();
-
 		/**
-		 * The bot needs to do based on the board and the difficulty of a game in first round.
+		 * The bot needs to do in the first round. The movement is based on the board and the difficulty of a game.
 		 *
 		 * @return Bot's move.
 		 * @since 2.1
 		 * @author Alex Cai
 		 */
 		protected abstract int round1();
+
+
+		/**
+		 * The bot needs to do in the second round. The movement is based on the board and the difficulty
+		 * of a game.
+		 *
+		 * @return Bot's move.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
 		protected abstract int round2();
+
+		/**
+		 * The bot needs to do in the third round. The movement is based on the board and the difficulty of a
+		 * game.
+		 *
+		 * @return Bot's move.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
 		protected abstract int round3();
+
+
+		/**
+		 * The bot needs to do in the fourth and more rounds. The movement is based on the board and the
+		 * difficulty of a game.
+		 *
+		 * @return Bot's move.
+		 * @since 2.1
+		 * @author Alex Cai
+		 */
 		protected abstract int round4AndMore();
 	}
 
@@ -221,12 +249,6 @@ public class TicTacToeGame implements IMiniGame
 		private BabyBot(TicTacToeGame game)
 		{
 			super(game);
-		}
-
-		@Override
-		protected int getReward()
-		{
-			return 1;
 		}
 
 		@Override
@@ -274,12 +296,6 @@ public class TicTacToeGame implements IMiniGame
 			super(game);
 		}
 
-		@Override
-		protected int getReward()
-		{
-			return 5;
-		}
-
 		/**
 		 * Based on the user's move on round 1. If the user put the piece at center, the bot put its one at
 		 * upper-left; otherwise, the bot put its piece at center of the board. Notice that <b>this method
@@ -311,12 +327,6 @@ public class TicTacToeGame implements IMiniGame
 		private NormalBot(TicTacToeGame game)
 		{
 			super(game);
-		}
-
-		@Override
-		protected int getReward()
-		{
-			return 20;
 		}
 
 		@Override
@@ -375,12 +385,6 @@ public class TicTacToeGame implements IMiniGame
 		}
 
 		@Override
-		protected int getReward()
-		{
-			return 50;
-		}
-
-		@Override
 		protected int round3()
 		{
 			int first, second, third;
@@ -388,9 +392,9 @@ public class TicTacToeGame implements IMiniGame
 
 			for (int[] winLine: winningCombinations) //檢查X是否即將連線 如果是則執行
 			{
-				f = game.board[first = winLine[0]];
-				s = game.board[second = winLine[1]];
-				t = game.board[third = winLine[2]];
+				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
+				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中
+				t = game.board[third = winLine[2]]; //可能連線的第三格 同時將索引存進third中
 				if (f + s == CROSS + CROSS && t == EMPTY) //[0]和[1]皆為X
 					return third;
 				if (f + t == CROSS + CROSS && s == EMPTY) //[0]和[2]皆為X
@@ -401,9 +405,9 @@ public class TicTacToeGame implements IMiniGame
 
 			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果是則阻止
 			{
-				f = game.board[first = winLine[0]];
-				s = game.board[second = winLine[1]];
-				t = game.board[third = winLine[2]];
+				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
+				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中
+				t = game.board[third = winLine[2]]; //可能連線的第三格 同時將索引存進third中
 				if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
 					return third;
 				if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O
@@ -422,12 +426,6 @@ public class TicTacToeGame implements IMiniGame
 		private HellBot(TicTacToeGame game)
 		{
 			super(game);
-		}
-
-		@Override
-		protected int getReward()
-		{
-			return 100;
 		}
 
 		@Override

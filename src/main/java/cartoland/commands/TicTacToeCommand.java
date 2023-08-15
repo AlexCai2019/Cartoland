@@ -130,6 +130,7 @@ public class TicTacToeCommand extends HasSubcommands
 
 			if (ticTacToe.isTie()) //平手
 			{
+				//之所以不像四子棋那樣在機器人動之後執行 是因為這個棋盤有奇數個格子 因此最後一步一定是玩家來下
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.tie") + ticTacToe.getBoard()).queue();
 				games.remove(userID);
 				return;

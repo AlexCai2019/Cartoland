@@ -100,23 +100,30 @@ public class ConnectFourCommand implements ICommand
 				return;
 			}
 
-			if (connectFour.isFull(column))
+			if (connectFour.isFull(column)) //直行已經滿了卻還是放棋子
 			{
 				event.reply("You can't put piece here!").setEphemeral(true).queue();
 				return;
 			}
 
-			if (connectFour.humanPlace(column))
+			if (connectFour.humanPlace(column)) //如果玩家贏了
 			{
 				event.reply("You won!\n" + connectFour.getBoard()).queue();
 				return;
 			}
 
-			String playerMove = connectFour.getBoard();
+			String playerMove = connectFour.getBoard(); //記錄下目前玩家動過後的棋盤
 
-			if (connectFour.aiPlace())
+			if (connectFour.aiPlace()) //如果機器人贏了
 			{
 				event.reply("You lost...\n" + connectFour.getBoard()).queue();
+				return;
+			}
+
+			if (connectFour.isTie()) //如果平手
+			{
+				//之所以不像井字遊戲那樣在機器人動之前執行 是因為這個棋盤有偶數個格子 因此最後一步一定是機器人來下
+				event.reply("It's tie!\n" + connectFour.getBoard()).queue();
 				return;
 			}
 

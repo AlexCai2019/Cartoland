@@ -338,9 +338,9 @@ public class TicTacToeGame implements IMiniGame
 			char f, s, t;
 			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
 			{
-				f = game.board[first = winLine[0]];
-				s = game.board[second = winLine[1]];
-				t = game.board[third = winLine[2]];
+				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
+				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中
+				t = game.board[third = winLine[2]]; //可能連線的第三格 同時將索引存進third中
 				if (f + s == NOUGHT + NOUGHT && t == EMPTY) //[0]和[1]皆為O
 					return third;
 				if (f + t == NOUGHT + NOUGHT && s == EMPTY) //[0]和[2]皆為O

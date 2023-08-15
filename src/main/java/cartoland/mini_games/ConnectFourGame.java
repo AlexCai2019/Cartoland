@@ -13,7 +13,10 @@ public class ConnectFourGame implements IMiniGame
 	private static final char EMPTY = ' ';
 
 	private final char[][] board = new char[ROWS][COLUMNS];
-	private final StringBuilder boardBuilder = new StringBuilder("```\nr\\c");
+	private int spaces = ROWS * COLUMNS;
+	private final StringBuilder boardBuilder = new StringBuilder("```\n 1 "); //顯示棋盤
+	private static final int CHARACTERS_IN_A_ROW = 3 + (COLUMNS - 1) * 4 + 1; //第一行的--- 以及剩下那些行分配到的---- 還有最後的換行
+	private final Random random = new Random();
 
 	public ConnectFourGame()
 	{
@@ -21,15 +24,15 @@ public class ConnectFourGame implements IMiniGame
 			Arrays.fill(row, EMPTY);
 
 		int r, c;
-		for (c = 1; c <= COLUMNS; c++)
-			boardBuilder.append("| ").append(c).append(' ');
+		for (c = 2; c <= COLUMNS; c++) //從2開始 1已經事先放好了
+			boardBuilder.append("| ").append(c).append(' '); //標上棋盤的行數
+		String separateRowDashes = "-".repeat(CHARACTERS_IN_A_ROW - 1); //扣掉換行符號
 		for (r = 1; r <= ROWS; r++)
 		{
-			boardBuilder.append('\n');
-			for (c = 0; c < COLUMNS; c++)
-				boardBuilder.append("----");
-			boardBuilder.append("---\n ").append(r).append(' ');
-			for (c = 0; c < COLUMNS; c++)
+			boardBuilder.append('\n') //換行
+					.append(separateRowDashes) //一大堆橫線
+					.append("\n " + EMPTY + ' '); //下一行以及第一格的空白
+			for (c = 1; c < COLUMNS; c++)
 				boardBuilder.append("| " + EMPTY + ' ');
 		}
 		boardBuilder.append("\n```");
@@ -39,6 +42,14 @@ public class ConnectFourGame implements IMiniGame
 	public String gameName()
 	{
 		return "Connect Four";
+	}
+
+	private void updateBoardString(char symbol, int row, int column)
+	{
+		boardBuilder.setCharAt(4 + CHARACTERS_IN_A_ROW * 2 + //首先排除掉前面的```\n以及上面那兩列
+				row * CHARACTERS_IN_A_ROW * 2 + //在第幾行 就忽略幾行的橫線和棋盤內容
+				4 * column + 1 //每一項都是前一項 + 1 這個等差數列是從1開始的
+				, symbol);
 	}
 
 	public String getBoard()
@@ -58,18 +69,23 @@ public class ConnectFourGame implements IMiniGame
 
 	public boolean humanPlace(int column)
 	{
-		return isWon(PLAYER_PLACE, place(PLAYER_PLACE, column), column);
+		spaces--; //可用空間減少一格
+		int row = place(PLAYER_PLACE, column); //即將要落子的那個橫列
+		updateBoardString(PLAYER_PLACE, row, column); //更新棋盤字串
+		return isWon(PLAYER_PLACE, row, column);
 	}
 
-	private final Random random = new Random();
 	public boolean aiPlace()
 	{
+		spaces--; //可用空間減少一格
 		int column; //要放棋子的直行
-		do
+		do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
 			column = random.nextInt(COLUMNS); //隨機選一直行
 		while (isFull(column)); //如果已經滿了 就再隨機選一次
+		int row = place(AI_PLACE, column); //即將要落子的那個橫列
+		updateBoardString(AI_PLACE, row, column); //更新棋盤字串
 
-		return isWon(AI_PLACE, place(AI_PLACE, column), column);
+		return isWon(AI_PLACE, row, column); //回傳是否勝利
 	}
 
 	private int place(char symbol, int column)
@@ -169,5 +185,10 @@ public class ConnectFourGame implements IMiniGame
 		}
 
 		return false;
+	}
+
+	public boolean isTie()
+	{
+		return spaces == 0; //已經沒有空間了
 	}
 }

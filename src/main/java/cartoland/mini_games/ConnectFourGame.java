@@ -46,8 +46,9 @@ public class ConnectFourGame implements IMiniGame
 
 	private void updateBoardString(char symbol, int row, int column)
 	{
+		System.out.println("symbol = " + symbol + ", row = " + row + ", column = " + column);
 		boardBuilder.setCharAt(4 + CHARACTERS_IN_A_ROW * 2 + //首先排除掉前面的```\n以及上面那兩列
-				row * CHARACTERS_IN_A_ROW * 2 + //在第幾行 就忽略幾行的橫線和棋盤內容
+				row * CHARACTERS_IN_A_ROW * 2 + //在第幾列 就忽略幾列的橫線和棋盤內容
 				4 * column + 1 //每一項都是前一項 + 1 這個等差數列是從1開始的
 				, symbol);
 	}
@@ -57,14 +58,14 @@ public class ConnectFourGame implements IMiniGame
 		return boardBuilder.toString();
 	}
 
-	public boolean isInBounds(int column1Index)
+	public boolean isInBounds(int column)
 	{
-		return 1 <= column1Index && column1Index <= COLUMNS;
+		return 0 <= column && column < COLUMNS;
 	}
 
 	public boolean isFull(int column)
 	{
-		return board[0][column - 1] != EMPTY; //最上面的那橫列 是否有東西
+		return board[0][column] != EMPTY; //最上面的那橫列 是否有東西
 	}
 
 	public boolean humanPlace(int column)
@@ -99,7 +100,7 @@ public class ConnectFourGame implements IMiniGame
 				break; //結束
 			}
 		}
-		return row;
+		return row - 1;
 	}
 
 	private boolean isWon(char symbol, int row, int column)
@@ -164,7 +165,7 @@ public class ConnectFourGame implements IMiniGame
 		symbolCount = 0;
 		if (row > column) //將r和c歸位到右上角 直到碰到其中一面的邊界為止
 		{
-			r = row + column;
+			r = row - column;
 			c = 0;
 		}
 		else

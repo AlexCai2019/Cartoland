@@ -13,37 +13,16 @@ import java.util.Map;
  * @since 2.1
  * @author Alex Cai
  */
-public class ConnectFourCommand implements ICommand
+public class ConnectFourCommand extends HasSubcommands
 {
-	private final ICommand startSubCommand;
-	private final ICommand playSubCommand;
-
 	public ConnectFourCommand(CommandUsage commandUsage)
 	{
-		startSubCommand = new StartSubCommand(commandUsage);
-		playSubCommand = new PlaySubCommand(commandUsage);
-	}
+		super(3);
 
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		("start".equals(event.getSubcommandName()) ? startSubCommand : playSubCommand).commandProcess(event);
-	}
-
-	private static class StartSubCommand implements ICommand
-	{
-		private final CommandUsage commandCore;
-
-		private StartSubCommand(CommandUsage commandUsage)
-		{
-			commandCore = commandUsage;
-		}
-
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
+		subcommands.put("start", event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames(); //目前所有人正在玩的遊戲們
+			Map<Long, IMiniGame> games = commandUsage.getGames(); //目前所有人正在玩的遊戲們
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
@@ -53,9 +32,22 @@ public class ConnectFourCommand implements ICommand
 				return;
 			}
 
-			event.reply("Start a game of connect four!").queue();
-			games.put(userID, new ConnectFourGame());
-		}
+			ConnectFourGame newGame = new ConnectFourGame();
+			event.reply("Start a game of connect four!\n" + newGame.getBoard()).queue();
+			games.put(userID, newGame);
+		});
+
+		subcommands.put("play", new PlaySubCommand(commandUsage));
+
+		subcommands.put("board", event ->
+		{
+			long userID = event.getUser().getIdLong();
+
+			if (commandUsage.getGames().get(userID) instanceof ConnectFourGame connectFour) //是在玩四子棋
+				event.reply(connectFour.getBoard()).setEphemeral(true).queue();
+			else
+				event.reply("You are not playing connect four!").setEphemeral(true).queue();
+		});
 	}
 
 	private static class PlaySubCommand implements ICommand
@@ -70,16 +62,9 @@ public class ConnectFourCommand implements ICommand
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Integer columnBox = event.getOption("column", CommonFunctions.getAsInt);
 			long userID = event.getUser().getIdLong();
 			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
-
-			if (columnBox == null) //column為必填
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
 
 			if (playing == null) //沒有在玩任何遊戲
 			{
@@ -90,6 +75,14 @@ public class ConnectFourCommand implements ICommand
 			if (!(playing instanceof ConnectFourGame connectFour)) //如果不是在玩四子棋卻還用了指令
 			{
 				event.reply("You are not playing connect four!").setEphemeral(true).queue();
+				return;
+			}
+
+			Integer columnBox = event.getOption("column", CommonFunctions.getAsInt);
+
+			if (columnBox == null) //column為必填
+			{
+				event.reply("Impossible, this is required!").queue();
 				return;
 			}
 
@@ -109,6 +102,7 @@ public class ConnectFourCommand implements ICommand
 			if (connectFour.humanPlace(column)) //如果玩家贏了
 			{
 				event.reply("You won!\n" + connectFour.getBoard()).queue();
+				games.remove(userID);
 				return;
 			}
 
@@ -117,6 +111,7 @@ public class ConnectFourCommand implements ICommand
 			if (connectFour.aiPlace()) //如果機器人贏了
 			{
 				event.reply("You lost...\n" + connectFour.getBoard()).queue();
+				games.remove(userID);
 				return;
 			}
 
@@ -124,6 +119,7 @@ public class ConnectFourCommand implements ICommand
 			{
 				//之所以不像井字遊戲那樣在機器人動之前執行 是因為這個棋盤有偶數個格子 因此最後一步一定是機器人來下
 				event.reply("It's tie!\n" + connectFour.getBoard()).queue();
+				games.remove(userID);
 				return;
 			}
 

@@ -23,25 +23,11 @@ public class TicTacToeCommand extends HasSubcommands
 	public TicTacToeCommand(CommandUsage commandUsage)
 	{
 		super(3);
-		subcommands.put("start", new StartSubcommand(commandUsage));
-		subcommands.put("play", new PlaySubCommand(commandUsage));
-		subcommands.put("board", new BoardSubcommand(commandUsage));
-	}
 
-	private static class StartSubcommand implements ICommand
-	{
-		private final CommandUsage commandCore;
-
-		private StartSubcommand(CommandUsage commandUsage)
-		{
-			commandCore = commandUsage;
-		}
-
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
+		subcommands.put("start", event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
+			Map<Long, IMiniGame> games = commandUsage.getGames();
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
@@ -61,7 +47,31 @@ public class TicTacToeCommand extends HasSubcommands
 			TicTacToeGame newGame = new TicTacToeGame(difficulty);
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.start") + newGame.getBoard()).queue();
 			games.put(userID, newGame);
-		}
+		});
+
+		subcommands.put("play", new PlaySubCommand(commandUsage));
+
+		subcommands.put("board", event ->
+		{
+
+			long userID = event.getUser().getIdLong();
+			Map<Long, IMiniGame> games = commandUsage.getGames();
+			IMiniGame playing = games.get(userID);
+
+			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe board
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
+				return;
+			}
+
+			//已經有在玩遊戲
+			if (playing instanceof TicTacToeGame ticTacToe) //是在玩井字遊戲
+				event.reply(ticTacToe.getBoard()).setEphemeral(true).queue();
+			else
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
+						.setEphemeral(true)
+						.queue();
+		});
 	}
 
 	/**
@@ -148,38 +158,6 @@ public class TicTacToeCommand extends HasSubcommands
 
 			event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") +
 								ticTacToe.getBoard() + "\n</tic_tac_toe play:1123462079546937485>").setEphemeral(true).queue();
-		}
-	}
-
-	private static class BoardSubcommand implements ICommand
-	{
-		private final CommandUsage commandCore;
-
-		private BoardSubcommand(CommandUsage commandUsage)
-		{
-			commandCore = commandUsage;
-		}
-
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
-		{
-			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
-			IMiniGame playing = games.get(userID);
-
-			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe board
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
-				return;
-			}
-
-			//已經有在玩遊戲
-			if (playing instanceof TicTacToeGame ticTacToe) //是在玩井字遊戲
-				event.reply(ticTacToe.getBoard()).setEphemeral(true).queue();
-			else
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
-					.setEphemeral(true)
-					.queue();
 		}
 	}
 }

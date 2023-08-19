@@ -33,7 +33,7 @@ public class ConnectFourCommand extends HasSubcommands
 			}
 
 			ConnectFourGame newGame = new ConnectFourGame();
-			event.reply("Start a game of connect four!\n" + newGame.getBoard()).queue();
+			event.reply("Start a game of connect four! Type </connect_four play:1142380307509690458> <column> to make a move\n" + newGame.getBoard()).queue();
 			games.put(userID, newGame);
 		});
 
@@ -41,9 +41,7 @@ public class ConnectFourCommand extends HasSubcommands
 
 		subcommands.put("board", event ->
 		{
-			long userID = event.getUser().getIdLong();
-
-			if (commandUsage.getGames().get(userID) instanceof ConnectFourGame connectFour) //是在玩四子棋
+			if (commandUsage.getGames().get(event.getUser().getIdLong()) instanceof ConnectFourGame connectFour) //是在玩四子棋
 				event.reply(connectFour.getBoard()).setEphemeral(true).queue();
 			else
 				event.reply("You are not playing connect four!").setEphemeral(true).queue();
@@ -123,7 +121,7 @@ public class ConnectFourCommand extends HasSubcommands
 				return;
 			}
 
-			event.reply("Your move:\n" + playerMove + "\nBot's move:\n" + connectFour.getBoard()).setEphemeral(true).queue();
+			event.reply("Your move:\n" + playerMove + "\nBot's move:\n" + connectFour.getBoard() + "\n</connect_four play:1142380307509690458>").setEphemeral(true).queue();
 		}
 	}
 }

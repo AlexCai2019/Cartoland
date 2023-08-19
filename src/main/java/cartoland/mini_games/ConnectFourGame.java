@@ -18,6 +18,8 @@ public class ConnectFourGame implements IMiniGame
 	private static final int CHARACTERS_IN_A_ROW = 3 + (COLUMNS - 1) * 4 + 1; //第一行的--- 以及剩下那些行分配到的---- 還有最後的換行
 	private final Random random = new Random();
 
+	private int lastHumanPlace;
+
 	public ConnectFourGame()
 	{
 		for (char[] row : board)
@@ -46,7 +48,6 @@ public class ConnectFourGame implements IMiniGame
 
 	private void updateBoardString(char symbol, int row, int column)
 	{
-		System.out.println("symbol = " + symbol + ", row = " + row + ", column = " + column);
 		boardBuilder.setCharAt(4 + CHARACTERS_IN_A_ROW * 2 + //首先排除掉前面的```\n以及上面那兩列
 				row * CHARACTERS_IN_A_ROW * 2 + //在第幾列 就忽略幾列的橫線和棋盤內容
 				4 * column + 1 //每一項都是前一項 + 1 這個等差數列是從1開始的
@@ -71,6 +72,7 @@ public class ConnectFourGame implements IMiniGame
 	public boolean humanPlace(int column)
 	{
 		spaces--; //可用空間減少一格
+		lastHumanPlace = column;
 		int row = place(PLAYER_PLACE, column); //即將要落子的那個橫列
 		updateBoardString(PLAYER_PLACE, row, column); //更新棋盤字串
 		return isWon(PLAYER_PLACE, row, column);
@@ -80,9 +82,14 @@ public class ConnectFourGame implements IMiniGame
 	{
 		spaces--; //可用空間減少一格
 		int column; //要放棋子的直行
-		do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
-			column = random.nextInt(COLUMNS); //隨機選一直行
-		while (isFull(column)); //如果已經滿了 就再隨機選一次
+		if (isFull(Math.max(0, lastHumanPlace - 1)) && isFull(lastHumanPlace) && isFull(Math.min(lastHumanPlace + 1, COLUMNS - 1))) //玩家下的左 中 右 都是滿的
+			do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
+				column = random.nextInt(COLUMNS); //隨機選一直行
+			while (isFull(column)); //如果已經滿了 就再隨機選一次
+		else //玩家的左 中 右 至少有一行還有個空格
+			do
+				column = lastHumanPlace - 1 + random.nextInt(3); //從玩家下的左 中 右 當中 隨機選一直行
+			while (column < 0 || column >= COLUMNS || isFull(column)); //如果數字不對 或已經滿了 就再隨機選一次
 		int row = place(AI_PLACE, column); //即將要落子的那個橫列
 		updateBoardString(AI_PLACE, row, column); //更新棋盤字串
 
@@ -91,15 +98,11 @@ public class ConnectFourGame implements IMiniGame
 
 	private int place(char symbol, int column)
 	{
-		int row = 0; //即將要放置棋子的橫列
+		int row = 1; //即將要放置棋子的橫列
 		for (; row < ROWS; row++)
-		{
 			if (board[row][column] != EMPTY) //找到第一個不是空的
-			{
-				board[row - 1][column] = symbol; //說明它前一個一定是空的
-				break; //結束
-			}
-		}
+				break; //說明它前一個一定是空的
+		board[row - 1][column] = symbol; //找到之後放棋子
 		return row - 1;
 	}
 
@@ -139,16 +142,9 @@ public class ConnectFourGame implements IMiniGame
 
 		// \
 		symbolCount = 0;
-		if (row > column) //將r和c歸位到左上角 直到碰到其中一面的邊界為止
-		{
-			r = row - column;
-			c = 0;
-		}
-		else
-		{
-			r = 0;
-			c = column - row;
-		}
+		//noinspection StatementWithEmptyBody
+		for (r = row, c = column; r > 0 && c > 0; r--, c--)
+			; //將r和c歸位到左上角 直到碰到其中一面的邊界為止
 		for (rowMax = Math.min(ROWS, row + WIN_COUNT), columnMax = Math.min(COLUMNS, column + WIN_COUNT); r < rowMax && c < columnMax; r++, c++)
 		{
 			if (board[r][c] == symbol)
@@ -163,16 +159,9 @@ public class ConnectFourGame implements IMiniGame
 
 		// /
 		symbolCount = 0;
-		if (row > column) //將r和c歸位到右上角 直到碰到其中一面的邊界為止
-		{
-			r = row - column;
-			c = 0;
-		}
-		else
-		{
-			r = 0;
-			c = column + row;
-		}
+		//noinspection StatementWithEmptyBody
+		for (r = row, c = column; r > 0 && c < COLUMNS - 1; r--, c++)
+			; //將r和c歸位到右上角 直到碰到其中一面的邊界為止
 		for (rowMax = Math.min(ROWS, row + WIN_COUNT), columnMax = Math.max(-1, column - WIN_COUNT); r < rowMax && c > columnMax; r++, c--)
 		{
 			if (board[r][c] == symbol)

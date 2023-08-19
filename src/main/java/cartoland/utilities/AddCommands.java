@@ -499,7 +499,7 @@ public final class AddCommands
 								.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
 								.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
 			//TODO: Finish /connect_four
-		/*Commands.slash(CONNECT_FOUR, "Play a game of Connect Four")
+		Commands.slash(CONNECT_FOUR, "Play a game of Connect Four")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場四子棋")
 				.setDescriptionLocalization(CHINESE_CHINA, "玩一场四子棋")
 				.addSubcommands(
@@ -517,7 +517,7 @@ public final class AddCommands
 												.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
 						new SubcommandData("board", "Get the current board")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
-								.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),*/
+								.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
 
 		Commands.message(RAW_TEXT)
 				.setNameLocalization(CHINESE_TAIWAN, "原始文字")

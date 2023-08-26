@@ -30,7 +30,6 @@ public final class JsonHandle
 	private static final Map<String, List<String>> commandListMap = new HashMap<>(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
 	private static final StringBuilder builder = new StringBuilder();
 
-	private static JSONObject file; //在lastUse中獲得這個ID對應的語言檔案 並在指令中使用
 	private static JSONObject englishFile; //英文檔案
 
 	static
@@ -39,18 +38,10 @@ public final class JsonHandle
 		FileHandle.registerSerialize(USERS_FILE_NAME, users);
 	}
 
-	private static void lastUse(long userID)
-	{
-		//獲取使用者設定的語言
-		//找不到設定的語言就放台灣正體進去
-		file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.TW_MANDARIN));
-	}
-
 	public static String command(long userID, String commandName)
 	{
-		lastUse(userID);
 		builder.setLength(0);
-		builder.append(file.opt(commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
+		builder.append(getStringFromJsonKey(userID, commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list"); //中間的資料 注意每個語言檔的指令裡一定要有.list 否則會擲出JSONException
 		int dotListLength = dotListArray.length();
 		if (dotListLength != 0) //建立回覆字串
@@ -63,7 +54,7 @@ public final class JsonHandle
 				builder.append(", ");
 			}
 		}
-		return builder.append(file.opt(commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會出現"null"
+		return builder.append(getStringFromJsonKey(userID, commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會出現"null"
 	}
 
 	public static String command(long userID, String commandName, String argument)
@@ -75,8 +66,8 @@ public final class JsonHandle
 			return result; //結束
 		}
 
-		//空字串代表獲取失敗
-		return result.isEmpty() ? file.getString(commandName + ".fail") : result; //注意每個語言檔的指令裡一定要有.fail 否則會擲出JSONException
+		//"null"字串 代表獲取失敗
+		return "null".equals(result) ? getStringFromJsonKey(userID, commandName + ".fail") : result; //注意每個語言檔的指令裡一定要有.fail 否則會出現"null"
 	}
 
 	public static List<String> commandList(String commandName)
@@ -108,11 +99,23 @@ public final class JsonHandle
 		commandListMap.put("dtp.list",  buildStringListFromJsonArray(englishFile.getJSONArray("dtp.list")));
 	}
 
+	/**
+	 * Get string from json file based on the ID of a user and a key.
+	 *
+	 * @param userID Determines which json file are going to access.
+	 * @param key The key of a string in a json file.
+	 * @return The string from the json file that key mapped.
+	 * @since 1.4
+	 * @author Alex Cai
+	 */
 	public static String getStringFromJsonKey(long userID, String key)
 	{
 		//程式設計原則 make the common case fast
 		//這個函式還能再最佳化嗎?
-		lastUse(userID);
+
+		//獲取使用者設定的語言
+		//找不到設定的語言就放台灣正體進去
+		JSONObject file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.TW_MANDARIN));
 		Object optionalValue; //要獲得的字串(物件型態)
 		String result; //要獲得的字串
 		while (true)

@@ -40,21 +40,21 @@ public class PrivateMessage implements IMessage
 		User author = event.getAuthor();
 
 		Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
-		if (cartoland == null)
+		if (cartoland == null) //機器人找不到創聯
 		{
 			message.reply("Can't get Cartoland server.").mentionRepliedUser(false).queue();
 			return;
 		}
 
 		Role nsfwRole = cartoland.getRoleById(IDs.NSFW_ROLE_ID);
-		if (nsfwRole == null)
+		if (nsfwRole == null) //機器人找不到地下身分組
 		{
 			message.reply("Can't get NSFW role.").mentionRepliedUser(false).queue();
 			return;
 		}
 
 		TextChannel undergroundChannel = cartoland.getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
-		if (undergroundChannel == null)
+		if (undergroundChannel == null) //機器人找不到地下頻道
 		{
 			message.reply("Can't get underground channel.").mentionRepliedUser(false).queue();
 			return;
@@ -64,14 +64,14 @@ public class PrivateMessage implements IMessage
 
 		cartoland.retrieveMemberById(author.getIdLong()).queue(member ->
 		{
-			if (member.isTimedOut())
+			if (member.isTimedOut()) //使用者已被禁言
 			{
 				message.reply("You are timed out from " + cartoland.getName() + can_t)
 						.mentionRepliedUser(false).queue();
 				return;
 			}
 
-			if (!member.getRoles().contains(nsfwRole))
+			if (!member.getRoles().contains(nsfwRole)) //使用者沒有地下身分組
 			{
 				message.reply("You don't have role " + nsfwRole.getName() + can_t)
 						.mentionRepliedUser(false).queue();
@@ -79,11 +79,11 @@ public class PrivateMessage implements IMessage
 			}
 
 			messageBuilder.setLength(0);
-			messageBuilder.append(message.getContentRaw());
-			List<Message.Attachment> attachments = message.getAttachments();
+			messageBuilder.append(message.getContentRaw()); //訊息本文
+			List<Message.Attachment> attachments = message.getAttachments(); //訊息附件
 			for (Message.Attachment attachment : attachments)
-				messageBuilder.append('\n').append(attachment.getUrl());
-			List<StickerItem> stickerItems = message.getStickers();
+				messageBuilder.append('\n').append(attachment.getUrl()); //以連結的方式傳送附件
+			List<StickerItem> stickerItems = message.getStickers(); //訊息貼圖
 			for (Sticker sticker : stickerItems)
 				messageBuilder.append('\n').append(sticker.getIconUrl());
 

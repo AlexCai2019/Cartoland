@@ -10,8 +10,12 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import java.util.Map;
 
 /**
- * @since 2.1
+ * {@code ConnectFourCommand} is an execution when user uses /connect_four command. This class implements
+ * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
+ * of the Connect-Four game.
+ *
  * @author Alex Cai
+ * @since 2.1
  */
 public class ConnectFourCommand extends HasSubcommands
 {
@@ -41,10 +45,23 @@ public class ConnectFourCommand extends HasSubcommands
 
 		subcommands.put("board", event ->
 		{
-			if (commandUsage.getGames().get(event.getUser().getIdLong()) instanceof ConnectFourGame connectFour) //是在玩四子棋
-				event.reply(connectFour.getBoard()).setEphemeral(true).queue();
-			else
-				event.reply("You are not playing connect four!").setEphemeral(true).queue();
+			long userID = event.getUser().getIdLong();
+			IMiniGame playing = commandUsage.getGames().get(userID);
+
+			if (playing == null) //沒有在玩遊戲 但還是使用了/connect_four board
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</connect_four start:1123462079546937485>"))
+						.setEphemeral(true)
+						.queue();
+				return;
+			}
+
+			//已經有在玩遊戲
+			event.reply(playing instanceof ConnectFourGame connectFour ? //是在玩四子棋
+							connectFour.getBoard() :
+							JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+					.setEphemeral(true)
+					.queue();
 		});
 	}
 
@@ -66,17 +83,19 @@ public class ConnectFourCommand extends HasSubcommands
 
 			if (playing == null) //沒有在玩任何遊戲
 			{
-				event.reply("You are not playing any game!").setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</connect_four start:1123462079546937485>"))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
 			if (!(playing instanceof ConnectFourGame connectFour)) //如果不是在玩四子棋卻還用了指令
 			{
-				event.reply("You are not playing connect four!").setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 				return;
 			}
 
-			Integer columnBox = event.getOption("column", CommonFunctions.getAsInt);
+			Integer columnBox = event.getOption("column", CommonFunctions.getAsInt); //獲取輸入的行數
 
 			if (columnBox == null) //column為必填
 			{
@@ -87,19 +106,19 @@ public class ConnectFourCommand extends HasSubcommands
 			int column = columnBox - 1; //拆箱 因為columnBox是以1為開始 所以要 - 1
 			if (!connectFour.isInBounds(column))
 			{
-				event.reply(userID, "connect_four.must_be_in_range").setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.must_be_in_range")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (connectFour.isFull(column)) //直行已經滿了卻還是放棋子
 			{
-				event.reply(userID, "connect_four.can_t_put").setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.can_t_put")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (connectFour.humanPlace(column)) //如果玩家贏了
 			{
-				event.reply(userID, "connect_four.win" + connectFour.getBoard()).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.win") + connectFour.getBoard()).queue();
 				games.remove(userID);
 				return;
 			}
@@ -108,7 +127,7 @@ public class ConnectFourCommand extends HasSubcommands
 
 			if (connectFour.aiPlace()) //如果機器人贏了
 			{
-				event.reply(userID, "connect_four.lose" + connectFour.getBoard()).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.lose") + connectFour.getBoard()).queue();
 				games.remove(userID);
 				return;
 			}
@@ -116,12 +135,14 @@ public class ConnectFourCommand extends HasSubcommands
 			if (connectFour.isTie()) //如果平手
 			{
 				//之所以不像井字遊戲那樣在機器人動之前執行 是因為這個棋盤有偶數個格子 因此最後一步一定是機器人來下
-				event.reply(userID, "connect_four.tie" + connectFour.getBoard()).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.tie") + connectFour.getBoard()).queue();
 				games.remove(userID);
 				return;
 			}
 
-			event.reply((userID, "connect_four.your_move") + playerMove + "\n" + (userID, "connect_four.bot_s_move") + connectFour.getBoard() + "\n</connect_four play:1142380307509690458>").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.your_move") + playerMove +
+								JsonHandle.getStringFromJsonKey(userID, "connect_four.bot_s_move") + connectFour.getBoard() +
+								"\n</connect_four play:1142380307509690458>").setEphemeral(true).queue();
 		}
 	}
 }

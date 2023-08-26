@@ -55,21 +55,21 @@ public class OneATwoBGame implements IMiniGame
 
 		for (int i = ANSWER_LENGTH - 1, digit; i >= 0; i--) //從後面檢測回來
 		{
-			digit = input % 10;
+			digit = input % 10; //取最右邊一位數字
 			if (metBefore[digit]) //遇過這個數字了
-				return null;
+				return null; //回傳null 不必擲出exception
 
-			metBefore[digit] = true;
+			metBefore[digit] = true; //記錄遇過這個數字了
 
-			if (answer[i] == digit)
-				ab[0]++;
-			else if (inAnswer[digit])
-				ab[1]++;
+			if (answer[i] == digit) //數字和位置一樣
+				ab[0]++; //a++
+			else if (inAnswer[digit]) //只有數字中 位置錯了
+				ab[1]++; //b++
 
-			input /= 10;
+			input /= 10; //下一個數字
 		}
 
-		return ab;
+		return ab; //結果
 	}
 	//計時結束
 	public long getTimePassed()

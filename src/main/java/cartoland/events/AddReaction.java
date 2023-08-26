@@ -23,14 +23,14 @@ public class AddReaction extends ListenerAdapter
 	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
-		Member member = event.getMember();
-		if (member == null)
-			return;
-		User user = member.getUser();
+		Member member = event.getMember(); //按表情的成員
+		if (member == null) //找不到成員
+			return; //結束
+		User user = member.getUser(); //案表情的使用者
 		if (user.isBot() || user.isSystem()) //是機器人或系統
-			return;
-		Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false);
-		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned))
+			return; //不用執行
+		Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false); //宇宙貓貓
+		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned)) //20%的機率跟著其他人按
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
 
 		//這以下是和問題論壇的resolved有關

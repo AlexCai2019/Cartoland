@@ -29,31 +29,12 @@ public class OneATwoBCommand implements ICommand
 
 	public OneATwoBCommand(CommandUsage commandUsage)
 	{
-		startSubCommand = new StartSubcommand(commandUsage);
-		guessSubCommand = new PlaySubcommand(commandUsage);
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		("start".equals(event.getSubcommandName()) ? startSubCommand : guessSubCommand).commandProcess(event);
-	}
-
-	private static class StartSubcommand implements ICommand
-	{
-		private final CommandUsage commandCore;
-		private StartSubcommand(CommandUsage commandUsage)
-		{
-			commandCore = commandUsage;
-		}
-
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
+		startSubCommand = event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
+			Map<Long, IMiniGame> games = commandUsage.getGames();
 			IMiniGame playing = games.get(userID);
-			if (playing != null) //已經有在玩遊戲
+			if (playing != null) //已經有在玩遊戲 還用start
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
 						.setEphemeral(true)
@@ -64,7 +45,14 @@ public class OneATwoBCommand implements ICommand
 			//沒有在玩遊戲 開始1A2B
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
 			games.put(userID, new OneATwoBGame());
-		}
+		};
+		guessSubCommand = new PlaySubcommand(commandUsage);
+	}
+
+	@Override
+	public void commandProcess(SlashCommandInteractionEvent event)
+	{
+		("start".equals(event.getSubcommandName()) ? startSubCommand : guessSubCommand).commandProcess(event);
 	}
 
 	private static class PlaySubcommand implements ICommand
@@ -86,14 +74,19 @@ public class OneATwoBCommand implements ICommand
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
-			int answer = answerBox; //拆箱
-			if (answer < 0)
-				answer = -answer;
+			int tempAnswer = answerBox; //拆箱
+			int answer = tempAnswer >= 0 ? tempAnswer : -tempAnswer; //避免負數
+
+			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>")).queue();
+				return;
+			}
 
 			//已經有在玩遊戲
 			if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 				return;
 			}
 
@@ -116,10 +109,11 @@ public class OneATwoBCommand implements ICommand
 			int guesses = oneATwoB.getGuesses();
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.game_over").formatted(shouldReply, answer, second / 60, second % 60, guesses);
 
-			if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES)
+			if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES) //如果在2分鐘內猜出來 且不大於7次
 			{
+				//因為許多時候並不會需要進來這個區塊 所以不必用StringBuilder 更為簡便的+=即可
 				replyString += JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.reward").formatted(MAX_MINUTE, MAX_GUESSES, REWARD);
-				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD);
+				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD); //獎勵REWARD顆指令方塊
 			}
 
 			event.reply(replyString).queue();

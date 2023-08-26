@@ -53,24 +53,23 @@ public class TicTacToeCommand extends HasSubcommands
 
 		subcommands.put("board", event ->
 		{
-
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandUsage.getGames();
-			IMiniGame playing = games.get(userID);
+			IMiniGame playing = commandUsage.getGames().get(userID);
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe board
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>"))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
 			//已經有在玩遊戲
-			if (playing instanceof TicTacToeGame ticTacToe) //是在玩井字遊戲
-				event.reply(ticTacToe.getBoard()).setEphemeral(true).queue();
-			else
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
-						.setEphemeral(true)
-						.queue();
+			event.reply(playing instanceof TicTacToeGame ticTacToe ? //是在玩井字遊戲
+								ticTacToe.getBoard() :
+								JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
+					.setEphemeral(true)
+					.queue();
 		});
 	}
 
@@ -107,14 +106,14 @@ public class TicTacToeCommand extends HasSubcommands
 			//帶參數
 			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe play
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.too_much_arguments")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>")).setEphemeral(true).queue();
 				return;
 			}
 
 			//已經有在玩遊戲
 			if (!(playing instanceof TicTacToeGame ticTacToe)) //不是在玩井字遊戲
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 				return;
 			}
 
@@ -146,7 +145,7 @@ public class TicTacToeCommand extends HasSubcommands
 				return;
 			}
 
-			String playerMove = JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + ticTacToe.getBoard(); //先獲得棋盤
+			String playerMove = ticTacToe.getBoard(); //先獲得棋盤
 
 			//機器人下
 			if (ticTacToe.aiPlace()) //機器人贏
@@ -156,8 +155,9 @@ public class TicTacToeCommand extends HasSubcommands
 				return;
 			}
 
-			event.reply(playerMove + JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") +
-								ticTacToe.getBoard() + "\n</tic_tac_toe play:1123462079546937485>").setEphemeral(true).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.your_move") + playerMove +
+								JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.bot_s_move") + ticTacToe.getBoard() +
+								"\n</tic_tac_toe play:1123462079546937485>").setEphemeral(true).queue();
 		}
 	}
 }

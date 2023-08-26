@@ -20,7 +20,7 @@ public class TicTacToeGame implements IMiniGame
 	private static final int CENTER = BOARD_SIDE * BOARD_SIDE >> 1;
 
 	private final char[] board = new char[9];
-	private final StringBuilder boardBuilder = new StringBuilder("```\nr\\c");
+	private final StringBuilder boardBuilder = new StringBuilder("```\nr\\c"); //棋盤字串
 
 	private static final int[][] winningCombinations =
 	{
@@ -44,7 +44,10 @@ public class TicTacToeGame implements IMiniGame
 
 	public TicTacToeGame(int difficulty)
 	{
-		Arrays.fill(board, ' ');
+		Arrays.fill(board, EMPTY); //清空棋盤
+
+		//這些建立棋盤字串的程式不要亂動
+		//他們經過了精密的計算 才能像現在這樣穩定
 		int r, c;
 		for (c = 1; c <= BOARD_SIDE; c++)
 			boardBuilder.append("| ").append(c).append(' ');

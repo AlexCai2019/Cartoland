@@ -26,7 +26,7 @@ public class AddReaction extends ListenerAdapter
 		Member member = event.getMember(); //按表情的成員
 		if (member == null) //找不到成員
 			return; //結束
-		User user = member.getUser(); //案表情的使用者
+		User user = member.getUser(); //按表情的使用者
 		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return; //不用執行
 		Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false); //宇宙貓貓

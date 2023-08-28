@@ -89,7 +89,7 @@ public class LotteryCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code GetSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code GetSubCommand} is a class that handles one of the subcommands of {@code /lottery} command, which is
 	 * {@code /lottery get}.
 	 *
 	 * @since 1.6
@@ -137,7 +137,7 @@ public class LotteryCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code BetSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code BetSubCommand} is a class that handles one of the subcommands of {@code /lottery} command, which is
 	 * {@code /lottery bet}.
 	 *
 	 * @since 1.6
@@ -191,7 +191,7 @@ public class LotteryCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code RankingSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code RankingSubCommand} is a class that handles one of the subcommands of {@code /lottery} command, which is
 	 * {@code /lottery ranking}.
 	 *
 	 * @since 1.6
@@ -323,7 +323,7 @@ public class LotteryCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code DailySubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code DailySubCommand} is a class that handles one of the subcommands of {@code /lottery} command, which is
 	 * {@code /lottery daily}.
 	 *
 	 * @since 2.1
@@ -372,7 +372,7 @@ public class LotteryCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code SlotSubCommand} is a class that handles one of the sub commands of {@code /lottery} command, which is
+	 * {@code SlotSubCommand} is a class that handles one of the subcommands of {@code /lottery} command, which is
 	 * {@code /lottery slot}.
 	 *
 	 * @since 2.1

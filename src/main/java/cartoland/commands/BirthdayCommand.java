@@ -41,7 +41,7 @@ public class BirthdayCommand implements ICommand
 	}
 
 	/**
-	 * {@code SetSubCommand} is a class that handles one of the sub commands of {@code /birthday} command, which is
+	 * {@code SetSubCommand} is a class that handles one of the subcommands of {@code /birthday} command, which is
 	 * {@code /birthday set}.
 	 *
 	 * @since 2.1

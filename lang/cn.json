@@ -249,7 +249,7 @@
 	"admin.slow_mode.cancel": "你取消了 %s 的慢速模式。",
 	"mini_game.playing_another_game": "你已经在玩 %s 了。",
 	"tic_tac_toe.not_playing": "请运行 %s 以开始一场新游戏。",
-	"one_a_two_b.start": "开始一场1A2B！输入 </one_a_two_b guess:1102681768840138941>` <答案>` 进行一次猜测。",
+	"one_a_two_b.start": "开始一场1A2B！输入 </one_a_two_b play:1102681768840138941>` <答案>` 进行一次猜测。",
 	"one_a_two_b.not_unique": "无效的输入，请输入 %d 个不一样的整数。",
 	"one_a_two_b.game_over": "%s\n游戏结束！答案是 **%03d**。\n花费时间： %d 分 %d 秒\n猜测次数： %d 次",
 	"one_a_two_b.reward": "\n你在 %d 分钟和 %d 次猜测内解开了问题，奖励 %d 个命令方块。",

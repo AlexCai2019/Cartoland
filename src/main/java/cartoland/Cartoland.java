@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
  */
 public class Cartoland
 {
-	private static JDA jda;
+	private static JDA jda; //Java Discord API
 	public static JDA getJDA()
 	{
 		return jda;
@@ -35,11 +35,11 @@ public class Cartoland
 	 */
 	public static void main(String[] args) throws InterruptedException
 	{
-		if (args.length < 1)
+		if (args.length < 1) //在終端機執行java -jar Cartoland.jar時 沒有帶參數
 			return;
 
-		jda = JDABuilder.createDefault(args[0])
-				.addEventListeners(
+		jda = JDABuilder.createDefault(args[0]) //以第一個參數為token 啟動機器人
+				.addEventListeners( //新增事件聆聽
 						new BotOnlineOffline(), //當機器人上下線的時候
 						new MessageEvent(), //當有任何訊息
 						new AddReaction(), //當有人為訊息新增反應
@@ -51,7 +51,7 @@ public class Cartoland
 						new UserChangeName(), //當有人改名(不是暱稱)
 						new ClickedButton(), //當有人按按鈕
 						new ReceiveModal()) //當有人使用Modal時
-				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS) //機器人可讀取訊息和查看伺服器成員
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.playing("Do /help for more information")) //正在玩
 				.build();

@@ -28,7 +28,6 @@ public class QuoteCommand implements ICommand
 {
 	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
-	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -63,7 +62,8 @@ public class QuoteCommand implements ICommand
 			return; //結束
 		}
 
-		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
+		//獲取訊息內的頻道 注意ID是String 與慣例的long不同
+		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, numbersInLink[0]);
 		if (linkChannel == null)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).setEphemeral(true).queue();
@@ -75,7 +75,8 @@ public class QuoteCommand implements ICommand
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
 			String linkAuthorAvatar = linkAuthor.getEffectiveAvatarUrl();
 
-			embedBuilder.setAuthor(linkAuthor.getEffectiveName(), linkAuthorAvatar, linkAuthorAvatar)
+			EmbedBuilder embedBuilder = new EmbedBuilder()
+					.setAuthor(linkAuthor.getEffectiveName(), linkAuthorAvatar, linkAuthorAvatar)
 					.setDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道

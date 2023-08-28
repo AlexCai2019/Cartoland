@@ -33,11 +33,14 @@ public class IntroduceCommand extends HasSubcommands
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
+	static
+	{
+		FileHandle.registerSerialize(INTRODUCTION_FILE_NAME, introduction); //註冊串聯化
+	}
+
 	public IntroduceCommand()
 	{
 		super(3);
-
-		FileHandle.registerSerialize(INTRODUCTION_FILE_NAME, introduction);
 
 		subcommands.put("user", event ->
 		{
@@ -47,7 +50,9 @@ public class IntroduceCommand extends HasSubcommands
 				target = user;
 
 			String content = introduction.get(target.getIdLong());
-			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")).queue();
+			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info"))
+					.setEphemeral(true)
+					.queue();
 		});
 		subcommands.put("update", new UpdateSubCommand());
 		subcommands.put("delete", event ->
@@ -73,8 +78,8 @@ public class IntroduceCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code UpdateSubCommand} is a class that handles one of the sub commands of {@code /introduce} command, which is
-	 * {@code /introduce update}.
+	 * {@code UpdateSubCommand} is a class that handles one of the subcommands of {@code /introduce} command, which
+	 * is {@code /introduce update}.
 	 *
 	 * @since 2.0
 	 * @author Alex Cai
@@ -83,7 +88,6 @@ public class IntroduceCommand extends HasSubcommands
 	{
 		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
-		private final StringBuilder introduceBuilder = new StringBuilder();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -117,7 +121,8 @@ public class IntroduceCommand extends HasSubcommands
 				return; //結束
 			}
 
-			MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, Long.parseLong(numbersInLink[0]));
+			//獲取訊息內的頻道 注意ID是String 與慣例的long不同
+			MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, numbersInLink[0]);
 			if (linkChannel == null) //找不到訊息內的頻道
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
@@ -128,12 +133,18 @@ public class IntroduceCommand extends HasSubcommands
 			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
-				introduceBuilder.setLength(0);
-				introduceBuilder.append(linkMessage.getContentRaw()); //訊息內容
-				List<Message.Attachment> attachments = linkMessage.getAttachments(); //副件
-				for (Message.Attachment attachment : attachments)
-					introduceBuilder.append('\n').append(attachment.getUrl());
-				updateIntroduction(linkMessage.getAuthor().getIdLong(), introduceBuilder.toString()); //更新介紹
+				List<Message.Attachment> attachments = linkMessage.getAttachments(); //附件
+				String introductionString;
+				if (attachments.isEmpty()) //如果沒有附件 這是比較常見的情形
+					introductionString = linkMessage.getContentRaw(); //直接等於訊息內容
+				else //有附件 改用StringBuilder處理
+				{
+					StringBuilder introduceBuilder = new StringBuilder(linkMessage.getContentRaw()); //訊息內容
+					for (Message.Attachment attachment : attachments)
+						introduceBuilder.append('\n').append(attachment.getUrl()); //一一獲取附件的連結
+					introductionString = introduceBuilder.toString();
+				}
+				updateIntroduction(linkMessage.getAuthor().getIdLong(), introductionString); //更新介紹
 			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();

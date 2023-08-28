@@ -24,7 +24,7 @@ public final class CommandBlocksHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public static boolean changed = true;
+	public static boolean changed = true; //清單是否更改過 用於決定/lottery ranking時是否重新排序
 	private static final String LOTTERY_DATA_FILE_NAME = "serialize/lottery_data.ser";
 	private static final long GAMBLE_ROLE_MIN = 100000L;
 
@@ -146,19 +146,6 @@ public final class CommandBlocksHandle
 		}
 
 		/**
-		 * Subtract command blocks to the user. This method checks if this user has enough command
-		 * blocks in order to prevent negative command blocks.
-		 *
-		 * @param sub The amount of command blocks that are going to subtract on this user.
-		 * @since 2.1
-		 * @author Alex Cai
-		 */
-		public void subBlocks(long sub)
-		{
-			setBlocks(blocks > sub ? blocks - sub : 0L);
-		}
-
-		/**
 		 * Set command blocks to the user.
 		 *
 		 * @param newValue The amount of command blocks that are going to set on this user.
@@ -169,8 +156,8 @@ public final class CommandBlocksHandle
 		{
 			changed = true; //指令方塊改變過了
 
-			long oldValue = blocks;
-			blocks = newValue;
+			long oldValue = blocks; //更新方塊前的方塊數量
+			blocks = newValue; //更新方塊
 
 			boolean less = newValue < GAMBLE_ROLE_MIN; //true = 新值依舊比GAMBLE_ROLE_MIN少
 			if (oldValue < GAMBLE_ROLE_MIN == less) //沒有跨過GAMBLE_ROLE_MIN
@@ -179,7 +166,7 @@ public final class CommandBlocksHandle
 			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
 			if (cartoland == null) //找不到創聯
 				return;
-			cartoland.retrieveMemberById(userID).queue(member ->
+			cartoland.retrieveMemberById(userID).queue(member -> //根據userID 從創聯中找到這名成員
 			{
 				Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID); //賭神身分組
 				if (godOfGamblersRole == null) //找不到賭神身分組
@@ -239,6 +226,7 @@ public final class CommandBlocksHandle
 
 		public void addGame(boolean isWon, boolean isShowHand)
 		{
+			//這是/lottery bet的
 			if (isWon)
 			{
 				betWon++;
@@ -255,6 +243,7 @@ public final class CommandBlocksHandle
 
 		public void addSlot(boolean isWon, boolean isShowHand)
 		{
+			//這是/lottery slot的
 			if (isWon)
 			{
 				slotWon++;
@@ -285,10 +274,10 @@ public final class CommandBlocksHandle
 			{
 				//不超過一天
 				int secondsUntil = 60 * 60 * 24 - (int) difference;
-				until[0] = (byte) (secondsUntil / (60 * 60));
-				until[1] = (byte) ((secondsUntil / 60) % 60);
-				until[2] = (byte) (secondsUntil % 60);
-				return false;
+				until[0] = (byte) (secondsUntil / (60 * 60)); //小時
+				until[1] = (byte) ((secondsUntil / 60) % 60); //分鐘
+				until[2] = (byte) (secondsUntil % 60); //秒
+				return false; //時間還沒到 不能領取
 			}
 
 			addBlocks(DAILY); //增加每日獎勵
@@ -310,9 +299,9 @@ public final class CommandBlocksHandle
 			if (bonus[2] = (streak % 365 == 0)) //一年
 				addBonus += YEARLY;
 
-			if (addBonus != 0L)
+			if (addBonus != 0L) //有獎勵
 			{
-				addBlocks(addBonus);
+				addBlocks(addBonus); //增加方塊
 				return true;
 			}
 			else

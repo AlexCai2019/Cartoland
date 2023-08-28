@@ -34,8 +34,8 @@ public class ToolCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code UUIDStringSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
-	 * {@code /tool uuid_string}.
+	 * {@code UUIDStringSubCommand} is a class that handles one of the subcommands of {@code /tool} command, which
+	 * is {@code /tool uuid_string}.
 	 *
 	 * @since 1.4
 	 * @see ToolCommand
@@ -102,7 +102,7 @@ public class ToolCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code UUIDArraySubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
+	 * {@code UUIDArraySubCommand} is a class that handles one of the subcommands of {@code /tool} command, which is
 	 * {@code /tool uuid_array}.
 	 *
 	 * @since 1.4
@@ -144,7 +144,7 @@ public class ToolCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code ColorRGBASubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
+	 * {@code ColorRGBASubCommand} is a class that handles one of the subcommands of {@code /tool} command, which is
 	 * {@code /tool color_rgba}.
 	 *
 	 * @since 1.6
@@ -202,8 +202,8 @@ public class ToolCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code ColorIntegerSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
-	 * {@code /tool color_integer}.
+	 * {@code ColorIntegerSubCommand} is a class that handles one of the subcommands of {@code /tool} command,
+	 * which is {@code /tool color_integer}.
 	 *
 	 * @since 1.6
 	 * @author Alex Cai
@@ -255,8 +255,8 @@ public class ToolCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code PackMcmetaSubCommand} is a class that handles one of the sub commands of {@code /tool} command, which is
-	 * {@code /tool pack_mcmeta}.
+	 * {@code PackMcmetaSubCommand} is a class that handles one of the subcommands of {@code /tool} command, which
+	 * is {@code /tool pack_mcmeta}.
 	 *
 	 * @since 1.4
 	 * @see ToolCommand

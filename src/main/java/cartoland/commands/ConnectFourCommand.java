@@ -65,6 +65,13 @@ public class ConnectFourCommand extends HasSubcommands
 		});
 	}
 
+	/**
+	 * {@code PlaySubCommand} is a class that handles one of the subcommands of {@code /connect_four} command,
+	 * which is {@code /connect_four play}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	private static class PlaySubCommand implements ICommand
 	{
 		private final CommandUsage commandCore;

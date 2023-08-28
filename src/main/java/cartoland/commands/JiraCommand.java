@@ -29,9 +29,6 @@ public class JiraCommand implements ICommand
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}");
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
-	private final EmbedBuilder bugEmbed = new EmbedBuilder()
-			.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png")
-			.setColor(MOJANG_RED);
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -81,21 +78,31 @@ public class JiraCommand implements ICommand
 		}
 
 		Element title = issueContent.getElementById("summary-val");
-		bugEmbed.setTitle('[' + bugID + "] " + (title != null ? title.text() : ""), link)
-				.clearFields();
-		bugEmbedAddField("Status", issueContent.getElementById("opsbar-transitions_more"));
-		bugEmbedAddField("Resolution", issueContent.getElementById("resolution-val"));
-		bugEmbedAddField("Mojang priority", issueContent.getElementById("customfield_12200-val"));
+		EmbedBuilder bugEmbed = new EmbedBuilder()
+				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png")
+				.setColor(MOJANG_RED)
+				.setTitle('[' + bugID + "] " + textValue(title), link);
+		bugEmbedAddField(bugEmbed, "Status", issueContent.getElementById("opsbar-transitions_more"));
+		bugEmbedAddField(bugEmbed, "Resolution", issueContent.getElementById("resolution-val"));
+		bugEmbedAddField(bugEmbed, "Mojang priority", issueContent.getElementById("customfield_12200-val"));
+
+		//可能會產生IndexOutOfBoundsException 但是目前尚未發生
 		Element affectsVersions = issueContent.getElementById("versions-field");
-		bugEmbedAddField("First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
-		bugEmbedAddField("Fix version/s", issueContent.getElementById("fixfor-val"));
-		bugEmbedAddField("Reporter", issueContent.getElementById("reporter-val"));
+		bugEmbedAddField(bugEmbed, "First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
+
+		bugEmbedAddField(bugEmbed, "Fix version/s", issueContent.getElementById("fixfor-val"));
+		bugEmbedAddField(bugEmbed, "Reporter", issueContent.getElementById("reporter-val"));
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
 
-	private void bugEmbedAddField(String fieldName, Element fieldValue)
+	private static String textValue(Element element)
+	{
+		return element != null ? element.text() : "";
+	}
+
+	private static void bugEmbedAddField(EmbedBuilder bugEmbed, String fieldName, Element element)
 	{
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
-		bugEmbed.addField(fieldName, fieldValue != null ? fieldValue.text() : "", true);
+		bugEmbed.addField(fieldName, textValue(element), true);
 	}
 }

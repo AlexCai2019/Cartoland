@@ -270,7 +270,7 @@
 	"admin.slow_mode.cancel": "你取消了 %s 的慢速模式。",
 	"mini_game.not_playing": "請執行 %s 以開始一場新遊戲。",
 	"mini_game.playing_another_game": "你已經在玩 %s 了。",
-	"one_a_two_b.start": "開始一場1A2B！輸入 </one_a_two_b guess:1102681768840138941>` <答案>` 進行一次猜測。",
+	"one_a_two_b.start": "開始一場1A2B！輸入 </one_a_two_b play:1102681768840138941>` <答案>` 進行一次猜測。",
 	"one_a_two_b.not_unique": "無效的輸入，請輸入 %d 個不一樣的整數。",
 	"one_a_two_b.game_over": "%s\n遊戲結束！答案是 **%03d**。\n花費時間： %d 分 %d 秒\n猜測次數： %d 次",
 	"one_a_two_b.reward": "\n你在 %d 分鐘和 %d 次猜測內解開了問題，獎勵 %d 個指令方塊。",

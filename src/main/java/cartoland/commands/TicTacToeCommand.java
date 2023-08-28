@@ -74,6 +74,9 @@ public class TicTacToeCommand extends HasSubcommands
 	}
 
 	/**
+	 * {@code PlaySubCommand} is a class that handles one of the subcommands of {@code /tic_tac_toe} command, which
+	 * is {@code /tic_tac_toe play}.
+	 *
 	 * @since 2.1
 	 * @author Alex Cai
 	 */

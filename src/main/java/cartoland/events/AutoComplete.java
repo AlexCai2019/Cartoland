@@ -15,8 +15,8 @@ import static cartoland.commands.ICommand.*;
  * in {@link cartoland.Cartoland#main}, with the build of JDA. It uses {@link #commands} to store every commands that
  * needs auto complete as keys, and {@link GenericComplete} instances as values.
  *
- * @since 1.5
  * @see GenericComplete
+ * @since 1.5
  * @author Alex Cai
  */
 public class AutoComplete extends ListenerAdapter
@@ -60,8 +60,8 @@ public class AutoComplete extends ListenerAdapter
 	 * command. The subclasses of this class will be initial in the constructor of {@link AutoComplete}, which is
 	 * {@link AutoComplete#AutoComplete()}.
 	 *
-	 * @since 1.5
 	 * @see AutoComplete
+	 * @since 1.5
 	 * @author Alex Cai
 	 */
 	private static abstract class GenericComplete
@@ -80,12 +80,12 @@ public class AutoComplete extends ListenerAdapter
 	 */
 	private static class JsonBasedComplete extends GenericComplete
 	{
-		private final String commandName;
+		private final String commandNameKey;
 		private final List<String> commandList;
 
 		JsonBasedComplete(String commandName)
 		{
-			this.commandName = commandName;
+			commandNameKey = commandName + "_name";
 			commandList = JsonHandle.commandList(commandName);
 		}
 
@@ -93,16 +93,16 @@ public class AutoComplete extends ListenerAdapter
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			AutoCompleteQuery focusedOption = event.getFocusedOption();
-			if (!focusedOption.getName().equals(commandName + "_name"))
+			if (!focusedOption.getName().equals(commandNameKey))
 				return;
 
 			String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-			List<Command.Choice> choices = commandList.stream()
-					.filter(word -> word.startsWith(optionValue))
-					.map(word -> new Command.Choice(word, word))
-					.toList(); //將字串串流轉換為選項列表
-
-			event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
+			event.replyChoices(
+					commandList.stream() //將字串串流轉換為選項列表
+							.limit(CHOICES_LIMIT)
+							.filter(word -> word.startsWith(optionValue))
+							.map(word -> new Command.Choice(word, word))
+							.toList()).queue();
 		}
 	}
 
@@ -117,7 +117,6 @@ public class AutoComplete extends ListenerAdapter
 	{
 		private final Map<String, String> youtubers = new LinkedHashMap<>(8); //LinkedHashMap or TreeMap ?
 		private final Set<Map.Entry<String, String>> youtubersEntries;
-		private final List<Command.Choice> choices = new ArrayList<>();
 
 		YouTuberComplete()
 		{
@@ -137,7 +136,7 @@ public class AutoComplete extends ListenerAdapter
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			String optionValue = event.getFocusedOption().getValue();
-			choices.clear();
+			List<Command.Choice> choices = new ArrayList<>();
 			for (Map.Entry<String, String> entry : youtubersEntries)
 			{
 				String youtuberName = entry.getKey();

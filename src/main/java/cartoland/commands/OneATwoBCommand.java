@@ -21,15 +21,15 @@ import java.util.Map;
  */
 public class OneATwoBCommand implements ICommand
 {
-	private final ICommand startSubCommand;
-	private final ICommand guessSubCommand;
+	private final ICommand startSubcommand;
+	private final ICommand playSubcommand;
 	private static final int MAX_MINUTE = 2;
 	private static final int MAX_GUESSES = 7;
 	private static final byte REWARD = 100;
 
 	public OneATwoBCommand(CommandUsage commandUsage)
 	{
-		startSubCommand = event ->
+		startSubcommand = event ->
 		{
 			long userID = event.getUser().getIdLong();
 			Map<Long, IMiniGame> games = commandUsage.getGames();
@@ -46,15 +46,22 @@ public class OneATwoBCommand implements ICommand
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
 			games.put(userID, new OneATwoBGame());
 		};
-		guessSubCommand = new PlaySubcommand(commandUsage);
+		playSubcommand = new PlaySubcommand(commandUsage);
 	}
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		("start".equals(event.getSubcommandName()) ? startSubCommand : guessSubCommand).commandProcess(event);
+		("start".equals(event.getSubcommandName()) ? startSubcommand : playSubcommand).commandProcess(event);
 	}
 
+	/**
+	 * {@code PlaySubCommand} is a class that handles one of the subcommands of {@code /one_a_two_b} command, which
+	 * is {@code /one_a_two_b play}.
+	 *
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	private static class PlaySubcommand implements ICommand
 	{
 		private final CommandUsage commandCore;
@@ -67,40 +74,51 @@ public class OneATwoBCommand implements ICommand
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = commandCore.getGames().get(userID);
+			Map<Long, IMiniGame> games = commandCore.getGames();
+			IMiniGame playing = games.get(userID);
 			Integer answerBox = event.getOption("answer", CommonFunctions.getAsInt);
 			if (answerBox == null)
 			{
 				event.reply("Impossible, this is required!").queue();
 				return;
 			}
-			int tempAnswer = answerBox; //拆箱
-			int answer = tempAnswer >= 0 ? tempAnswer : -tempAnswer; //避免負數
+			int answer = Math.abs(answerBox); //拆箱 且避免負數
+			if (answer == Integer.MIN_VALUE) //Math.abs無法處理-2147483648
+			{
+				event.reply("Please input a positive integer!").setEphemeral(true).queue();
+				return;
+			}
 
 			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>")).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>"))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
 			//已經有在玩遊戲
 			if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
 			int[] ab = oneATwoB.calculateAAndB(answer); //如果是null 代表答案不是獨一無二的數字
 			if (ab == null)
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH)).setEphemeral(true).queue();
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
 			String shouldReply = String.format("%0" + OneATwoBGame.ANSWER_LENGTH + "d", answer) + " = " + ab[0] + " A " + ab[1] + " B";
 			if (ab[0] != OneATwoBGame.ANSWER_LENGTH)//沒有猜出ANSWER_LENGTH個A 遊戲繼續
 			{
-				event.reply(shouldReply + "\n</one_a_two_b guess:1102681768840138941>").setEphemeral(true).queue();
+				event.reply(shouldReply + "\n</one_a_two_b play:1102681768840138941>").setEphemeral(true).queue();
 				return;
 			}
 
@@ -117,7 +135,7 @@ public class OneATwoBCommand implements ICommand
 			}
 
 			event.reply(replyString).queue();
-			commandCore.getGames().remove(userID);
+			games.remove(userID);
 		}
 	}
 }

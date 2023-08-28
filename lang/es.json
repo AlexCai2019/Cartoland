@@ -270,7 +270,7 @@
 	"admin.slow_mode.cancel": "You cancelled the slow mode of %s.",
 	"mini_game.playing_another_game": "You are already in a %s game.",
 	"mini_game.not_playing": "Please run %s to start a new game.",
-	"one_a_two_b.start": "Started a game of 1A2B! Type </one_a_two_b guess:1102681768840138941>` <answer>` to make a guess.",
+	"one_a_two_b.start": "Started a game of 1A2B! Type </one_a_two_b play:1102681768840138941>` <answer>` to make a guess.",
 	"one_a_two_b.not_unique": "Invalid guess: please enter %d unique digits.",
 	"one_a_two_b.game_over": "%s\nGame over! The answer is **%03d**.\nTime elapsed: %d minutes, %d seconds\nGuesses: %d times",
 	"one_a_two_b.reward": "\nYou solved this in %d minutes and %d guesses, rewarded %d command blocks.",

@@ -32,9 +32,7 @@ public final class ForumsHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final Emoji resolved = Emoji.fromCustom("resolved", 1081082902785314921L, false);
-	private static final String resolvedFormat = resolved.getFormatted();
-	private static final Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
+	private static final String resolvedFormat = "<:resolved:1081082902785314921>";
 	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
 	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;
@@ -135,14 +133,14 @@ public final class ForumsHandle
 		if (withReaction instanceof Message message)
 			return message.getContentRaw().equals(resolvedFormat);
 		else if (withReaction instanceof MessageReaction reaction)
-			return reaction.getEmoji().equals(resolved);
+			return reaction.getEmoji().equals(Emoji.fromCustom("resolved", 1081082902785314921L, false));
 		else
 			return false;
 	}
 
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
-		eventMessage.addReaction(resolved).queue(); //機器人會在訊息上加:resolved:
+		eventMessage.addReaction(Emoji.fromCustom("resolved", 1081082902785314921L, false)).queue(); //機器人會在訊息上加:resolved:
 		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
@@ -177,7 +175,7 @@ public final class ForumsHandle
 			idledQuestionForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
 
 			//增加🎗️
-			forumPost.retrieveStartMessage().queue(message -> message.addReaction(reminder_ribbon).queue());
+			forumPost.retrieveStartMessage().queue(message -> message.addReaction(Emoji.fromUnicode("🎗️")).queue());
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 		{
 			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
@@ -187,11 +185,13 @@ public final class ForumsHandle
 
 	public static void unIdleQuestionForumPost(ThreadChannel forumPost, boolean archive)
 	{
+		//如果 貼文已被關閉 或 貼文已鎖定 或 貼文不屬於疑難雜症
 		if (forumPost.isArchived() || forumPost.isLocked() || forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID)
 			return;
 
 		forumPost.retrieveStartMessage().queue(message ->
 		{
+			Emoji reminder_ribbon = Emoji.fromUnicode("🎗️");
 			if (message.getReactions().stream().anyMatch(reaction -> reaction.getEmoji().equals(reminder_ribbon))) //如果第一則訊息有🎗️
 				message.removeReaction(reminder_ribbon).queue(); //移除🎗️
 

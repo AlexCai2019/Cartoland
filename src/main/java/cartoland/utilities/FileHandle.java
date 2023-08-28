@@ -31,7 +31,7 @@ public final class FileHandle
 	{
 		try
 		{
-			return Files.readString(Paths.get(fileName));
+			return Files.readString(Paths.get(fileName)); //從指定的檔名中讀取全部的資料 並將這些資料做成一個字串
 		}
 		catch (IOException exception)
 		{
@@ -57,7 +57,7 @@ public final class FileHandle
 	 */
 	public static void registerSerialize(String fileName, Object object)
 	{
-		serializeObjects.add(new SerializeObject(fileName, object));
+		serializeObjects.add(new SerializeObject(fileName, object)); //向註冊清單中新增一個註冊物件
 	}
 
 	/**
@@ -92,19 +92,17 @@ public final class FileHandle
 
 	public static Object deserialize(String fileName)
 	{
-		Object object;
-		try (FileInputStream fileStream = new FileInputStream(fileName);
-			 ObjectInputStream objectStream = new ObjectInputStream(fileStream))
+		try (FileInputStream fileStream = new FileInputStream(fileName); //從檔名建立檔案串流
+			 ObjectInputStream objectStream = new ObjectInputStream(fileStream)) //從檔案串流建立物件串流
 		{
-			object = objectStream.readObject();
+			return objectStream.readObject(); //從物件串流讀取物件
 		}
 		catch (IOException | ClassNotFoundException exception)
 		{
 			exception.printStackTrace();
 			log(exception);
-			return null;
+			return null; //讀不到就回傳null
 		}
-		return object;
 	}
 
 	public static void changeLogDate()

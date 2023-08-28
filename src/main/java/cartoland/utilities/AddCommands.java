@@ -384,12 +384,11 @@ public final class AddCommands
 								.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")
 								.setDescriptionLocalization(CHINESE_CHINA, "玩一场1A2B游戏")
 								.addOptions(
-										new OptionData(OptionType.INTEGER, "answer", "The answer that you think", false, false)
+										new OptionData(OptionType.INTEGER, "answer", "The answer that you think", true, false)
 												.setNameLocalization(CHINESE_TAIWAN, "答案")
 												.setNameLocalization(CHINESE_CHINA, "答案")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
-												.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案"))
-				),
+												.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案"))),
 		Commands.slash(LOTTERY, "Play the lottery game")
 				.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 				.setDescriptionLocalization(CHINESE_CHINA, "抽奖")

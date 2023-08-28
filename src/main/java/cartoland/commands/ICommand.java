@@ -72,6 +72,14 @@ class HasSubcommands implements ICommand
 		subcommands = new HashMap<>(initialCapacity);
 	}
 
+	/**
+	 * The execution of the main command, used for get execution object from {@link #subcommands} through
+	 * the name of the subcommand. This should not be overridden.
+	 *
+	 * @param event The event that carries information of the user and the command.
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{

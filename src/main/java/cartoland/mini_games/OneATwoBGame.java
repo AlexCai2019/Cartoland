@@ -17,9 +17,9 @@ import java.util.Arrays;
  */
 public class OneATwoBGame implements IMiniGame
 {
-	public static final int ANSWER_LENGTH = 4;
+	public static final int ANSWER_LENGTH = 4; //答案的長度
 
-	private final int[] answer = new int[ANSWER_LENGTH];
+	private final int[] answer = new int[ANSWER_LENGTH]; //答案
 	private final boolean[] metBefore = new boolean[10];
 	private final boolean[] inAnswer = { false,false,false,false,false,false,false,false,false,false };
 	private final Instant begin;

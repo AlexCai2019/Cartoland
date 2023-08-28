@@ -43,7 +43,7 @@ public class AddReaction extends ListenerAdapter
 			return;
 		if (forumPost.isArchived()) //關閉著的
 			return;
-		if (user.getIdLong() != forumPost.getOwnerIdLong() && !member.hasPermission(Permission.MANAGE_THREADS))
+		if (user.getIdLong() != forumPost.getOwnerIdLong() && !member.hasPermission(Permission.MANAGE_THREADS)) //不是貼文的擁有者 且沒有管理貼文的權限
 			return;
 
 		event.retrieveMessage().queue(message -> ForumsHandle.archiveForumPost(forumPost, message));

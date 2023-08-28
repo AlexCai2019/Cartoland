@@ -47,7 +47,7 @@ public class AdminCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code MuteSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code MuteSubCommand} is a class that handles one of the subcommands of {@code /admin} command, which is
 	 * {@code /admin mute}.
 	 *
 	 * @since 2.1
@@ -144,7 +144,7 @@ public class AdminCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code TempBanSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code TempBanSubCommand} is a class that handles one of the subcommands of {@code /admin} command, which is
 	 * {@code /admin temp_ban}.
 	 *
 	 * @since 2.1
@@ -251,7 +251,7 @@ public class AdminCommand extends HasSubcommands
 	}
 
 	/**
-	 * {@code SlowModeSubCommand} is a class that handles one of the sub commands of {@code /admin} command, which is
+	 * {@code SlowModeSubCommand} is a class that handles one of the subcommands of {@code /admin} command, which is
 	 * {@code /admin slow_mode}.
 	 *
 	 * @since 2.1

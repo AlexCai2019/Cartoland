@@ -335,7 +335,10 @@ public class TicTacToeGame implements IMiniGame
 		@Override
 		protected int round2()
 		{
-			Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
+			synchronized (TicTacToeGame.class) //避免洗牌時造成干擾
+			{
+				Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
+			}
 
 			int first, second, third;
 			char f, s, t;

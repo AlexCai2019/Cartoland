@@ -127,7 +127,7 @@ public final class TimerHandle
 				}
 				builder.append("今天是 ").append(members.get(i).getAsMention()).append(" 的生日！\n");
 			}
-			lobbyChannel.sendMessage(builder).queue(); //把剛剛有累積到 不滿26人的寄出
+			lobbyChannel.sendMessage(builder).queue(); //把剛剛有累積到 不滿60人的寄出
 		});
 	}
 
@@ -137,9 +137,9 @@ public final class TimerHandle
 	private static long hoursFrom1970 = System.currentTimeMillis() / (1000 * 60 * 60); //從1970年1月1日開始過了幾個小時
 	private static final ScheduledFuture<?> everyHour = executorService.scheduleAtFixedRate(() -> //每小時執行一次
 	{
-		hoursFrom1970++;
-		nowHour++;
-		if (nowHour == 24)
+		hoursFrom1970++; //增加小時
+		nowHour++; //增加現在幾點
+		if (nowHour == 24) //第24小時是0點
 			nowHour = 0;
 
 		for (TimerEvent event : timerEvents) //走訪被註冊的事件們
@@ -201,7 +201,7 @@ public final class TimerHandle
 	{
 		//根據現在的時間 決定是否解ban
 		Set<long[]> tempBanSet = AdminCommand.tempBanSet;
-		if (tempBanSet.size() == 0) //沒有人被temp_ban
+		if (tempBanSet.isEmpty()) //沒有人被temp_ban
 			return; //不用執行
 		//這以下是有關解ban的程式碼
 		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原set

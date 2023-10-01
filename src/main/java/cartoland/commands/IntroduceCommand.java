@@ -49,8 +49,7 @@ public class IntroduceCommand extends HasSubcommands
 			if (target == null) //沒有填 預設是自己
 				target = user;
 
-			String content = introduction.get(target.getIdLong());
-			event.reply(content != null ? content : JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info"))
+			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -134,7 +133,7 @@ public class IntroduceCommand extends HasSubcommands
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
 				List<Message.Attachment> attachments = linkMessage.getAttachments(); //附件
-				String introductionString;
+				String introductionString; //介紹文字
 				if (attachments.isEmpty()) //如果沒有附件 這是比較常見的情形
 					introductionString = linkMessage.getContentRaw(); //直接等於訊息內容
 				else //有附件 改用StringBuilder處理

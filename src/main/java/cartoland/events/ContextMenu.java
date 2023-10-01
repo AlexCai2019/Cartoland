@@ -41,6 +41,7 @@ public class ContextMenu extends ListenerAdapter
 	public void onMessageContextInteraction(MessageContextInteractionEvent event)
 	{
 		User user = event.getUser();
+		long userID = user.getIdLong();
 		String eventName = event.getName();
 
 		switch (eventName)
@@ -101,15 +102,15 @@ public class ContextMenu extends ListenerAdapter
 				//選擇連結訊息內的第一張圖片作為embed的圖片
 				//不用add field 沒必要那麼麻煩
 				List<Message.Attachment> attachments = message.getAttachments();
-				if (attachments.size() != 0)
+				if (attachments.isEmpty())
+					embedBuilder.setImage(null);
+				else
 					attachments.stream()
 							.filter(CommonFunctions.isImage)
 							.findFirst()
-							.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
-				else
-					embedBuilder.setImage(null);
+							.ifPresent(image -> embedBuilder.setImage(image.getUrl()));
 				event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "quote.jump_message")))
+					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))
 					.queue();
 			}
 
@@ -127,7 +128,7 @@ public class ContextMenu extends ListenerAdapter
 				boolean isDiscussPostOwner = //如果是地圖專版的論壇貼文的開啟者 可以無視權限直接釘選
 					channel != null && channel.getType().isThread() && //是討論串
 					((ThreadChannel) channel).getParentChannel().getIdLong() == IDs.MAP_DISCUSS_CHANNEL_ID && //是地圖專版
-					((ThreadChannel) channel).getOwnerIdLong() == member.getIdLong(); //是開啟者
+					((ThreadChannel) channel).getOwnerIdLong() == userID; //是開啟者
 
 				if (!isDiscussPostOwner && !member.hasPermission(Permission.MESSAGE_MANAGE)) //如果不是地圖專版貼文不是開啟者且沒有權限
 				{
@@ -148,6 +149,6 @@ public class ContextMenu extends ListenerAdapter
 			}
 		}
 
-		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used " + eventName);
+		FileHandle.log(user.getEffectiveName() + '(' + userID + ") used " + eventName);
 	}
 }

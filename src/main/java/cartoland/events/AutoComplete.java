@@ -54,10 +54,9 @@ public class AutoComplete extends ListenerAdapter
 			complete.completeProcess(event);
 	}
 
-
 	/**
-	 * {@code GenericComplete} is a parent class that has subclasses that can process auto complete of typing a slash
-	 * command. The subclasses of this class will be initial in the constructor of {@link AutoComplete}, which is
+	 * {@code GenericComplete} is a parent class that has subclasses that can process auto complete of typing a
+	 * slash command. The subclasses of this class will be initial in the constructor of {@link AutoComplete}, which is
 	 * {@link AutoComplete#AutoComplete()}.
 	 *
 	 * @see AutoComplete
@@ -66,7 +65,7 @@ public class AutoComplete extends ListenerAdapter
 	 */
 	private static abstract class GenericComplete
 	{
-		protected static final int CHOICES_LIMIT = 25;
+		protected static final int CHOICES_LIMIT = 25; //最多只能有25個建議
 
 		abstract void completeProcess(CommandAutoCompleteInteractionEvent event);
 	}
@@ -137,14 +136,17 @@ public class AutoComplete extends ListenerAdapter
 		{
 			String optionValue = event.getFocusedOption().getValue();
 			List<Command.Choice> choices = new ArrayList<>();
+			int choicesCount = 0;
 			for (Map.Entry<String, String> entry : youtubersEntries)
 			{
 				String youtuberName = entry.getKey();
 				if (youtuberName.contains(optionValue))
 					choices.add(new Command.Choice(youtuberName, entry.getValue()));
+				if (++choicesCount == CHOICES_LIMIT)
+					break;
 			}
 
-			event.replyChoices(choices.size() <= CHOICES_LIMIT ? choices : choices.subList(0, CHOICES_LIMIT)).queue();
+			event.replyChoices(choices).queue();
 		}
 	}
 }

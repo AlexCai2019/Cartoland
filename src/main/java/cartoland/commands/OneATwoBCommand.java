@@ -76,19 +76,6 @@ public class OneATwoBCommand implements ICommand
 			long userID = event.getUser().getIdLong();
 			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
-			Integer answerBox = event.getOption("answer", CommonFunctions.getAsInt);
-			if (answerBox == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-			int answer = Math.abs(answerBox); //拆箱 且避免負數
-			if (answer == Integer.MIN_VALUE) //Math.abs無法處理-2147483648
-			{
-				event.reply("Please input a positive integer!").setEphemeral(true).queue();
-				return;
-			}
-
 			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>"))
@@ -103,6 +90,19 @@ public class OneATwoBCommand implements ICommand
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
 						.setEphemeral(true)
 						.queue();
+				return;
+			}
+
+			Integer answerBox = event.getOption("answer", CommonFunctions.getAsInt);
+			if (answerBox == null)
+			{
+				event.reply("Impossible, this is required!").queue();
+				return;
+			}
+			int answer = Math.abs(answerBox); //拆箱 且避免負數
+			if (answer == Integer.MIN_VALUE) //Math.abs無法處理-2147483648
+			{
+				event.reply("Please input a positive integer!").setEphemeral(true).queue();
 				return;
 			}
 

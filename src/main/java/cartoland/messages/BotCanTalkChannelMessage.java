@@ -157,21 +157,21 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessageLength <= 1) //只打一個字或是沒有字 (不過沒有字是怎麼送出的?)
 			return; //沒有必要執行下面那些檢測
 
-		if (rawMessageLength == 3) //用字串長度去最佳化 注意這其中若出現了長度不是3的字串 那這個條件就要修改
+		if (rawMessageLength == 3) //用字串長度去最佳化 注意這if的區塊中若出現了長度不是3的字串 那這個條件就要修改
 		{
-			if (rawMessage.equalsIgnoreCase("lol"))
+			if ("lol".equalsIgnoreCase(rawMessage))
 			{
 				channel.sendMessage("LOL").queue();
 				return; //在這之下的if們 全都不可能通過
 			}
 
-			if (rawMessage.equalsIgnoreCase("owo"))
+			if ("owo".equalsIgnoreCase(rawMessage))
 			{
 				channel.sendMessage("OwO").queue();
 				return; //在這之下的if們 全都不可能通過
 			}
 
-			if (rawMessage.equalsIgnoreCase("ouo"))
+			if ("ouo".equalsIgnoreCase(rawMessage))
 			{
 				channel.sendMessage("OuO").queue();
 				return; //在這之下的if們 全都不可能通過

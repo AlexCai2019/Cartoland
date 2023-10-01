@@ -5,7 +5,6 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,7 +25,7 @@ public class JiraCommand implements ICommand
 {
 	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
 	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
-	private final Pattern numberRegex = Pattern.compile("\\d{1,6}");
+	private final Pattern numberRegex = Pattern.compile("\\d{1,6}"); //目前bug數還沒超過999999個 等超過了再來改
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
 
@@ -52,7 +51,7 @@ public class JiraCommand implements ICommand
 			bugID = "MC-" + link;
 		else
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
 		link = "https://bugs.mojang.com/browse/" + bugID;
@@ -65,44 +64,46 @@ public class JiraCommand implements ICommand
 		}
 		catch (IOException e)
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID)).queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID)).setEphemeral(true).queue();
 			return;
 		}
 
 		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 		if (issueContent == null) //如果不存在id為issue-content的標籤
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue"))
-					.addActionRow(Button.link(link, "Jira")).queue();
+			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue")).setEphemeral(true).queue();
 			return;
 		}
 
-		Element title = issueContent.getElementById("summary-val");
 		EmbedBuilder bugEmbed = new EmbedBuilder()
-				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png")
-				.setColor(MOJANG_RED)
-				.setTitle('[' + bugID + "] " + textValue(title), link);
-		bugEmbedAddField(bugEmbed, "Status", issueContent.getElementById("opsbar-transitions_more"));
-		bugEmbedAddField(bugEmbed, "Resolution", issueContent.getElementById("resolution-val"));
-		bugEmbedAddField(bugEmbed, "Mojang priority", issueContent.getElementById("customfield_12200-val"));
+				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png") //縮圖為Mojang
+				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
+				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
+		bugEmbed.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true);
+		bugEmbed.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true);
+		bugEmbed.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
 
-		//可能會產生IndexOutOfBoundsException 但是目前尚未發生
 		Element affectsVersions = issueContent.getElementById("versions-field");
-		bugEmbedAddField(bugEmbed, "First affects version", affectsVersions != null ? affectsVersions.child(0) : null);
+		int childrenSize;
+		if (affectsVersions != null && (childrenSize = affectsVersions.childrenSize()) != 0) //有版本紀錄
+		{
+			bugEmbed.addField("First affects version", textValue(affectsVersions.child(0)), true);
+			bugEmbed.addField("Last affects version", textValue(affectsVersions.child(childrenSize - 1)), true);
+		}
+		else
+		{
+			bugEmbed.addField("First affects version", "", true);
+			bugEmbed.addField("Last affects version", "", true);
+		}
 
-		bugEmbedAddField(bugEmbed, "Fix version/s", issueContent.getElementById("fixfor-val"));
-		bugEmbedAddField(bugEmbed, "Reporter", issueContent.getElementById("reporter-val"));
+		bugEmbed.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true);
+		bugEmbed.addField("Reporter", textValue(issueContent.getElementById("reporter-val")), true);
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
 
-	private static String textValue(Element element)
+	private String textValue(Element element)
 	{
 		return element != null ? element.text() : "";
-	}
-
-	private static void bugEmbedAddField(EmbedBuilder bugEmbed, String fieldName, Element element)
-	{
-		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
-		bugEmbed.addField(fieldName, textValue(element), true);
 	}
 }

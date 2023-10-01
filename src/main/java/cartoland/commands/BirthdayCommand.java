@@ -62,19 +62,19 @@ public class BirthdayCommand implements ICommand
 
 			long userID = event.getUser().getIdLong();
 			int month = monthBox, date = dateBox;
-			if (month < 1 || month > 12)
+			if (month < 1 || month > 12) //月份不在1 ~ 12的區間
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();
 				return;
 			}
 
-			if (date < 1 || date > 31)
+			if (date < 1 || date > 31) //日期不在1 ~ 31的區間
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_date")).setEphemeral(true).queue();
 				return;
 			}
 
-			if (isWrongDate(month, date))
+			if (isWrongDate(month, date)) //如果日期對不上月份 例如2月30日、4月31日等
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_date_in_month")
 									.formatted(
@@ -87,16 +87,16 @@ public class BirthdayCommand implements ICommand
 								.formatted(
 										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + month),
 										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + date))).queue();
-			TimerHandle.setBirthday(event.getUser().getIdLong(), month, date);
+			TimerHandle.setBirthday(userID, month, date);
 		}
 
 		private boolean isWrongDate(int month, int date)
 		{
 			return switch (month)
 			{
-				case 4, 6, 9, 11 -> date > 30;
+				case 4, 6, 9, 11 -> date > 30; //小月不得超過30
 
-				case 2 -> date > 29;
+				case 2 -> date > 29; //2月不得超過29
 
 				default -> false; //因為前面已經檢查過31了 所以大月是不會錯的
 			};

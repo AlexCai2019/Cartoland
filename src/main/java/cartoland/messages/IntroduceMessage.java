@@ -16,8 +16,6 @@ import java.util.List;
  */
 public class IntroduceMessage implements IMessage
 {
-	private final StringBuilder introductionBuilder = new StringBuilder();
-
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -28,11 +26,18 @@ public class IntroduceMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		Message message = event.getMessage();
-		introductionBuilder.setLength(0);
-		introductionBuilder.append(message.getContentRaw());
 		List<Message.Attachment> attachments = message.getAttachments();
-		for (Message.Attachment attachment : attachments)
-			introductionBuilder.append('\n').append(attachment.getUrl());
-		IntroduceCommand.updateIntroduction(message.getAuthor().getIdLong(), introductionBuilder.toString()); //將自介頻道內的訊息設為/introduce的內容
+
+		String introductionString; //介紹文字
+		if (attachments.isEmpty()) //如果沒有附件 這是比較常見的情形
+			introductionString = message.getContentRaw(); //直接等於訊息內容
+		else //有附件 改用StringBuilder處理
+		{
+			StringBuilder introduceBuilder = new StringBuilder(message.getContentRaw()); //訊息內容
+			for (Message.Attachment attachment : attachments)
+				introduceBuilder.append('\n').append(attachment.getUrl()); //一一獲取附件的連結
+			introductionString = introduceBuilder.toString();
+		}
+		IntroduceCommand.updateIntroduction(message.getAuthor().getIdLong(), introductionString); //將自介頻道內的訊息設為/introduce的內容
 	}
 }

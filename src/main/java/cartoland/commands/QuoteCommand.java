@@ -84,13 +84,13 @@ public class QuoteCommand implements ICommand
 			//選擇連結訊息內的第一張圖片作為embed的圖片
 			//不用add field 沒必要那麼麻煩
 			List<Message.Attachment> attachments = linkMessage.getAttachments();
-			if (attachments.size() != 0)
+			if (attachments.isEmpty())
+				embedBuilder.setImage(null);
+			else
 				attachments.stream()
 						.filter(CommonFunctions.isImage)
 						.findFirst()
 						.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
-			else
-				embedBuilder.setImage(null);
 
 			(Boolean.TRUE.equals(event.getOption("mention_author", CommonFunctions.getAsBoolean)) ? //是否提及訊息作者
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention")

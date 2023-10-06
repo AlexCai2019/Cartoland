@@ -1,7 +1,7 @@
-![Banner](https://cdn.discordapp.com/attachments/886936474723950611/1142946638302810132/IMG_6989.jpg)
+![Banner](Banner.jpg)
 
 # Cartoland Bot
-#### [English](https://github.com/AlexCai2019/Cartoland/blob/master/README.md) / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/README_ta.md) / 粵語漢字 / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/README_cn.md)
+#### [English](https://github.com/AlexCai2019/Cartoland/blob/master/readme/README.md) / [台灣正體](https://github.com/AlexCai2019/Cartoland/blob/master/readme/README_tw.md) / [台語文字](https://github.com/AlexCai2019/Cartoland/blob/master/readme/README_ta.md) / 粵語漢字 / [简体中文](https://github.com/AlexCai2019/Cartoland/blob/master/readme/README_cn.md)
 
 ![Online Members](https://discord.com/api/guilds/886936474723950603/widget.png)
 

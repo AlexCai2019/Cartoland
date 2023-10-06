@@ -51,15 +51,15 @@ public final class CommandBlocksHandle
 	 */
 	public static LotteryData getLotteryData(long userID)
 	{
-		LotteryData lotteryData = lotteryDataMap.get(userID);
+		LotteryData lotteryData = lotteryDataMap.get(userID); //從map中獲得指令方塊資料
 		if (lotteryData != null) //已經有這名玩家
 			return lotteryData;
 
 		//如果沒有記錄這名玩家
-		LotteryData newUser = new LotteryData(userID);
+		LotteryData newUser = new LotteryData(userID); //建立新資料
 		lotteryDataMap.put(userID, newUser); //放入這名玩家
 		lotteryDataList.add(newUser); //放入這名玩家
-		Cartoland.getJDA().retrieveUserById(userID).queue(user -> newUser.name = user.getEffectiveName());
+		Cartoland.getJDA().retrieveUserById(userID).queue(user -> newUser.name = user.getEffectiveName()); //初始化新資料
 		return newUser; //絕不回傳null
 	}
 

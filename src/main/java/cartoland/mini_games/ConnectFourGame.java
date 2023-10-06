@@ -1,7 +1,10 @@
 package cartoland.mini_games;
 
+import cartoland.utilities.Algorithm;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.List;
 
 public class ConnectFourGame implements IMiniGame
 {
@@ -11,12 +14,12 @@ public class ConnectFourGame implements IMiniGame
 	private static final char PLAYER_PLACE = 'O';
 	private static final char AI_PLACE = 'X';
 	private static final char EMPTY = ' ';
+	private static final int[] zeroOneTwo = {0,1,2};
 
 	private final char[][] board = new char[ROWS][COLUMNS];
 	private int spaces = ROWS * COLUMNS;
 	private final StringBuilder boardBuilder = new StringBuilder("```\n 1 "); //顯示棋盤
 	private static final int CHARACTERS_IN_A_ROW = 3 + (COLUMNS - 1) * 4 + 1; //第一行的--- 以及剩下那些行分配到的---- 還有最後的換行
-	private final Random random = new Random();
 
 	private int lastHumanPlace;
 
@@ -83,13 +86,24 @@ public class ConnectFourGame implements IMiniGame
 		spaces--; //可用空間減少一格
 		int column; //要放棋子的直行
 		if (isFull(Math.max(0, lastHumanPlace - 1)) && isFull(lastHumanPlace) && isFull(Math.min(lastHumanPlace + 1, COLUMNS - 1))) //玩家下的左 中 右 都是滿的
-			do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
-				column = random.nextInt(COLUMNS); //隨機選一直行
-			while (isFull(column)); //如果已經滿了 就再隨機選一次
+		{
+			List<Integer> possibleColumns = new ArrayList<>(); //所有還有空位的直行
+			for (int i = 0; i < lastHumanPlace - 1; i++) //從最左邊開始 走訪玩家下的左邊那一區(不包含剛剛已經檢查過的左邊那一行)
+				if (!isFull(i)) //這一行還有空間
+					possibleColumns.add(i); //加入可能落子的直行中
+			for (int i = lastHumanPlace + 2; i < COLUMNS; i++)
+				if (!isFull(i))
+					possibleColumns.add(i);
+			column = Algorithm.randomElement(possibleColumns); //隨機選一直行
+		}
 		else //玩家的左 中 右 至少有一行還有個空格
-			do
-				column = lastHumanPlace - 1 + random.nextInt(3); //從玩家下的左 中 右 當中 隨機選一直行
+		{
+			Algorithm.shuffle(zeroOneTwo); //隨機排序0、1、2
+			int i = 0;
+			do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
+				column = lastHumanPlace - 1 + zeroOneTwo[i++]; //從玩家下的左 中 右 當中 隨機選一直行
 			while (column < 0 || column >= COLUMNS || isFull(column)); //如果數字不對 或已經滿了 就再隨機選一次
+		}
 		int row = place(AI_PLACE, column); //即將要落子的那個橫列
 		updateBoardString(AI_PLACE, row, column); //更新棋盤字串
 

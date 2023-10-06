@@ -53,7 +53,7 @@ public class Cartoland
 						new ReceiveModal()) //當有人使用Modal時
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS) //機器人可讀取訊息和查看伺服器成員
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
-				.setActivity(Activity.playing("Do /help for more information")) //正在玩
+				.setActivity(Activity.customStatus("Do /help for more information")) //自訂狀態
 				.build();
 
 		jda.updateCommands().addCommands(AddCommands.commands).queue(); //添加指令 裡面的程式簡直是一團亂 能跑就行

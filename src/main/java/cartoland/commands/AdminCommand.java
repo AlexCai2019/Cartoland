@@ -75,7 +75,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Member target = event.getOption("target", CommonFunctions.getAsMember);
+			Member target = event.getOption("target", CommonFunctions.getAsMember); //要被禁言的目標
 			if (target == null) //找不到要被禁言的成員
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_member")).setEphemeral(true).queue();
@@ -131,7 +131,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String mutedTime = Algorithm.buildCleanFloatingString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String mutedTime = Algorithm.cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
 					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
@@ -212,7 +212,7 @@ public class AdminCommand extends HasSubcommands
 				case "year" -> 24 * 365;
 				case "wood_rat" -> 24 * 365 * 60;
 				case "century" -> 24 * 365 * 100;
-				default -> 1; //其實unit一定等於上述那些或second 但是default必須的
+				default -> 1; //其實unit一定等於上述那些或second 但是default必須要有
 			}); //Math.round會處理溢位
 
 			if (durationHours < 1L) //時間不能小於一小時
@@ -221,7 +221,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String bannedTime = Algorithm.buildCleanFloatingString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String bannedTime = Algorithm.cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 					.formatted(
 							target.getAsMention(), bannedTime,
@@ -318,7 +318,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String slowTime = Algorithm.buildCleanFloatingString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String slowTime = Algorithm.cleanFPString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			if (timeSecond > 0)
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.success").formatted(channel.getAsMention(), slowTime)).queue();
 			else //一定是等於0 前面過濾掉小於0的情況了

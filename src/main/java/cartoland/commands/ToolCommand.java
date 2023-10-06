@@ -162,11 +162,14 @@ public class ToolCommand extends HasSubcommands
 			rgbaColors[1] = argbColors[2] = event.getOption("green", CommonFunctions.getAsInt);
 			rgbaColors[2] = argbColors[3] = event.getOption("blue", CommonFunctions.getAsInt);
 			rgbaColors[3] = argbColors[0] = event.getOption("alpha", CommonFunctions.getAsInt);
+			if (rgbaColors[3] == null) //沒有設定透明度
+				rgbaColors[3] = argbColors[0] = 255;
+			Integer[] rgbColors = { rgbaColors[0],rgbaColors[1],rgbaColors[2] };
 
-			int rgba = 0, argb = 0;
+			int rgba = 0, argb = 0, rgb = 0;
 
 			long userID = event.getUser().getIdLong();
-			for (int i = 0, offset = 24; i < 4; i++)
+			for (int i = 0, offset = 24, rgbaPrimitive, argbPrimitive; i < 4; i++)
 			{
 				if (rgbaColors[i] == null || argbColors[i] == null)
 				{
@@ -174,20 +177,27 @@ public class ToolCommand extends HasSubcommands
 					return;
 				}
 
-				if (notInRange(rgbaColors[i]) || notInRange(argbColors[i]))
+				rgbaPrimitive = rgbaColors[i]; //避免重複解包
+				argbPrimitive = argbColors[i];
+				if (notInRange(rgbaPrimitive) || notInRange(argbPrimitive))
 				{
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
 					return;
 				}
 
-				rgba += rgbaColors[i] << offset; //舉例 如果是#0D18F70C 那麼紅色就是13 然後往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是
-				argb += argbColors[i] << offset;
+				rgba += rgbaPrimitive << offset; //舉例 如果是13,24,247,12 那麼作為紅色的13往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是#0D18F70C
+				argb += argbPrimitive << offset;
 				offset -= 8; //offset原是24 每次減8後 下次推的時候就是推16 然後推8 最後推0
+				rgb += rgbaPrimitive << offset; //舉例 如果是13,24,247 那麼作為紅色的13往左推16 bits 綠色是24左推8bits 藍色是247左推0 結果是#0D18F7
 			}
 
 			String decimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.decimal");
 			String hexadecimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.hexadecimal");
-			event.reply("RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
+
+			event.reply("RGB: `" + Arrays.toString(rgbColors) + "`\n" +
+								"RGB(" + decimal + "): `" + rgb + "`\n" +
+								"RGB(" + hexadecimal + "): `#" + String.format("%06X` `#%06x", rgb, rgb) + "`\n" +
+								"RGBA: `" + Arrays.toString(rgbaColors) + "`\n" +
 								"RGBA(" + decimal + "): `" + rgba + "`\n" +
 								"RGBA(" + hexadecimal + "): `#" + String.format("%08X` `#%08x", rgba, rgba) + "`\n" +
 								"ARGB: `" + Arrays.toString(argbColors) + "`\n" +

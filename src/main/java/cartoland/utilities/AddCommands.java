@@ -102,14 +102,14 @@ public final class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "蓝")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "藍 (0 ~ 255)")
 												.setDescriptionLocalization(CHINESE_CHINA, "蓝 (0 ~ 255)"),
-										new OptionData(OptionType.INTEGER, "alpha", "Alpha (0 ~ 255)", true, false)
+										new OptionData(OptionType.INTEGER, "alpha", "Alpha (0 ~ 255)", false, false)
 												.setNameLocalization(CHINESE_TAIWAN, "不透明度")
 												.setNameLocalization(CHINESE_CHINA, "不透明度")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "不透明度 (0 ~ 255)")
 												.setDescriptionLocalization(CHINESE_CHINA, "不透明度 (0 ~ 255)")),
 						new SubcommandData(ToolCommand.COLOR_INTEGER, "Get color data from RGB integer")
-								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGB整數獲得顏色資料")
-								.setDescriptionLocalization(CHINESE_CHINA, "从RGB整数获得颜色数据")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "從RGBA整數獲得顏色資料")
+								.setDescriptionLocalization(CHINESE_CHINA, "从RGBA整数获得颜色数据")
 								.addOptions(
 										new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
 												.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")

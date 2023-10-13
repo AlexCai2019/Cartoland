@@ -14,12 +14,30 @@ public class ConnectFourGame implements IMiniGame
 	private static final char PLAYER_PLACE = 'O';
 	private static final char AI_PLACE = 'X';
 	private static final char EMPTY = ' ';
-	private static final int[] zeroOneTwo = {0,1,2};
+	private static final int[] ZERO_ONE_TWO = {0,1,2};
+	public static final StringBuilder BOARD_TEMPLATE = new StringBuilder("```\n 1 "); //棋盤範本
+	private static final int CHARACTERS_IN_A_ROW = 3 + (COLUMNS - 1) * 4 + 1; //第一行的--- 以及剩下那些行分配到的---- 還有最後的換行
+
+	static
+	{
+		int r, c;
+		for (c = 2; c <= COLUMNS; c++) //從2開始 1已經事先放好了
+			BOARD_TEMPLATE.append("| ").append(c).append(' '); //標上棋盤的行數
+		String separateRowDashes = "-".repeat(CHARACTERS_IN_A_ROW - 1); //扣掉換行符號
+		for (r = 1; r <= ROWS; r++)
+		{
+			BOARD_TEMPLATE.append('\n') //換行
+					.append(separateRowDashes) //一大堆橫線
+					.append("\n " + EMPTY + ' '); //下一行以及第一格的空白
+			for (c = 1; c < COLUMNS; c++)
+				BOARD_TEMPLATE.append("| " + EMPTY + ' ');
+		}
+		BOARD_TEMPLATE.append("\n```");
+	}
 
 	private final char[][] board = new char[ROWS][COLUMNS];
 	private int spaces = ROWS * COLUMNS;
-	private final StringBuilder boardBuilder = new StringBuilder("```\n 1 "); //顯示棋盤
-	private static final int CHARACTERS_IN_A_ROW = 3 + (COLUMNS - 1) * 4 + 1; //第一行的--- 以及剩下那些行分配到的---- 還有最後的換行
+	private final StringBuilder boardBuilder = new StringBuilder(BOARD_TEMPLATE); //顯示棋盤
 
 	private int lastHumanPlace;
 
@@ -27,20 +45,6 @@ public class ConnectFourGame implements IMiniGame
 	{
 		for (char[] row : board)
 			Arrays.fill(row, EMPTY);
-
-		int r, c;
-		for (c = 2; c <= COLUMNS; c++) //從2開始 1已經事先放好了
-			boardBuilder.append("| ").append(c).append(' '); //標上棋盤的行數
-		String separateRowDashes = "-".repeat(CHARACTERS_IN_A_ROW - 1); //扣掉換行符號
-		for (r = 1; r <= ROWS; r++)
-		{
-			boardBuilder.append('\n') //換行
-					.append(separateRowDashes) //一大堆橫線
-					.append("\n " + EMPTY + ' '); //下一行以及第一格的空白
-			for (c = 1; c < COLUMNS; c++)
-				boardBuilder.append("| " + EMPTY + ' ');
-		}
-		boardBuilder.append("\n```");
 	}
 
 	@Override
@@ -98,10 +102,10 @@ public class ConnectFourGame implements IMiniGame
 		}
 		else //玩家的左 中 右 至少有一行還有個空格
 		{
-			Algorithm.shuffle(zeroOneTwo); //隨機排序0、1、2
+			Algorithm.shuffle(ZERO_ONE_TWO); //隨機排序0、1、2
 			int i = 0;
 			do //column必須要先取值一次 雖然用while(isFull(column))也可以 但是難得有do-while的表現機會
-				column = lastHumanPlace - 1 + zeroOneTwo[i++]; //從玩家下的左 中 右 當中 隨機選一直行
+				column = lastHumanPlace - 1 + ZERO_ONE_TWO[i++]; //從玩家下的左 中 右 當中 隨機選一直行
 			while (column < 0 || column >= COLUMNS || isFull(column)); //如果數字不對 或已經滿了 就再隨機選一次
 		}
 		int row = place(AI_PLACE, column); //即將要落子的那個橫列

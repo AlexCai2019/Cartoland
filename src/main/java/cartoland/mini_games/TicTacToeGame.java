@@ -18,9 +18,7 @@ public class TicTacToeGame implements IMiniGame
 	private static final int BOARD_SIDE = 3;
 	private static final int LEFT_CORNER = 0;
 	private static final int CENTER = BOARD_SIDE * BOARD_SIDE >> 1;
-
-	private final char[] board = new char[9];
-	private final StringBuilder boardBuilder = new StringBuilder("```\nr\\c"); //棋盤字串
+	private static final StringBuilder BOARD_TEMPLATE = new StringBuilder("```\nr\\c"); //棋盤範本
 
 	private static final int[][] winningCombinations =
 	{
@@ -33,31 +31,37 @@ public class TicTacToeGame implements IMiniGame
 	private static final char CROSS = 'X';
 	private static final char EMPTY = ' ';
 
+	private static final int ROW_LENGTH = (BOARD_SIDE << 2) + 3; //3 * (BOARD_SIDE + 1) + BOARD_SIDE
+
+	static
+	{
+		//這些建立棋盤字串的程式不要亂動
+		//他們經過了精密的計算 才能像現在這樣穩定
+		int r, c;
+		for (c = 1; c <= BOARD_SIDE; c++)
+			BOARD_TEMPLATE.append("| ").append(c).append(' ');
+		String separateRow = "-".repeat(ROW_LENGTH);
+		for (r = 1; r <= BOARD_SIDE; r++)
+		{
+			BOARD_TEMPLATE.append('\n').append(separateRow).append("\n ").append(r);
+			for (c = 1; c <= BOARD_SIDE; c++)
+				BOARD_TEMPLATE.append(" | " + EMPTY);
+		}
+		BOARD_TEMPLATE.append("\n```");
+	}
+
+	private final char[] board = new char[9];
+	private final StringBuilder boardBuilder = new StringBuilder(BOARD_TEMPLATE); //棋盤字串
+
 	private int spaces = BOARD_SIDE * BOARD_SIDE; //棋盤上還空著的格數
 	private int[] notPlaced = null; //board還是EMPTY的index們 之所以不用ArrayList 是為了省效能 注意要到第三輪才會開始追蹤空棋盤
 	private int round = 1;
 
 	private final DifficultyBot difficultyBot;
 
-	private static final int ROW_LENGTH = (BOARD_SIDE << 2) + 3; //3 * (BOARD_SIDE + 1) + BOARD_SIDE
-	private static final String SEPARATE_ROW = "-".repeat(ROW_LENGTH);
-
 	public TicTacToeGame(int difficulty)
 	{
 		Arrays.fill(board, EMPTY); //清空棋盤
-
-		//這些建立棋盤字串的程式不要亂動
-		//他們經過了精密的計算 才能像現在這樣穩定
-		int r, c;
-		for (c = 1; c <= BOARD_SIDE; c++)
-			boardBuilder.append("| ").append(c).append(' ');
-		for (r = 1; r <= BOARD_SIDE; r++)
-		{
-			boardBuilder.append('\n').append(SEPARATE_ROW).append("\n ").append(r);
-			for (c = 1; c <= BOARD_SIDE; c++)
-				boardBuilder.append(" | ").append(board[boardCoordinate(r, c)]);
-		}
-		boardBuilder.append("\n```");
 
 		difficultyBot = switch (difficulty)
 		{

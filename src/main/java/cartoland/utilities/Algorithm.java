@@ -130,6 +130,19 @@ public final class Algorithm
 	}
 
 	/**
+	 * Returns a random element of an array.
+	 *
+	 * @param array The array that are going to return a random element.
+	 * @return A random element of the array.
+	 * @since 2.2
+	 * @author Alex Cai
+	 */
+	public static long randomElement(long[] array)
+	{
+		return array[random.nextInt(array.length)];
+	}
+
+	/**
 	 * Returns a random element of a list.
 	 *
 	 * @param list The list that need to shuffle

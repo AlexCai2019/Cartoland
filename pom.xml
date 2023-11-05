@@ -76,21 +76,21 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.15</version>
+            <version>5.0.0-beta.17</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <!-- https://github.com/stleary/JSON-java -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20230618</version>
+            <version>20231013</version>
         </dependency>
         <!-- https://jsoup.org/ -->
         <!-- https://github.com/jhy/jsoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.16.1</version>
+            <version>1.16.2</version>
         </dependency>
     </dependencies>
 

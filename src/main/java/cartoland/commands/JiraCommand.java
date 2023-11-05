@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -26,9 +27,10 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
-	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L)?|REALMS)-\\d{1,6}");
+	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS)-\\d{1,6}");
+	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L|LG)?|REALMS)-\\d{1,6}");
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}"); //目前bug數還沒超過999999個 等超過了再來改
+	private final Pattern snapshotRegex = Pattern.compile(".*\\d{2}w\\d{2}[a-z]");
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
 
@@ -92,8 +94,8 @@ public class JiraCommand implements ICommand
 		int childrenSize; //有幾個版本受到了影響
 		if (affectsVersions != null && (childrenSize = affectsVersions.childrenSize()) != 0) //有版本紀錄
 		{
-			bugEmbed.addField("First affects version", textValue(affectsVersions.child(0)), true);
-			bugEmbed.addField("Last affects version", textValue(affectsVersions.child(childrenSize - 1)), true);
+			bugEmbed.addField("First affects version", snapshotFor(textValue(affectsVersions.child(0))), true);
+			bugEmbed.addField("Last affects version", snapshotFor(textValue(affectsVersions.child(childrenSize - 1))), true);
 		}
 		else
 		{
@@ -127,6 +129,53 @@ public class JiraCommand implements ICommand
 		if (timeTags.isEmpty())
 			return "";
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
-		return "<t:" + ZonedDateTime.parse(timeTags.get(0).attr("datetime"), dateTimeFormatter).toEpochSecond() + ":R>";
+		try
+		{
+			return "<t:" + ZonedDateTime.parse(timeTags.get(0).attr("datetime"), dateTimeFormatter).toEpochSecond() + ":R>";
+		}
+		catch (DateTimeParseException e)
+		{
+			return "";
+		}
+	}
+
+	private String snapshotFor(String versionString)
+	{
+		if (!snapshotRegex.matcher(versionString).matches())
+			return versionString; //不是快照版本 就直接回傳原本的字串
+
+		int length = versionString.length();
+		Document document;
+		try
+		{
+			document = Jsoup.connect("https://minecraft.wiki/w/Java_Edition_" + versionString.substring(length - 6, length)).get(); //連上wiki 旁邊會有Snapshot for
+		}
+		catch (IOException e)
+		{
+			return versionString; //連不上就算了
+		}
+
+		Elements infoBoxes = document.getElementsByClass("infobox-rows"); //wiki沒有為旁邊的table加id 很可惜
+
+		for (Element infoBox : infoBoxes) //從中篩選出需要的
+		{
+			if (!"table".equals(infoBox.tagName())) //它必須是個table
+				continue;
+			Elements trs = infoBox.getElementsByTag("tr"); //找出所有的tr
+			for (Element tr : trs) //從中篩選出需要的
+			{
+				Elements ths = tr.getElementsByTag("th"); //tr底下的th們
+				if (ths.isEmpty()) //沒有th
+					continue; //下一個tr
+				if (!"Snapshot for ".equals(ths.get(0).text())) //需要找到th裡的text是Snapshot for 的tr
+					continue; //下一個tr
+				Elements anchors = tr.getElementsByTag("a"); //版本名稱就是a的text
+				if (anchors.isEmpty()) //沒有a
+					continue; //下一個tr
+				return versionString + " (" + anchors.get(0).text() + ')'; //回傳快照版本(正式版本名稱)
+			}
+		}
+
+		return versionString; //前面的都失敗了 那就再把字串回傳回去
 	}
 }

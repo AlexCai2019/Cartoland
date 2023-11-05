@@ -157,8 +157,12 @@ public final class ForumsHandle
 
 	public static void tryIdleQuestionForumPost(ThreadChannel forumPost)
 	{
-		if (forumPost.isArchived() || forumPost.isLocked() || forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID)
-			return; //已經關閉 或已經鎖起來了 或不是問題論壇
+		long forumPostID = forumPost.getIdLong();
+		if (forumPost.isArchived() || forumPost.isLocked() || forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //已經關閉 或已經鎖起來了 或不是問題論壇
+		{
+			idledQuestionForumPosts.remove(forumPostID);
+			return;
+		}
 
 		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
 		{

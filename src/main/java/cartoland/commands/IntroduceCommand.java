@@ -1,6 +1,5 @@
 package cartoland.commands;
 
-import cartoland.Cartoland;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
@@ -113,7 +112,7 @@ public class IntroduceCommand extends HasSubcommands
 			//從創聯中取得頻道
 			Guild cartoland = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
 			if (cartoland == null || cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //結果不是在創聯
-				cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
+				cartoland = event.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
 			if (cartoland == null) //找不到創聯
 			{
 				event.reply("Can't get Cartoland server").queue();

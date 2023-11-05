@@ -90,9 +90,9 @@ public final class TimerHandle
 
 		TimerHandle.registerTimerEvent((byte) 12, () -> //中午12點
 		{
-			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID);
+			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
 			if (questionsChannel == null)
-				return;
+				return; //找不到就算了
 			List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
 			for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
@@ -107,6 +107,8 @@ public final class TimerHandle
 		{
 			StringBuilder builder = new StringBuilder();
 			int membersCount = members.size();
+			if (membersCount == 0)
+				return;
 			//最後把剛剛沒說的寄出去
 			if (membersCount <= MAX_MEMBERS_AT_ONCE)
 			{

@@ -1,6 +1,5 @@
 package cartoland.messages;
 
-import cartoland.Cartoland;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
@@ -109,9 +108,9 @@ public class BotCanTalkChannelMessage implements IMessage
 		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
 
-		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯" });
+		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling" });
 		keywords.put("午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }); //後面那句由 brick-bk 新增
-		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/goodnight-gif-8996096" });
+		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/kfc-fried-chicken-kentucky-fried-chicken-fast-food-gif-26996460" });
 		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好","https://static.wikia.nocookie.net/theamazingworldofgumball/images/1/10/Season_3_Anais.png/" });
 	}
 
@@ -133,7 +132,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		MessageChannel channel = message.getChannel();
 		User author = event.getAuthor();
 
-		if (message.getMentions().isMentioned(Cartoland.getJDA().getSelfUser(), botType)) //有人tag機器人
+		if (message.getMentions().isMentioned(event.getJDA().getSelfUser(), botType)) //有人tag機器人
 		{
 			long userID = author.getIdLong();
 			long channelID = channel.getIdLong();
@@ -157,11 +156,27 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (rawMessageLength <= 1) //只打一個字或是沒有字 (不過沒有字是怎麼送出的?)
 			return; //沒有必要執行下面那些檢測
 
-		if (rawMessageLength == 3) //用字串長度去最佳化 注意這if的區塊中若出現了長度不是3的字串 那這個條件就要修改
+
+		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
+		{
+			String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
+			if (sendStrings != null) //如果找到了
+			{
+				channel.sendMessage(Algorithm.randomElement(sendStrings)).queue();
+				return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
+			}
+		}
+		else if (rawMessageLength == 3) //用字串長度去最佳化 注意這if的區塊中若出現了長度不是3的字串 那這個條件就要修改
 		{
 			if ("lol".equalsIgnoreCase(rawMessage))
 			{
 				channel.sendMessage("LOL").queue();
+				return; //在這之下的if們 全都不可能通過
+			}
+
+			if ("omg".equalsIgnoreCase(rawMessage))
+			{
+				channel.sendMessage("OMG").queue();
 				return; //在這之下的if們 全都不可能通過
 			}
 
@@ -177,21 +192,35 @@ public class BotCanTalkChannelMessage implements IMessage
 				return; //在這之下的if們 全都不可能通過
 			}
 		}
-
-		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
+		else if (rawMessageLength == 4)
 		{
-			String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
-			if (sendStrings != null) //如果找到了
+			if ("oeur".equalsIgnoreCase(rawMessage) || "芋圓柚子".equals(rawMessage))
 			{
-				channel.sendMessage(Algorithm.randomElement(sendStrings)).queue();
-				return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
+				channel.sendMessage(
+     			"""
+					阿神的超神奇馬桶可以激發他的無限靈感
+					阿謙和阿神的關係到現在還是非常的不明
+					可愛的小夏狂搶麥最後生氣的都是巧克力
+					誰說阿晋拿下眼鏡之後傲嬌屬性就會轉移
+					阿晋泡麵加上狗子便當
+					再加一顆梅子就可以吃
+					全全的傳說傳了好幾年
+					半半要不要再進化一次呢
+					梅子空姐的廣播跳下飛機後再聽一次
+					丹丹的最強絕技就是永遠保持於狀況外
+					""").queue();
+				return;
+			}
+
+			if ("鬼島交通".equals(rawMessage)) //Added by Champsing
+			{
+				channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
+				return;
 			}
 		}
 
 		if (rawMessage.contains("惠惠") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()) || rawMessage.contains("めぐみん"))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
-		if (rawMessage.contains("鬼島交通"))//Added by Champsing
-			channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
 		if (rawMessage.contains("賺爛"))
@@ -204,5 +233,7 @@ public class BotCanTalkChannelMessage implements IMessage
 			channel.sendMessage("這什麼到底什麼閃現齁齁齁齁齁").queue();
 		if (rawMessage.contains("興奮"))
 			channel.sendMessage("https://tenor.com/view/excited-gif-8604873").queue();
+		if (rawMessage.contains("原神") && rawMessage.contains("啟動"))
+			channel.sendMessage("https://imgur.com/3LQqer3").queue();
 	}
 }

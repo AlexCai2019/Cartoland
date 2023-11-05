@@ -48,4 +48,24 @@ public class LightOutGame implements IMiniGame
 	{
 		return "Light Out";
 	}
+
+	public void flip(byte row, byte column)
+	{
+		board[row][column] = !board[row][column];
+		safeFlip((byte)(row - 1), column);
+		safeFlip((byte)(row + 1), column);
+		safeFlip(row, (byte)(column - 1));
+		safeFlip(row, (byte)(column + 1));
+	}
+
+	private void safeFlip(byte row, byte column)
+	{
+		if (row >= 0 && row < ROWS && column >= 0 && column < COLUMNS)
+			board[row][column] = !board[row][column];
+	}
+
+	public String getBoard()
+	{
+		return boardBuilder.toString();
+	}
 }

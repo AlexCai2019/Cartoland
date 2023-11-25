@@ -35,6 +35,17 @@ public final class IDs
 	public static final long GOD_OF_GAMBLERS_ROLE_ID = 1119944573117014096L; //賭神身分組
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組
+	public static final long LEARNED_EMOJI_ID = 892406442622083143L; //:learned:表情符號
+	public static final long CHAO_WEN_DE_LA_EMOJI_ID = 967305472950542336L; //:chaowendela:表情符號
+	public static final long CARTOLAND_LOGO_EMOJI_ID = 949332057258070036L; //:cartoland_logo:表情符號
+	public static final long HAHA_EMOJI_ID = 900717110488084530L; //:haha:表情符號
+	public static final long PIKA_EMOJI_ID = 891713649926869003L; //:pika:表情符號
+	public static final long COOL_PIKA_EMOJI_ID = 891714126424985610L; //:cool_pika:表情符號
+	public static final long YA_EMOJI_ID = 920200649830989825L; //:ya:表情符號
+	public static final long WOW_EMOJI_ID = 893499112228519996L; //:wow:表情符號
+	public static final long WORSHIP_A_EMOJI_ID = 935135593527128104L; //:worship_a:表情符號
+	public static final long PING_EMOJI_ID = 1065915559918719006L; //:ping:表情符號
+	public static final long RESOLVED_EMOJI_ID = 1081082902785314921L; //:resolved:表情符號
 	public static final long AC_ID = 355953951469731842L;
 	public static final long MEGA_ID = 412943154317361152L;
 }

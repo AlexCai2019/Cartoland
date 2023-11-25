@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 /**
  * {@code ForumsHandle} is a utility class that has functions which controls map-discuss forum and question forum
  * from create to archive. Can not be instantiated or inherited.
+ * TODO: refactor
+ *
  * @since 2.0
  * @author Alex Cai
  */
@@ -32,7 +34,7 @@ public final class ForumsHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final String resolvedFormat = "<:resolved:1081082902785314921>";
+	private static final String RESOLVED_FORMAT = "<:resolved:" + Long.toUnsignedString(IDs.RESOLVED_EMOJI_ID) + '>';
 	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
 	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;
@@ -50,7 +52,7 @@ public final class ForumsHandle
 							• Ask your question straight and clearly, tell us what you are trying to do.
 							• Mention which Minecraft version you are using and any mods.
 							• Remember to use `:resolved:` %s to close the post after resolved.
-							""".formatted(resolvedFormat, resolvedFormat))
+							""".formatted(RESOLVED_FORMAT, RESOLVED_FORMAT))
 			.setColor(CARTOLAND_GREEN) //創聯的綠色
 			.build();
 	private static final String remindMessage =
@@ -59,7 +61,7 @@ public final class ForumsHandle
 			如果還沒解決，可以嘗試在問題中加入更多資訊。
 			%%s, did your question got a solution? If it did, remember to close this post using `:resolved:` %s emoji.
 			If it didn't, try offer more information of question.
-			""".formatted(resolvedFormat, resolvedFormat);
+			""".formatted(RESOLVED_FORMAT, RESOLVED_FORMAT);
 
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
@@ -129,18 +131,17 @@ public final class ForumsHandle
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted") //IntelliJ IDEA 閉嘴
 	public static boolean typedResolved(Object withReaction)
 	{
-		//TODO: 升級到Java 21後 用Pattern matching for switch取代
-		if (withReaction instanceof Message message)
-			return message.getContentRaw().equals(resolvedFormat);
-		else if (withReaction instanceof MessageReaction reaction)
-			return reaction.getEmoji().equals(Emoji.fromCustom("resolved", 1081082902785314921L, false));
-		else
-			return false;
+		return switch (withReaction)
+		{
+			case Message message -> RESOLVED_FORMAT.equals(message.getContentRaw());
+			case MessageReaction reaction -> reaction.getEmoji().equals(Emoji.fromCustom("resolved", IDs.RESOLVED_EMOJI_ID, false));
+			default -> false;
+		};
 	}
 
 	public static void archiveForumPost(ThreadChannel forumPost, Message eventMessage)
 	{
-		eventMessage.addReaction(Emoji.fromCustom("resolved", 1081082902785314921L, false)).queue(); //機器人會在訊息上加:resolved:
+		eventMessage.addReaction(Emoji.fromCustom("resolved", IDs.RESOLVED_EMOJI_ID, false)).queue(); //機器人會在訊息上加:resolved:
 		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
@@ -173,7 +174,7 @@ public final class ForumsHandle
 			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() < LAST_MESSAGE_HOUR) //LAST_MESSAGE_HOUR小時內有人發言
 				return;
 
-			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
+			String mentionOwner = "<@" + forumPost.getOwnerId() + ">"; //注意這裡使用String型別的get id
 			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue(); //提醒開串者
 
 			idledQuestionForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
@@ -182,7 +183,7 @@ public final class ForumsHandle
 			forumPost.retrieveStartMessage().queue(message -> message.addReaction(Emoji.fromUnicode("🎗️")).queue());
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 		{
-			String mentionOwner = "<@" + forumPost.getOwnerIdLong() + ">";
+			String mentionOwner = "<@" + forumPost.getOwnerId() + ">"; //注意這裡使用String型別的get id
 			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue();
 		}));
 	}

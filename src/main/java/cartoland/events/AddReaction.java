@@ -29,7 +29,7 @@ public class AddReaction extends ListenerAdapter
 		User user = member.getUser(); //按表情的使用者
 		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return; //不用執行
-		Emoji learned = Emoji.fromCustom("learned", 892406442622083143L, false); //宇宙貓貓
+		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
 		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned)) //20%的機率跟著其他人按
 			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
 

@@ -382,13 +382,13 @@ public class LotteryCommand extends HasSubcommands
 	{
 		private final EmojiData[] emojis =
 		{
-			new EmojiData("learned",        892406442622083143L), //宇宙貓貓
-			new EmojiData("chaowendela",    967305472950542336L), //超穩的啦
-			new EmojiData("cartoland_logo", 949332057258070036L), //創聯logo
-			new EmojiData("haha",           900717110488084530L), //海綿寶寶笑
-			new EmojiData("pika",           891713649926869003L), //驚訝皮卡丘
-			new EmojiData("cool_pika",      891714126424985610L), //墨鏡皮卡丘
-			new EmojiData("ya",             920200649830989825L)  //好耶
+			new EmojiData("learned",        IDs.LEARNED_EMOJI_ID), //宇宙貓貓
+			new EmojiData("chaowendela",    IDs.CHAO_WEN_DE_LA_EMOJI_ID), //超穩的啦
+			new EmojiData("cartoland_logo", IDs.CARTOLAND_LOGO_EMOJI_ID), //創聯logo
+			new EmojiData("haha",           IDs.HAHA_EMOJI_ID), //海綿寶寶笑
+			new EmojiData("pika",           IDs.PIKA_EMOJI_ID), //驚訝皮卡丘
+			new EmojiData("cool_pika",      IDs.COOL_PIKA_EMOJI_ID), //墨鏡皮卡丘
+			new EmojiData("ya",             IDs.YA_EMOJI_ID)  //好耶
 		};
 
 		private final StringBuilder replyBuilder = new StringBuilder();
@@ -457,7 +457,7 @@ public class LotteryCommand extends HasSubcommands
 
 			private EmojiData(String name, long ID)
 			{
-				emojiFormat = "<:" + name + ':' + (this.ID = ID) + '>';
+				emojiFormat = "<:" + name + ':' + Long.toUnsignedString(this.ID = ID) + '>';
 			}
 		}
 	}

@@ -179,5 +179,5 @@ public final class FileHandle
 		}
 	}
 
-	private static record SerializeObject(String fileName, Object object) {}
+	private record SerializeObject(String fileName, Object object) {}
 }

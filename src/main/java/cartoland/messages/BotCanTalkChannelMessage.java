@@ -63,7 +63,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"再吵，就把你丟到亞馬遜上面賣。",
 		"你除了tag機器人外沒別的事情好做嗎？",
 		"有病要去看醫生。",
-		"<:ping:1065915559918719006>",
+		"<:ping:" + Long.toUnsignedString(IDs.PING_EMOJI_ID) + '>',
 		"你凡是有tag我被我記起來的對不對？我一定到現場打你，一定打你！",
 		"哪裡來的小孩子，家教差成這樣。",
 		"老子瘋狗的外號Maps群時期就有啦！",
@@ -108,9 +108,9 @@ public class BotCanTalkChannelMessage implements IMessage
 		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
 		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
 
-		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling" });
+		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling","道聲「早安」\n卻又讓我做了夢\n自然而然的生活方式不是很好嗎？" });
 		keywords.put("午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }); //後面那句由 brick-bk 新增
-		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/kfc-fried-chicken-kentucky-fried-chicken-fast-food-gif-26996460" });
+		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/kfc-fried-chicken-kentucky-fried-chicken-fast-food-gif-26996460","https://tenor.com/view/burger-butter-cooking-gif-3340446" });
 		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好","https://static.wikia.nocookie.net/theamazingworldofgumball/images/1/10/Season_3_Anais.png/" });
 	}
 
@@ -147,7 +147,7 @@ public class BotCanTalkChannelMessage implements IMessage
 				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) //如果頻道在機器人或地下 就正常地回傳replyMention
 					message.reply(Algorithm.randomElement(replyMention)).mentionRepliedUser(false).queue();
 				else //在其他地方ping就固定加一個ping的emoji
-					message.addReaction(Emoji.fromCustom("ping", 1065915559918719006L, false)).queue();
+					message.addReaction(Emoji.fromCustom("ping", IDs.PING_EMOJI_ID, false)).queue();
 			}
 		}
 

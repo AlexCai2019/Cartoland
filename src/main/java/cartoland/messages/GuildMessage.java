@@ -69,13 +69,13 @@ public class GuildMessage implements IMessage
 		String rawMessage = message.getContentRaw(); //獲取訊息字串
 
 		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
-			message.addReaction(Emoji.fromCustom("learned", 892406442622083143L, false)).queue();
+			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
 		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
-			message.addReaction(Emoji.fromCustom("wow", 893499112228519996L, false)).queue();
+			message.addReaction(Emoji.fromCustom("wow", IDs.WOW_EMOJI_ID, false)).queue();
 		if (rawMessage.contains("貓們"))
 		{
-			message.addReaction(Emoji.fromCustom("learned", 892406442622083143L, false)).queue();
-			message.addReaction(Emoji.fromCustom("worship_a", 935135593527128104L, true)).queue();
+			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
+			message.addReaction(Emoji.fromCustom("worship_a", IDs.WORSHIP_A_EMOJI_ID, true)).queue();
 		}
 		if (jiraLinkRegex.matcher(rawMessage).matches()) //是bug連結
 		{

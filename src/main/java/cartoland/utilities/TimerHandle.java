@@ -4,7 +4,6 @@ import cartoland.Cartoland;
 import cartoland.commands.AdminCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -38,9 +37,9 @@ public final class TimerHandle
 	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
 	private static final String BIRTHDAY_ARRAY = "serialize/birthday_array.ser";
 
-	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
+	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
 	private static final Map<Long, Short> birthdayMap = (FileHandle.deserialize(BIRTHDAY_MAP) instanceof Map map) ? map : new HashMap<>();
-	@SuppressWarnings({"unchecked","rawtypes"}) //閉嘴IntelliJ IDEA
+	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
 	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[366];
 
 	static
@@ -60,23 +59,16 @@ public final class TimerHandle
 			FileHandle.changeLogDate(); //更換log的日期
 
 			//這以下是和生日有關的
-			List<Long> birthdayMembersID = TimerHandle.todayBirthdayMembers(); //今天生日的成員們的ID
+
+			LocalDate today = LocalDate.now();
+			List<Long> birthdayMembersID = birthdayArray[getDateOfYear(today.getMonthValue(), today.getDayOfMonth()) - 1]; //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
 			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null) //找不到大廳頻道
 				return;
-			int birthdayMembersCount = birthdayMembersID.size(); //今天生日的人數
-			if (birthdayMembersCount <= 100) //小於等於100人
-			{
-				birthdayMembers(birthdayMembersID, lobbyChannel); //直接放下去跑就好
-				return;
-			}
-
-			int membersRange;
-			for (membersRange = 0; membersRange + 100 < birthdayMembersCount; membersRange += 100) //一次只能100人
-				birthdayMembers(birthdayMembersID.subList(membersRange, membersRange + 100), lobbyChannel); //每次取100個
-			birthdayMembers(birthdayMembersID.subList(membersRange, birthdayMembersCount), lobbyChannel); //最後不滿100人
+			for (long birthdayMemberID : birthdayMembersID)
+				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！").queue();
 		});
 
 		TimerHandle.registerTimerEvent((byte) 3, () -> //凌晨3點
@@ -97,40 +89,6 @@ public final class TimerHandle
 			for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
-	}
-
-	private static final int MAX_MEMBERS_AT_ONCE = 60; //由於ID最長應該是18446744073709551615 因此每個人最多會占用33個字元 而Discord一次輸入的上限是2000字 33 * 60 = 1980
-
-	private static void birthdayMembers(List<Long> birthdayMembersIDs, TextChannel lobbyChannel)
-	{
-		lobbyChannel.getGuild().retrieveMembersByIds(birthdayMembersIDs).onSuccess(members -> //獲取所有的生日成員們
-		{
-			StringBuilder builder = new StringBuilder();
-			int membersCount = members.size();
-			if (membersCount == 0)
-				return;
-			//最後把剛剛沒說的寄出去
-			if (membersCount <= MAX_MEMBERS_AT_ONCE)
-			{
-				for (Member member : members) //走訪所有成員們
-					builder.append("今天是 ").append(member.getAsMention()).append(" 的生日！\n");
-				lobbyChannel.sendMessage(builder).queue(); //將生日祝賀合併為一則訊息
-				return; //提前結束
-			}
-
-			//這以下是人數超過60人的應對方法
-			for (int i = 0, j = 0; i < membersCount; i++, j++)
-			{
-				if (j == MAX_MEMBERS_AT_ONCE) //當到第61人時 先把第1到第60人寄出 但陣列是從0開始的
-				{
-					lobbyChannel.sendMessage(builder).complete(); //先送出一次生日祝賀 要等它完成後才能重設builder
-					builder.setLength(0); //重設builder
-					j = 0;
-				}
-				builder.append("今天是 ").append(members.get(i).getAsMention()).append(" 的生日！\n");
-			}
-			lobbyChannel.sendMessage(builder).queue(); //把剛剛有累積到 不滿60人的寄出
-		});
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -193,7 +151,7 @@ public final class TimerHandle
 		LocalDateTime now = LocalDateTime.now(); //現在的時間
 		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0); //目標時間
 
-		if (now.compareTo(untilTime) > 0) //如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了
+		if (now.isAfter(untilTime)) //如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了
 			untilTime = untilTime.plusDays(1L); //明天再執行
 
 		return Duration.between(now, untilTime).getSeconds();
@@ -252,12 +210,6 @@ public final class TimerHandle
 		return LocalDate.now().toString();
 	}
 
-	public static List<Long> todayBirthdayMembers()
-	{
-		LocalDate today = LocalDate.now();
-		return birthdayArray[getDateOfYear(today.getMonthValue(), today.getDayOfMonth()) - 1];
-	}
-
 	public static void setBirthday(long userID, int month, int date)
 	{
 		Short oldBirthday = birthdayMap.get(userID); //獲取舊生日
@@ -281,7 +233,7 @@ public final class TimerHandle
 	 * @author Alex Cai
 	 * @since 2.1
 	 */
-	private static record TimerEvent(byte hour, Runnable function)
+	private record TimerEvent(byte hour, Runnable function)
 	{
 		private boolean shouldExecute(byte hour)
 		{

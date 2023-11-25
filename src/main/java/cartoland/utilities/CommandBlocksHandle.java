@@ -29,7 +29,7 @@ public final class CommandBlocksHandle
 	private static final long GAMBLE_ROLE_MIN = 100000L;
 
 	//會有unchecked assignment的警告 but I did it anyway
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"rawtypes","unchecked"})
 	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
 
 	public static final List<LotteryData> lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list
@@ -133,7 +133,7 @@ public final class CommandBlocksHandle
 		}
 
 		/**
-		 * Add command blocks to the user. This method calls {@link Algorithm#safeAdd(long, long) in
+		 * Add command blocks to the user. This method calls {@link Algorithm#safeAdd(long, long)} in
 		 * order to add without overflow.
 		 *
 		 * @param add The amount of command blocks that are going to add on this user.

@@ -2,6 +2,7 @@ package cartoland.events;
 
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
+import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -88,6 +89,8 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event)
 	{
-		allMembers.remove(event.getUser().getIdLong());
+		long userID = event.getUser().getIdLong();
+		allMembers.remove(userID);
+		TimerHandle.deleteBirthday(userID);
 	}
 }

@@ -93,7 +93,6 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
 
-	private final Message.MentionType[] botType = { Message.MentionType.USER, Message.MentionType.ROLE };
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
@@ -132,7 +131,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		MessageChannel channel = message.getChannel();
 		User author = event.getAuthor();
 
-		if (message.getMentions().isMentioned(event.getJDA().getSelfUser(), botType)) //有人tag機器人
+		if (message.getMentions().isMentioned(event.getJDA().getSelfUser(), Message.MentionType.USER, Message.MentionType.ROLE)) //有人tag機器人
 		{
 			long userID = author.getIdLong();
 			long channelID = channel.getIdLong();
@@ -155,7 +154,6 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		if (rawMessageLength <= 1) //只打一個字或是沒有字 (不過沒有字是怎麼送出的?)
 			return; //沒有必要執行下面那些檢測
-
 
 		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
 		{

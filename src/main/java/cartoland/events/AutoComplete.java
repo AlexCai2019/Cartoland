@@ -44,6 +44,9 @@ public class AutoComplete extends ListenerAdapter
 
 		//youtuber
 		commands.put(YOUTUBER, new YouTuberComplete());
+
+		//birthday
+		commands.put(BIRTHDAY, new BirthdayComplete());
 	}
 
 	@Override
@@ -92,14 +95,14 @@ public class AutoComplete extends ListenerAdapter
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			AutoCompleteQuery focusedOption = event.getFocusedOption();
-			if (!focusedOption.getName().equals(commandNameKey))
+			if (!commandNameKey.equals(focusedOption.getName()))
 				return;
 
 			String optionValue = focusedOption.getValue(); //獲取目前正在打的選項
-			event.replyChoices(
-					commandList.stream() //將字串串流轉換為選項列表
-							.limit(CHOICES_LIMIT)
+			event.replyChoices( //將字串串流轉換為選項列表
+					commandList.stream()
 							.filter(word -> word.startsWith(optionValue))
+							.limit(CHOICES_LIMIT)
 							.map(word -> new Command.Choice(word, word))
 							.toList()).queue();
 		}
@@ -114,38 +117,88 @@ public class AutoComplete extends ListenerAdapter
 	 */
 	private static class YouTuberComplete extends GenericComplete
 	{
-		private final Map<String, String> youtubers = new LinkedHashMap<>(8); //LinkedHashMap or TreeMap ?
-		private final Set<Map.Entry<String, String>> youtubersEntries;
-
-		YouTuberComplete()
-		{
-			//這是TreeMap的排序方式 若要新增YouTuber 必須寫一個小程式測試TreeMap會怎麼排序
-			youtubers.put("Cloud Wolf", "@CloudWolfMinecraft");
-			youtubers.put("Phoenix SC", "@PhoenixSC");
-			youtubers.put("SethBling", "@SethBling");
-			youtubers.put("kingbdogz", "@kingbdogz");
-			youtubers.put("slicedlime", "@slicedlime");
-			youtubers.put("天豹星雲", "@nebulirion");
-			youtubers.put("惡靈oreki", "@oreki20");
-			youtubers.put("收音機", "@radio0529");
-			youtubersEntries = youtubers.entrySet();
-		}
+		//這是TreeMap的排序方式 若要新增YouTuber 必須寫一個小程式測試TreeMap會怎麼排序
+		private final List<YouTuber> youtubers = Arrays.asList(
+				new YouTuber("Cloud Wolf", "@CloudWolfMinecraft"),
+				new YouTuber("Phoenix SC", "@PhoenixSC"),
+				new YouTuber("SethBling", "@SethBling"),
+				new YouTuber("kingbdogz", "@kingbdogz"),
+				new YouTuber("slicedlime", "@slicedlime"),
+				new YouTuber("天豹星雲", "@nebulirion"),
+				new YouTuber("惡靈oreki", "@oreki20"),
+				new YouTuber("收音機", "@radio0529"));
 
 		@Override
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			String optionValue = event.getFocusedOption().getValue();
-			List<Command.Choice> choices = new ArrayList<>();
-			int choicesCount = 0;
-			for (Map.Entry<String, String> entry : youtubersEntries)
+			event.replyChoices( //將字串串流轉換為選項列表
+					youtubers.stream()
+							.filter(youtuber -> youtuber.name.contains(optionValue))
+							.limit(CHOICES_LIMIT)
+							.map(youtuber -> new Command.Choice(youtuber.name, youtuber.ID))
+							.toList()).queue();
+		}
+
+		/**
+		 * An YouTuber.
+		 *
+		 * @param name The youtuber's channel name, such as "Alex Cai"
+		 * @param ID The youtuber's channel ID, such as "@alexcai3002"
+		 * @since 2.2
+		 * @author Alex Cai
+		 */
+		private record YouTuber(String name, String ID) {}
+	}
+
+	/**
+	 * {@code BirthdayComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
+	 * /birthday. This class helps users to enter the date of their birthdays.
+	 *
+	 * @since 2.2
+	 * @author Alex Cai
+	 */
+	private static class BirthdayComplete extends GenericComplete
+	{
+		private final String[] dates =
+		{
+			"1","2","3","4","5","6","7","8","9","10",
+			"11","12","13","14","15","16","17","18","19","20",
+			"21","22","23","24","25","26","27","28","29","30","31"
+		};
+		private final List<Command.Choice> twentyFive;
+
+		BirthdayComplete()
+		{
+			Command.Choice[] twentyFiveArray = new Command.Choice[CHOICES_LIMIT]; //1 ~ 25
+			for (byte b = 0; b < CHOICES_LIMIT; b++)
+				twentyFiveArray[b] = new Command.Choice(dates[b], b + 1L); //dates[0] ~ dates[24] 對應到1 ~ 25
+			twentyFive = Arrays.asList(twentyFiveArray); //直接轉成固定大小的List 應該會比ArrayList快
+		}
+
+		@Override
+		void completeProcess(CommandAutoCompleteInteractionEvent event)
+		{
+			AutoCompleteQuery focusedOption = event.getFocusedOption();
+			if (!"date".equals(focusedOption.getName())) //必須要是date
+				return;
+			String optionValue = focusedOption.getValue();
+			if (optionValue.isEmpty()) //代表沒有填值
 			{
-				String youtuberName = entry.getKey();
-				if (youtuberName.contains(optionValue))
-					choices.add(new Command.Choice(youtuberName, entry.getValue()));
-				if (++choicesCount == CHOICES_LIMIT)
-					break;
+				event.replyChoices(twentyFive).queue(); //直接給出1 ~ 25
+				return;
 			}
 
+			List<Command.Choice> choices = new ArrayList<>(); //選項
+			int choicesCount = 0;
+			for (byte b = 0; b < 31; b++) //或能用Arrays.stream 但new Choice的地方應該就要用parseLong了
+			{
+				if (!dates[b].contains(optionValue)) //如果日期字串內沒有包含
+					continue; //下一個日期
+				choices.add(new Command.Choice(dates[b], b + 1L)); //給予選項 dates[0] 對應到1 依此類推
+				if (++choicesCount == CHOICES_LIMIT) //不得超過25個
+					break;
+			}
 			event.replyChoices(choices).queue();
 		}
 	}

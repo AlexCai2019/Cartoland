@@ -9,8 +9,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 /**
- * {@code Cartoland} is the class that has the {@link #main} method, which is the entry point of the entire program. All the
- * settings of JDA was done here.
+ * {@code Cartoland} is the class that has the {@link #main(String[])} method, which is the entry point of the entire
+ * program. All the settings of JDA was done here.
  *
  * @since 1.0
  * @author Alex Cai

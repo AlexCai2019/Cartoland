@@ -45,7 +45,7 @@ public final class FileHandle
 
 	/**
 	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by
-	 * {@link #serialize} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware
+	 * {@link #serialize()} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware
 	 * that the object must implement {@link Serializable} interface. Most importantly, this object must be <b>final</b>,
 	 * since Java doesn't have double pointer, there's no way to serialize correct contents if the class reference
 	 * changed its pointing address.
@@ -57,7 +57,8 @@ public final class FileHandle
 	 */
 	public static void registerSerialize(String fileName, Object object)
 	{
-		serializeObjects.add(new SerializeObject(fileName, object)); //向註冊清單中新增一個註冊物件
+		if (object instanceof Serializable)
+			serializeObjects.add(new SerializeObject(fileName, object)); //向註冊清單中新增一個註冊物件
 	}
 
 	/**
@@ -70,24 +71,7 @@ public final class FileHandle
 	public static void serialize()
 	{
 		for (SerializeObject so : serializeObjects)
-			serialize(so.fileName, so.object);
-	}
-
-	private static void serialize(String fileName, Object object)
-	{
-		if (!(object instanceof Serializable))
-			return;
-		try (FileOutputStream fileStream = new FileOutputStream(fileName);
-			 ObjectOutputStream objectStream = new ObjectOutputStream(fileStream))
-		{
-			objectStream.writeObject(object);
-			objectStream.flush();
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			log(exception);
-		}
+			so.serialize();
 	}
 
 	public static Object deserialize(String fileName)
@@ -179,5 +163,21 @@ public final class FileHandle
 		}
 	}
 
-	private record SerializeObject(String fileName, Object object) {}
+	private record SerializeObject(String fileName, Object object)
+	{
+		private void serialize()
+		{
+			try (FileOutputStream fileStream = new FileOutputStream(fileName);
+				 ObjectOutputStream objectStream = new ObjectOutputStream(fileStream))
+			{
+				objectStream.writeObject(object);
+				objectStream.flush();
+			}
+			catch (IOException exception)
+			{
+				exception.printStackTrace();
+				log(exception);
+			}
+		}
+	}
 }

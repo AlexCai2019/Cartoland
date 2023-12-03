@@ -8,13 +8,14 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.entities.sticker.StickerItem;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * {@code PrivateMessage} is a listener that triggers when a user types anything in the direct message to the bot. This
@@ -25,8 +26,6 @@ import java.util.List;
  */
 public class PrivateMessage implements IMessage
 {
-	private final StringBuilder messageBuilder = new StringBuilder();
-
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -78,18 +77,25 @@ public class PrivateMessage implements IMessage
 				return;
 			}
 
-			messageBuilder.setLength(0);
-			messageBuilder.append(message.getContentRaw()); //訊息本文
+			MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
+			messageBuilder.applyMessage(message); //訊息本文
 			List<Message.Attachment> attachments = message.getAttachments(); //訊息附件
-			for (Message.Attachment attachment : attachments)
-				messageBuilder.append('\n').append(attachment.getUrl()); //以連結的方式傳送附件
-			List<StickerItem> stickerItems = message.getStickers(); //訊息貼圖
-			for (Sticker sticker : stickerItems)
-				messageBuilder.append('\n').append(sticker.getIconUrl());
+			if (!attachments.isEmpty())
+				messageBuilder.addFiles(attachments.stream().map(attachment -> FileUpload.fromStreamSupplier(attachment.getFileName(), () ->
+					{
+						try
+						{
+							return attachment.getProxy().download().get();
+						}
+						catch (InterruptedException | ExecutionException e)
+						{
+							FileHandle.log(e);
+							throw new RuntimeException(e);
+						}
+					})).toList());
 
-			String rawMessage = messageBuilder.toString();
-			undergroundChannel.sendMessage(rawMessage).queue(); //私訊轉到地下聊天室
-			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + rawMessage + "\" in direct message.");
+			undergroundChannel.sendMessage(messageBuilder.build()).queue(); //私訊轉到地下聊天室
+			FileHandle.log(author.getName() + "(" + author.getId() + ") typed \"" + message.getContentRaw() + "\" in direct message.");
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MEMBER, e ->
 				message.reply("You are not a member of " + cartoland.getName() + can_t).mentionRepliedUser(false).queue()));
 	}

@@ -259,7 +259,8 @@ public final class CommandBlocksHandle
 		}
 
 		/**
-		 * Try claim the daily reward. Success if
+		 * Try claim the daily reward. Success if the duration between now and the last time daily reward was claimed are
+		 * longer than 24 hours.
 		 *
 		 * @param until The time until next available daily reward.
 		 * @return If the difference in seconds between now and the last time daily reward was claimed is more than a day.

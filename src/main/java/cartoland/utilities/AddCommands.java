@@ -18,8 +18,9 @@ import static cartoland.events.ContextMenu.*;
 import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 /**
- * {@code AddCommands} is a utility that holds every command. The only usage is for {@link cartoland.Cartoland#main} to
- * get all commands when registering JDA. Can not be instantiated or inherited.
+ * {@code AddCommands} is a utility that holds every command. The only purpose and usage is for
+ * {@link cartoland.Cartoland#main(String[])} to get all commands when registering JDA. Can not be instantiated or
+ * inherited.
  *
  * @since 1.5
  * @see cartoland.Cartoland
@@ -223,7 +224,7 @@ public final class AddCommands
 														new Command.Choice("December", 12)
 																.setNameLocalization(CHINESE_TAIWAN, "十二月")
 																.setNameLocalization(CHINESE_CHINA, "十二月")),
-										new OptionData(OptionType.INTEGER, "date", "Your birthday", true, false)
+										new OptionData(OptionType.INTEGER, "date", "Your birthday", true, true)
 												.setNameLocalization(CHINESE_TAIWAN, "日")
 												.setNameLocalization(CHINESE_CHINA, "日")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "你的生日日期")

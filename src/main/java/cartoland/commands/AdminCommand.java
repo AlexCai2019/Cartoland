@@ -1,6 +1,9 @@
 package cartoland.commands;
 
-import cartoland.utilities.*;
+import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.FileHandle;
+import cartoland.utilities.JsonHandle;
+import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -44,6 +47,42 @@ public class AdminCommand extends HasSubcommands
 		subcommands.put("mute", new MuteSubcommand());
 		subcommands.put("temp_ban", new TempBanSubcommand());
 		subcommands.put("slow_mode", new SlowModeSubcommand());
+	}
+
+	/**
+	 * Create a string from the value of a double without trailing zeros.
+	 * <pre>
+	 *     String s1 = Algorithm.cleanFPString("5.5"); //5.5
+	 *     String s2 = Algorithm.cleanFPString("5.0"); //5
+	 *     String s3 = Algorithm.cleanFPString("1.500"); //1.5
+	 * </pre>
+	 *
+	 * @param fpString The string that are going to trim the trailing zeros.
+	 * @return The string of duration without trailing zeros.
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
+	private static String cleanFPString(String fpString)
+	{
+		int dotIndex = fpString.indexOf('.'); //小數點的索引
+		int headOfTrailingZeros = fpString.length(); //將會是小數部分最後的一串0中 第一個0
+
+		//從最後一個字元開始 一路往左到小數點
+		int index;
+		for (index = headOfTrailingZeros - 1; index >= dotIndex; index--) //開始時 headOfTrailingZeros為字串長度 index則為字串長度 - 1
+		{
+			if (fpString.charAt(index) != '0') //如果發現第一個不是0的數
+			{
+				headOfTrailingZeros = index + 1; //那就說明這個索引的右邊 一定末端連續0的第一個
+				break; //找到了 結束
+			}
+		}
+
+		//結果:
+		//5.000000 => 5
+		//1.500000 => 1.5
+		//從第一個數字開始 一路到連續0的第一個 如果小數點後都是連續0 那就連小數點都不要了
+		return fpString.substring(0, (index == dotIndex) ? dotIndex : headOfTrailingZeros); //經歷過for迴圈 此時index必定是連續0開頭的左邊那個
 	}
 
 	/**
@@ -131,7 +170,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String mutedTime = Algorithm.cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
 					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
@@ -221,7 +260,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String bannedTime = Algorithm.cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String bannedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
 					.formatted(
 							target.getAsMention(), bannedTime,
@@ -318,7 +357,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			String slowTime = Algorithm.cleanFPString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String slowTime = cleanFPString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
 			if (timeSecond > 0)
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.success").formatted(channel.getAsMention(), slowTime)).queue();
 			else //一定是等於0 前面過濾掉小於0的情況了

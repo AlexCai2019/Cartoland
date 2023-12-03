@@ -13,8 +13,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
  * trigger if this bot was shutdown by accident, such as killed by ^C, server shutdown, etc. This class was
- * registered in {@link cartoland.Cartoland#main}, with the build of JDA. The {@link #onReady} starts schedule functions,
- * and the {@link #onShutdown} method help synchronize JSONObjects and their files.
+ * registered in {@link cartoland.Cartoland#main(String[])}, with the build of JDA. The {@link #onReady(ReadyEvent)}
+ * invokes {@link CommandBlocksHandle#initial()}, and the {@link #onShutdown(ShutdownEvent)} method helps serialize
+ * objects and stop scheduled functions.
  *
  * @since 1.0
  * @author Alex Cai
@@ -22,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 public class BotOnlineOffline extends ListenerAdapter
 {
 	/**
-	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will start
-	 * schedule events and send online message to bot channel.
+	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will send online
+	 * message to bot channel.
 	 *
 	 * @param event The event that carries information.
 	 * @since 1.0

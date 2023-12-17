@@ -178,6 +178,8 @@
 	"tool.color_rgba.wrong_range": "你必須輸入一個在 0 到 255 之間的整數！",
 	"tool.color_rgba.hexadecimal": "十六進位",
 	"tool.color_integer.wrong_argument": "請使用 </tool color_integer:1102681768701722804>` <十進位整數>` 、 </tool color_integer:1102681768701722804>` <十六進位整數>` 或 </tool color_integer:1102681768701722804>` #<十六進位整數>`",
+	"tool.color_integer.integer": "整數",
+	"tool.color_integer.float": "小數",
 	"tool.color_integer.decimal": "十進位",
 	"tool.color_integer.hexadecimal": "十六進位",
 	"quote.invalid_link": "無效的連結，請輸入一個創世聯邦的訊息連結。",

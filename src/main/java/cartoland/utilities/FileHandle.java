@@ -24,7 +24,7 @@ public final class FileHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static FileWriter logger = null;
+	private static final StringBuffer logString = new StringBuffer(); //使用StringBuffer 避免執行緒問題
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)
@@ -89,80 +89,6 @@ public final class FileHandle
 		}
 	}
 
-	public static void changeLogDate()
-	{
-		try
-		{
-			closeLog0();
-			startLog0();
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
-
-	public static void log(String output)
-	{
-		//時間 內容
-		String logString = TimerHandle.getTimeString() + '\t' + output + '\n';
-		try
-		{
-			logger.write(logString);
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
-
-	public static void log(Exception exception)
-	{
-		log(Arrays.stream(exception.getStackTrace())
-					.map(CommonFunctions.stringValue)
-					.collect(Collectors.joining("\n")));
-	}
-
-	private static void startLog0() throws IOException
-	{
-		//一定要事先備好logs資料夾
-		logger = new FileWriter("logs/" + TimerHandle.getDateString(), true);
-	}
-
-	public static void startLog()
-	{
-		try
-		{
-			startLog0();
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
-
-	private static void closeLog0() throws IOException
-	{
-		if (logger != null)
-			logger.close();
-	}
-
-	public static void closeLog()
-	{
-		try
-		{
-			closeLog0();
-		}
-		catch (IOException exception)
-		{
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
-
 	private record SerializeObject(String fileName, Object object)
 	{
 		private void serialize()
@@ -179,5 +105,33 @@ public final class FileHandle
 				log(exception);
 			}
 		}
+	}
+
+	public static void flushLog()
+	{
+		//一定要事先備好logs資料夾
+		try (FileWriter logger = new FileWriter("logs/" + TimerHandle.getDateString(), true))
+		{
+			logger.write(logString.toString()); //關閉時寫入
+			logString.setLength(0); //清空暫存
+		}
+		catch (IOException exception)
+		{
+			exception.printStackTrace();
+			Cartoland.getJDA().shutdownNow();
+		}
+	}
+
+	public static void log(String output)
+	{
+		//時間 內容
+		logString.append(TimerHandle.getTimeString()).append('\t').append(output).append('\n');
+	}
+
+	public static void log(Exception exception)
+	{
+		log(Arrays.stream(exception.getStackTrace())
+					.map(CommonFunctions.stringValue)
+					.collect(Collectors.joining("\n")));
 	}
 }

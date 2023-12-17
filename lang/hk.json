@@ -178,6 +178,8 @@
 	"tool.color_rgba.decimal": "十進制",
 	"tool.color_rgba.hexadecimal": "十六進制",
 	"tool.color_integer.wrong_argument": "請使用 </tool color_integer:1102681768701722804>` <十進制整數>`, </tool color_integer:1102681768701722804>` <十六進制整數>` 或者 </tool color_integer:1102681768701722804>` #<十六進制整數>`",
+	"tool.color_integer.integer": "Integer",
+	"tool.color_integer.float": "Decimal representation",
 	"tool.color_integer.decimal": "十進制",
 	"tool.color_integer.hexadecimal": "十六進制",
 	"quote.invalid_link": "無效嘅連結：請輸入一個創世聯邦嘅訊息連結。",

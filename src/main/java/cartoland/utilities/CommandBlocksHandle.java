@@ -70,9 +70,8 @@ public final class CommandBlocksHandle
 
 	public static void initial()
 	{
-		Set<Long> keySet = lotteryDataMap.keySet();
 		JDA jda = Cartoland.getJDA();
-		for (long userID : keySet) //找到每位使用者
+		for (long userID : lotteryDataMap.keySet()) //找到每位使用者
 			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.get(userID).name = user.getEffectiveName()); //更新名字
 		changed = true;
 	}

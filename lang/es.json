@@ -178,6 +178,8 @@
 	"tool.color_rgba.decimal": "Decimal",
 	"tool.color_rgba.hexadecimal": "Hexadecimal",
 	"tool.color_integer.wrong_argument": "Please use </tool color_integer:1102681768701722804>` <decimal integer>`, </tool color_integer:1102681768701722804>` <hexadecimal integer>` or </tool color_integer:1102681768701722804>` #<hexadecimal integer>`",
+	"tool.color_integer.integer": "Integer",
+	"tool.color_integer.float": "Decimal representation",
 	"tool.color_integer.decimal": "Decimal",
 	"tool.color_integer.hexadecimal": "Hexadecimal",
 	"quote.invalid_link": "Invalid link: Please input a message link from Cartoland.",

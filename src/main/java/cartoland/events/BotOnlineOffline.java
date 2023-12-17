@@ -40,7 +40,6 @@ public class BotOnlineOffline extends ListenerAdapter
 			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
 		String logString = "online";
 		System.out.println(logString);
-		FileHandle.startLog(); //開始log log物件的建立不可直接寫在static裡 會和TimerHandle有順序問題
 		FileHandle.log(logString);
 	}
 
@@ -62,6 +61,6 @@ public class BotOnlineOffline extends ListenerAdapter
 		String logString = "offline";
 		System.out.println(logString);
 		FileHandle.log(logString);
-		FileHandle.closeLog();
+		FileHandle.flushLog();
 	}
 }

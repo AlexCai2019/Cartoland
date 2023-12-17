@@ -66,7 +66,7 @@ public final class JsonHandle
 			return result; //結束
 		}
 
-		//"null"字串 代表獲取失敗
+		//"null"字串 代表獲取失敗 不用擔心耗效能 有字串池在
 		return "null".equals(result) ? getStringFromJsonKey(userID, commandName + ".fail") : result; //注意每個語言檔的指令裡一定要有.fail 否則會出現"null"
 	}
 

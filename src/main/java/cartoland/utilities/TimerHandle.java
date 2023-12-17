@@ -65,7 +65,7 @@ public final class TimerHandle
 
 		TimerHandle.registerTimerEvent(0, () -> //半夜12點
 		{
-			FileHandle.changeLogDate(); //更換log的日期
+			FileHandle.flushLog(); //更換log的日期
 
 			//這以下是和生日有關的
 			LocalDate today = LocalDate.now();
@@ -93,8 +93,7 @@ public final class TimerHandle
 			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
 			if (questionsChannel == null)
 				return; //找不到就算了
-			List<ThreadChannel> forumPosts = questionsChannel.getThreadChannels(); //論壇貼文們
-			for (ThreadChannel forumPost : forumPosts) //走訪論壇貼文們
+			for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
 		}); //中午十二點時處理並提醒未解決的論壇貼文
 	}
@@ -191,7 +190,9 @@ public final class TimerHandle
 	}
 
 	public static void unregisterTimerEvent(int hour)
-	{}
+	{
+		timerEvents[hour].removeLast();
+	}
 
 	public static void unregisterTimerEvent(int hour, Runnable function)
 	{

@@ -19,7 +19,7 @@ import static cartoland.commands.ICommand.*;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@link cartoland.Cartoland#main(String[])}, with the build of JDA.
  *
  * @since 1.0
  * @author Alex Cai

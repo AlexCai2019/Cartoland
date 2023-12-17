@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 
 /**
  * {@code ReceiveModal} is a listener that triggers when a user interact with a modal. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@link cartoland.Cartoland#main(String[])}, with the build of JDA.
  *
  * @since 2.0
  * @author Alex Cai

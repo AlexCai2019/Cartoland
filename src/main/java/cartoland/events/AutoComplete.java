@@ -12,7 +12,7 @@ import static cartoland.commands.ICommand.*;
 
 /**
  * {@code AutoComplete} is a listener that triggers when a user is typing a command. This class was registered
- * in {@link cartoland.Cartoland#main}, with the build of JDA. It uses {@link #commands} to store every commands that
+ * in {@link cartoland.Cartoland#main(String[])}, with the build of JDA. It uses {@link #commands} to store every commands that
  * needs auto complete as keys, and {@link GenericComplete} instances as values.
  *
  * @see GenericComplete
@@ -75,7 +75,7 @@ public class AutoComplete extends ListenerAdapter
 
 	/**
 	 * {@code JsonBasedComplete} is a subclass of {@code GenericComplete}, which handles the auto complete of command
-	 * /cmd, /faq, /dtp and their alias. This class use {@link JsonHandle#commandList} to get this information.
+	 * /cmd, /faq, /dtp and their alias. This class use {@link JsonHandle#commandList(String)} to get this information.
 	 *
 	 * @since 1.6
 	 * @author Alex Cai

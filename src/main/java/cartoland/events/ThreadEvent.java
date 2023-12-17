@@ -16,8 +16,8 @@ import java.util.Set;
 
 /**
  * {@code ThreadEvent} is a listener that triggers when a user create a thread or a thread archived. For now, this only
- * affect Question forum post. This class was registered in {@link cartoland.Cartoland#main}, with the build of
- * JDA.
+ * affect Question forum post. This class was registered in {@link cartoland.Cartoland#main(String[])}, with the build
+ * of JDA.
  *
  * @since 1.5
  * @author Alex Cai

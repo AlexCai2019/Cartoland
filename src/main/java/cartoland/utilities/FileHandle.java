@@ -45,10 +45,10 @@ public final class FileHandle
 
 	/**
 	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by
-	 * {@link #serialize()} when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed. Be aware
-	 * that the object must implement {@link Serializable} interface. Most importantly, this object must be <b>final</b>,
-	 * since Java doesn't have double pointer, there's no way to serialize correct contents if the class reference
-	 * changed its pointing address.
+	 * {@link #serialize()} when {@link cartoland.events.BotOnlineOffline#onShutdown(net.dv8tion.jda.api.events.session.ShutdownEvent)}
+	 * was executed. Be aware that the object must implement {@link Serializable} interface. Most importantly, this object
+	 * must be <b>final</b>, since Java doesn't have double pointer, there's no way to serialize correct contents if the
+	 * class reference changed its pointing address.
 	 *
 	 * @param fileName The name of the serialize file. Usually has {@code .ser} as file name extension.
 	 * @param object The object that is going to be serialized.
@@ -62,8 +62,8 @@ public final class FileHandle
 	}
 
 	/**
-	 * This method will be call when {@link cartoland.events.BotOnlineOffline#onShutdown} was executed.
-	 * It will serialize every objects in {@link #serializeObjects}, which was registered by {@link #registerSerialize}.
+	 * This method will be call when {@link cartoland.events.BotOnlineOffline#onShutdown(net.dv8tion.jda.api.events.session.ShutdownEvent)}
+	 * was executed. It will serialize every objects in {@link #serializeObjects}, which was registered by {@link #registerSerialize(String, Object)}.
 	 *
 	 * @since 2.0
 	 * @author Alex Cai

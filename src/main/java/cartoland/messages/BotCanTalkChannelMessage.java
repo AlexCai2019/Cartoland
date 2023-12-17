@@ -93,10 +93,9 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
 
-
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
-	private final Set<Long> canTalkCategories = new HashSet<>();
+	private final Set<Long> canTalkCategories = new HashSet<>(4);
 
 	private final Map<String, String[]> keywords = new HashMap<>(4);
 
@@ -152,7 +151,7 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		int rawMessageLength = rawMessage.length(); //訊息的字數
 
-		if (rawMessageLength <= 1) //只打一個字或是沒有字 (不過沒有字是怎麼送出的?)
+		if (rawMessageLength <= 1) //只打一個字或是沒有字 (沒有字代表只有檔案)
 			return; //沒有必要執行下面那些檢測
 
 		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改

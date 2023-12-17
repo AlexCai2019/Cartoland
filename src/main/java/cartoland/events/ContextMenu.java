@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * {@code ContextMenu} is a listener that triggers when a user uses right click command. This class was registered
- * in {@link cartoland.Cartoland#main}, with the build of JDA.
+ * in {@link cartoland.Cartoland#main(String[])}, with the build of JDA.
  *
  * @since 1.5
  * @author Alex Cai

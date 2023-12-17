@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * {@code NewMember} is a listener that triggers when a user joined a server that the bot is in, or get a new role. For now,
  * it only reacts with the "member role" in Cartoland. This class was registered in
- * {@link cartoland.Cartoland#main}, with the build of JDA.
+ * {@link cartoland.Cartoland#main(String[])}, with the build of JDA.
  *
  * @since 1.4
  * @author Alex Cai

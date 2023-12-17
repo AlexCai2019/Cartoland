@@ -32,7 +32,7 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final List<TimerEvent> timerEvents = new ArrayList<>();
+	private static final int DAYS = 366; //一年有366天
 
 	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
 	private static final String BIRTHDAY_ARRAY = "serialize/birthday_array.ser";
@@ -40,13 +40,18 @@ public final class TimerHandle
 	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
 	private static final Map<Long, Short> birthdayMap = (FileHandle.deserialize(BIRTHDAY_MAP) instanceof Map map) ? map : new HashMap<>();
 	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
-	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[366];
+	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[DAYS];
+
+	public static final int HOURS = 24;
+
+	@SuppressWarnings({"unchecked"})
+	private static final List<Runnable>[] timerEvents = new ArrayList[HOURS];
 
 	static
 	{
 		if (birthdayArray[0] == null) //如果從不存在紀錄
 		{
-			for (int i = 0; i < 366; i++)
+			for (int i = 0; i < DAYS; i++)
 				birthdayArray[i] = new ArrayList<>();
 			birthdayMap.clear(); //一切紀錄重來
 		}
@@ -54,12 +59,15 @@ public final class TimerHandle
 		FileHandle.registerSerialize(BIRTHDAY_MAP, birthdayMap);
 		FileHandle.registerSerialize(BIRTHDAY_ARRAY, birthdayArray);
 
-		TimerHandle.registerTimerEvent((byte) 0, () -> //半夜12點
+		//初始化時間事件
+		for (int i = 0; i < HOURS; i++)
+			timerEvents[i] = new ArrayList<>();
+
+		TimerHandle.registerTimerEvent(0, () -> //半夜12點
 		{
 			FileHandle.changeLogDate(); //更換log的日期
 
 			//這以下是和生日有關的
-
 			LocalDate today = LocalDate.now();
 			List<Long> birthdayMembersID = birthdayArray[getDateOfYear(today.getMonthValue(), today.getDayOfMonth()) - 1]; //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
@@ -71,7 +79,7 @@ public final class TimerHandle
 				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！").queue();
 		});
 
-		TimerHandle.registerTimerEvent((byte) 3, () -> //凌晨3點
+		TimerHandle.registerTimerEvent(3, () -> //凌晨3點
 		{
 			TextChannel undergroundChannel = Cartoland.getJDA().getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
 			if (undergroundChannel == null)
@@ -80,7 +88,7 @@ public final class TimerHandle
 			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
 		}); //好棒 三點了
 
-		TimerHandle.registerTimerEvent((byte) 12, () -> //中午12點
+		TimerHandle.registerTimerEvent(12, () -> //中午12點
 		{
 			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
 			if (questionsChannel == null)
@@ -93,21 +101,20 @@ public final class TimerHandle
 
 	//https://stackoverflow.com/questions/65984126
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-	private static byte nowHour = (byte) LocalTime.now().getHour(); //現在是幾點
+	private static int nowHour = LocalTime.now().getHour(); //現在是幾點
 	private static long hoursFrom1970 = System.currentTimeMillis() / (1000 * 60 * 60); //從1970年1月1日開始過了幾個小時
 	private static final ScheduledFuture<?> everyHour = executorService.scheduleAtFixedRate(() -> //每小時執行一次
 	{
 		hoursFrom1970++; //增加小時
 		nowHour++; //增加現在幾點
-		if (nowHour == 24) //第24小時是0點
+		if (nowHour == HOURS) //第24小時是0點
 			nowHour = 0;
 
-		for (TimerEvent event : timerEvents) //走訪被註冊的事件們
-			if (event.shouldExecute(nowHour)) //時間到了
-				event.execute(); //執行
+		for (Runnable event : timerEvents[nowHour]) //走訪被註冊的事件們
+			event.run(); //執行
 
-		unbanMembers();
-	}, secondsUntil((nowHour + 1) % 24), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
+		unbanMembers(); //時間到了的話就解除封鎖
+	}, secondsUntil((nowHour + 1) % HOURS), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	public static long getHoursFrom1970()
 	{
@@ -178,11 +185,17 @@ public final class TimerHandle
 		}
 	}
 
-	public static void registerTimerEvent(byte hour, Runnable function)
+	public static void registerTimerEvent(int hour, Runnable function)
 	{
-		if (hour < 0 || hour > 23)
-			throw new IllegalArgumentException("Hour must between 0 and 23!");
-		timerEvents.add(new TimerEvent(hour, function)); //註冊一個特定小時會發生的事件
+		timerEvents[hour].add(function);
+	}
+
+	public static void unregisterTimerEvent(int hour)
+	{}
+
+	public static void unregisterTimerEvent(int hour, Runnable function)
+	{
+		timerEvents[hour].remove(function);
 	}
 
 	/**
@@ -225,24 +238,5 @@ public final class TimerHandle
 		Short oldBirthday = birthdayMap.remove(memberID); //移除舊生日 並把移除掉的值存起來
 		if (oldBirthday != null) //如果設定過舊生日
 			birthdayArray[oldBirthday].remove(memberID); //從記錄中移除這位成員
-	}
-
-	/**
-	 * {@code TimerEvent} is a record class that is used for register hour events.
-	 *
-	 * @author Alex Cai
-	 * @since 2.1
-	 */
-	private record TimerEvent(byte hour, Runnable function)
-	{
-		private boolean shouldExecute(byte hour)
-		{
-			return this.hour == hour;
-		}
-
-		private void execute()
-		{
-			function.run();
-		}
 	}
 }

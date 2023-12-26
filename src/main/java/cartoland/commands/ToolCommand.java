@@ -224,7 +224,7 @@ public class ToolCommand extends HasSubcommands
 		private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6,8}"); //FFFFFF
 		private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{6,8}"); //#FFFFFF
 
-		private static final double DIVIDE_255 = 1 / 255.0;
+		private static final float DIVIDE_255 = 1.0F / 255.0F;
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -255,7 +255,7 @@ public class ToolCommand extends HasSubcommands
 			//{ rgba / 65536 % 256, rgba / 256 % 256, rgba % 256 }
 			//假設是16777215 除以65536就會變成255, 16777215 除以256後取除以256的餘數也是255, 取除以256的餘數也是255
 			long[] colorsLong = { rgba >> 24, (rgba >> 16) & 255, (rgba >> 8) & 255, rgba & 255 };
-			double[] colorsDouble = { colorsLong[0] * DIVIDE_255, colorsLong[1] * DIVIDE_255, colorsLong[2] * DIVIDE_255, colorsLong[3] * DIVIDE_255 };
+			float[] colorsDouble = { colorsLong[0] * DIVIDE_255, colorsLong[1] * DIVIDE_255, colorsLong[2] * DIVIDE_255, colorsLong[3] * DIVIDE_255 };
 
 			event.reply("RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.integer") + "): `" + Arrays.toString(colorsLong) + "`\n" +
 								"RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.float") + "):`" + Arrays.toString(colorsDouble) + "`\n" +

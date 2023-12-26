@@ -170,10 +170,11 @@ public class AutoComplete extends ListenerAdapter
 
 		BirthdayComplete()
 		{
+			//直接轉成固定大小的List 應該會比ArrayList快
 			Command.Choice[] twentyFiveArray = new Command.Choice[CHOICES_LIMIT]; //1 ~ 25
 			for (byte b = 0; b < CHOICES_LIMIT; b++)
 				twentyFiveArray[b] = new Command.Choice(dates[b], b + 1L); //dates[0] ~ dates[24] 對應到1 ~ 25
-			twentyFive = Arrays.asList(twentyFiveArray); //直接轉成固定大小的List 應該會比ArrayList快
+			twentyFive = Arrays.asList(twentyFiveArray); //event.replyChoices可以接受陣列 不過內部也是呼叫asList 不如事先呼叫好
 		}
 
 		@Override

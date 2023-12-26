@@ -3,6 +3,7 @@ package cartoland.commands;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
@@ -15,29 +16,37 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  * @since 2.1
  * @author Alex Cai
  */
-public class BirthdayCommand implements ICommand
+public class BirthdayCommand extends HasSubcommands
 {
-	private final ICommand setSubCommand = new SetSubCommand();
-	private final ICommand deleteSubCommand = event ->
+	public BirthdayCommand()
 	{
-		long userID = event.getUser().getIdLong();
-		TimerHandle.deleteBirthday(userID);
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.delete")).queue();
-	};
-
-	/**
-	 * The execution of a slash command. Unlike other commands that has sub commands, since this
-	 * command only has 2 subcommands, it uses a single ternary operation instead of HashMap to call the
-	 * class that handles the subcommand.
-	 *
-	 * @param event The event that carries information of the user and the command.
-	 * @since 2.1
-	 * @author Alex Cai
-	 */
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		("set".equals(event.getSubcommandName()) ? setSubCommand : deleteSubCommand).commandProcess(event);
+		super(3);
+		subcommands.put("set", new SetSubCommand());
+		subcommands.put("get", event ->
+		{
+			User user = event.getUser();
+			User target = event.getOption("target", CommonFunctions.getAsUser);
+			if (target == null)
+				target = user;
+			int[] birthday = TimerHandle.getBirthday(target.getIdLong());
+			long userID = user.getIdLong();
+			if (birthday != null)
+				event.reply(
+						JsonHandle.getStringFromJsonKey(userID, "birthday.get.set_on")
+								.formatted(
+										target.getEffectiveName(),
+										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + birthday[0]),
+										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + birthday[1])))
+						.queue();
+			else
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.no_set").formatted(target.getEffectiveName())).queue();
+		});
+		subcommands.put("delete", event ->
+		{
+			long userID = event.getUser().getIdLong();
+			TimerHandle.deleteBirthday(userID);
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.delete")).queue();
+		});
 	}
 
 	/**

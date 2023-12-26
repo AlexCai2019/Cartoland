@@ -229,6 +229,15 @@ public final class AddCommands
 												.setNameLocalization(CHINESE_CHINA, "日")
 												.setDescriptionLocalization(CHINESE_TAIWAN, "你的生日日期")
 												.setDescriptionLocalization(CHINESE_CHINA, "你的生日日期")),
+						new SubcommandData("get", "Get other user's birthday")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "獲取其他使用者們的生日")
+								.setDescriptionLocalization(CHINESE_CHINA, "获取其他用户们的生日")
+								.addOptions(
+										new OptionData(OptionType.USER, "target", "The user that you want to check", false, false)
+												.setNameLocalization(CHINESE_TAIWAN, "目標")
+												.setNameLocalization(CHINESE_CHINA, "目标")
+												.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的使用者")
+												.setDescriptionLocalization(CHINESE_CHINA, "想确认的用户")),
 						new SubcommandData("delete", "Delete your birthday setting")
 								.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的生日設定")
 								.setDescriptionLocalization(CHINESE_CHINA, "删除你的生日设置")

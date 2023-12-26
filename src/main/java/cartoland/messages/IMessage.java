@@ -1,5 +1,7 @@
 package cartoland.messages;
 
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+
 /**
  * {@code IMessage} is an interface that deals with message event. Subclasses are stored in an array which is a field of
  * {@link cartoland.events.MessageEvent}. This class can't be instantiated via lambda.
@@ -17,7 +19,7 @@ public interface IMessage
 	 * @since 2.0
 	 * @author Alex Cai
 	 */
-	boolean messageCondition(net.dv8tion.jda.api.events.message.MessageReceivedEvent event);
+	boolean messageCondition(MessageReceivedEvent event);
 
 	/**
 	 * The execution of a message event.
@@ -26,5 +28,5 @@ public interface IMessage
 	 * @since 2.0
 	 * @author Alex Cai
 	 */
-	void messageProcess(net.dv8tion.jda.api.events.message.MessageReceivedEvent event);
+	void messageProcess(MessageReceivedEvent event);
 }

@@ -239,6 +239,8 @@
 	"birthday.date_29": "二十九日",
 	"birthday.date_30": "三十日",
 	"birthday.date_31": "三十一日",
+	"birthday.get.set_on": "%s 的生日設定在 %s %s。",
+	"birthday.get.no_set": "%s 沒有設定生日。",
 	"birthday.delete": "成功刪除。",
 	"admin.unit_second": "秒",
 	"admin.unit_minute": "分鐘",

@@ -239,6 +239,8 @@
 	"birthday.date_29": "29th",
 	"birthday.date_30": "30th",
 	"birthday.date_31": "31st",
+	"birthday.get.set_on": "%s's birthday is set on %s %s.",
+	"birthday.get.no_set": "%s didn't set birthday.",
 	"birthday.delete": "Deleted success.",
 	"admin.unit_second": "seconds",
 	"admin.unit_minute": "minutes",

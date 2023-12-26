@@ -132,7 +132,12 @@ public final class TimerHandle
 	 */
 	private static short getDateOfYear(int month, int date)
 	{
-		return (short) (switch (month) //一年中的第幾天(以0開始)
+		return (short) (getDaysReachMonth(month) + date);
+	}
+
+	private static short getDaysReachMonth(int month)
+	{
+		return (short) switch (month) //需要幾天才會抵達這個月 從0開始
 		{
 			case 1 -> 0;
 			case 2 -> 31;
@@ -147,7 +152,7 @@ public final class TimerHandle
 			case 11 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
 			case 12 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30;
 			default -> throw new IllegalArgumentException("Month must between 1 and 12!");
-		} + date);
+		};
 	}
 
 	private static long secondsUntil(int hour)
@@ -232,6 +237,21 @@ public final class TimerHandle
 		short dateOfYear = getDateOfYear(month, date); //一年中的第幾天 1月1號為1 12月31號為366
 		birthdayArray[dateOfYear - 1].add(userID); //將該使用者增加到那天生日的清單中
 		birthdayMap.put(userID, dateOfYear); //設定使用者的生日
+	}
+
+	public static int[] getBirthday(long userID)
+	{
+		Short birthdayBox = birthdayMap.get(userID);
+		if (birthdayBox == null)
+			return null;
+		short birthday = birthdayBox;
+		for (int month = 2; month <= 12; month++)
+		{
+			short daysNeedToReachThisMonth = getDaysReachMonth(month); //總共的天數 - 抵達這個月需要的天數
+			if (daysNeedToReachThisMonth >= birthday)
+				return new int[]{month - 1, birthday - getDaysReachMonth(month - 1)};
+		}
+		return new int[]{12, birthday - getDaysReachMonth(11)};
 	}
 
 	public static void deleteBirthday(long memberID)

@@ -239,6 +239,8 @@
 	"birthday.date_29": "廿九號",
 	"birthday.date_30": "三十號",
 	"birthday.date_31": "三十一號",
+	"birthday.get.set_on": "%s's birthday is set on %s %s.",
+	"birthday.get.no_set": "%s didn't set birthday.",
 	"birthday.delete": "已成功刪除。",
 	"admin.unit_second": "秒",
 	"admin.unit_minute": "分鐘",

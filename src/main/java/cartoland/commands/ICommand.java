@@ -51,7 +51,7 @@ public interface ICommand
 	 * @since 1.3
 	 * @author Alex Cai
 	 */
-	void commandProcess(net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent event); //指令
+	void commandProcess(SlashCommandInteractionEvent event); //指令
 }
 
 /**

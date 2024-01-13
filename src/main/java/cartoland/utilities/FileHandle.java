@@ -6,9 +6,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * {@code FileHandle} is a utility class that provides every functions that this program need to deal with file input and
@@ -24,7 +22,7 @@ public final class FileHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final StringBuffer logString = new StringBuffer(); //使用StringBuffer 避免執行緒問題
+	private static final StringBuilder logString = new StringBuilder();
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)
@@ -74,6 +72,14 @@ public final class FileHandle
 			so.serialize();
 	}
 
+	/**
+	 * Deserialize an object from a file.
+	 *
+	 * @param fileName The name of the file that stores the object.
+	 * @return The object that deserialize from a file.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
 	public static Object deserialize(String fileName)
 	{
 		try (FileInputStream fileStream = new FileInputStream(fileName); //從檔名建立檔案串流
@@ -107,7 +113,7 @@ public final class FileHandle
 		}
 	}
 
-	public static void flushLog()
+	public synchronized static void flushLog()
 	{
 		//一定要事先備好logs資料夾
 		try (FileWriter logger = new FileWriter("logs/" + TimerHandle.getDateString(), true))
@@ -122,16 +128,19 @@ public final class FileHandle
 		}
 	}
 
-	public static void log(String output)
+	public synchronized static void log(Object... outputs)
 	{
 		//時間 內容
-		logString.append(TimerHandle.getTimeString()).append('\t').append(output).append('\n');
+		logString.append(TimerHandle.getTimeString()).append('\t');
+		for (Object output : outputs)
+			logString.append(output);
+		logString.append('\n');
 	}
 
-	public static void log(Exception exception)
+	public synchronized static void log(Exception exception)
 	{
-		log(Arrays.stream(exception.getStackTrace())
-					.map(CommonFunctions.stringValue)
-					.collect(Collectors.joining("\n")));
+		logString.append(TimerHandle.getTimeString()).append("\t\n");
+		for (StackTraceElement trace : exception.getStackTrace())
+			logString.append('\t').append(trace).append('\n');
 	}
 }

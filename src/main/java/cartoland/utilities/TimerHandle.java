@@ -32,7 +32,9 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final int DAYS = 366; //一年有366天
+	private static final short DAYS = 366; //一年有366天
+
+	private static final short MONTHS = 12; //一年有12月
 
 	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
 	private static final String BIRTHDAY_ARRAY = "serialize/birthday_array.ser";
@@ -42,7 +44,7 @@ public final class TimerHandle
 	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
 	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[DAYS];
 
-	public static final int HOURS = 24;
+	public static final short HOURS = 24; //一天有24小時
 
 	@SuppressWarnings({"unchecked"})
 	private static final List<Runnable>[] timerEvents = new ArrayList[HOURS];
@@ -51,7 +53,7 @@ public final class TimerHandle
 	{
 		if (birthdayArray[0] == null) //如果從不存在紀錄
 		{
-			for (int i = 0; i < DAYS; i++)
+			for (short i = 0; i < DAYS; i++)
 				birthdayArray[i] = new ArrayList<>();
 			birthdayMap.clear(); //一切紀錄重來
 		}
@@ -60,7 +62,7 @@ public final class TimerHandle
 		FileHandle.registerSerialize(BIRTHDAY_ARRAY, birthdayArray);
 
 		//初始化時間事件
-		for (int i = 0; i < HOURS; i++)
+		for (short i = 0; i < HOURS; i++)
 			timerEvents[i] = new ArrayList<>();
 
 		TimerHandle.registerTimerEvent(0, () -> //半夜12點
@@ -239,19 +241,16 @@ public final class TimerHandle
 		birthdayMap.put(userID, dateOfYear); //設定使用者的生日
 	}
 
-	public static int[] getBirthday(long userID)
+	public static short[] getBirthday(long userID)
 	{
-		Short birthdayBox = birthdayMap.get(userID);
+		Short birthdayBox = birthdayMap.get(userID); //查詢map的紀錄
 		if (birthdayBox == null)
 			return null;
-		short birthday = birthdayBox;
-		for (int month = 2; month <= 12; month++)
-		{
-			short daysNeedToReachThisMonth = getDaysReachMonth(month); //總共的天數 - 抵達這個月需要的天數
-			if (daysNeedToReachThisMonth >= birthday)
-				return new int[]{month - 1, birthday - getDaysReachMonth(month - 1)};
-		}
-		return new int[]{12, birthday - getDaysReachMonth(11)};
+		short birthday = birthdayBox; //解包
+		for (short month = 2; month <= MONTHS; month++) //從2月開始 一路到12月
+			if (getDaysReachMonth(month) >= birthday) //總共的天數 - 抵達這個月需要的天數 >= 生日
+				return new short[]{ (short) (month - 1), (short) (birthday - getDaysReachMonth(month - 1)) };
+		return new short[]{12, (short) (birthday - getDaysReachMonth(11)) };
 	}
 
 	public static void deleteBirthday(long memberID)

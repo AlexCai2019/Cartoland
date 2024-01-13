@@ -50,7 +50,8 @@ public class Cartoland
 						new ThreadEvent(), //和討論串有關
 						new UserChangeName(), //當有人改名(不是暱稱)
 						new ClickedButton(), //當有人按按鈕
-						new ReceiveModal()) //當有人使用Modal時
+						new ReceiveModal(), //當有人使用Modal時
+						new EditMessage()) //當有人編輯訊息時
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS) //機器人可讀取訊息和查看伺服器成員
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setActivity(Activity.customStatus("Do /help for more information")) //自訂狀態

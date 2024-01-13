@@ -24,22 +24,23 @@ public class BirthdayCommand extends HasSubcommands
 		subcommands.put("set", new SetSubCommand());
 		subcommands.put("get", event ->
 		{
-			User user = event.getUser();
-			User target = event.getOption("target", CommonFunctions.getAsUser);
-			if (target == null)
-				target = user;
-			int[] birthday = TimerHandle.getBirthday(target.getIdLong());
+			User user = event.getUser(); //自己
+			User target = event.getOption("target", CommonFunctions.getAsUser); //要查詢的使用者
+			if (target == null) //如果沒有指定查詢的對象
+				target = user; //預設是自己
+			short[] birthday = TimerHandle.getBirthday(target.getIdLong());
 			long userID = user.getIdLong();
-			if (birthday != null)
-				event.reply(
-						JsonHandle.getStringFromJsonKey(userID, "birthday.get.set_on")
+			if (birthday == null)
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.no_set").formatted(target.getEffectiveName())).queue();
+				return;
+			}
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.set_on")
 								.formatted(
 										target.getEffectiveName(),
 										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + birthday[0]),
 										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + birthday[1])))
 						.queue();
-			else
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.no_set").formatted(target.getEffectiveName())).queue();
 		});
 		subcommands.put("delete", event ->
 		{

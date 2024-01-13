@@ -179,7 +179,7 @@ public class CommandUsage extends ListenerAdapter
 		else
 			event.reply("You can't use this!").setEphemeral(true).queue();
 		User user = event.getUser();
-		FileHandle.log(user.getEffectiveName() + "(" + user.getIdLong() + ") used /" + commandName); //IO放最後 避免超過3秒限制
+		FileHandle.log(user.getEffectiveName(), '(', user.getIdLong(), ") /", commandName); //IO放最後 避免超過3秒限制
 	}
 
 	/**

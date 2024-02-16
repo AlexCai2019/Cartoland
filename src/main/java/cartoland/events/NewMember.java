@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * {@code NewMember} is a listener that triggers when a user joined a server that the bot is in, or get a new role. For now,
@@ -35,8 +34,8 @@ public class NewMember extends ListenerAdapter
 			Please read messages in <#%d>, and follow all rules.
 			""".formatted(IDs.READ_ME_CHANNEL_ID, IDs.READ_ME_CHANNEL_ID);
 	private static final String ALL_MEMBERS = "serialize/all_members.ser";
-	private static final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet<?> set ?
-			set.stream().map(userID -> (Long)userID).collect(Collectors.toSet()) : new HashSet<>();
+	@SuppressWarnings({"unchecked","rawtypes"})
+	private static final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet set ? set : new HashSet<>();
 
 	static
 	{

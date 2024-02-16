@@ -68,6 +68,21 @@ public final class Algorithm
 	}
 
 	/**
+	 * Add two integers without overflow.
+	 *
+	 * @param augend augend
+	 * @param addend addend
+	 * @return sum
+	 * @since 2.2
+	 * @author Alex Cai
+	 */
+	public static int safeAdd(int augend, int addend)
+	{
+		int sum = augend + addend;
+		return sum >= 0 ? sum : Integer.MAX_VALUE; //避免溢位
+	}
+
+	/**
 	 * Add two long integers without overflow.
 	 *
 	 * @param augend augend

@@ -7,7 +7,7 @@ import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
@@ -29,8 +29,14 @@ public class IntroduceCommand extends HasSubcommands
 {
 	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+
+	public static final String USER = "user";
+
+	public static final String UPDATE = "update";
+
+	public static final String DELETE = "delete";
 
 	static
 	{
@@ -120,7 +126,7 @@ public class IntroduceCommand extends HasSubcommands
 			}
 
 			//獲取訊息內的頻道 注意ID是String 與慣例的long不同
-			MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, numbersInLink[0]);
+			GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);
 			if (linkChannel == null) //找不到訊息內的頻道
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();

@@ -17,7 +17,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * {@code ForumsHandle} is a utility class that has functions which controls map-discuss forum and question forum
@@ -66,10 +65,10 @@ public final class ForumsHandle
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-	private static final Set<Long> idledQuestionForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet<?> set ?
-			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
-	private static final Set<Long> hasStartMessageForumPosts = FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME) instanceof HashSet<?> set ?
-			set.stream().map(element -> (Long)element).collect(Collectors.toSet()) : new HashSet<>();
+	@SuppressWarnings({"unchecked","rawtypes"})
+	private static final Set<Long> idledQuestionForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet set ? set : new HashSet<>();
+	@SuppressWarnings({"unchecked","rawtypes"})
+	private static final Set<Long> hasStartMessageForumPosts = FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME) instanceof HashSet set ? set : new HashSet<>();
 
 	static
 	{

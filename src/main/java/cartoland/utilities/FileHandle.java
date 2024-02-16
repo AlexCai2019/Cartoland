@@ -33,7 +33,6 @@ public final class FileHandle
 		}
 		catch (IOException exception)
 		{
-			exception.printStackTrace();
 			log(exception);
 			return "{}";
 		}
@@ -89,7 +88,6 @@ public final class FileHandle
 		}
 		catch (IOException | ClassNotFoundException exception)
 		{
-			exception.printStackTrace();
 			log(exception);
 			return null; //讀不到就回傳null
 		}
@@ -107,7 +105,6 @@ public final class FileHandle
 			}
 			catch (IOException exception)
 			{
-				exception.printStackTrace();
 				log(exception);
 			}
 		}
@@ -123,6 +120,7 @@ public final class FileHandle
 		}
 		catch (IOException exception)
 		{
+			//noinspection CallToPrintStackTrace
 			exception.printStackTrace();
 			Cartoland.getJDA().shutdownNow();
 		}

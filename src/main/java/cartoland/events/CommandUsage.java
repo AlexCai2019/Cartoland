@@ -127,6 +127,9 @@ public class CommandUsage extends ListenerAdapter
 			jda.shutdown(); //關機下線
 		});
 
+		//roll
+		commands.put(ROLL, new RollCommand());
+
 		//reload
 		commands.put(RELOAD, event ->
 		{

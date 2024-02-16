@@ -21,6 +21,10 @@ import java.util.Map;
  */
 public class OneATwoBCommand implements ICommand
 {
+	public static final String START = "start";
+
+	public static final String PLAY = "play";
+
 	private final ICommand startSubcommand;
 	private final ICommand playSubcommand;
 	private static final int MAX_MINUTE = 2;
@@ -52,7 +56,7 @@ public class OneATwoBCommand implements ICommand
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
-		("start".equals(event.getSubcommandName()) ? startSubcommand : playSubcommand).commandProcess(event);
+		(START.equals(event.getSubcommandName()) ? startSubcommand : playSubcommand).commandProcess(event);
 	}
 
 	/**

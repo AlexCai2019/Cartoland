@@ -33,6 +33,7 @@ public interface ICommand
 	String YOUTUBER = "youtuber";
 	String INTRODUCE = "introduce";
 	String BIRTHDAY = "birthday";
+	String ROLL = "roll";
 	String MEGUMIN = "megumin";
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";

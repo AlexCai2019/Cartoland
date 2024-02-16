@@ -14,7 +14,6 @@ import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * {@code AdminCommand} is an execution when a moderator uses /admin command. This class extends
@@ -30,11 +29,17 @@ public class AdminCommand extends HasSubcommands
 	private static final String TEMP_BAN_SET = "serialize/temp_ban_set.ser";
 
 	//userID為value[0] ban time為value[1] ban guild為value[2]
-	public static final Set<long[]> tempBanSet = (FileHandle.deserialize(TEMP_BAN_SET) instanceof HashSet<?> set) ? set.stream()
-			.map(o -> (long[])o).collect(Collectors.toSet()) : new HashSet<>();
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public static final Set<long[]> tempBanSet = (FileHandle.deserialize(TEMP_BAN_SET) instanceof HashSet set) ? set : new HashSet<>();
 	public static final byte USER_ID_INDEX = 0;
 	public static final byte BANNED_TIME = 1;
 	public static final byte BANNED_SERVER = 2;
+
+	public static final String MUTE = "mute";
+
+	public static final String TEMP_BAN = "temp_ban";
+
+	public static final String SLOW_MODE = "slow_mode";
 
 	static
 	{
@@ -44,9 +49,9 @@ public class AdminCommand extends HasSubcommands
 	public AdminCommand()
 	{
 		super(3);
-		subcommands.put("mute", new MuteSubcommand());
-		subcommands.put("temp_ban", new TempBanSubcommand());
-		subcommands.put("slow_mode", new SlowModeSubcommand());
+		subcommands.put(MUTE, new MuteSubcommand());
+		subcommands.put(TEMP_BAN, new TempBanSubcommand());
+		subcommands.put(SLOW_MODE, new SlowModeSubcommand());
 	}
 
 	/**
@@ -139,11 +144,6 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 			double duration = durationBox;
-			if (duration <= 0) //不能負時間
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.duration_must_be_positive")).setEphemeral(true).queue();
-				return;
-			}
 
 			String unit = event.getOption("unit", CommonFunctions.getAsString);
 			if (unit == null) //單位
@@ -157,12 +157,19 @@ public class AdminCommand extends HasSubcommands
 			{
 				case "second" -> 1000;
 				case "minute" -> 1000 * 60;
+				case "quarter" -> 1000 * 60 * 15;
 				case "hour" -> 1000 * 60 * 60;
 				case "double_hour" -> 1000 * 60 * 60 * 2;
 				case "day" -> 1000 * 60 * 60 * 24;
 				case "week" -> 1000 * 60 * 60 * 24 * 7;
-				default -> 1;
+				default -> 1; //millisecond
 			}); //Math.round會處理溢位
+
+			if (durationMillis <= 0) //不能負時間
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.duration_must_be_positive")).setEphemeral(true).queue();
+				return;
+			}
 
 			if (durationMillis > MAX_TIME_OUT_LENGTH_MILLIS) //不能禁言超過28天
 			{
@@ -175,10 +182,10 @@ public class AdminCommand extends HasSubcommands
 					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
 			if (reason != null) //有理由
-				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason);
+				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason); //加上理由
 
 			event.reply(replyString).queue();
-			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue();
+			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
 		}
 	}
 
@@ -228,11 +235,6 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 			double duration = durationBox;
-			if (duration <= 0) //不能負時間
-			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short")).setEphemeral(true).queue();
-				return;
-			}
 
 			String unit = event.getOption("unit", CommonFunctions.getAsString);
 			if (unit == null)
@@ -249,9 +251,10 @@ public class AdminCommand extends HasSubcommands
 				case "month" -> 24 * 30;
 				case "season" -> 24 * 30 * 3;
 				case "year" -> 24 * 365;
+				case "decade" -> 24 * 365 * 10;
 				case "wood_rat" -> 24 * 365 * 60;
 				case "century" -> 24 * 365 * 100;
-				default -> 1; //其實unit一定等於上述那些或second 但是default必須要有
+				default -> 1; //其實unit一定等於上述那些或hour 但是default必須要有
 			}); //Math.round會處理溢位
 
 			if (durationHours < 1L) //時間不能小於一小時

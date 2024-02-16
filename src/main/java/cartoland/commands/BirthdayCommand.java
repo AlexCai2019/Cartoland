@@ -18,11 +18,17 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 public class BirthdayCommand extends HasSubcommands
 {
+	public static final String SET = "set";
+
+	public static final String GET = "get";
+
+	public static final String DELETE = "delete";
+
 	public BirthdayCommand()
 	{
 		super(3);
-		subcommands.put("set", new SetSubCommand());
-		subcommands.put("get", event ->
+		subcommands.put(SET, new SetSubCommand());
+		subcommands.put(GET, event ->
 		{
 			User user = event.getUser(); //自己
 			User target = event.getOption("target", CommonFunctions.getAsUser); //要查詢的使用者
@@ -42,7 +48,7 @@ public class BirthdayCommand extends HasSubcommands
 										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + birthday[1])))
 						.queue();
 		});
-		subcommands.put("delete", event ->
+		subcommands.put(DELETE, event ->
 		{
 			long userID = event.getUser().getIdLong();
 			TimerHandle.deleteBirthday(userID);

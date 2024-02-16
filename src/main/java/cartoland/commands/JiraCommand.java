@@ -130,7 +130,7 @@ public class JiraCommand implements ICommand
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
 		try
 		{
-			return "<t:" + ZonedDateTime.parse(timeTags.get(0).attr("datetime"), dateTimeFormatter).toEpochSecond() + ":R>";
+			return "<t:" + ZonedDateTime.parse(timeTags.getFirst().attr("datetime"), dateTimeFormatter).toEpochSecond() + ":R>";
 		}
 		catch (DateTimeParseException e)
 		{

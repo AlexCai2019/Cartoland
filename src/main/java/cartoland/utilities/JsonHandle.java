@@ -115,7 +115,7 @@ public final class JsonHandle
 
 		//獲取使用者設定的語言
 		//找不到設定的語言就放台灣正體進去
-		JSONObject file = languageFileMap.get(users.computeIfAbsent(userID, k -> Languages.TW_MANDARIN));
+		JSONObject file = languageFileMap.get(users.computeIfAbsent(userID, defaultLanguage -> Languages.TW_MANDARIN));
 		Object optionalValue; //要獲得的字串(物件型態)
 		String result; //要獲得的字串
 		while (true)

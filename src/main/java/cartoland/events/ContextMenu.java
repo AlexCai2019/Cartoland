@@ -33,9 +33,8 @@ public class ContextMenu extends ListenerAdapter
 	public static final String RAW_TEXT = "Raw Text";
 	public static final String REACTIONS = "Reactions";
 	public static final String CODE_BLOCK = "Code Block";
-	public static final String QUOTE = "Quote";
+	public static final String QUOTE_ = "Quote";
 	public static final String PIN = "Pin";
-	private final EmbedBuilder embedBuilder = new EmbedBuilder();
 
 	@Override
 	public void onMessageContextInteraction(MessageContextInteractionEvent event)
@@ -86,15 +85,14 @@ public class ContextMenu extends ListenerAdapter
 					}));
 			}
 
-			case QUOTE ->
+			case QUOTE_ ->
 			{
 				Message message = event.getTarget();
 				User linkAuthor = message.getAuthor(); //連結訊息的發送者
 				String linkAuthorName = linkAuthor.getEffectiveName();
-				String linkAuthorAvatar = linkAuthor.getEffectiveAvatarUrl();
 				MessageChannel channel = event.getChannel();
 
-				embedBuilder.setAuthor(linkAuthorName, linkAuthorAvatar, linkAuthorAvatar)
+				EmbedBuilder embedBuilder = new EmbedBuilder().setAuthor(linkAuthorName, null, linkAuthor.getEffectiveAvatarUrl())
 						.setDescription(message.getContentRaw()) //訊息的內容
 						.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
 						.setFooter(channel != null ? channel.getName() : linkAuthorName, null); //訊息的發送頻道

@@ -81,7 +81,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.19</version>
+            <version>5.0.0-beta.20</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <!-- https://github.com/stleary/JSON-java -->
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.17.1</version>
+            <version>1.17.2</version>
         </dependency>
     </dependencies>
 

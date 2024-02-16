@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -62,7 +62,7 @@ public class QuoteCommand implements ICommand
 		}
 
 		//獲取訊息內的頻道 注意ID是String 與慣例的long不同
-		MessageChannel linkChannel = cartoland.getChannelById(MessageChannel.class, numbersInLink[0]);
+		GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);
 		if (linkChannel == null)
 		{
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).setEphemeral(true).queue();
@@ -72,10 +72,9 @@ public class QuoteCommand implements ICommand
 		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 		{
 			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
-			String linkAuthorAvatar = linkAuthor.getEffectiveAvatarUrl();
 
 			EmbedBuilder embedBuilder = new EmbedBuilder()
-					.setAuthor(linkAuthor.getEffectiveName(), linkAuthorAvatar, linkAuthorAvatar)
+					.setAuthor(linkAuthor.getEffectiveName(), null, linkAuthor.getEffectiveAvatarUrl())
 					.setDescription(linkMessage.getContentRaw()) //訊息的內容
 					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道

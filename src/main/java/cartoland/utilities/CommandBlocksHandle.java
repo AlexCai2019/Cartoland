@@ -288,6 +288,7 @@ public final class CommandBlocksHandle
 			return true;
 		}
 
+		@SuppressWarnings("AssignmentUsedAsCondition")
 		public boolean tryClaimBonus(boolean[] bonus)
 		{
 			long addBonus = 0L; //獎勵的額外指令方塊

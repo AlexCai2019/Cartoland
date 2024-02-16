@@ -35,7 +35,7 @@ public class Cartoland
 	 */
 	public static void main(String[] args) throws InterruptedException
 	{
-		if (args.length < 1) //在終端機執行java -jar Cartoland.jar時 沒有帶參數
+		if (args.length == 0) //在終端機執行java -jar Cartoland.jar時 沒有帶參數
 			return;
 
 		jda = JDABuilder.createDefault(args[0]) //以第一個參數為token 啟動機器人
@@ -57,7 +57,7 @@ public class Cartoland
 				.setActivity(Activity.customStatus("Do /help for more information")) //自訂狀態
 				.build();
 
-		jda.updateCommands().addCommands(AddCommands.commands).queue(); //添加指令 裡面的程式簡直是一團亂 能跑就行
+		jda.updateCommands().addCommands(AddCommands.commands()).queue(); //添加指令 裡面的程式簡直是一團亂 能跑就行
 
 		jda.awaitReady();
 	}

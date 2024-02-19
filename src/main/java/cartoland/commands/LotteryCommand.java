@@ -26,25 +26,27 @@ public class LotteryCommand extends HasSubcommands
 	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
 	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
 
+	public static final String GET = "get";
+	public static final String BET = "bet";
+	public static final String RANKING = "ranking";
+	public static final String DAILY = "daily";
+	public static final String SLOT = "slot";
+
 	public LotteryCommand()
 	{
 		super(5);
-		subcommands.put("get", new GetSubCommand());
-		subcommands.put("bet", new BetSubCommand());
-		subcommands.put("ranking", new RankingSubCommand());
-		subcommands.put("daily", new DailySubCommand());
-		subcommands.put("slot", new SlotSubCommand());
+		subcommands.put(GET, new GetSubCommand());
+		subcommands.put(BET, new BetSubCommand());
+		subcommands.put(RANKING, new RankingSubCommand());
+		subcommands.put(DAILY, new DailySubCommand());
+		subcommands.put(SLOT, new SlotSubCommand());
 	}
 
 	private static long createValidBet(SlashCommandInteractionEvent event, long userID, long nowHave)
 	{
-		String betString = event.getOption("bet", CommonFunctions.getAsString); //注意指令參數名一定要是bet 也許未來會變 但目前就是bet
-
-		if (betString == null) //不帶參數
-		{
-			event.reply("Impossible, this is required!").queue();
-			return INVALID_BET;
-		}
+		//此方法同時在BetSubCommand和SlotSubCommand中使用
+		String betString = event.getOption("bet", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+		//注意指令參數名一定要是bet 也許未來會變 但目前就是bet
 
 		long bet;
 		if (NUMBER_REGEX.matcher(betString).matches()) //賭數字
@@ -101,18 +103,15 @@ public class LotteryCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			User user = event.getUser();
-
-			User target = event.getOption("target", CommonFunctions.getAsUser);
-			if (target == null) //沒有填 預設是自己
-				target = user;
-			else if (target.isBot() || target.isSystem())
+			User target = event.getOption("target", () -> user, CommonFunctions.getAsUser); //目標 沒有填預設是自己
+			if (target.isBot() || target.isSystem())
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
 				return;
 			}
 
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (!Boolean.TRUE.equals(event.getOption("display_detail", CommonFunctions.getAsBoolean))) //不顯示細節 null代表false 所以不使用Boolean.FALSE.equals
+			if (!event.getOption("display_detail", CommonFunctions.booleanDefault, CommonFunctions.getAsBoolean)) //不顯示細節
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
 									.formatted(lotteryData.getName(), lotteryData.getBlocks())).queue();
@@ -211,8 +210,7 @@ public class LotteryCommand extends HasSubcommands
 			boolean sameUser = userID == lastUser;
 			lastUser = userID;
 
-			Integer pageBox = event.getOption("page", CommonFunctions.getAsInt);
-			int page = pageBox != null ? pageBox : 1; //page從1開始
+			int page = event.getOption("page", () -> 1, CommonFunctions.getAsInt); //page從1開始 預設1 所以不能用CommonFunctions
 
 			//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
 			int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;

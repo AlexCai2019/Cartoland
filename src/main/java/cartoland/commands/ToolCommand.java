@@ -115,16 +115,9 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Integer[] uuidArray = new Integer[4];
+			Integer[] uuidArray = new Integer[4]; //裝箱類別應該比基本型別好 因為下面大量使用了String.format
 			for (int i = 0; i < 4; i++)
-			{
-				uuidArray[i] = event.getOption(String.valueOf(i), CommonFunctions.getAsInt);
-				if (uuidArray[i] == null)
-				{
-					event.reply("Impossible, this is required!").queue();
-					return;
-				}
-			}
+				uuidArray[i] = event.getOption(Integer.toString(i), CommonFunctions.intDefault, CommonFunctions.getAsInt);
 
 			//因為四個UUID是必填項 所以不須偵測是否存在 直接進程式
 			String[] uuidStrings = new String[5];
@@ -155,40 +148,32 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Integer[] rgbaColors = new Integer[4];
-			Integer[] argbColors = new Integer[4];
+			int[] rgbaColors = new int[4];
+			int[] argbColors = new int[4];
 
-			rgbaColors[0] = argbColors[1] = event.getOption("red", CommonFunctions.getAsInt);
-			rgbaColors[1] = argbColors[2] = event.getOption("green", CommonFunctions.getAsInt);
-			rgbaColors[2] = argbColors[3] = event.getOption("blue", CommonFunctions.getAsInt);
-			rgbaColors[3] = argbColors[0] = event.getOption("alpha", CommonFunctions.getAsInt);
-			if (rgbaColors[3] == null) //沒有設定透明度
-				rgbaColors[3] = argbColors[0] = 255;
-			Integer[] rgbColors = { rgbaColors[0],rgbaColors[1],rgbaColors[2] };
+			rgbaColors[0] = argbColors[1] = event.getOption("red", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			rgbaColors[1] = argbColors[2] = event.getOption("green", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			rgbaColors[2] = argbColors[3] = event.getOption("blue", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			rgbaColors[3] = argbColors[0] = event.getOption("alpha", () -> 255, CommonFunctions.getAsInt); //沒有設定透明度就是255
+			int[] rgbColors = { rgbaColors[0],rgbaColors[1],rgbaColors[2] };
 
 			int rgba = 0, argb = 0, rgb = 0;
 
 			long userID = event.getUser().getIdLong();
-			for (int i = 0, offset = 24, rgbaPrimitive, argbPrimitive; i < 4; i++)
+			for (int i = 0, offset = 24, rgbaTemp, argbTemp; i < 4; i++)
 			{
-				if (rgbaColors[i] == null || argbColors[i] == null)
-				{
-					event.reply("Impossible, this is required!").queue();
-					return;
-				}
-
-				rgbaPrimitive = rgbaColors[i]; //避免重複解包
-				argbPrimitive = argbColors[i];
-				if (notInRange(rgbaPrimitive) || notInRange(argbPrimitive))
+				rgbaTemp = rgbaColors[i]; //避免重複解包
+				argbTemp = argbColors[i];
+				if (notInRange(rgbaTemp) || notInRange(argbTemp))
 				{
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
 					return;
 				}
 
-				rgba += rgbaPrimitive << offset; //舉例 如果是13,24,247,12 那麼作為紅色的13往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是#0D18F70C
-				argb += argbPrimitive << offset;
+				rgba += rgbaTemp << offset; //舉例 如果是13,24,247,12 那麼作為紅色的13往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是#0D18F70C
+				argb += argbTemp << offset;
 				offset -= 8; //offset原是24 每次減8後 下次推的時候就是推16 然後推8 最後推0
-				rgb += rgbaPrimitive << offset; //舉例 如果是13,24,247 那麼作為紅色的13往左推16 bits 綠色是24左推8bits 藍色是247左推0 結果是#0D18F7
+				rgb += rgbaTemp << offset; //舉例 如果是13,24,247 那麼作為紅色的13往左推16 bits 綠色是24左推8bits 藍色是247左推0 結果是#0D18F7
 			}
 
 			String decimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.decimal");
@@ -229,12 +214,7 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String rgbString = event.getOption("rgba_or_argb", CommonFunctions.getAsString);
-			if (rgbString == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			String rgbString = event.getOption("rgba_or_argb", CommonFunctions.stringDefault, CommonFunctions.getAsString);
 
 			long userID = event.getUser().getIdLong();
 			long rgba;
@@ -277,12 +257,7 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String packType = event.getOption("pack_type", CommonFunctions.getAsString);
-			if (packType == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			String packType = event.getOption("pack_type", () -> "d", CommonFunctions.getAsString);
 
 			event.reply(switch (packType.charAt(0))
 			{
@@ -292,7 +267,7 @@ public class ToolCommand extends HasSubcommands
 						{
 							"pack":
 							{
-								"pack_format": 10,
+								"pack_format": 32,
 								"description": "Your description here"
 							}
 						}
@@ -305,7 +280,7 @@ public class ToolCommand extends HasSubcommands
 						{
 							"pack":
 							{
-								"pack_format": 12,
+								"pack_format": 26,
 								"description": "Your description here"
 							}
 						}

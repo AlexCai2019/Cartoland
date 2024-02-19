@@ -1,9 +1,6 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.FileHandle;
-import cartoland.utilities.JsonHandle;
-import cartoland.utilities.TimerHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -36,9 +33,7 @@ public class AdminCommand extends HasSubcommands
 	public static final byte BANNED_SERVER = 2;
 
 	public static final String MUTE = "mute";
-
 	public static final String TEMP_BAN = "temp_ban";
-
 	public static final String SLOW_MODE = "slow_mode";
 
 	static
@@ -137,20 +132,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Double durationBox = event.getOption("duration", CommonFunctions.getAsDouble);
-			if (durationBox == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-			double duration = durationBox;
-
-			String unit = event.getOption("unit", CommonFunctions.getAsString);
-			if (unit == null) //單位
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			double duration = event.getOption("duration", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble);
+			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString);
 
 			//不用java.util.concurrent.TimeUnit 因為它不接受浮點數
 			long durationMillis = Math.round(duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
@@ -178,13 +161,13 @@ public class AdminCommand extends HasSubcommands
 			}
 
 			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
-			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
-					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000);
+			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
+					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000));
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
 			if (reason != null) //有理由
-				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason); //加上理由
+				replyStringBuilder.append(JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason)); //加上理由
 
-			event.reply(replyString).queue();
+			event.reply(replyStringBuilder.toString()).queue();
 			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
 		}
 	}
@@ -228,20 +211,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Double durationBox = event.getOption("duration", CommonFunctions.getAsDouble);
-			if (durationBox == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-			double duration = durationBox;
-
-			String unit = event.getOption("unit", CommonFunctions.getAsString);
-			if (unit == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			double duration = event.getOption("duration", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble);
+			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString);
 
 			long durationHours = Math.round(duration * switch (unit) //將單位轉成小時
 			{
@@ -264,28 +235,23 @@ public class AdminCommand extends HasSubcommands
 			}
 
 			String bannedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
-			String replyString = JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
-					.formatted(
-							target.getAsMention(), bannedTime,
-							System.currentTimeMillis() / 1000 + durationHours * 60 * 60); //直到<t:> 以秒為單位
+			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
+					.formatted(target.getAsMention(), bannedTime, System.currentTimeMillis() / 1000 + durationHours * 60 * 60)); //直到<t:> 以秒為單位
 			//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
 			if (reason != null)
-				replyString += JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason);
+				replyStringBuilder.append(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason));
 
-			event.reply(replyString).queue(); //回覆
+			event.reply(replyStringBuilder.toString()).queue(); //回覆
 
 			//回覆完再開始動作 避免超過三秒限制
-			long pardonTime = TimerHandle.getHoursFrom1970() + durationHours; //計算解除時間
-			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
-			if (pardonTime <= 0) //溢位
-				pardonTime = Long.MAX_VALUE;
 
 			Guild guild = target.getGuild();
 			long[] banData = new long[3];
 			banData[USER_ID_INDEX] = target.getIdLong(); //紀錄被ban的人的ID
-			banData[BANNED_TIME] = pardonTime; //紀錄被ban的人的時間
+			banData[BANNED_TIME] = Algorithm.safeAdd(TimerHandle.getHoursFrom1970(), durationHours); //紀錄被ban的人的解除時間
+			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
 			banData[BANNED_SERVER] = guild.getIdLong(); //紀錄被ban的人的群組
 			tempBanSet.add(banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
@@ -325,30 +291,21 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Double timeBox = event.getOption("time", CommonFunctions.getAsDouble); //可惜沒有getAsFloat
-			if (timeBox == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-			float time = (float) timeBox.doubleValue(); //解包並轉float
+			//可惜沒有getAsFloat
+			float time = (float) event.getOption("time", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble).doubleValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
 				return;
 			}
 
-			String unit = event.getOption("unit", CommonFunctions.getAsString); //單位字串
-			if (unit == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString); //單位字串
 
 			int timeSecond = Math.round(time * switch (unit) //將單位轉成秒
 			{
 				case "second" -> 1;
 				case "minute" -> 60;
+				case "quarter" -> 60 * 15;
 				case "hour" -> 60 * 60;
 				case "double_hour" -> 60 * 60 * 2;
 				default -> 0;

@@ -39,12 +39,7 @@ public class JiraCommand implements ICommand
 		event.deferReply().queue(); //延後回覆
 		InteractionHook hook = event.getHook();
 		long userID = event.getUser().getIdLong();
-		String link = event.getOption("bug_link", CommonFunctions.getAsString);
-		if (link == null)
-		{
-			hook.sendMessage("Impossible, this is required!").queue();
-			return;
-		}
+		String link = event.getOption("bug_link", CommonFunctions.stringDefault, CommonFunctions.getAsString);
 
 		String bugID; //將會變成像"MC-87984"那樣的bug ID
 		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984
@@ -107,7 +102,12 @@ public class JiraCommand implements ICommand
 		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
 		bugEmbed.addField("Created", timeValue(issueContent.getElementById("created-val")), true);
 		bugEmbed.addField("Updated", timeValue(issueContent.getElementById("updated-val")), true);
+		String resolutionDate = timeValue(issueContent.getElementById("resolutiondate-val"));
+		bugEmbed.addField("Resolved", resolutionDate.isEmpty() ? "None" : resolutionDate, true);
+
 		bugEmbed.addField("Reporter", textValue(issueContent.getElementById("reporter-val")), true);
+		bugEmbed.addField("Votes", textValue(issueContent.getElementById("vote-data")), true);
+		bugEmbed.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true);
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}

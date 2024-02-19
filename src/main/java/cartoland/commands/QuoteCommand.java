@@ -33,12 +33,7 @@ public class QuoteCommand implements ICommand
 	{
 		User user = event.getUser();
 		long userID = user.getIdLong();
-		String link = event.getOption("link", CommonFunctions.getAsString);
-		if (link == null)
-		{
-			event.reply("Impossible, this is required!").queue();
-			return;
-		}
+		String link = event.getOption("link", CommonFunctions.stringDefault, CommonFunctions.getAsString);
 
 		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
@@ -90,7 +85,7 @@ public class QuoteCommand implements ICommand
 						.findFirst()
 						.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
 
-			(Boolean.TRUE.equals(event.getOption("mention_author", CommonFunctions.getAsBoolean)) ? //是否提及訊息作者
+			(event.getOption("mention_author", CommonFunctions.booleanDefault, CommonFunctions.getAsBoolean) ? //是否提及訊息作者
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention")
 										.formatted(user.getEffectiveName(), linkAuthor.getAsMention())).addEmbeds(embedBuilder.build()) : //提及訊息作者
 					event.replyEmbeds(embedBuilder.build())) //不提及訊息作者

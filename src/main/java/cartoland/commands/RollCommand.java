@@ -46,24 +46,26 @@ public class RollCommand extends HasSubcommands
 					return;
 				if (member.getRoles().contains(memberRole)) //如果有會員身分組
 					allMembers.add(member); //加入
-			});
-
-			if (allMembers.isEmpty()) //找不到任何有會員身分組的人
+			}).onSuccess(unused ->
 			{
-				event.reply("This guild doesn't have any members!").queue();
-				return; //結束
-			}
-			User commandUser = event.getUser();
-			Member member = Algorithm.randomElement(allMembers);
-			User user = member.getUser();
-			event.reply(member.getEffectiveName() + '(' + user.getEffectiveName() + ')')
-					.setEmbeds(new EmbedBuilder()
-							.setDescription(user.getAsMention())
-							.setAuthor(commandUser.getEffectiveName(), null, commandUser.getEffectiveAvatarUrl())
-							.setTimestamp(OffsetDateTime.now())
-							.setFooter(user.getId())
-							.build())
-					.queue();
+				if (allMembers.isEmpty()) //找不到任何有會員身分組的人
+				{
+					event.reply("This guild doesn't have any members!").queue();
+					return; //結束
+				}
+				User commandUser = event.getUser();
+				Member member = Algorithm.randomElement(allMembers);
+				User user = member.getUser();
+				event.reply(member.getEffectiveName() + '(' + user.getName() + ')')
+						.setEmbeds(new EmbedBuilder()
+								.setTitle("Result")
+								.setDescription(user.getAsMention())
+								.setAuthor(commandUser.getEffectiveName(), null, commandUser.getEffectiveAvatarUrl())
+								.setTimestamp(OffsetDateTime.now())
+								.setFooter(user.getId())
+								.build())
+						.queue();
+			});
 		}
 	}
 
@@ -72,23 +74,15 @@ public class RollCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Integer minimum = event.getOption("minimum", CommonFunctions.getAsInt);
-			Integer maximum = event.getOption("maximum", CommonFunctions.getAsInt);
+			int minimum = event.getOption("minimum", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			int maximum = event.getOption("maximum", CommonFunctions.intDefault, CommonFunctions.getAsInt);
 
-			if (minimum == null || maximum == null) //都是null
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-
-			int min = minimum;
-			int max = maximum;
-			if (min > max)
+			if (minimum > maximum)
 			{
 				event.reply("Minimum mustn't larger than maximum!").queue();
 				return;
 			}
-			event.reply(Integer.toString(new Random().nextInt(min, Algorithm.safeAdd(max, 1)))).queue();
+			event.reply(Integer.toString(new Random().nextInt(minimum, Algorithm.safeAdd(maximum, 1)))).queue();
 		}
 	}
 }

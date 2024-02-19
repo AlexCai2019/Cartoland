@@ -238,7 +238,7 @@ public final class AddCommands
 							.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
 							.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
 							.addOptions(
-								new OptionData(OptionType.STRING, "content", "Your self introduction", false, false)
+								new OptionData(OptionType.STRING, "content", "Your self introduction", true, false)
 									.setNameLocalization(CHINESE_TAIWAN, "內容")
 									.setNameLocalization(CHINESE_CHINA, "内容")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
@@ -477,6 +477,9 @@ public final class AddCommands
 										new Command.Choice("Minute", "minute")
 											.setNameLocalization(CHINESE_TAIWAN, "分鐘")
 											.setNameLocalization(CHINESE_CHINA, "分钟"),
+										new Command.Choice("Quarter", "quarter")
+											.setNameLocalization(CHINESE_TAIWAN, "刻")
+											.setNameLocalization(CHINESE_CHINA, "刻"),
 										new Command.Choice("Hour", "hour")
 											.setNameLocalization(CHINESE_TAIWAN, "小時")
 											.setNameLocalization(CHINESE_CHINA, "小时"),
@@ -504,7 +507,7 @@ public final class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 					.setDescriptionLocalization(CHINESE_CHINA, "抽奖")
 					.addSubcommands(
-						new SubcommandData("get", "Gets the amount of command blocks the user owns")
+						new SubcommandData(LotteryCommand.GET, "Gets the amount of command blocks the user owns")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得使用者擁有的指令方塊數量")
 							.setDescriptionLocalization(CHINESE_CHINA, "获得用户拥有的命令方块数量")
 							.addOptions(
@@ -518,7 +521,7 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "显示细节")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "指令是否顯示賭注紀錄")
 									.setDescriptionLocalization(CHINESE_CHINA, "命令是否显示赌注纪录")),
-						new SubcommandData("bet", "Bet some command blocks")
+						new SubcommandData(LotteryCommand.BET, "Bet some command blocks")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "賭上一些指令方塊")
 							.setDescriptionLocalization(CHINESE_CHINA, "赌上一些命令方块")
 							.addOptions(
@@ -527,7 +530,7 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "賭注")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "想賭上的數量")
 									.setDescriptionLocalization(CHINESE_CHINA, "想赌上的数量")),
-						new SubcommandData("ranking", "Rank all users")
+						new SubcommandData(LotteryCommand.RANKING, "Rank all users")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得所有使用者們的排行")
 							.setDescriptionLocalization(CHINESE_CHINA, "获得所有用户们的排行")
 							.addOptions(
@@ -536,10 +539,10 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "页数")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "排名清單的頁數")
 									.setDescriptionLocalization(CHINESE_CHINA, "排名清单的页数")),
-						new SubcommandData("daily", "Daily rewards")
+						new SubcommandData(LotteryCommand.DAILY, "Daily rewards")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "每日獎勵")
 							.setDescriptionLocalization(CHINESE_CHINA, "每日奖励"),
-						new SubcommandData("slot", "Play the slot machine once")
+						new SubcommandData(LotteryCommand.SLOT, "Play the slot machine once")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "玩一次角子老虎機")
 							.setDescriptionLocalization(CHINESE_CHINA, "玩一次角子老虎机")
 							.addOptions(

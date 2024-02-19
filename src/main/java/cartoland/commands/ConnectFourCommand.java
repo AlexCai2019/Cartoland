@@ -102,15 +102,7 @@ public class ConnectFourCommand extends HasSubcommands
 				return;
 			}
 
-			Integer columnBox = event.getOption("column", CommonFunctions.getAsInt); //獲取輸入的行數
-
-			if (columnBox == null) //column為必填
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-
-			int column = columnBox - 1; //拆箱 因為columnBox是以1為開始 所以要 - 1
+			int column = event.getOption("column", CommonFunctions.intDefault, CommonFunctions.getAsInt) - 1; //因為輸入的行數是以1為開始 所以要 - 1
 			if (!connectFour.isInBounds(column))
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "connect_four.must_be_in_range")).setEphemeral(true).queue();

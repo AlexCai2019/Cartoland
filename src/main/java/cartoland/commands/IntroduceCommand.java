@@ -50,9 +50,7 @@ public class IntroduceCommand extends HasSubcommands
 		subcommands.put("user", event ->
 		{
 			User user = event.getUser();
-			User target = event.getOption("user", CommonFunctions.getAsUser);
-			if (target == null) //沒有填 預設是自己
-				target = user;
+			User target = event.getOption("user", () -> user, CommonFunctions.getAsUser); //沒有填 預設是自己
 
 			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")))
 					.setEphemeral(true)
@@ -97,8 +95,8 @@ public class IntroduceCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			String content = event.getOption("content", CommonFunctions.getAsString);
-			if (content == null)
+			String content = event.getOption("content", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+			if (content.isEmpty())
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
 				introduction.remove(userID); //刪除自我介紹

@@ -132,8 +132,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			double duration = event.getOption("duration", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble);
-			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+			double duration = event.getOption("duration", 0.0, CommonFunctions.getAsDouble);
+			String unit = event.getOption("unit", "", CommonFunctions.getAsString);
 
 			//不用java.util.concurrent.TimeUnit 因為它不接受浮點數
 			long durationMillis = Math.round(duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
@@ -211,8 +211,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			double duration = event.getOption("duration", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble);
-			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+			double duration = event.getOption("duration", 0.0, CommonFunctions.getAsDouble);
+			String unit = event.getOption("unit", "", CommonFunctions.getAsString);
 
 			long durationHours = Math.round(duration * switch (unit) //將單位轉成小時
 			{
@@ -292,14 +292,14 @@ public class AdminCommand extends HasSubcommands
 			}
 
 			//可惜沒有getAsFloat
-			float time = (float) event.getOption("time", CommonFunctions.doubleDefault, CommonFunctions.getAsDouble).doubleValue(); //解包並轉float
+			float time = (float) event.getOption("time", 0.0, CommonFunctions.getAsDouble).doubleValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
 				return;
 			}
 
-			String unit = event.getOption("unit", CommonFunctions.stringDefault, CommonFunctions.getAsString); //單位字串
+			String unit = event.getOption("unit", "", CommonFunctions.getAsString); //單位字串
 
 			int timeSecond = Math.round(time * switch (unit) //將單位轉成秒
 			{

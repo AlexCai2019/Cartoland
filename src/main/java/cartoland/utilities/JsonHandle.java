@@ -28,7 +28,6 @@ public final class JsonHandle
 	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value
 	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(7); //語言字串為key 語言檔案為value
 	private static final Map<String, List<String>> commandListMap = new HashMap<>(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
-	private static final StringBuilder builder = new StringBuilder();
 
 	private static JSONObject englishFile; //英文檔案
 
@@ -40,8 +39,7 @@ public final class JsonHandle
 
 	public static String command(long userID, String commandName)
 	{
-		builder.setLength(0);
-		builder.append(getStringFromJsonKey(userID, commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
+		StringBuilder builder = new StringBuilder(getStringFromJsonKey(userID, commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list"); //中間的資料 注意每個語言檔的指令裡一定要有.list 否則會擲出JSONException
 		int dotListLength = dotListArray.length();
 		if (dotListLength != 0) //建立回覆字串
@@ -104,7 +102,7 @@ public final class JsonHandle
 	 *
 	 * @param userID Determines which json file are going to access.
 	 * @param key The key of a string in a json file.
-	 * @return The string from the json file that key mapped.
+	 * @return The string from the json file that key mapped, or "null" if not presented.
 	 * @since 1.4
 	 * @author Alex Cai
 	 */
@@ -120,11 +118,15 @@ public final class JsonHandle
 		String result; //要獲得的字串
 		while (true)
 		{
-			optionalValue = file.opt(key); //之所以使用opt 是為了更快一些 getString還要檢查has
-
+			//之所以使用opt 是為了更快一些 getString還要檢查has
 			//如果使用者的語言檔沒有這個key 就預設使用英文
 			//之所以不用String.valueOf包住全部 而是只包englishFile.opt(key) 是因為只有它才需要valueOf optionalValue只需一個轉字串即可
-			result = optionalValue != null ? optionalValue.toString() : String.valueOf(englishFile.opt(key));
+			if ((optionalValue = file.opt(key)) != null)
+				result = optionalValue.toString();
+			else if (file != englishFile) //用指標比較 如果預設不是英文 才有在englishFile裡找的必要
+				result = String.valueOf(englishFile.opt(key));
+			else
+				return "null";
 
 			//注意.json檔內一定不能有空字串 否則charAt會擲出StringIndexOutOfBoundsException
 			//為了讓機器人省去檢查 也為了省去動用result.startsWith 辛苦一下我們人類了

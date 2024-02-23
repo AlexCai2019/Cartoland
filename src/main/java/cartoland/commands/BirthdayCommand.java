@@ -31,7 +31,7 @@ public class BirthdayCommand extends HasSubcommands
 		subcommands.put(GET, event ->
 		{
 			User user = event.getUser(); //自己
-			User target = event.getOption("target", () -> user, CommonFunctions.getAsUser); //要查詢的使用者
+			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者
 			//如果沒有指定查詢的對象 預設是自己
 			short[] birthday = TimerHandle.getBirthday(target.getIdLong());
 			long userID = user.getIdLong();
@@ -69,8 +69,8 @@ public class BirthdayCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 
-			int month = event.getOption("month", CommonFunctions.intDefault, CommonFunctions.getAsInt);
-			int date = event.getOption("date", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			int month = event.getOption("month", 1, CommonFunctions.getAsInt);
+			int date = event.getOption("date", 1, CommonFunctions.getAsInt);
 			if (month < 1 || month > 12) //月份不在1 ~ 12的區間
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();

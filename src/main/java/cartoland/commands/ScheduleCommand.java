@@ -13,7 +13,7 @@ public class ScheduleCommand implements ICommand
 	private final ICommand createSubCommand = new CreateSubCommand();
 	private final ICommand cancelSubCommand = event ->
 	{
-		int time = event.getOption("time", CommonFunctions.intDefault, CommonFunctions.getAsInt); //時間 介於0到23之間
+		int time = event.getOption("time", 0, CommonFunctions.getAsInt); //時間 介於0到23之間
 		if (time < 0 || time > 23) //不得超出範圍
 		{
 			event.reply("Time must between 0 and 23!").setEphemeral(true).queue();

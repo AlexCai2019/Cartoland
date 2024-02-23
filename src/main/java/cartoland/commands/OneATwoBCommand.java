@@ -97,7 +97,7 @@ public class OneATwoBCommand implements ICommand
 				return;
 			}
 
-			int answer = Math.abs(event.getOption("answer", CommonFunctions.intDefault, CommonFunctions.getAsInt)); //避免負數
+			int answer = Math.abs(event.getOption("answer", 0, CommonFunctions.getAsInt)); //避免負數
 			if (answer == Integer.MIN_VALUE) //Math.abs無法處理-2147483648
 			{
 				event.reply("Please input a positive integer!").setEphemeral(true).queue();

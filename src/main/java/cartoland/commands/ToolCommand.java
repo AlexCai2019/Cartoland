@@ -117,7 +117,7 @@ public class ToolCommand extends HasSubcommands
 		{
 			Integer[] uuidArray = new Integer[4]; //裝箱類別應該比基本型別好 因為下面大量使用了String.format
 			for (int i = 0; i < 4; i++)
-				uuidArray[i] = event.getOption(Integer.toString(i), CommonFunctions.intDefault, CommonFunctions.getAsInt);
+				uuidArray[i] = event.getOption(Integer.toString(i), 0, CommonFunctions.getAsInt);
 
 			//因為四個UUID是必填項 所以不須偵測是否存在 直接進程式
 			String[] uuidStrings = new String[5];
@@ -151,10 +151,10 @@ public class ToolCommand extends HasSubcommands
 			int[] rgbaColors = new int[4];
 			int[] argbColors = new int[4];
 
-			rgbaColors[0] = argbColors[1] = event.getOption("red", CommonFunctions.intDefault, CommonFunctions.getAsInt);
-			rgbaColors[1] = argbColors[2] = event.getOption("green", CommonFunctions.intDefault, CommonFunctions.getAsInt);
-			rgbaColors[2] = argbColors[3] = event.getOption("blue", CommonFunctions.intDefault, CommonFunctions.getAsInt);
-			rgbaColors[3] = argbColors[0] = event.getOption("alpha", () -> 255, CommonFunctions.getAsInt); //沒有設定透明度就是255
+			rgbaColors[0] = argbColors[1] = event.getOption("red", 0, CommonFunctions.getAsInt);
+			rgbaColors[1] = argbColors[2] = event.getOption("green", 0, CommonFunctions.getAsInt);
+			rgbaColors[2] = argbColors[3] = event.getOption("blue", 0, CommonFunctions.getAsInt);
+			rgbaColors[3] = argbColors[0] = event.getOption("alpha", 255, CommonFunctions.getAsInt); //沒有設定透明度就是255
 			int[] rgbColors = { rgbaColors[0],rgbaColors[1],rgbaColors[2] };
 
 			int rgba = 0, argb = 0, rgb = 0;
@@ -214,23 +214,22 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String rgbString = event.getOption("rgba_or_argb", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+			String rgbString = event.getOption("rgba_or_argb", "", CommonFunctions.getAsString);
 
 			long userID = event.getUser().getIdLong();
-			long rgba;
+			long rgbaInput;
 			if (decimalRegex.matcher(rgbString).matches())
-				rgba = Long.parseLong(rgbString);
+				rgbaInput = Long.parseLong(rgbString);
 			else if (hexadecimalRegex.matcher(rgbString).matches())
-				rgba = Long.parseLong(rgbString, 16);
+				rgbaInput = Long.parseLong(rgbString, 16);
 			else if (leadingSharpHexadecimalRegex.matcher(rgbString).matches())
-				rgba = Long.parseLong(rgbString.substring(1), 16);//像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
+				rgbaInput = Long.parseLong(rgbString.substring(1), 16);//像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 			else
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
 				return;
 			}
-			if (rgba > 0xFFFFFFFFL)
-				rgba = 0xFFFFFFFFL;
+			long rgba = Math.min(rgbaInput, 0xFFFF_FFFFL);
 
 			//{ rgba / 65536 % 256, rgba / 256 % 256, rgba % 256 }
 			//假設是16777215 除以65536就會變成255, 16777215 除以256後取除以256的餘數也是255, 取除以256的餘數也是255
@@ -257,7 +256,7 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String packType = event.getOption("pack_type", () -> "d", CommonFunctions.getAsString);
+			String packType = event.getOption("pack_type", "d", CommonFunctions.getAsString);
 
 			event.reply(switch (packType.charAt(0))
 			{

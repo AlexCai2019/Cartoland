@@ -39,7 +39,7 @@ public class JiraCommand implements ICommand
 		event.deferReply().queue(); //延後回覆
 		InteractionHook hook = event.getHook();
 		long userID = event.getUser().getIdLong();
-		String link = event.getOption("bug_link", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+		String link = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
 		String bugID; //將會變成像"MC-87984"那樣的bug ID
 		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984

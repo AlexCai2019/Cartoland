@@ -13,7 +13,9 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,6 +42,11 @@ public class NewMember extends ListenerAdapter
 	static
 	{
 		FileHandle.registerSerialize(ALL_MEMBERS, allMembers);
+	}
+
+	public static List<Long> getAllMembersList()
+	{
+		return new ArrayList<>(allMembers);
 	}
 
 	@Override

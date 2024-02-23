@@ -125,7 +125,7 @@ public final class Algorithm
 	/**
 	 * Returns a random element of an array. Use generic to avoid unnecessary cast.
 	 *
-	 * @param array The array that are going to return a random element.
+	 * @param array The array that is going to return a random element.
 	 * @param <T> Type of elements.
 	 * @return A random element of the array.
 	 * @since 2.0
@@ -139,7 +139,7 @@ public final class Algorithm
 	/**
 	 * Returns a random element of an array.
 	 *
-	 * @param array The array that are going to return a random element.
+	 * @param array The array that is going to return a random element.
 	 * @return A random element of the array.
 	 * @since 2.1
 	 * @author Alex Cai
@@ -152,7 +152,7 @@ public final class Algorithm
 	/**
 	 * Returns a random element of an array.
 	 *
-	 * @param array The array that are going to return a random element.
+	 * @param array The array that is going to return a random element.
 	 * @return A random element of the array.
 	 * @since 2.2
 	 * @author Alex Cai
@@ -165,7 +165,7 @@ public final class Algorithm
 	/**
 	 * Returns a random element of a list.
 	 *
-	 * @param list The list that need to shuffle
+	 * @param list The list that is going to return a random element.
 	 * @param <T> Type of elements.
 	 * @since 2.2
 	 * @author Alex Cai

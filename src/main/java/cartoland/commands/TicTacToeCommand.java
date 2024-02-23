@@ -38,7 +38,7 @@ public class TicTacToeCommand extends HasSubcommands
 			}
 
 			//沒有在玩遊戲 開始井字遊戲
-			int difficulty = event.getOption("difficulty", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			int difficulty = event.getOption("difficulty", 0, CommonFunctions.getAsInt);
 			TicTacToeGame newGame = new TicTacToeGame(difficulty);
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.start") + newGame.getBoard()).queue();
 			games.put(userID, newGame);
@@ -87,8 +87,8 @@ public class TicTacToeCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			int row = event.getOption("row", CommonFunctions.intDefault, CommonFunctions.getAsInt);
-			int column = event.getOption("column", CommonFunctions.intDefault, CommonFunctions.getAsInt);
+			int row = event.getOption("row", 0, CommonFunctions.getAsInt);
+			int column = event.getOption("column", 0, CommonFunctions.getAsInt);
 			long userID = event.getUser().getIdLong();
 			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);

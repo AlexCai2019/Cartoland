@@ -45,7 +45,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		String transferAmountString = event.getOption("amount", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+		String transferAmountString = event.getOption("amount", "", CommonFunctions.getAsString);
 
 		CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
 		CommandBlocksHandle.LotteryData targetData = CommandBlocksHandle.getLotteryData(targetID);

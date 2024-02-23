@@ -45,7 +45,7 @@ public class LotteryCommand extends HasSubcommands
 	private static long createValidBet(SlashCommandInteractionEvent event, long userID, long nowHave)
 	{
 		//此方法同時在BetSubCommand和SlotSubCommand中使用
-		String betString = event.getOption("bet", CommonFunctions.stringDefault, CommonFunctions.getAsString);
+		String betString = event.getOption("bet", "", CommonFunctions.getAsString);
 		//注意指令參數名一定要是bet 也許未來會變 但目前就是bet
 
 		long bet;
@@ -103,7 +103,7 @@ public class LotteryCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			User user = event.getUser();
-			User target = event.getOption("target", () -> user, CommonFunctions.getAsUser); //目標 沒有填預設是自己
+			User target = event.getOption("target", user, CommonFunctions.getAsUser); //目標 沒有填預設是自己
 			if (target.isBot() || target.isSystem())
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.invalid_get")).queue();
@@ -111,7 +111,7 @@ public class LotteryCommand extends HasSubcommands
 			}
 
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (!event.getOption("display_detail", CommonFunctions.booleanDefault, CommonFunctions.getAsBoolean)) //不顯示細節
+			if (!event.getOption("display_detail", false, CommonFunctions.getAsBoolean)) //不顯示細節
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(user.getIdLong(), "lottery.get.query")
 									.formatted(lotteryData.getName(), lotteryData.getBlocks())).queue();
@@ -210,7 +210,7 @@ public class LotteryCommand extends HasSubcommands
 			boolean sameUser = userID == lastUser;
 			lastUser = userID;
 
-			int page = event.getOption("page", () -> 1, CommonFunctions.getAsInt); //page從1開始 預設1 所以不能用CommonFunctions
+			int page = event.getOption("page", 1, CommonFunctions.getAsInt); //page從1開始 預設1
 
 			//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
 			int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;
@@ -255,9 +255,7 @@ public class LotteryCommand extends HasSubcommands
 		{
 			//page 從1開始
 			int startElement = (page - 1) * 10; //開始的那個元素
-			int endElement = startElement + 10; //結束的那個元素
-			if (endElement > forSort.size()) //結束的那個元素比list總長還長
-				endElement = forSort.size();
+			int endElement = Math.min(startElement + 10, forSort.size()); //結束的那個元素 不可比list總長還長
 
 			List<CommandBlocksHandle.LotteryData> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
 			CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
@@ -331,7 +329,6 @@ public class LotteryCommand extends HasSubcommands
 	{
 		private final byte[] until = { 0,0,0 }; //until[0]為小時 [1]為分鐘 [2]為秒
 		private final boolean[] bonus = { false,false,false };
-		private final StringBuilder replyBuilder = new StringBuilder();
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
@@ -345,11 +342,10 @@ public class LotteryCommand extends HasSubcommands
 				return;
 			}
 
-			replyBuilder.setLength(0);
-			replyBuilder.append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY));
-
 			int streak = lotteryData.getStreak(); //連續領取天數
-			replyBuilder.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.streak").formatted(streak));
+
+			StringBuilder replyBuilder = new StringBuilder(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.claimed").formatted(CommandBlocksHandle.LotteryData.DAILY))
+					.append('\n').append(JsonHandle.getStringFromJsonKey(userID, "lottery.daily.streak").formatted(streak));
 			if (lotteryData.tryClaimBonus(bonus)) //有額外
 			{
 				if (bonus[0]) //週
@@ -389,8 +385,6 @@ public class LotteryCommand extends HasSubcommands
 			new EmojiData("ya",             IDs.YA_EMOJI_ID)  //好耶
 		};
 
-		private final StringBuilder replyBuilder = new StringBuilder();
-
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
@@ -416,7 +410,7 @@ public class LotteryCommand extends HasSubcommands
 			if (win) //賭贏
 			{
 				afterBet = Algorithm.safeAdd(nowHave, bet * 49); //機率 1 / 49
-				//應該要先減去籌碼後獲得49倍 * 48才對
+				//應該要先減去籌碼後獲得49倍 也就是 * 48才對
 				//但是最一開始寫錯了 乾脆將錯就錯 改成50倍 當作福利
 				result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.win");
 			}
@@ -426,8 +420,7 @@ public class LotteryCommand extends HasSubcommands
 				result = JsonHandle.getStringFromJsonKey(userID, "lottery.bet.lose");
 			}
 
-			replyBuilder.setLength(0);
-			replyBuilder.append("--------------\n| ")
+			StringBuilder replyBuilder = new StringBuilder("--------------\n| ")
 					.append(slotResults[0].emojiFormat)
 					.append(" | ")
 					.append(slotResults[1].emojiFormat)

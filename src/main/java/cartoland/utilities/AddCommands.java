@@ -321,7 +321,13 @@ public final class AddCommands
 					.addSubcommands(
 						new SubcommandData(RollCommand.MEMBER, "Roll a member")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "抽出一名成員")
-							.setDescriptionLocalization(CHINESE_CHINA, "抽出一名成员"),
+							.setDescriptionLocalization(CHINESE_CHINA, "抽出一名成员")
+							.addOptions(
+								new OptionData(OptionType.ROLE, "role", "Target members will need to have this role", false, false)
+									.setNameLocalization(CHINESE_TAIWAN, "身分組")
+									.setNameLocalization(CHINESE_CHINA, "身份组")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "目標成員需要有這個身分組")
+									.setDescriptionLocalization(CHINESE_CHINA, "目标成员需要有这个身份组")),
 						new SubcommandData(RollCommand.NUMBER, "Roll a number")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "抽出一個數字")
 							.setDescriptionLocalization(CHINESE_CHINA, "抽出一个数字")

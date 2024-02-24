@@ -1,9 +1,6 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
-import cartoland.utilities.FileHandle;
-import cartoland.utilities.IDs;
-import cartoland.utilities.JsonHandle;
+import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -12,7 +9,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -29,8 +25,8 @@ public class IntroduceCommand extends HasSubcommands
 {
 	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";
 
-	@SuppressWarnings({"unchecked","rawtypes"})
-	private static final Map<Long, String> introduction = (FileHandle.deserialize(INTRODUCTION_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, String> introduction = CastToInstance.modifiableMap(FileHandle.deserialize(INTRODUCTION_FILE_NAME));
 
 	public static final String USER = "user";
 

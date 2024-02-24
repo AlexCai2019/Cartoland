@@ -1,42 +1,36 @@
 package cartoland.commands;
 
-import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.JsonHandle;
 import cartoland.utilities.CommonFunctions;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-
-import java.util.Map;
 
 /**
  * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This class implements
- * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
- * of the 1A2B game. This used to be a lambda in {@code CommandUsage}, until 1.3 became an independent file.
+ * {@link ICommand} interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This can be seen as a frontend
+ * of the 1A2B game. This used to be a lambda in {@link cartoland.events.CommandUsage}, until 1.3 became an independent file.
  *
  * @since 1.3
  * @see OneATwoBGame The backend of the 1A2B game.
  * @author Alex Cai
  */
-public class OneATwoBCommand implements ICommand
+public class OneATwoBCommand extends HasSubcommands
 {
-	public static final String START = "start";
-
-	public static final String PLAY = "play";
-
-	private final ICommand startSubcommand;
-	private final ICommand playSubcommand;
 	private static final int MAX_MINUTE = 2;
 	private static final int MAX_GUESSES = 7;
 	private static final byte REWARD = 100;
 
-	public OneATwoBCommand(CommandUsage commandUsage)
+	public static final String START = "start";
+	public static final String PLAY = "play";
+
+	public OneATwoBCommand(IMiniGame.MiniGameMap games)
 	{
-		startSubcommand = event ->
+		super(2);
+		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandUsage.getGames();
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲 還用start
 			{
@@ -49,14 +43,8 @@ public class OneATwoBCommand implements ICommand
 			//沒有在玩遊戲 開始1A2B
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
 			games.put(userID, new OneATwoBGame());
-		};
-		playSubcommand = new PlaySubcommand(commandUsage);
-	}
-
-	@Override
-	public void commandProcess(SlashCommandInteractionEvent event)
-	{
-		(START.equals(event.getSubcommandName()) ? startSubcommand : playSubcommand).commandProcess(event);
+		});
+		subcommands.put(PLAY, new PlaySubcommand(games));
 	}
 
 	/**
@@ -66,19 +54,17 @@ public class OneATwoBCommand implements ICommand
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	private static class PlaySubcommand implements ICommand
+	private static class PlaySubcommand extends GameSubcommand
 	{
-		private final CommandUsage commandCore;
-		private PlaySubcommand(CommandUsage commandUsage)
+		private PlaySubcommand(IMiniGame.MiniGameMap games)
 		{
-			commandCore = commandUsage;
+			super(games);
 		}
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
 			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
 			{

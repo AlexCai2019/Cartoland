@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -26,8 +25,8 @@ public class AdminCommand extends HasSubcommands
 	private static final String TEMP_BAN_SET = "serialize/temp_ban_set.ser";
 
 	//userID為value[0] ban time為value[1] ban guild為value[2]
-	@SuppressWarnings({"unchecked","rawtypes"})
-	public static final Set<long[]> tempBanSet = (FileHandle.deserialize(TEMP_BAN_SET) instanceof HashSet set) ? set : new HashSet<>();
+	@SuppressWarnings("unchecked")
+	public static final Set<long[]> tempBanSet = CastToInstance.modifiableSet(FileHandle.deserialize(TEMP_BAN_SET));
 	public static final byte USER_ID_INDEX = 0;
 	public static final byte BANNED_TIME = 1;
 	public static final byte BANNED_SERVER = 2;

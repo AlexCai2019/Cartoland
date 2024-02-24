@@ -47,14 +47,18 @@ public class QuoteCommand implements ICommand
 		//numbersInLink[1] = "891666028986253322";
 
 		//從創聯中取得頻道
-		Guild cartoland = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
-		if (cartoland == null || cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //結果不是在創聯
-			cartoland = event.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
-		if (cartoland == null) //找不到創聯
+		Guild cartoland, eventGuild = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
+		if (eventGuild == null || eventGuild.getIdLong() != IDs.CARTOLAND_SERVER_ID) //結果不是在創聯
 		{
-			event.reply("Can't get Cartoland server").setEphemeral(true).queue();
-			return; //結束
+			cartoland = event.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
+			if (cartoland == null) //找不到創聯
+			{
+				event.reply("Can't get Cartoland server").setEphemeral(true).queue();
+				return; //結束
+			}
 		}
+		else
+			cartoland = eventGuild;
 
 		//獲取訊息內的頻道 注意ID是String 與慣例的long不同
 		GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);

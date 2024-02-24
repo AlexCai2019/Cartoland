@@ -1,17 +1,14 @@
 package cartoland.commands;
 
-import cartoland.events.CommandUsage;
 import cartoland.mini_games.ConnectFourGame;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.Map;
-
 /**
  * {@code ConnectFourCommand} is an execution when user uses /connect_four command. This class implements
- * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
+ * {@link ICommand} interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This can be seen as a frontend
  * of the Connect-Four game.
  *
  * @author Alex Cai
@@ -19,14 +16,17 @@ import java.util.Map;
  */
 public class ConnectFourCommand extends HasSubcommands
 {
-	public ConnectFourCommand(CommandUsage commandUsage)
+	public static final String START = "start";
+	public static final String PLAY = "play";
+	public static final String BOARD = "board";
+
+	public ConnectFourCommand(IMiniGame.MiniGameMap games)
 	{
 		super(3);
 
-		subcommands.put("start", event ->
+		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandUsage.getGames(); //目前所有人正在玩的遊戲們
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
@@ -41,12 +41,12 @@ public class ConnectFourCommand extends HasSubcommands
 			games.put(userID, newGame);
 		});
 
-		subcommands.put("play", new PlaySubCommand(commandUsage));
+		subcommands.put(PLAY, new PlaySubCommand(games));
 
-		subcommands.put("board", event ->
+		subcommands.put(BOARD, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = commandUsage.getGames().get(userID);
+			IMiniGame playing = games.get(userID);
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/connect_four board
 			{
@@ -72,20 +72,17 @@ public class ConnectFourCommand extends HasSubcommands
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	private static class PlaySubCommand implements ICommand
+	private static class PlaySubCommand extends GameSubcommand
 	{
-		private final CommandUsage commandCore;
-
-		private PlaySubCommand(CommandUsage commandUsage)
+		private PlaySubCommand(IMiniGame.MiniGameMap games)
 		{
-			commandCore = commandUsage;
+			super(games);
 		}
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
 
 			if (playing == null) //沒有在玩任何遊戲

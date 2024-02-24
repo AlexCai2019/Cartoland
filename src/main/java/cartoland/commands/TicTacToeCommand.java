@@ -1,17 +1,14 @@
 package cartoland.commands;
 
-import cartoland.events.CommandUsage;
 import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.TicTacToeGame;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.Map;
-
 /**
  * {@code TicTacToeCommand} is an execution when user uses /tic_tac_toe command. This class implements
- * {@link ICommand} interface, which is for the commands HashMap in {@link CommandUsage}. This can be seen as a frontend
+ * {@link ICommand} interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This can be seen as a frontend
  * of the Tic-Tac-Toe game.
  *
  * @since 2.0
@@ -20,14 +17,17 @@ import java.util.Map;
  */
 public class TicTacToeCommand extends HasSubcommands
 {
-	public TicTacToeCommand(CommandUsage commandUsage)
+	public static final String START = "start";
+	public static final String PLAY = "play";
+	public static final String BOARD = "board";
+
+	public TicTacToeCommand(IMiniGame.MiniGameMap games)
 	{
 		super(3);
 
-		subcommands.put("start", event ->
+		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandUsage.getGames();
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
@@ -44,12 +44,12 @@ public class TicTacToeCommand extends HasSubcommands
 			games.put(userID, newGame);
 		});
 
-		subcommands.put("play", new PlaySubCommand(commandUsage));
+		subcommands.put(PLAY, new PlaySubCommand(games));
 
-		subcommands.put("board", event ->
+		subcommands.put(BOARD, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = commandUsage.getGames().get(userID);
+			IMiniGame playing = games.get(userID);
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe board
 			{
@@ -75,25 +75,20 @@ public class TicTacToeCommand extends HasSubcommands
 	 * @since 2.1
 	 * @author Alex Cai
 	 */
-	public static class PlaySubCommand implements ICommand
+	public static class PlaySubCommand extends GameSubcommand
 	{
-		private final CommandUsage commandCore;
 
-		private PlaySubCommand(CommandUsage commandUsage)
+		private PlaySubCommand(IMiniGame.MiniGameMap games)
 		{
-			commandCore = commandUsage;
+			super(games);
 		}
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			int row = event.getOption("row", 0, CommonFunctions.getAsInt);
-			int column = event.getOption("column", 0, CommonFunctions.getAsInt);
 			long userID = event.getUser().getIdLong();
-			Map<Long, IMiniGame> games = commandCore.getGames();
 			IMiniGame playing = games.get(userID);
 
-			//帶參數
 			if (playing == null) //沒有在玩遊戲 但還是使用了/tic_tac_toe play
 			{
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>")).setEphemeral(true).queue();
@@ -106,6 +101,9 @@ public class TicTacToeCommand extends HasSubcommands
 				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName())).setEphemeral(true).queue();
 				return;
 			}
+
+			int row = event.getOption("row", 0, CommonFunctions.getAsInt);
+			int column = event.getOption("column", 0, CommonFunctions.getAsInt);
 
 			if (!TicTacToeGame.isInBounds(row, column)) //不在範圍內
 			{

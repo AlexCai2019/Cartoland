@@ -1,5 +1,6 @@
 package cartoland.events;
 
+import cartoland.utilities.CastToInstance;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
@@ -14,7 +15,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -36,8 +37,11 @@ public class NewMember extends ListenerAdapter
 			Please read messages in <#%d>, and follow all rules.
 			""".formatted(IDs.READ_ME_CHANNEL_ID, IDs.READ_ME_CHANNEL_ID);
 	private static final String ALL_MEMBERS = "serialize/all_members.ser";
-	@SuppressWarnings({"unchecked","rawtypes"})
-	private static final Set<Long> allMembers = FileHandle.deserialize(ALL_MEMBERS) instanceof HashSet set ? set : new HashSet<>();
+
+	@SuppressWarnings("unchecked")
+	private static final Set<Long> allMembers = CastToInstance.modifiableSet(FileHandle.deserialize(ALL_MEMBERS));
+
+	private static List<Long> allMembersList = Collections.emptyList();
 
 	static
 	{
@@ -46,7 +50,9 @@ public class NewMember extends ListenerAdapter
 
 	public static List<Long> getAllMembersList()
 	{
-		return new ArrayList<>(allMembers);
+		if (allMembersList.size() != allMembers.size())
+			allMembersList = new ArrayList<>(allMembers);
+		return allMembersList;
 	}
 
 	@Override

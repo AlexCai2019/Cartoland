@@ -6,15 +6,14 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public final class AnonymousHandle
 {
 	private static final String PRIVATE_TO_UNDERGROUND_MAP = "serialize/private_to_underground.ser";
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static final Map<Long, Long> privateToUnderground = FileHandle.deserialize(PRIVATE_TO_UNDERGROUND_MAP) instanceof HashMap map ? map : new HashMap<>();
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, Long> privateToUnderground = CastToInstance.modifiableMap(FileHandle.deserialize(PRIVATE_TO_UNDERGROUND_MAP));
 
 	static
 	{

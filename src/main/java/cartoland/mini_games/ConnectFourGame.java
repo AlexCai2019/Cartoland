@@ -55,8 +55,8 @@ public class ConnectFourGame implements IMiniGame
 
 	private void updateBoardString(char symbol, int row, int column)
 	{
-		boardBuilder.setCharAt(4 + CHARACTERS_IN_A_ROW * 2 + //首先排除掉前面的```\n以及上面那兩列
-				row * CHARACTERS_IN_A_ROW * 2 + //在第幾列 就忽略幾列的橫線和棋盤內容
+		boardBuilder.setCharAt(4 + (CHARACTERS_IN_A_ROW << 1) + //首先排除掉前面的```\n以及上面那兩列 (用 << 1 取代 * 2)
+				row * (CHARACTERS_IN_A_ROW << 1) + //在第幾列 就忽略幾列的橫線和棋盤內容 (用 << 1 取代 * 2)
 				4 * column + 1 //每一項都是前一項 + 1 這個等差數列是從1開始的
 				, symbol);
 	}

@@ -3,7 +3,6 @@ package cartoland.events;
 import cartoland.utilities.AnonymousHandle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -12,8 +11,7 @@ public class EditMessage extends ListenerAdapter
 	@Override
 	public void onMessageUpdate(MessageUpdateEvent event)
 	{
-		MessageChannel channel = event.getChannel();
-		if (channel.getType().isGuild()) //不是私訊
+		if (event.isFromGuild()) //不是私訊
 			return; //結束
 
 		Message message = event.getMessage();

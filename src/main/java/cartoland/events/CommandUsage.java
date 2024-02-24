@@ -2,7 +2,6 @@ package cartoland.events;
 
 import cartoland.Cartoland;
 import cartoland.commands.*;
-import cartoland.commands.TicTacToeCommand;
 import cartoland.mini_games.IMiniGame;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.JDA;
@@ -30,14 +29,11 @@ public class CommandUsage extends ListenerAdapter
 	 * The key of this map is the n of a command, and the value is the execution.
 	 */
 	private final Map<String, ICommand> commands = new HashMap<>();
+
 	/**
 	 * The key of this map is the n of a game, and the value is the actual game.
 	 */
-	private final Map<Long, IMiniGame> games = new HashMap<>();
-	public Map<Long, IMiniGame> getGames()
-	{
-		return games;
-	}
+	public final IMiniGame.MiniGameMap games = new IMiniGame.MiniGameMap();
 
 	/**
 	 * 403 images about Megumin.
@@ -147,7 +143,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put(ADMIN, new AdminCommand());
 
 		//one_a_two_b
-		commands.put(ONE_A_TWO_B, new OneATwoBCommand(this));
+		commands.put(ONE_A_TWO_B, new OneATwoBCommand(games));
 
 		//lottery
 		commands.put(LOTTERY, new LotteryCommand());
@@ -156,13 +152,13 @@ public class CommandUsage extends ListenerAdapter
 		commands.put(TRANSFER, new TransferCommand());
 
 		//tic_tac_toe
-		commands.put(TIC_TAC_TOE, new TicTacToeCommand(this));
+		commands.put(TIC_TAC_TOE, new TicTacToeCommand(games));
 
 		//connect_four
-		commands.put(CONNECT_FOUR, new ConnectFourCommand(this));
+		commands.put(CONNECT_FOUR, new ConnectFourCommand(games));
 
 		//light_out
-		commands.put(LIGHT_OUT, new LightOutCommand(this));
+		commands.put(LIGHT_OUT, new LightOutCommand(games));
 	}
 
 	/**

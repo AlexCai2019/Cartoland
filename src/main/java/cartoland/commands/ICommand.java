@@ -1,5 +1,6 @@
 package cartoland.commands;
 
+import cartoland.mini_games.IMiniGame;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.HashMap;
@@ -69,7 +70,7 @@ class HasSubcommands implements ICommand
 {
 	protected final Map<String, ICommand> subcommands; //子指令們
 
-	public HasSubcommands(int initialCapacity)
+	protected HasSubcommands(int initialCapacity)
 	{
 		subcommands = new HashMap<>(initialCapacity);
 	}
@@ -86,5 +87,15 @@ class HasSubcommands implements ICommand
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
 		subcommands.get(event.getSubcommandName()).commandProcess(event); //透過HashMap選擇子指令
+	}
+}
+
+abstract class GameSubcommand implements ICommand
+{
+	protected final IMiniGame.MiniGameMap games;
+
+	protected GameSubcommand(IMiniGame.MiniGameMap games)
+	{
+		this.games = games;
 	}
 }

@@ -29,8 +29,8 @@ public final class CommandBlocksHandle
 	private static final long GAMBLE_ROLE_MIN = 100000L;
 
 	//會有unchecked assignment的警告 but I did it anyway
-	@SuppressWarnings({"rawtypes","unchecked"})
-	private static final Map<Long, LotteryData> lotteryDataMap = (FileHandle.deserialize(LOTTERY_DATA_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>();
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, LotteryData> lotteryDataMap = CastToInstance.modifiableMap(FileHandle.deserialize(LOTTERY_DATA_FILE_NAME));
 
 	public static final List<LotteryData> lotteryDataList = new ArrayList<>(lotteryDataMap.values()); //將map轉換為array list
 	//因為每次修改的是LotteryData的內容 而不是參考本身 所以可以事先建好

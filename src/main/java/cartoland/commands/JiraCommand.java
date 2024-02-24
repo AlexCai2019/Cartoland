@@ -77,37 +77,35 @@ public class JiraCommand implements ICommand
 		EmbedBuilder bugEmbed = new EmbedBuilder()
 				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png") //縮圖為Mojang
 				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
-				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link) //embed標題是[bug ID]bug標題 點了會連結到jira頁面
 
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
-		bugEmbed.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true);
-		bugEmbed.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true);
-		bugEmbed.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
+				.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true)
+				.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true)
+				.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
 
-		Element affectsVersions = issueContent.getElementById("versions-field");
-		int childrenSize; //有幾個版本受到了影響
-		if (affectsVersions != null && (childrenSize = affectsVersions.childrenSize()) != 0) //有版本紀錄
+		Element allAffectsVersions = issueContent.getElementById("versions-field");
+		if (allAffectsVersions != null)
 		{
-			bugEmbed.addField("First affects version", textValue(affectsVersions.child(0)), true);
-			bugEmbed.addField("Last affects version", textValue(affectsVersions.child(childrenSize - 1)), true);
-		}
-		else
-		{
-			bugEmbed.addField("First affects version", "", true);
-			bugEmbed.addField("Last affects version", "", true);
+			Elements affectsVersions = allAffectsVersions.children();
+			//此處不用getFirst()和getLast() 因為first()和last()會在沒有元素時回傳null 而不是擲出NoSuchElementException
+			bugEmbed.addField("First affects version", textValue(affectsVersions.first()), true)
+					.addField("Last affects version", textValue(affectsVersions.last()), true);
 		}
 
-		bugEmbed.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true);
+		bugEmbed.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true)
 
 		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
-		bugEmbed.addField("Created", timeValue(issueContent.getElementById("created-val")), true);
-		bugEmbed.addField("Updated", timeValue(issueContent.getElementById("updated-val")), true);
-		String resolutionDate = timeValue(issueContent.getElementById("resolutiondate-val"));
-		bugEmbed.addField("Resolved", resolutionDate.isEmpty() ? "None" : resolutionDate, true);
+				.addField("Created", timeValue(issueContent.getElementById("created-val")), true)
+				.addField("Updated", timeValue(issueContent.getElementById("updated-val")), true)
+				.addField("Resolved", timeValue(issueContent.getElementById("resolutiondate-val")), true)
 
-		bugEmbed.addField("Reporter", textValue(issueContent.getElementById("reporter-val")), true);
-		bugEmbed.addField("Votes", textValue(issueContent.getElementById("vote-data")), true);
-		bugEmbed.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true);
+				.addField("Reporter", textValue(issueContent.getElementById("reporter-val")), true)
+				.addField("Votes", textValue(issueContent.getElementById("vote-data")), true)
+				.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true);
+
+		Element projectAvatar = issueContent.getElementById("project-avatar");
+		bugEmbed.setFooter(textValue(issueContent.getElementById("project-name-val")), projectAvatar == null ? null : projectAvatar.attr("src"));
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}

@@ -39,8 +39,8 @@ public final class TimerHandle
 	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
 	private static final String BIRTHDAY_ARRAY = "serialize/birthday_array.ser";
 
-	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
-	private static final Map<Long, Short> birthdayMap = (FileHandle.deserialize(BIRTHDAY_MAP) instanceof Map map) ? map : new HashMap<>();
+	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
+	private static final Map<Long, Short> birthdayMap = CastToInstance.modifiableMap(FileHandle.deserialize(BIRTHDAY_MAP));
 	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
 	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[DAYS];
 

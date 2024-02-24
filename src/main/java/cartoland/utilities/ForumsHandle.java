@@ -65,10 +65,10 @@ public final class ForumsHandle
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
 	//https://stackoverflow.com/questions/41778276/casting-from-object-to-arraylist
-	@SuppressWarnings({"unchecked","rawtypes"})
-	private static final Set<Long> idledQuestionForumPosts = FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME) instanceof HashSet set ? set : new HashSet<>();
-	@SuppressWarnings({"unchecked","rawtypes"})
-	private static final Set<Long> hasStartMessageForumPosts = FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME) instanceof HashSet set ? set : new HashSet<>();
+	@SuppressWarnings("unchecked")
+	private static final Set<Long> idledQuestionForumPosts = CastToInstance.modifiableSet(FileHandle.deserialize(IDLED_QUESTIONS_SET_FILE_NAME));
+	@SuppressWarnings("unchecked")
+	private static final Set<Long> hasStartMessageForumPosts = CastToInstance.modifiableSet(FileHandle.deserialize(HAS_START_MESSAGE_FILE_NAME));
 
 	static
 	{

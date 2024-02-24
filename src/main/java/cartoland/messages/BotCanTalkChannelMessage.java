@@ -151,69 +151,68 @@ public class BotCanTalkChannelMessage implements IMessage
 
 		int rawMessageLength = rawMessage.length(); //訊息的字數
 
-		if (rawMessageLength <= 1) //只打一個字或是沒有字 (沒有字代表只有檔案)
-			return; //沒有必要執行下面那些檢測
-
-		if (rawMessageLength == 2) //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
+		switch (rawMessageLength)
 		{
-			String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
-			if (sendStrings != null) //如果找到了
-			{
-				channel.sendMessage(Algorithm.randomElement(sendStrings)).queue();
-				return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
-			}
-		}
-		else if (rawMessageLength == 3) //用字串長度去最佳化 注意這if的區塊中若出現了長度不是3的字串 那這個條件就要修改
-		{
-			if ("lol".equalsIgnoreCase(rawMessage))
-			{
-				channel.sendMessage("LOL").queue();
-				return; //在這之下的if們 全都不可能通過
-			}
+			case 0: //只有檔案或貼圖
+			case 1: //只打一個字
+				return; //沒有必要執行下面那些檢測
 
-			if ("omg".equalsIgnoreCase(rawMessage))
-			{
-				channel.sendMessage("OMG").queue();
-				return; //在這之下的if們 全都不可能通過
-			}
+			case 2: //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
+				String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
+				if (sendStrings != null) //如果找到了
+				{
+					channel.sendMessage(Algorithm.randomElement(sendStrings)).queue();
+					return; //keywords內的字串 沒有一個包含了下面的內容 所以底下的可直接不執行
+				}
+				break;
 
-			if ("owo".equalsIgnoreCase(rawMessage))
-			{
-				channel.sendMessage("OwO").queue();
-				return; //在這之下的if們 全都不可能通過
-			}
+			case 3: //用字串長度去最佳化
+				if ("lol".equalsIgnoreCase(rawMessage))
+				{
+					channel.sendMessage("LOL").queue();
+					return; //在這之下的if們 全都不可能通過
+				}
+				if ("omg".equalsIgnoreCase(rawMessage))
+				{
+					channel.sendMessage("OMG").queue();
+					return; //在這之下的if們 全都不可能通過
+				}
+				if ("owo".equalsIgnoreCase(rawMessage))
+				{
+					channel.sendMessage("OwO").queue();
+					return; //在這之下的if們 全都不可能通過
+				}
+				if ("ouo".equalsIgnoreCase(rawMessage))
+				{
+					channel.sendMessage("OuO").queue();
+					return; //在這之下的if們 全都不可能通過
+				}
+				break;
 
-			if ("ouo".equalsIgnoreCase(rawMessage))
-			{
-				channel.sendMessage("OuO").queue();
-				return; //在這之下的if們 全都不可能通過
-			}
-		}
-		else if (rawMessageLength == 4)
-		{
-			if ("oeur".equalsIgnoreCase(rawMessage) || "芋圓柚子".equals(rawMessage))
-			{
-				channel.sendMessage(
-     			"""
-					阿神的超神奇馬桶可以激發他的無限靈感
-					阿謙和阿神的關係到現在還是非常的不明
-					可愛的小夏狂搶麥最後生氣的都是巧克力
-					誰說阿晋拿下眼鏡之後傲嬌屬性就會轉移
-					阿晋泡麵加上狗子便當
-					再加一顆梅子就可以吃
-					全全的傳說傳了好幾年
-					半半要不要再進化一次呢
-					梅子空姐的廣播跳下飛機後再聽一次
-					丹丹的最強絕技就是永遠保持於狀況外
-					""").queue();
-				return;
-			}
-
-			if ("鬼島交通".equals(rawMessage)) //Added by Champsing
-			{
-				channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
-				return;
-			}
+			case 4: //用字串長度去最佳化
+				if ("oeur".equalsIgnoreCase(rawMessage) || "芋圓柚子".equals(rawMessage))
+				{
+					channel.sendMessage(
+					"""
+						阿神的超神奇馬桶可以激發他的無限靈感
+						阿謙和阿神的關係到現在還是非常的不明
+						可愛的小夏狂搶麥最後生氣的都是巧克力
+						誰說阿晋拿下眼鏡之後傲嬌屬性就會轉移
+						阿晋泡麵加上狗子便當
+						再加一顆梅子就可以吃
+						全全的傳說傳了好幾年
+						半半要不要再進化一次呢
+						梅子空姐的廣播跳下飛機後再聽一次
+						丹丹的最強絕技就是永遠保持於狀況外
+						""").queue();
+					return;
+				}
+				if ("鬼島交通".equals(rawMessage)) //Added by Champsing
+				{
+					channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
+					return;
+				}
+				break;
 		}
 
 		if (rawMessage.contains("惠惠") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()) || rawMessage.contains("めぐみん"))

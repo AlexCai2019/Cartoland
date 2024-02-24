@@ -24,8 +24,8 @@ public final class JsonHandle
 
 	private static final String USERS_FILE_NAME = "serialize/users.ser";
 
-	@SuppressWarnings({"rawtypes","unchecked"})
-	private static final Map<Long, String> users = (FileHandle.deserialize(USERS_FILE_NAME) instanceof HashMap map) ? map : new HashMap<>(); //使用者的語言設定 id為key en, tw 等等的語言字串為value
+	@SuppressWarnings("unchecked")
+	private static final Map<Long, String> users = CastToInstance.modifiableMap(FileHandle.deserialize(USERS_FILE_NAME)); //使用者的語言設定 id為key en, tw 等等的語言字串為value
 	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(7); //語言字串為key 語言檔案為value
 	private static final Map<String, List<String>> commandListMap = new HashMap<>(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
 

@@ -575,7 +575,7 @@ public final class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
 					.addSubcommands(
-						new SubcommandData("start", "Start a game of Tic-Tac-Toe")
+						new SubcommandData(TicTacToeCommand.START, "Start a game of Tic-Tac-Toe")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "開始一場井字遊戲")
 							.setDescriptionLocalization(CHINESE_CHINA, "开始一场井字游戏")
 							.addOptions(
@@ -600,7 +600,7 @@ public final class AddCommands
 										new Command.Choice("Hell", 4)
 											.setNameLocalization(CHINESE_TAIWAN, "地獄")
 											.setNameLocalization(CHINESE_CHINA, "地狱"))),
-						new SubcommandData("play", "Play a game of Tic-Tac-Toe")
+						new SubcommandData(TicTacToeCommand.PLAY, "Play a game of Tic-Tac-Toe")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場井字遊戲")
 							.setDescriptionLocalization(CHINESE_CHINA, "玩一场井字游戏")
 							.addOptions(
@@ -614,17 +614,17 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "直列")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
 									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
-						new SubcommandData("board", "Get the current board")
+						new SubcommandData(TicTacToeCommand.BOARD, "Get the current board")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
 							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
 			Commands.slash(CONNECT_FOUR, "Play a game of Connect Four")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場四子棋")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场四子棋")
 					.addSubcommands(
-						new SubcommandData("start", "Start a game of Connect Four")
+						new SubcommandData(ConnectFourCommand.START, "Start a game of Connect Four")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "開始一場四子棋")
 							.setDescriptionLocalization(CHINESE_CHINA, "开始一场四子棋"),
-						new SubcommandData("play", "Play a game of Connect Four")
+						new SubcommandData(ConnectFourCommand.PLAY, "Play a game of Connect Four")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場四子棋")
 							.setDescriptionLocalization(CHINESE_CHINA, "玩一场四子棋")
 							.addOptions(
@@ -633,7 +633,31 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_CHINA, "直列")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
 									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
-						new SubcommandData("board", "Get the current board")
+						new SubcommandData(ConnectFourCommand.BOARD, "Get the current board")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
+							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
+			Commands.slash(LIGHT_OUT, "Play a game of Light Out")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場關燈遊戲")
+					.setDescriptionLocalization(CHINESE_CHINA, "玩一场关灯游戏")
+					.addSubcommands(
+						new SubcommandData(LightOutCommand.START, "Start a game of Light Out")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "開始一場關燈遊戲")
+							.setDescriptionLocalization(CHINESE_CHINA, "开始一场关灯游戏"),
+						new SubcommandData(LightOutCommand.FLIP, "Flip a slot on board")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "切換棋盤上的一個格子")
+							.setDescriptionLocalization(CHINESE_CHINA, "切换棋盘上的一个格子")
+							.addOptions(
+								new OptionData(OptionType.INTEGER, "row", "The row of the board", true, false)
+									.setNameLocalization(CHINESE_TAIWAN, "橫列")
+									.setNameLocalization(CHINESE_CHINA, "横行")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的橫列")
+									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的横行"),
+								new OptionData(OptionType.INTEGER, "column", "The column of the board", true, false)
+									.setNameLocalization(CHINESE_TAIWAN, "直行")
+									.setNameLocalization(CHINESE_CHINA, "直列")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "棋盤上的直行")
+									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
+						new SubcommandData(LightOutCommand.BOARD, "Get the current board")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
 							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
 

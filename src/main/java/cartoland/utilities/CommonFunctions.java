@@ -7,8 +7,6 @@ import net.dv8tion.jda.api.entities.channel.unions.GuildChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Common lambda functions for use. Including method references in {@link OptionMapping},
@@ -25,16 +23,11 @@ public final class CommonFunctions
 	}
 
 	public static final Function<OptionMapping, Boolean> getAsBoolean = OptionMapping::getAsBoolean;
-	public static final Supplier<Boolean> booleanDefault = () -> Boolean.FALSE;
 	public static final Function<OptionMapping, Integer> getAsInt = OptionMapping::getAsInt;
-	public static final Supplier<Integer> intDefault = () -> 0;
 	public static final Function<OptionMapping, Double> getAsDouble = OptionMapping::getAsDouble;
-	public static final Supplier<Double> doubleDefault = () -> 0.0;
 	public static final Function<OptionMapping, String> getAsString = OptionMapping::getAsString;
-	public static final Supplier<String> stringDefault = () -> "";
 	public static final Function<OptionMapping, User> getAsUser = OptionMapping::getAsUser;
 	public static final Function<OptionMapping, Member> getAsMember = OptionMapping::getAsMember;
 	public static final Function<OptionMapping, GuildChannelUnion> getAsChannel = OptionMapping::getAsChannel;
 	public static final Function<Object, String> stringValue = String::valueOf;
-	public static final Predicate<Message.Attachment> isImage = Message.Attachment::isImage;
 }

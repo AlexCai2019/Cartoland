@@ -19,9 +19,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 public class BirthdayCommand extends HasSubcommands
 {
 	public static final String SET = "set";
-
 	public static final String GET = "get";
-
 	public static final String DELETE = "delete";
 
 	public BirthdayCommand()

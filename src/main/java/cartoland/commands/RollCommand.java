@@ -27,7 +27,16 @@ public class RollCommand extends HasSubcommands
 	{
 		super(2);
 		subcommands.put(MEMBER, new MemberSubcommand());
-		subcommands.put(NUMBER, new NumberSubcommand());
+		subcommands.put(NUMBER, event ->
+		{
+			int minimum = event.getOption("minimum", 0, CommonFunctions.getAsInt);
+			int maximum = event.getOption("maximum", 0, CommonFunctions.getAsInt);
+
+			if (minimum > maximum)
+				event.reply("Minimum mustn't larger than maximum!").queue();
+			else
+				event.reply(Integer.toString(new Random().nextInt(minimum, Algorithm.safeAdd(maximum, 1)))).queue();
+		});
 	}
 
 	private static class MemberSubcommand implements ICommand
@@ -67,23 +76,6 @@ public class RollCommand extends HasSubcommands
 				return;
 			}
 			event.getHook().sendMessage("This guild doesn't have any members!").queue();
-		}
-	}
-
-	private static class NumberSubcommand implements ICommand
-	{
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
-		{
-			int minimum = event.getOption("minimum", 0, CommonFunctions.getAsInt);
-			int maximum = event.getOption("maximum", 0, CommonFunctions.getAsInt);
-
-			if (minimum > maximum)
-			{
-				event.reply("Minimum mustn't larger than maximum!").queue();
-				return;
-			}
-			event.reply(Integer.toString(new Random().nextInt(minimum, Algorithm.safeAdd(maximum, 1)))).queue();
 		}
 	}
 }

@@ -39,21 +39,21 @@ public class JiraCommand implements ICommand
 		event.deferReply().queue(); //延後回覆
 		InteractionHook hook = event.getHook();
 		long userID = event.getUser().getIdLong();
-		String link = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
+		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
 		String bugID; //將會變成像"MC-87984"那樣的bug ID
-		if (jiraLinkRegex.matcher(link).matches()) //https://bugs.mojang.com/browse/MC-87984
-			bugID = link.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (bugIDRegex.matcher(link).matches()) //MC-87984
-			bugID = link.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (numberRegex.matcher(link).matches()) //87984
-			bugID = "MC-" + link;
+		if (jiraLinkRegex.matcher(inputLink).matches()) //https://bugs.mojang.com/browse/MC-87984
+			bugID = inputLink.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+		else if (bugIDRegex.matcher(inputLink).matches()) //MC-87984
+			bugID = inputLink.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+		else if (numberRegex.matcher(inputLink).matches()) //87984
+			bugID = "MC-" + inputLink;
 		else
 		{
 			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
-		link = "https://bugs.mojang.com/browse/" + bugID;
+		String link = "https://bugs.mojang.com/browse/" + bugID;
 
 		Document document; //HTML文件
 

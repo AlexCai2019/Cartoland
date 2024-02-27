@@ -4,8 +4,8 @@ import cartoland.utilities.Algorithm;
 
 public class LightOutGame implements IMiniGame
 {
-	private static final char ON = '⬜';
-	private static final char OFF = '⬛';
+	private static final char ON = '◽';
+	private static final char OFF = '◾';
 	private static final byte ROWS = 5;
 	private static final byte COLUMNS = 5;
 	private static final byte INITIAL_LIGHTS = 5; //初始會點亮的格子
@@ -42,7 +42,12 @@ public class LightOutGame implements IMiniGame
 		Algorithm.shuffle(PLACE_ON); //洗牌 藉此隨機選出要點亮的格子
 		byte light;
 		for (light = 0; light < INITIAL_LIGHTS; light++) //取出前INITIAL_LIGHTS項 作為要點亮的格子
-			board[PLACE_ON[light][0]][PLACE_ON[light][1]] = true; //設為點亮
+		{
+			byte row = PLACE_ON[light][0],
+				column = PLACE_ON[light][1];
+			board[row][column] = true; //設為點亮
+			updateBoardString(ON, row, column);
+		}
 		for (; light < PLACE_ON.length; light++)
 			board[PLACE_ON[light][0]][PLACE_ON[light][1]] = false; //剩下的就設為關閉
 	}

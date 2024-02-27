@@ -24,10 +24,11 @@ public class OneATwoBCommand extends HasSubcommands
 
 	public static final String START = "start";
 	public static final String PLAY = "play";
+	public static final String GIVE_UP = "give_up";
 
 	public OneATwoBCommand(IMiniGame.MiniGameMap games)
 	{
-		super(2);
+		super(3);
 		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
@@ -44,7 +45,28 @@ public class OneATwoBCommand extends HasSubcommands
 			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
 			games.put(userID, new OneATwoBGame());
 		});
+
 		subcommands.put(PLAY, new PlaySubcommand(games));
+
+		subcommands.put(GIVE_UP, event ->
+		{
+			long userID = event.getUser().getIdLong();
+			IMiniGame playing = games.get(userID);
+			if (playing == null)
+			{
+				event.reply("There's no game to gave up!").setEphemeral(true).queue();
+				return;
+			}
+			if (!(playing instanceof OneATwoBGame oneATwoB))
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+						.setEphemeral(true)
+						.queue();
+				return;
+			}
+			games.remove(event.getUser().getIdLong());
+			event.reply("You gave up!\nThe answer is " + oneATwoB.getAnswerString()).queue();
+		});
 	}
 
 	/**

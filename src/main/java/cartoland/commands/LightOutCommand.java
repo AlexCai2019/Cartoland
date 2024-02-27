@@ -11,10 +11,11 @@ public class LightOutCommand extends HasSubcommands
 	public static final String START = "start";
 	public static final String FLIP = "flip";
 	public static final String BOARD = "board";
+	public static final String GIVE_UP = "give_up";
 
 	public LightOutCommand(IMiniGame.MiniGameMap games)
 	{
-		super(3);
+		super(4);
 		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
@@ -27,7 +28,7 @@ public class LightOutCommand extends HasSubcommands
 				return;
 			}
 			LightOutGame newGame = new LightOutGame();
-			event.reply("..." + newGame.getBoard()).queue();
+			event.reply(JsonHandle.getStringFromJsonKey(userID, "light_out.start") + newGame.getBoard()).queue();
 			games.put(userID, newGame);
 		});
 
@@ -40,7 +41,7 @@ public class LightOutCommand extends HasSubcommands
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/light_out board
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</light_out start:...>"))
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</light_out start:1211761952276217856>"))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -49,9 +50,29 @@ public class LightOutCommand extends HasSubcommands
 			//已經有在玩遊戲
 			event.reply(playing instanceof LightOutGame lightOut ? //是在玩井字遊戲
 							lightOut.getBoard() :
-							"...")
+							JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
 					.setEphemeral(true)
 					.queue();
+		});
+
+		subcommands.put(GIVE_UP, event ->
+		{
+			long userID = event.getUser().getIdLong();
+			IMiniGame playing = games.get(userID);
+			if (playing == null)
+			{
+				event.reply("There's no game to gave up!").queue();
+				return;
+			}
+			if (!(playing instanceof LightOutGame lightOut))
+			{
+				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+						.setEphemeral(true)
+						.queue();
+				return;
+			}
+			games.remove(event.getUser().getIdLong());
+			event.reply("You gave up!\n" + lightOut.getBoard()).queue();
 		});
 	}
 
@@ -79,8 +100,8 @@ public class LightOutCommand extends HasSubcommands
 				return;
 			}
 
-			int row = event.getOption("row", 0, CommonFunctions.getAsInt);
-			int column = event.getOption("column", 0, CommonFunctions.getAsInt);
+			int row = event.getOption("row", 1, CommonFunctions.getAsInt) - 1;
+			int column = event.getOption("column", 1, CommonFunctions.getAsInt) - 1;
 
 			if (!LightOutGame.isInBounds(row, column))
 			{

@@ -17,6 +17,9 @@ public final class CastToInstance
 			case HashMap hashMap -> hashMap;
 			case TreeMap treeMap -> treeMap;
 			case EnumMap enumMap -> enumMap;
+			case IdentityHashMap identityHashMap -> identityHashMap;
+			case WeakHashMap weakHashMap -> weakHashMap;
+			case Hashtable hashtable -> hashtable;
 			default -> new HashMap<>();
 		} : new HashMap<>();
 	}

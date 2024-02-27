@@ -1,6 +1,5 @@
 package cartoland.events;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import cartoland.utilities.JsonHandle;
@@ -18,7 +17,6 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -97,16 +95,15 @@ public class ContextMenu extends ListenerAdapter
 						.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
 						.setFooter(channel != null ? channel.getName() : linkAuthorName, null); //訊息的發送頻道
 
-				//選擇連結訊息內的第一張圖片作為embed的圖片
-				//不用add field 沒必要那麼麻煩
-				List<Message.Attachment> attachments = message.getAttachments();
-				if (attachments.isEmpty())
-					embedBuilder.setImage(null);
-				else
-					attachments.stream()
-							.filter(CommonFunctions.isImage)
-							.findFirst()
-							.ifPresent(image -> embedBuilder.setImage(image.getUrl()));
+				//選擇訊息內的第一張圖片作為embed的圖片
+				for (Message.Attachment attachment : message.getAttachments())
+				{
+					if (attachment.isImage())
+					{
+						embedBuilder.setImage(attachment.getUrl());
+						break;
+					}
+				}
 				event.replyEmbeds(embedBuilder.build())
 					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))
 					.queue();

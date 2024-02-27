@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -79,15 +78,14 @@ public class QuoteCommand implements ICommand
 					.setFooter(linkChannel.getName(), null); //訊息的發送頻道
 
 			//選擇連結訊息內的第一張圖片作為embed的圖片
-			//不用add field 沒必要那麼麻煩
-			List<Message.Attachment> attachments = linkMessage.getAttachments();
-			if (attachments.isEmpty())
-				embedBuilder.setImage(null);
-			else
-				attachments.stream()
-						.filter(CommonFunctions.isImage)
-						.findFirst()
-						.ifPresent(imageAttachment -> embedBuilder.setImage(imageAttachment.getUrl()));
+			for (Message.Attachment attachment : linkMessage.getAttachments())
+			{
+				if (attachment.isImage())
+				{
+					embedBuilder.setImage(attachment.getUrl());
+					break;
+				}
+			}
 
 			(event.getOption("mention_author", false, CommonFunctions.getAsBoolean) ? //是否提及訊息作者
 					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention")

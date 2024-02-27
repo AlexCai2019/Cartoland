@@ -461,6 +461,7 @@
 	"connect_four.lose": "You lost...\n",
 	"connect_four.your_move": "Your move:\n",
 	"connect_four.bot_s_move": "Bot's move:\n",
+	"light_out.start": "Start a game of Light Out! Type </light_out flip:1211761952276217856>` <row> <column>` to make a move\n",
 	"archive_thread.already_archived": "This thread is already archived!",
 	"archive_thread.no_permission": "You don't have the permission to archive this thread!",
 	"archive_thread.archived": "%s archived this thread.",

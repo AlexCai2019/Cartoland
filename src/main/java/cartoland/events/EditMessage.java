@@ -14,21 +14,16 @@ public class EditMessage extends ListenerAdapter
 		if (event.isFromGuild()) //不是私訊
 			return; //結束
 
-		Message message = event.getMessage();
-		Long undergroundMessageID = AnonymousHandle.getConnection(message.getIdLong()); //查看有沒有記錄到這則訊息
+		Message dm = event.getMessage(); //私訊
+		Long undergroundMessageID = AnonymousHandle.getConnection(dm.getIdLong()); //查看有沒有記錄到這則訊息
 		if (undergroundMessageID == null) //沒有
 			return; //結束
 		TextChannel[] undergroundChannel = new TextChannel[1];
-		String isValid = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong(), undergroundChannel);
-		if (!isValid.isEmpty())
-		{
-			message.reply(isValid).mentionRepliedUser(false).queue();
-			return;
-		}
-		undergroundChannel[0].retrieveMessageById(undergroundMessageID).queue(unsergroundMessage -> //獲取對應的地下訊息
-		{
-			 unsergroundMessage.editMessage(message.getContentRaw()).queue(); //編輯訊息內文
-			 unsergroundMessage.editMessageAttachments(message.getAttachments()).queue(); //編輯訊息附加物
-		});
+		String errorMessage = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong(), undergroundChannel);
+		if (errorMessage.isEmpty())
+			undergroundChannel[0].retrieveMessageById(undergroundMessageID) //獲取對應的地下訊息
+					.queue(message -> message.editMessage(dm.getContentRaw()).setAttachments(dm.getAttachments()).queue()); //編輯訊息內文和附加物
+		else
+			dm.reply(errorMessage).mentionRepliedUser(false).queue();
 	}
 }

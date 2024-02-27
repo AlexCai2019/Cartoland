@@ -61,8 +61,8 @@ public class TicTacToeCommand extends HasSubcommands
 
 			//已經有在玩遊戲
 			event.reply(playing instanceof TicTacToeGame ticTacToe ? //是在玩井字遊戲
-								ticTacToe.getBoard() :
-								JsonHandle.getStringFromJsonKey(userID, "tic_tac_toe.playing_another_game").formatted(playing.gameName()))
+							ticTacToe.getBoard() :
+							JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
 					.setEphemeral(true)
 					.queue();
 		});

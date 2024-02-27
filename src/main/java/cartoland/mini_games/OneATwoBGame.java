@@ -81,4 +81,9 @@ public class OneATwoBGame implements IMiniGame
 	{
 		return guesses;
 	}
+
+	public String getAnswerString()
+	{
+		return Arrays.toString(answer);
+	}
 }

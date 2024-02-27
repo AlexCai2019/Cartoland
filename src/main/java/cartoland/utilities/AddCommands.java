@@ -92,6 +92,8 @@ public final class AddCommands
 					.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请链接"),
 
 			Commands.slash(HELP, "Get help with bot commands")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得機器人指令的介紹")
+					.setDescriptionLocalization(CHINESE_CHINA, "获得机器人指令的介绍")
 					.addOptions(
 						new OptionData(OptionType.STRING, "help_name", "The command you want help with", false, false)
 							.setDescriptionLocalization(CHINESE_TAIWAN, "想確認的指令")
@@ -508,7 +510,10 @@ public final class AddCommands
 									.setNameLocalization(CHINESE_TAIWAN, "答案")
 									.setNameLocalization(CHINESE_CHINA, "答案")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "你認為的答案")
-									.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案"))),
+									.setDescriptionLocalization(CHINESE_CHINA, "你认为的答案")),
+						new SubcommandData(OneATwoBCommand.GIVE_UP, "Give up the game")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "放棄遊戲")
+							.setDescriptionLocalization(CHINESE_CHINA, "放弃游戏")),
 			Commands.slash(LOTTERY, "Play the lottery game")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "抽獎")
 					.setDescriptionLocalization(CHINESE_CHINA, "抽奖")
@@ -659,7 +664,10 @@ public final class AddCommands
 									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
 						new SubcommandData(LightOutCommand.BOARD, "Get the current board")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
-							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
+							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘"),
+						new SubcommandData(LightOutCommand.GIVE_UP, "Give up the game")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "放棄遊戲")
+							.setDescriptionLocalization(CHINESE_CHINA, "放弃游戏")),
 
 			Commands.message(RAW_TEXT)
 					.setNameLocalization(CHINESE_TAIWAN, "原始文字")

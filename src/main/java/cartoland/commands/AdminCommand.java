@@ -109,25 +109,25 @@ public class AdminCommand extends HasSubcommands
 
 			if (!member.hasPermission(Permission.MODERATE_MEMBERS))
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_permission")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.no_permission")).setEphemeral(true).queue();
 				return;
 			}
 
 			Member target = event.getOption("target", CommonFunctions.getAsMember); //要被禁言的目標
 			if (target == null) //找不到要被禁言的成員
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.no_member")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.no_member")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.can_t_owner")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.can_t_owner")).setEphemeral(true).queue();
 				return;
 			}
 			if (target.isTimedOut()) //已經被禁言了
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.already_timed_out")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.already_timed_out")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -149,22 +149,22 @@ public class AdminCommand extends HasSubcommands
 
 			if (durationMillis <= 0) //不能負時間
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.duration_must_be_positive")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.duration_must_be_positive")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (durationMillis > MAX_TIME_OUT_LENGTH_MILLIS) //不能禁言超過28天
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.mute.too_long").formatted(Member.MAX_TIME_OUT_LENGTH)).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.mute.too_long", Member.MAX_TIME_OUT_LENGTH)).setEphemeral(true).queue();
 				return;
 			}
 
-			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
-			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getStringFromJsonKey(userID, "admin.mute.success")
-					.formatted(target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000));
+			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getString(userID, "admin.unit_" + unit);
+			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getString(userID, "admin.mute.success",
+					target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000));
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
 			if (reason != null) //有理由
-				replyStringBuilder.append(JsonHandle.getStringFromJsonKey(userID, "admin.mute.reason").formatted(reason)); //加上理由
+				replyStringBuilder.append(JsonHandle.getString(userID, "admin.mute.reason", reason)); //加上理由
 
 			event.reply(replyStringBuilder.toString()).queue();
 			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
@@ -194,19 +194,19 @@ public class AdminCommand extends HasSubcommands
 
 			if (!member.hasPermission(Permission.BAN_MEMBERS))
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_permission")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.temp_ban.no_permission")).setEphemeral(true).queue();
 				return;
 			}
 
 			Member target = event.getOption("target", CommonFunctions.getAsMember);
 			if (target == null)
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.no_member")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.temp_ban.no_member")).setEphemeral(true).queue();
 				return;
 			}
 			if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.can_t_owner")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.temp_ban.can_t_owner")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -229,18 +229,18 @@ public class AdminCommand extends HasSubcommands
 
 			if (durationHours < 1L) //時間不能小於一小時
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.duration_too_short")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.temp_ban.duration_too_short")).setEphemeral(true).queue();
 				return;
 			}
 
-			String bannedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
-			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.success")
-					.formatted(target.getAsMention(), bannedTime, System.currentTimeMillis() / 1000 + durationHours * 60 * 60)); //直到<t:> 以秒為單位
+			String bannedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getString(userID, "admin.unit_" + unit);
+			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getString(userID, "admin.temp_ban.success",
+					target.getAsMention(), bannedTime, System.currentTimeMillis() / 1000 + durationHours * 60 * 60)); //直到<t:> 以秒為單位
 			//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)
 
 			String reason = event.getOption("reason", CommonFunctions.getAsString);
 			if (reason != null)
-				replyStringBuilder.append(JsonHandle.getStringFromJsonKey(userID, "admin.temp_ban.reason").formatted(reason));
+				replyStringBuilder.append(JsonHandle.getString(userID, "admin.temp_ban.reason", reason));
 
 			event.reply(replyStringBuilder.toString()).queue(); //回覆
 
@@ -280,13 +280,13 @@ public class AdminCommand extends HasSubcommands
 
 			if (!member.hasPermission(Permission.MANAGE_CHANNEL))
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.no_permission")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.no_permission")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof ISlowmodeChannel channel)) //不是可以設慢速模式的頻道
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.wrong_channel")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.wrong_channel")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -294,7 +294,7 @@ public class AdminCommand extends HasSubcommands
 			float time = (float) event.getOption("time", 0.0, CommonFunctions.getAsDouble).doubleValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -311,16 +311,16 @@ public class AdminCommand extends HasSubcommands
 			});
 			if (timeSecond > ISlowmodeChannel.MAX_SLOWMODE) //不能超過6小時 21600秒
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.too_long").formatted(ISlowmodeChannel.MAX_SLOWMODE / (60 * 60)))
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.too_long", ISlowmodeChannel.MAX_SLOWMODE / (60 * 60)))
 						.setEphemeral(true).queue();
 				return;
 			}
 
-			String slowTime = cleanFPString(Float.toString(time)) + ' ' + JsonHandle.getStringFromJsonKey(userID, "admin.unit_" + unit);
+			String slowTime = cleanFPString(Float.toString(time)) + ' ' + JsonHandle.getString(userID, "admin.unit_" + unit);
 			if (timeSecond > 0)
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.success").formatted(channel.getAsMention(), slowTime)).queue();
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.success", channel.getAsMention(), slowTime)).queue();
 			else //一定是等於0 前面過濾掉小於0的情況了
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "admin.slow_mode.cancel").formatted(channel.getAsMention())).queue();
+				event.reply(JsonHandle.getString(userID, "admin.slow_mode.cancel", channel.getAsMention())).queue();
 			channel.getManager().setSlowmode(timeSecond).queue(); //設定慢速時間
 		}
 	}

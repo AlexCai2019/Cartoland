@@ -50,7 +50,7 @@ public class JiraCommand implements ICommand
 			bugID = "MC-" + inputLink;
 		else
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.invalid_link")).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
 		String link = "https://bugs.mojang.com/browse/" + bugID;
@@ -63,14 +63,14 @@ public class JiraCommand implements ICommand
 		}
 		catch (IOException e)
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_bug").formatted(bugID)).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", bugID)).setEphemeral(true).queue();
 			return;
 		}
 
 		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 		if (issueContent == null) //如果不存在id為issue-content的標籤
 		{
-			hook.sendMessage(JsonHandle.getStringFromJsonKey(userID, "jira.no_issue")).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.no_issue")).setEphemeral(true).queue();
 			return;
 		}
 

@@ -38,19 +38,19 @@ public class ClickedButton extends ListenerAdapter
 				ThreadChannel channel = (ThreadChannel) event.getChannel();
 				if (channel.isArchived())
 				{
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.already_archived")).setEphemeral(true).queue();
+					event.reply(JsonHandle.getString(userID, "archive_thread.already_archived")).setEphemeral(true).queue();
 					return;
 				}
 
 				Member member = event.getMember();
 				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong())) //獲取失敗 或 沒有權限
 				{
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.no_permission")).setEphemeral(true).queue();
+					event.reply(JsonHandle.getString(userID, "archive_thread.no_permission")).setEphemeral(true).queue();
 					return;
 				}
 
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "archive_thread.archived")
-									.formatted(member.getEffectiveName())).complete(); //complete 才不會導致討論串被關了後才回覆
+				event.reply(JsonHandle.getString(userID, "archive_thread.archived",
+						member.getEffectiveName())).complete(); //complete 才不會導致討論串被關了後才回覆
 				channel.getManager().setArchived(true).queue();
 			}
 
@@ -61,13 +61,13 @@ public class ClickedButton extends ListenerAdapter
 				Member member = event.getMember();
 				if (member == null || (!member.hasPermission(Permission.MANAGE_THREADS) && member.getIdLong() != channel.getOwnerIdLong())) //獲取失敗 或 沒有權限
 				{
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "rename_thread.no_permission")).setEphemeral(true).queue();
+					event.reply(JsonHandle.getString(userID, "rename_thread.no_permission")).setEphemeral(true).queue();
 					return;
 				}
 
 				newTitleInputBuilder.setValue(channel.getName());
 				event.replyModal(
-						Modal.create(ReceiveModal.NEW_TITLE_MODAL_ID, JsonHandle.getStringFromJsonKey(userID, "rename_thread.set_new_thread_title"))
+						Modal.create(ReceiveModal.NEW_TITLE_MODAL_ID, JsonHandle.getString(userID, "rename_thread.set_new_thread_title"))
 								.addComponents(ActionRow.of(newTitleInputBuilder.build()))
 								.build()).queue(); //如果Modal可以事先建好就好了
 			}

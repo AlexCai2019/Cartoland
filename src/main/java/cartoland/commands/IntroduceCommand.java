@@ -48,7 +48,7 @@ public class IntroduceCommand extends HasSubcommands
 			User user = event.getUser();
 			User target = event.getOption("user", user, CommonFunctions.getAsUser); //沒有填 預設是自己
 
-			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getStringFromJsonKey(user.getIdLong(), "introduce.user.no_info")))
+			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getString(user.getIdLong(), "introduce.user.no_info")))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -56,7 +56,7 @@ public class IntroduceCommand extends HasSubcommands
 		subcommands.put("delete", event ->
 		{
 			long userID = event.getUser().getIdLong();
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+			event.reply(JsonHandle.getString(userID, "introduce.update.delete")).queue();
 			introduction.remove(userID); //刪除自我介紹
 		});
 	}
@@ -94,14 +94,14 @@ public class IntroduceCommand extends HasSubcommands
 			String content = event.getOption("content", "", CommonFunctions.getAsString);
 			if (content.isEmpty()) //空的代表刪除
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.delete")).queue();
+				event.reply(JsonHandle.getString(userID, "introduce.update.delete")).queue();
 				introduction.remove(userID); //刪除自我介紹
 				return;
 			}
 
 			if (!linkRegex.matcher(content).matches()) //如果內容不是創聯群組連結
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue();
+				event.reply(JsonHandle.getString(userID, "introduce.update.update")).queue();
 				updateIntroduction(userID, content);
 				return;
 			}
@@ -127,14 +127,14 @@ public class IntroduceCommand extends HasSubcommands
 			GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);
 			if (linkChannel == null) //找不到訊息內的頻道
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_channel")).queue();
+				event.reply(JsonHandle.getString(userID, "introduce.update.no_channel")).queue();
 				return;
 			}
 
 			//從頻道中取得訊息 注意ID是String 與慣例的long不同
 			linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
+				event.reply(JsonHandle.getString(userID, "introduce.update.update")).queue(); //越早回覆越好 以免超過三秒
 				List<Message.Attachment> attachments = linkMessage.getAttachments(); //附件
 				String introductionString; //介紹文字
 				if (attachments.isEmpty()) //如果沒有附件 這是比較常見的情形
@@ -149,7 +149,7 @@ public class IntroduceCommand extends HasSubcommands
 				updateIntroduction(linkMessage.getAuthor().getIdLong(), introductionString); //更新介紹
 			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "introduce.update.no_message")).queue();
+				event.reply(JsonHandle.getString(userID, "introduce.update.no_message")).queue();
 				updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
 			}));
 		}

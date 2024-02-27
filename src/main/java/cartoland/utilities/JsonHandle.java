@@ -39,7 +39,7 @@ public final class JsonHandle
 
 	public static String command(long userID, String commandName)
 	{
-		StringBuilder builder = new StringBuilder(getStringFromJsonKey(userID, commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
+		StringBuilder builder = new StringBuilder(getString(userID, commandName + ".begin")); //開頭 注意每個語言檔的指令裡一定要有.begin 否則會出現"null"
 		JSONArray dotListArray = englishFile.getJSONArray(commandName + ".list"); //中間的資料 注意每個語言檔的指令裡一定要有.list 否則會擲出JSONException
 		int dotListLength = dotListArray.length();
 		if (dotListLength != 0) //建立回覆字串
@@ -52,12 +52,12 @@ public final class JsonHandle
 				builder.append(", ");
 			}
 		}
-		return builder.append(getStringFromJsonKey(userID, commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會出現"null"
+		return builder.append(getString(userID, commandName + ".end")).toString(); //結尾 注意每個語言檔的指令裡一定要有.end 否則會出現"null"
 	}
 
 	public static String command(long userID, String commandName, String argument)
 	{
-		String result = getStringFromJsonKey(userID, commandName + ".name." + argument);
+		String result = getString(userID, commandName + ".name." + argument);
 		if ("lang".equals(commandName)) //如果使用的是/lang指令(或/language)
 		{
 			users.put(userID, argument); //更改語言
@@ -65,7 +65,7 @@ public final class JsonHandle
 		}
 
 		//"null"字串 代表獲取失敗 不用擔心耗效能 有字串池在
-		return "null".equals(result) ? getStringFromJsonKey(userID, commandName + ".fail") : result; //注意每個語言檔的指令裡一定要有.fail 否則會出現"null"
+		return "null".equals(result) ? getString(userID, commandName + ".fail") : result; //注意每個語言檔的指令裡一定要有.fail 否則會出現"null"
 	}
 
 	public static List<String> commandList(String commandName)
@@ -106,7 +106,7 @@ public final class JsonHandle
 	 * @since 1.4
 	 * @author Alex Cai
 	 */
-	public static String getStringFromJsonKey(long userID, String key)
+	public static String getString(long userID, String key)
 	{
 		//程式設計原則 make the common case fast
 		//這個函式還能再最佳化嗎?
@@ -135,5 +135,17 @@ public final class JsonHandle
 			else //並不是以&開頭
 				return result; //result就是最終找到的結果了 直接結束 注意若沒找到 會回傳內容為"null"的字串
 		}
+	}
+
+	public static String getString(long userID, String key, Object with)
+	{
+		String result = getString(userID, key);
+		return with == null ? result : result.formatted(with);
+	}
+
+	public static String getString(long userID, String key, Object... withs)
+	{
+		String result = getString(userID, key);
+		return withs == null ? result : result.formatted(withs);
 	}
 }

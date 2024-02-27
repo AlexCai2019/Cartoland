@@ -36,7 +36,7 @@ public class QuoteCommand implements ICommand
 
 		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.invalid_link")).setEphemeral(true).queue();
+			event.reply(JsonHandle.getString(userID, "quote.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
 
@@ -63,7 +63,7 @@ public class QuoteCommand implements ICommand
 		GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);
 		if (linkChannel == null)
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_channel")).setEphemeral(true).queue();
+			event.reply(JsonHandle.getString(userID, "quote.no_channel")).setEphemeral(true).queue();
 			return;
 		}
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同
@@ -88,10 +88,10 @@ public class QuoteCommand implements ICommand
 			}
 
 			(event.getOption("mention_author", false, CommonFunctions.getAsBoolean) ? //是否提及訊息作者
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.mention")
-										.formatted(user.getEffectiveName(), linkAuthor.getAsMention())).addEmbeds(embedBuilder.build()) : //提及訊息作者
+					event.reply(JsonHandle.getString(userID, "quote.mention",
+							user.getEffectiveName(), linkAuthor.getAsMention())).addEmbeds(embedBuilder.build()) : //提及訊息作者
 					event.replyEmbeds(embedBuilder.build())) //不提及訊息作者
-				.addActionRow(Button.link(link, JsonHandle.getStringFromJsonKey(userID, "quote.jump_message"))).queue();
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getStringFromJsonKey(userID, "quote.no_message")).setEphemeral(true).queue()));
+				.addActionRow(Button.link(link, JsonHandle.getString(userID, "quote.jump_message"))).queue();
+		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
 	}
 }

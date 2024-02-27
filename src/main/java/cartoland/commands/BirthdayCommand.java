@@ -35,21 +35,20 @@ public class BirthdayCommand extends HasSubcommands
 			long userID = user.getIdLong();
 			if (birthday == null)
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.no_set").formatted(target.getEffectiveName())).queue();
+				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
 				return;
 			}
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.get.set_on")
-								.formatted(
-										target.getEffectiveName(),
-										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + birthday[0]),
-										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + birthday[1])))
+			event.reply(JsonHandle.getString(userID, "birthday.get.set_on",
+							target.getEffectiveName(),
+							JsonHandle.getString(userID, "birthday.month_" + birthday[0]),
+							JsonHandle.getString(userID, "birthday.date_" + birthday[1])))
 						.queue();
 		});
 		subcommands.put(DELETE, event ->
 		{
 			long userID = event.getUser().getIdLong();
 			TimerHandle.deleteBirthday(userID);
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.delete")).queue();
+			event.reply(JsonHandle.getString(userID, "birthday.delete")).queue();
 		});
 	}
 
@@ -71,29 +70,27 @@ public class BirthdayCommand extends HasSubcommands
 			int date = event.getOption("date", 1, CommonFunctions.getAsInt);
 			if (month < 1 || month > 12) //月份不在1 ~ 12的區間
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (date < 1 || date > 31) //日期不在1 ~ 31的區間
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_date")).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_date")).setEphemeral(true).queue();
 				return;
 			}
 
 			if (isWrongDate(month, date)) //如果日期對不上月份 例如2月30日、4月31日等
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.wrong_date_in_month")
-									.formatted(
-											JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + month),
-											JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + date))).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_date_in_month",
+						JsonHandle.getString(userID, "birthday.month_" + month),
+						JsonHandle.getString(userID, "birthday.date_" + date))).setEphemeral(true).queue();
 				return;
 			}
 
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "birthday.set.result")
-								.formatted(
-										JsonHandle.getStringFromJsonKey(userID, "birthday.month_" + month),
-										JsonHandle.getStringFromJsonKey(userID, "birthday.date_" + date))).queue();
+			event.reply(JsonHandle.getString(userID, "birthday.set.result",
+					JsonHandle.getString(userID, "birthday.month_" + month),
+					JsonHandle.getString(userID, "birthday.date_" + date))).queue();
 			TimerHandle.setBirthday(userID, month, date);
 		}
 

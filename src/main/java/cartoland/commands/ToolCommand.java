@@ -83,7 +83,7 @@ public class ToolCommand extends HasSubcommands
 			}
 			else //不是一個合法的UUID字串
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
+				event.reply(JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
 				return;
 			}
 
@@ -96,7 +96,7 @@ public class ToolCommand extends HasSubcommands
 			};
 
 			event.reply("UUID: `" + dash + "`\n" +
-								"UUID (" + JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
+								"UUID (" + JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
 								"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 		}
 	}
@@ -131,7 +131,7 @@ public class ToolCommand extends HasSubcommands
 			uuidStrings[4] = temp.substring(4) + String.format("%08x", uuidArray[3]);
 
 			event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
-								"UUID(" + JsonHandle.getStringFromJsonKey(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
+								"UUID(" + JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
 								"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
 		}
 	}
@@ -166,7 +166,7 @@ public class ToolCommand extends HasSubcommands
 				argbTemp = argbColors[i];
 				if (notInRange(rgbaTemp) || notInRange(argbTemp))
 				{
-					event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.wrong_range")).queue();
+					event.reply(JsonHandle.getString(userID, "tool.color_rgba.wrong_range")).queue();
 					return;
 				}
 
@@ -176,8 +176,8 @@ public class ToolCommand extends HasSubcommands
 				rgb += rgbaTemp << offset; //舉例 如果是13,24,247 那麼作為紅色的13往左推16 bits 綠色是24左推8bits 藍色是247左推0 結果是#0D18F7
 			}
 
-			String decimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.decimal");
-			String hexadecimal = JsonHandle.getStringFromJsonKey(userID, "tool.color_rgba.hexadecimal");
+			String decimal = JsonHandle.getString(userID, "tool.color_rgba.decimal");
+			String hexadecimal = JsonHandle.getString(userID, "tool.color_rgba.hexadecimal");
 
 			event.reply("RGB: `" + Arrays.toString(rgbColors) + "`\n" +
 								"RGB(" + decimal + "): `" + rgb + "`\n" +
@@ -226,7 +226,7 @@ public class ToolCommand extends HasSubcommands
 				rgbaInput = Long.parseLong(rgbString.substring(1), 16);//像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 			else
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.wrong_argument")).queue();
+				event.reply(JsonHandle.getString(userID, "tool.color_integer.wrong_argument")).queue();
 				return;
 			}
 			long rgba = Math.min(rgbaInput, 0xFFFF_FFFFL);
@@ -236,10 +236,10 @@ public class ToolCommand extends HasSubcommands
 			long[] colorsLong = { rgba >> 24, (rgba >> 16) & 255, (rgba >> 8) & 255, rgba & 255 };
 			float[] colorsDouble = { colorsLong[0] * DIVIDE_255, colorsLong[1] * DIVIDE_255, colorsLong[2] * DIVIDE_255, colorsLong[3] * DIVIDE_255 };
 
-			event.reply("RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.integer") + "): `" + Arrays.toString(colorsLong) + "`\n" +
-								"RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.float") + "):`" + Arrays.toString(colorsDouble) + "`\n" +
-								"RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
-								"RGBA / ARGB: (" + JsonHandle.getStringFromJsonKey(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
+			event.reply("RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.integer") + "): `" + Arrays.toString(colorsLong) + "`\n" +
+								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.float") + "):`" + Arrays.toString(colorsDouble) + "`\n" +
+								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
+								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
 		}
 	}
 

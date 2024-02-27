@@ -105,7 +105,7 @@ public class ContextMenu extends ListenerAdapter
 					}
 				}
 				event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getStringFromJsonKey(userID, "quote.jump_message")))
+					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message")))
 					.queue();
 			}
 

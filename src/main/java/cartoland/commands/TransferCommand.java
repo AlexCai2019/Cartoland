@@ -34,14 +34,14 @@ public class TransferCommand implements ICommand
 		}
 		if (target.isBot() || target.isSystem()) //是機器人或系統
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_user")).queue(); //不能轉帳
+			event.reply(JsonHandle.getString(userID, "transfer.wrong_user")).queue(); //不能轉帳
 			return;
 		}
 
 		long targetID = target.getIdLong();
 		if (userID == targetID)
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.self_transfer")).queue();
+			event.reply(JsonHandle.getString(userID, "transfer.self_transfer")).queue();
 			return;
 		}
 
@@ -59,7 +59,7 @@ public class TransferCommand implements ICommand
 			short percentage = Short.parseShort(transferAmountString.substring(0, transferAmountString.length() - 1));
 			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_percent").formatted(transferAmountString)).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "transfer.wrong_percent", transferAmountString)).setEphemeral(true).queue();
 				return;
 			}
 			transferAmount = nowHave * percentage / 100;
@@ -70,24 +70,24 @@ public class TransferCommand implements ICommand
 			transferAmount = nowHave >> 1;
 		else //都不是
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).setEphemeral(true).queue(); //格式錯誤
+			event.reply(JsonHandle.getString(userID, "transfer.wrong_argument")).setEphemeral(true).queue(); //格式錯誤
 			return;
 		}
 
 		if (transferAmount == 0L) //不能轉0
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.wrong_argument")).queue();
+			event.reply(JsonHandle.getString(userID, "transfer.wrong_argument")).queue();
 			return;
 		}
 
 		if (nowHave < transferAmount) //不夠轉
 		{
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.not_enough").formatted(transferAmount, nowHave)).queue();
+			event.reply(JsonHandle.getString(userID, "transfer.not_enough", transferAmount, nowHave)).queue();
 			return;
 		}
 
 		long afterHave = nowHave - transferAmount;
-		event.reply(JsonHandle.getStringFromJsonKey(userID, "transfer.success").formatted(transferAmount, target.getEffectiveName(), afterHave)).queue();
+		event.reply(JsonHandle.getString(userID, "transfer.success", transferAmount, target.getEffectiveName(), afterHave)).queue();
 
 		targetData.addBlocks(transferAmount);
 		myData.setBlocks(afterHave);

@@ -35,14 +35,14 @@ public class OneATwoBCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲 還用start
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
 						.setEphemeral(true)
 						.queue();
 				return;
 			}
 
 			//沒有在玩遊戲 開始1A2B
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.start")).queue();
+			event.reply(JsonHandle.getString(userID, "one_a_two_b.start")).queue();
 			games.put(userID, new OneATwoBGame());
 		});
 
@@ -59,7 +59,7 @@ public class OneATwoBCommand extends HasSubcommands
 			}
 			if (!(playing instanceof OneATwoBGame oneATwoB))
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -90,7 +90,7 @@ public class OneATwoBCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</tic_tac_toe start:1123462079546937485>"))
+				event.reply(JsonHandle.getString(userID, "mini_game.not_playing", "</tic_tac_toe start:1123462079546937485>"))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -99,7 +99,7 @@ public class OneATwoBCommand extends HasSubcommands
 			//已經有在玩遊戲
 			if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -115,7 +115,7 @@ public class OneATwoBCommand extends HasSubcommands
 			int[] ab = oneATwoB.calculateAAndB(answer); //如果是null 代表答案不是獨一無二的數字
 			if (ab == null)
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.not_unique").formatted(OneATwoBGame.ANSWER_LENGTH))
+				event.reply(JsonHandle.getString(userID, "one_a_two_b.not_unique", OneATwoBGame.ANSWER_LENGTH))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -131,12 +131,12 @@ public class OneATwoBCommand extends HasSubcommands
 			//猜出ANSWER_LENGTH個A 遊戲結束
 			long second = oneATwoB.getTimePassed();
 			int guesses = oneATwoB.getGuesses();
-			String replyString = JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.game_over").formatted(shouldReply, answer, second / 60, second % 60, guesses);
+			String replyString = JsonHandle.getString(userID, "one_a_two_b.game_over", shouldReply, answer, second / 60, second % 60, guesses);
 
 			if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES) //如果在2分鐘內猜出來 且不大於7次
 			{
 				//因為許多時候並不會需要進來這個區塊 所以不必用StringBuilder 更為簡便的+=即可
-				replyString += JsonHandle.getStringFromJsonKey(userID, "one_a_two_b.reward").formatted(MAX_MINUTE, MAX_GUESSES, REWARD);
+				replyString += JsonHandle.getString(userID, "one_a_two_b.reward", MAX_MINUTE, MAX_GUESSES, REWARD);
 				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD); //獎勵REWARD顆指令方塊
 			}
 

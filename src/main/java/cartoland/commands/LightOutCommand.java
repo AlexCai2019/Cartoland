@@ -28,7 +28,7 @@ public class LightOutCommand extends HasSubcommands
 				return;
 			}
 			LightOutGame newGame = new LightOutGame();
-			event.reply(JsonHandle.getStringFromJsonKey(userID, "light_out.start") + newGame.getBoard()).queue();
+			event.reply(JsonHandle.getString(userID, "light_out.start") + newGame.getBoard()).queue();
 			games.put(userID, newGame);
 		});
 
@@ -41,7 +41,7 @@ public class LightOutCommand extends HasSubcommands
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/light_out board
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.not_playing").formatted("</light_out start:1211761952276217856>"))
+				event.reply(JsonHandle.getString(userID, "mini_game.not_playing", "</light_out start:1211761952276217856>"))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -50,7 +50,7 @@ public class LightOutCommand extends HasSubcommands
 			//已經有在玩遊戲
 			event.reply(playing instanceof LightOutGame lightOut ? //是在玩井字遊戲
 							lightOut.getBoard() :
-							JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+							JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -66,7 +66,7 @@ public class LightOutCommand extends HasSubcommands
 			}
 			if (!(playing instanceof LightOutGame lightOut))
 			{
-				event.reply(JsonHandle.getStringFromJsonKey(userID, "mini_game.playing_another_game").formatted(playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
 						.setEphemeral(true)
 						.queue();
 				return;

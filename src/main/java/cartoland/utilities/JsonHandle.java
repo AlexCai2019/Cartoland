@@ -137,12 +137,6 @@ public final class JsonHandle
 		}
 	}
 
-	public static String getString(long userID, String key, Object with)
-	{
-		String result = getString(userID, key);
-		return with == null ? result : result.formatted(with);
-	}
-
 	public static String getString(long userID, String key, Object... withs)
 	{
 		String result = getString(userID, key);

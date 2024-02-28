@@ -30,7 +30,7 @@ public class ConnectFourCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -59,7 +59,7 @@ public class ConnectFourCommand extends HasSubcommands
 			//已經有在玩遊戲
 			event.reply(playing instanceof ConnectFourGame connectFour ? //是在玩四子棋
 							connectFour.getBoard() :
-							JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+							JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -95,7 +95,7 @@ public class ConnectFourCommand extends HasSubcommands
 
 			if (!(playing instanceof ConnectFourGame connectFour)) //如果不是在玩四子棋卻還用了指令
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName())).setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name"))).setEphemeral(true).queue();
 				return;
 			}
 

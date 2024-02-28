@@ -35,7 +35,7 @@ public class OneATwoBCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲 還用start
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -54,18 +54,18 @@ public class OneATwoBCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing == null)
 			{
-				event.reply("There's no game to gave up!").setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "mini_game.no_game_gave_up")).setEphemeral(true).queue();
 				return;
 			}
 			if (!(playing instanceof OneATwoBGame oneATwoB))
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
 			}
 			games.remove(event.getUser().getIdLong());
-			event.reply("You gave up!\nThe answer is " + oneATwoB.getAnswerString()).queue();
+			event.reply(JsonHandle.getString(userID, "one_a_two_b.gave_up") + oneATwoB.getAnswerString()).queue();
 		});
 	}
 
@@ -99,7 +99,7 @@ public class OneATwoBCommand extends HasSubcommands
 			//已經有在玩遊戲
 			if (!(playing instanceof OneATwoBGame oneATwoB)) //不是在玩1A2B
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;

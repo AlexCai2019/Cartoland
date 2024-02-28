@@ -77,7 +77,7 @@ public class TicTacToeGame implements IMiniGame
 	@Override
 	public String gameName()
 	{
-		return "Tic-Tac-Toe";
+		return "tic_tac_toe";
 	}
 
 	/**

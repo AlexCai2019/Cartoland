@@ -22,7 +22,7 @@ public class LightOutCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
-				event.reply("..." + playing.gameName())
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -50,7 +50,7 @@ public class LightOutCommand extends HasSubcommands
 			//已經有在玩遊戲
 			event.reply(playing instanceof LightOutGame lightOut ? //是在玩井字遊戲
 							lightOut.getBoard() :
-							JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+							JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -61,18 +61,18 @@ public class LightOutCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing == null)
 			{
-				event.reply("There's no game to gave up!").queue();
+				event.reply(JsonHandle.getString(userID, "mini_game.no_game_gave_up")).queue();
 				return;
 			}
 			if (!(playing instanceof LightOutGame lightOut))
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
 			}
 			games.remove(event.getUser().getIdLong());
-			event.reply("You gave up!\n" + lightOut.getBoard()).queue();
+			event.reply(JsonHandle.getString(userID, "light_out.gave_up") + lightOut.getBoard()).queue();
 		});
 	}
 
@@ -91,12 +91,16 @@ public class LightOutCommand extends HasSubcommands
 
 			if (playing == null) //沒有在玩任何遊戲
 			{
-				event.reply("...").setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "mini_game.not_playing", "</light_out start:1211761952276217856>"))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 			if (!(playing instanceof LightOutGame lightOut))
 			{
-				event.reply("...").setEphemeral(true).queue();
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
+						.setEphemeral(true)
+						.queue();
 				return;
 			}
 
@@ -105,7 +109,7 @@ public class LightOutCommand extends HasSubcommands
 
 			if (!LightOutGame.isInBounds(row, column))
 			{
-				event.reply("...").setEphemeral(true).queue();
+				event.reply("The arguments are not in bounds!").setEphemeral(true).queue();
 				return;
 			}
 

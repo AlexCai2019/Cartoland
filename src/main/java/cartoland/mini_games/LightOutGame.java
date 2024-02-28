@@ -4,8 +4,8 @@ import cartoland.utilities.Algorithm;
 
 public class LightOutGame implements IMiniGame
 {
-	private static final char ON = '◽';
-	private static final char OFF = '◾';
+	private static final char ON = '▫';
+	private static final char OFF = '▪';
 	private static final byte ROWS = 5;
 	private static final byte COLUMNS = 5;
 	private static final byte INITIAL_LIGHTS = 5; //初始會點亮的格子
@@ -15,10 +15,10 @@ public class LightOutGame implements IMiniGame
 
 	static
 	{
-		byte row, column;
+		byte row, column, index = 0;
 		for (row = 0; row < ROWS; row++)
 			for (column = 0; column < COLUMNS; column++)
-				PLACE_ON[row * column] = new byte[]{ row, column }; // {0,0},{0,1},{0,2},{0,3},{0,4},{1,0},{1,1},{1,2}...
+				PLACE_ON[index++] = new byte[]{ row, column }; // {0,0},{0,1},{0,2},{0,3},{0,4},{1,0},{1,1},{1,2}...
 
 		//建立棋盤範本
 		for (column = 1; column <= COLUMNS; column++)
@@ -55,7 +55,7 @@ public class LightOutGame implements IMiniGame
 	@Override
 	public String gameName()
 	{
-		return "Light Out";
+		return "light_out";
 	}
 
 	public static boolean isInBounds(int row, int column)

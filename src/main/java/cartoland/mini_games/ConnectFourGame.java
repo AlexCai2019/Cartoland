@@ -50,7 +50,7 @@ public class ConnectFourGame implements IMiniGame
 	@Override
 	public String gameName()
 	{
-		return "Connect Four";
+		return "connect_four";
 	}
 
 	private void updateBoardString(char symbol, int row, int column)

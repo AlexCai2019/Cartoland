@@ -31,7 +31,7 @@ public class TicTacToeCommand extends HasSubcommands
 			IMiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
@@ -62,7 +62,7 @@ public class TicTacToeCommand extends HasSubcommands
 			//已經有在玩遊戲
 			event.reply(playing instanceof TicTacToeGame ticTacToe ? //是在玩井字遊戲
 							ticTacToe.getBoard() :
-							JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+							JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 					.setEphemeral(true)
 					.queue();
 		});
@@ -100,14 +100,14 @@ public class TicTacToeCommand extends HasSubcommands
 			//已經有在玩遊戲
 			if (!(playing instanceof TicTacToeGame ticTacToe)) //不是在玩井字遊戲
 			{
-				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", playing.gameName()))
+				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
 						.queue();
 				return;
 			}
 
-			int row = event.getOption("row", 0, CommonFunctions.getAsInt);
-			int column = event.getOption("column", 0, CommonFunctions.getAsInt);
+			int row = event.getOption("row", 1, CommonFunctions.getAsInt);
+			int column = event.getOption("column", 1, CommonFunctions.getAsInt);
 
 			if (!TicTacToeGame.isInBounds(row, column)) //不在範圍內
 			{

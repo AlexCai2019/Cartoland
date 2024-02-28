@@ -42,7 +42,7 @@ public class OneATwoBGame implements IMiniGame
 	@Override
 	public String gameName()
 	{
-		return "1A2B";
+		return "one_a_two_b";
 	}
 
 	private final int[] ab = new int[2];

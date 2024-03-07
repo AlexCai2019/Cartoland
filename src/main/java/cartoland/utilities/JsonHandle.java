@@ -116,30 +116,35 @@ public final class JsonHandle
 		JSONObject file = languageFileMap.get(users.computeIfAbsent(userID, defaultLanguage -> Languages.TW_MANDARIN));
 		Object optionalValue; //要獲得的字串(物件型態)
 		String result; //要獲得的字串
-		while (true)
-		{
-			//之所以使用opt 是為了更快一些 getString還要檢查has
-			//如果使用者的語言檔沒有這個key 就預設使用英文
-			//之所以不用String.valueOf包住全部 而是只包englishFile.opt(key) 是因為只有它才需要valueOf optionalValue只需一個轉字串即可
-			if ((optionalValue = file.opt(key)) != null)
-				result = optionalValue.toString();
-			else if (file != englishFile) //用指標比較 如果預設不是英文 才有在englishFile裡找的必要
-				result = String.valueOf(englishFile.opt(key));
-			else
-				return "null";
 
-			//注意.json檔內一定不能有空字串 否則charAt會擲出StringIndexOutOfBoundsException
-			//為了讓機器人省去檢查 也為了省去動用result.startsWith 辛苦一下我們人類了
-			if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找 (&在C/C++中代表reference)
-				key = result.substring(1); //獲得新的key 進入下一輪迴圈
-			else //並不是以&開頭
-				return result; //result就是最終找到的結果了 直接結束 注意若沒找到 會回傳內容為"null"的字串
-		}
+		//之所以使用opt 是為了更快一些 file.getString還要檢查has
+		//如果使用者的語言檔沒有這個key 就預設使用英文
+		//之所以不用String.valueOf包住全部 而是只包englishFile.opt(key) 是因為只有它才需要valueOf optionalValue只需一個轉字串即可
+		if ((optionalValue = file.opt(key)) != null)
+			result = optionalValue.toString();
+		else if (file != englishFile) //用指標比較 如果預設不是英文 才有在englishFile裡找的必要
+			result = String.valueOf(englishFile.opt(key));
+		else
+			return "null";
+
+		//注意.json檔內一定不能有空字串 否則charAt會擲出StringIndexOutOfBoundsException
+		//為了讓機器人省去檢查 也為了省去動用result.startsWith 辛苦一下我們人類了
+		if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找 (&在C/C++中代表reference)
+			key = result.substring(1); //獲得新的key 進入下一輪迴圈
+		else //並不是以&開頭
+			return result; //result就是最終找到的結果了 直接結束 注意若沒找到 會回傳內容為"null"的字串
+
+		//以下是已經&過 直接取用上面的程式碼
+		if ((optionalValue = file.opt(key)) != null)
+			return optionalValue.toString(); //與上面不同 可以直接回傳了
+		else if (file != englishFile) //用指標比較 如果預設不是英文 才有在englishFile裡找的必要
+			return String.valueOf(englishFile.opt(key));
+		else
+			return "null";
 	}
 
 	public static String getString(long userID, String key, Object... withs)
 	{
-		String result = getString(userID, key);
-		return withs == null ? result : result.formatted(withs);
+		return getString(userID, key).formatted(withs);
 	}
 }

@@ -38,7 +38,7 @@ public final class FileHandle
 		}
 	}
 
-	private static final List<SerializeObject> serializeObjects = new ArrayList<>();
+	private static final List<SerializeObject> serializeObjects = new ArrayList<>(11);
 
 	/**
 	 * Register an object to the {@link #serializeObjects} list, then the objects in that list will be serialized by

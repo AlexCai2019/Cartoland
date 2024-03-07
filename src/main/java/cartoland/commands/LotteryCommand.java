@@ -142,8 +142,6 @@ public class LotteryCommand extends HasSubcommands
 	 */
 	private static class BetSubCommand implements ICommand
 	{
-		private final StringBuilder replyBuilder = new StringBuilder();
-
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
@@ -171,8 +169,7 @@ public class LotteryCommand extends HasSubcommands
 				result = JsonHandle.getString(userID, "lottery.bet.lose");
 			}
 
-			replyBuilder.setLength(0);
-			replyBuilder.append(JsonHandle.getString(userID, "lottery.bet.result", bet, result, afterBet));
+			StringBuilder replyBuilder = new StringBuilder(JsonHandle.getString(userID, "lottery.bet.result", bet, result, afterBet));
 			if (showHand)
 			{
 				if (win)

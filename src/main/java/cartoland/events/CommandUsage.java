@@ -96,7 +96,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put(BIRTHDAY, new BirthdayCommand());
 
 		//megumin
-		commands.put(MEGUMIN, event -> event.reply("https://vxtwitter.com/i/status/" + Algorithm.randomElement(MEGUMIN_IMAGES)).queue()); //隨機一張惠惠
+		commands.put(MEGUMIN, event -> event.reply("https://twitter.com/i/status/" + Algorithm.randomElement(MEGUMIN_IMAGES)).queue()); //隨機一張惠惠
 
 		//shutdown
 		commands.put(SHUTDOWN, event ->
@@ -178,7 +178,7 @@ public class CommandUsage extends ListenerAdapter
 		else
 			event.reply("You can't use this!").setEphemeral(true).queue();
 		User user = event.getUser();
-		FileHandle.log(user.getEffectiveName(), '(', user.getIdLong(), ") /", commandName); //IO放最後 避免超過3秒限制
+		FileHandle.log(user.getEffectiveName(), '(', user.getId(), ") /", commandName); //IO放最後 避免超過3秒限制
 	}
 
 	/**

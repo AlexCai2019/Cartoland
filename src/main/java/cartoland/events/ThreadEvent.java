@@ -30,7 +30,7 @@ public class ThreadEvent extends ListenerAdapter
 		if (!event.getChannelType().isThread()) //如果不是討論串
 			return; //bye have a great time
 
-		ThreadChannel threadChannel = event.getChannel().asThreadChannel();
+		ThreadChannel threadChannel = (ThreadChannel) event.getChannel();
 		threadChannel.join().queue(); //加入討論串
 
 		//關於地圖專版和問題論壇

@@ -70,9 +70,9 @@ class HasSubcommands implements ICommand
 {
 	protected final Map<String, ICommand> subcommands; //子指令們
 
-	protected HasSubcommands(int initialCapacity)
+	protected HasSubcommands(int subcommandsCount)
 	{
-		subcommands = new HashMap<>(initialCapacity);
+		subcommands = HashMap.newHashMap(subcommandsCount);
 	}
 
 	/**

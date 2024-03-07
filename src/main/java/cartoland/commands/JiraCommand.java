@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS)-\\d{1,6}");
-	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L|LG)?|REALMS)-\\d{1,6}");
+	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
+	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}"); //目前bug數還沒超過999999個 等超過了再來改
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
@@ -77,7 +77,15 @@ public class JiraCommand implements ICommand
 		EmbedBuilder bugEmbed = new EmbedBuilder()
 				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png") //縮圖為Mojang
 				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
-				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link) //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+
+		StringBuilder description = new StringBuilder(textValue(issueContent.getElementById("description-val")).strip());
+		if (description.length() > 500) //小於等於500就全文放下
+		{
+			description.setLength(497);
+			description.append("...");
+		}
+		bugEmbed.appendDescription(description) //bug描述
 
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
 				.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true)
@@ -85,22 +93,19 @@ public class JiraCommand implements ICommand
 				.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
 
 		Element allAffectsVersions = issueContent.getElementById("versions-field");
-		if (allAffectsVersions != null)
-		{
-			Elements affectsVersions = allAffectsVersions.children();
-			//此處不用getFirst()和getLast() 因為first()和last()會在沒有元素時回傳null 而不是擲出NoSuchElementException
-			bugEmbed.addField("First affects version", textValue(affectsVersions.first()), true)
-					.addField("Last affects version", textValue(affectsVersions.last()), true);
-		}
+		Elements affectsVersions = allAffectsVersions != null ? allAffectsVersions.children() : new Elements();
 
-		bugEmbed.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true)
+		//此處不用getFirst()和getLast() 因為first()和last()會在沒有元素時回傳null 而不是擲出NoSuchElementException
+		bugEmbed.addField("First affects version", textValue(affectsVersions.first()), true)
+				.addField("Last affects version", textValue(affectsVersions.last()), true)
+				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true)
 
 		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
 				.addField("Created", timeValue(issueContent.getElementById("created-val")), true)
 				.addField("Updated", timeValue(issueContent.getElementById("updated-val")), true)
 				.addField("Resolved", timeValue(issueContent.getElementById("resolutiondate-val")), true)
 
-				.addField("Reporter", textValue(issueContent.getElementById("reporter-val")), true)
+				.addField("Checked", timeValue(issueContent.getElementById("customfield_10701-val")), true)
 				.addField("Votes", textValue(issueContent.getElementById("vote-data")), true)
 				.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true);
 

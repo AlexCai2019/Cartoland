@@ -8,15 +8,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * {@code TimerHandle} is a utility class that handles schedule. Including checking if functions should execute in every
@@ -32,46 +26,47 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final short DAYS = 366; //一年有366天
+	public record TimerEvent(int hour, Runnable function) {}
 
+	private static final short DAYS = 366; //一年有366天
 	private static final short MONTHS = 12; //一年有12月
+	public static final short HOURS = 24; //一天有24小時
 
 	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
-	private static final String BIRTHDAY_ARRAY = "serialize/birthday_array.ser";
+	private static final String SCHEDULED_EVENTS = "serialize/scheduled_events.ser";
 
 	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
 	private static final Map<Long, Short> birthdayMap = CastToInstance.modifiableMap(FileHandle.deserialize(BIRTHDAY_MAP));
-	@SuppressWarnings({"rawtypes","unchecked"}) //閉嘴IntelliJ IDEA
-	private static final List<Long>[] birthdayArray = (FileHandle.deserialize(BIRTHDAY_ARRAY) instanceof ArrayList[] array) ? array : new ArrayList[DAYS];
+	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
+	private static final Set<Long>[] birthdayArray = new HashSet[DAYS];
 
-	public static final short HOURS = 24; //一天有24小時
-
-	@SuppressWarnings({"unchecked"})
-	private static final List<Runnable>[] timerEvents = new ArrayList[HOURS];
+	@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
+	private static final Set<Runnable>[] hourRunFunctions = new HashSet[HOURS];
+	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
+	private static final Map<String, TimerEvent> scheduledEvents = CastToInstance.modifiableMap(FileHandle.deserialize(SCHEDULED_EVENTS)); //timer event是匿名的 scheduled event是有名字的
+	private static final Set<TimerEvent> toBeRemoved = new HashSet<>(); //不能直接在Runnable裡呼叫unregister
 
 	static
 	{
-		if (birthdayArray[0] == null) //如果從不存在紀錄
-		{
-			for (short i = 0; i < DAYS; i++)
-				birthdayArray[i] = new ArrayList<>();
-			birthdayMap.clear(); //一切紀錄重來
-		}
-
 		FileHandle.registerSerialize(BIRTHDAY_MAP, birthdayMap);
-		FileHandle.registerSerialize(BIRTHDAY_ARRAY, birthdayArray);
+		FileHandle.registerSerialize(SCHEDULED_EVENTS, scheduledEvents);
+
+		//生日
+		for (short i = 0; i < DAYS; i++)
+			birthdayArray[i] = new HashSet<>();
+		for (Map.Entry<Long, Short> idAndBirthday : birthdayMap.entrySet())
+			birthdayArray[idAndBirthday.getValue() - 1].add(idAndBirthday.getKey());
 
 		//初始化時間事件
 		for (short i = 0; i < HOURS; i++)
-			timerEvents[i] = new ArrayList<>();
+			hourRunFunctions[i] = new HashSet<>();
 
-		TimerHandle.registerTimerEvent(0, () -> //半夜12點
+		//半夜12點
+		TimerHandle.registerTimerEvent(new TimerEvent(0, FileHandle::flushLog)); //更換log的日期
+		TimerHandle.registerTimerEvent(new TimerEvent(0, () -> //和生日有關的
 		{
-			FileHandle.flushLog(); //更換log的日期
-
-			//這以下是和生日有關的
 			LocalDate today = LocalDate.now();
-			List<Long> birthdayMembersID = birthdayArray[getDateOfYear(today.getMonthValue(), today.getDayOfMonth()) - 1]; //今天生日的成員們的ID
+			Set<Long> birthdayMembersID = birthdayArray[getDateOfYear(today.getMonthValue(), today.getDayOfMonth()) - 1]; //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
 			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
@@ -79,25 +74,27 @@ public final class TimerHandle
 				return;
 			for (long birthdayMemberID : birthdayMembersID)
 				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！").queue();
-		});
+		}));
 
-		TimerHandle.registerTimerEvent(3, () -> //凌晨3點
+		//凌晨3點
+		TimerHandle.registerTimerEvent(new TimerEvent(3, () -> //好棒 三點了
 		{
 			TextChannel undergroundChannel = Cartoland.getJDA().getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
-			if (undergroundChannel == null)
-				return;
+			if (undergroundChannel == null) //找不到地下頻道
+				return; //結束
 			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
 			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
-		}); //好棒 三點了
+		}));
 
-		TimerHandle.registerTimerEvent(12, () -> //中午12點
+		//中午12點
+		TimerHandle.registerTimerEvent(new TimerEvent(12, () -> //中午十二點時處理並提醒未解決的論壇貼文
 		{
 			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
 			if (questionsChannel == null)
 				return; //找不到就算了
 			for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
-		}); //中午十二點時處理並提醒未解決的論壇貼文
+		}));
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -111,7 +108,14 @@ public final class TimerHandle
 		if (nowHour == HOURS) //第24小時是0點
 			nowHour = 0;
 
-		for (Runnable event : timerEvents[nowHour]) //走訪被註冊的事件們
+		if (!toBeRemoved.isEmpty()) //有事件要被移除
+		{
+			for (TimerEvent removeTimerEvent : toBeRemoved) //移除要被移除的事件們
+				hourRunFunctions[removeTimerEvent.hour].remove(removeTimerEvent.function);
+			toBeRemoved.clear();
+		}
+
+		for (Runnable event : hourRunFunctions[nowHour]) //走訪被註冊的事件們
 			event.run(); //執行
 
 		unbanMembers(); //時間到了的話就解除封鎖
@@ -162,10 +166,12 @@ public final class TimerHandle
 		if (hour < 0 || hour > 23)
 			throw new IllegalArgumentException("Hour must between 0 and 23!");
 		LocalDateTime now = LocalDateTime.now(); //現在的時間
-		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0); //目標時間
+		LocalDateTime untilTime, targetTime = now.withHour(hour).withMinute(0).withSecond(0); //目標時間
 
-		if (now.isAfter(untilTime)) //如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了
-			untilTime = untilTime.plusDays(1L); //明天再執行
+		if (now.isAfter(targetTime)) //如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了
+			untilTime = targetTime.plusDays(1L); //明天再執行
+		else
+			untilTime = targetTime;
 
 		return Duration.between(now, untilTime).getSeconds();
 	}
@@ -191,19 +197,35 @@ public final class TimerHandle
 		}
 	}
 
-	public static void registerTimerEvent(int hour, Runnable function)
+	private static void registerTimerEvent(TimerEvent timerEvent)
 	{
-		timerEvents[hour].add(function);
+		hourRunFunctions[timerEvent.hour].add(timerEvent.function);
 	}
 
-	public static void unregisterTimerEvent(int hour)
+	public static void registerScheduledEvent(String name, TimerEvent timerEvent)
 	{
-		timerEvents[hour].removeLast();
+		registerTimerEvent(timerEvent);
+		scheduledEvents.put(name, timerEvent);
 	}
 
-	public static void unregisterTimerEvent(int hour, Runnable function)
+	public static boolean hasScheduledEvent(String name)
 	{
-		timerEvents[hour].remove(function);
+		return scheduledEvents.containsKey(name);
+	}
+
+	public static Set<String> scheduledEventsNames()
+	{
+		return scheduledEvents.keySet();
+	}
+
+	public static void unregisterTimerEvent(TimerEvent timerEvent)
+	{
+		toBeRemoved.add(timerEvent);
+	}
+
+	public static void unregisterScheduledEvent(String name)
+	{
+		unregisterTimerEvent(scheduledEvents.remove(name));
 	}
 
 	/**
@@ -235,7 +257,7 @@ public final class TimerHandle
 	{
 		Short oldBirthday = birthdayMap.get(userID); //獲取舊生日
 		if (oldBirthday != null) //如果確實設定過舊生日
-			birthdayArray[oldBirthday].remove(userID); //移除設定
+			birthdayArray[oldBirthday - 1].remove(userID); //移除設定
 		short dateOfYear = getDateOfYear(month, date); //一年中的第幾天 1月1號為1 12月31號為366
 		birthdayArray[dateOfYear - 1].add(userID); //將該使用者增加到那天生日的清單中
 		birthdayMap.put(userID, dateOfYear); //設定使用者的生日
@@ -247,16 +269,24 @@ public final class TimerHandle
 		if (birthdayBox == null)
 			return null;
 		short birthday = birthdayBox; //解包
-		for (short month = 2; month <= MONTHS; month++) //從2月開始 一路到12月
-			if (getDaysReachMonth(month) >= birthday) //總共的天數 - 抵達這個月需要的天數 >= 生日
-				return new short[]{ (short) (month - 1), (short) (birthday - getDaysReachMonth(month - 1)) };
-		return new short[]{12, (short) (birthday - getDaysReachMonth(11)) };
+		short daysReachLastMonth = 0;
+		//舉例 生日在2月10號, birthday = 31(1月的天數) + 10 = 41
+		//第一次迴圈(month = 2), daysReachThisMonth = 31(1月的天數), 31 < 41, 不通過
+		//第二次迴圈(month = 3), daysReachThisMonth = 31 + 29, 60 >= 41, 因此return {3 - 1, 41 - 31}
+		for (short month = 2, daysReachThisMonth; month <= MONTHS; month++) //從2月開始 一路到12月
+		{
+			daysReachThisMonth = getDaysReachMonth(month);
+			if (daysReachThisMonth >= birthday) //總共的天數 - 抵達這個月需要的天數 >= 生日
+				return new short[]{(short) (month - 1), (short) (birthday - daysReachLastMonth)};
+			daysReachLastMonth = daysReachThisMonth;
+		}
+		return new short[]{MONTHS, (short) (birthday - daysReachLastMonth) };
 	}
 
 	public static void deleteBirthday(long memberID)
 	{
 		Short oldBirthday = birthdayMap.remove(memberID); //移除舊生日 並把移除掉的值存起來
 		if (oldBirthday != null) //如果設定過舊生日
-			birthdayArray[oldBirthday].remove(memberID); //從記錄中移除這位成員
+			birthdayArray[oldBirthday - 1].remove(memberID); //從記錄中移除這位成員
 	}
 }

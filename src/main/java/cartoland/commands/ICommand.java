@@ -39,6 +39,7 @@ public interface ICommand
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";
 	String ADMIN = "admin";
+	String SCHEDULE = "schedule";
 	String ONE_A_TWO_B = "one_a_two_b";
 	String LOTTERY = "lottery";
 	String TRANSFER = "transfer";

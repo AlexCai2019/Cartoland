@@ -1,6 +1,7 @@
 package cartoland.events;
 
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
@@ -21,7 +22,7 @@ import static cartoland.commands.ICommand.*;
  */
 public class AutoComplete extends ListenerAdapter
 {
-	private final Map<String, GenericComplete> commands = new HashMap<>(9); //指令們
+	private final Map<String, GenericComplete> commands = HashMap.newHashMap(11); //指令們
 
 	public AutoComplete()
 	{
@@ -47,6 +48,9 @@ public class AutoComplete extends ListenerAdapter
 
 		//birthday
 		commands.put(BIRTHDAY, new BirthdayComplete());
+
+		//schedule
+		commands.put(SCHEDULE, new ScheduleComplete());
 	}
 
 	@Override
@@ -71,6 +75,11 @@ public class AutoComplete extends ListenerAdapter
 		protected static final int CHOICES_LIMIT = 25; //最多只能有25個建議
 
 		abstract void completeProcess(CommandAutoCompleteInteractionEvent event);
+
+		protected static Command.Choice stringToChoice(String keyAndValue)
+		{
+			return new Command.Choice(keyAndValue, keyAndValue);
+		}
 	}
 
 	/**
@@ -85,7 +94,7 @@ public class AutoComplete extends ListenerAdapter
 		private final String commandNameKey;
 		private final List<String> commandList;
 
-		JsonBasedComplete(String commandName)
+		private JsonBasedComplete(String commandName)
 		{
 			commandNameKey = commandName + "_name";
 			commandList = JsonHandle.commandList(commandName);
@@ -103,7 +112,7 @@ public class AutoComplete extends ListenerAdapter
 					commandList.stream()
 							.filter(word -> word.startsWith(optionValue))
 							.limit(CHOICES_LIMIT)
-							.map(word -> new Command.Choice(word, word))
+							.map(GenericComplete::stringToChoice)
 							.toList()).queue();
 		}
 	}
@@ -131,12 +140,12 @@ public class AutoComplete extends ListenerAdapter
 		@Override
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
-			String optionValue = event.getFocusedOption().getValue();
-			event.replyChoices( //將字串串流轉換為選項列表
+			String optionValue = event.getFocusedOption().getValue(); //將字串串流轉換為選項列表
+			event.replyChoices(
 					youtubers.stream()
-							.filter(youtuber -> youtuber.name.contains(optionValue))
+							.filter(youtuber -> youtuber.nameContains(optionValue))
 							.limit(CHOICES_LIMIT)
-							.map(youtuber -> new Command.Choice(youtuber.name, youtuber.ID))
+							.map(YouTuber::toChoice)
 							.toList()).queue();
 		}
 
@@ -148,7 +157,18 @@ public class AutoComplete extends ListenerAdapter
 		 * @since 2.2
 		 * @author Alex Cai
 		 */
-		private record YouTuber(String name, String ID) {}
+		private record YouTuber(String name, String ID)
+		{
+			private boolean nameContains(String s)
+			{
+				return name.contains(s);
+			}
+
+			private Command.Choice toChoice()
+			{
+				return new Command.Choice(name, ID);
+			}
+		}
 	}
 
 	/**
@@ -168,7 +188,7 @@ public class AutoComplete extends ListenerAdapter
 		};
 		private final List<Command.Choice> twentyFive;
 
-		BirthdayComplete()
+		private BirthdayComplete()
 		{
 			//直接轉成固定大小的List 應該會比ArrayList快
 			Command.Choice[] twentyFiveArray = new Command.Choice[CHOICES_LIMIT]; //1 ~ 25
@@ -201,6 +221,26 @@ public class AutoComplete extends ListenerAdapter
 					break;
 			}
 			event.replyChoices(choices).queue();
+		}
+	}
+
+	private static class ScheduleComplete extends GenericComplete
+	{
+		@Override
+		void completeProcess(CommandAutoCompleteInteractionEvent event)
+		{
+			AutoCompleteQuery focusedOption = event.getFocusedOption();
+			if (!"name".equals(focusedOption.getName())) //必須要是name
+				return;
+			String optionValue = focusedOption.getValue();
+			event.replyChoices(
+					TimerHandle.scheduledEventsNames()
+							.stream()
+							.filter(name -> name.contains(optionValue))
+							.limit(CHOICES_LIMIT)
+							.map(GenericComplete::stringToChoice)
+							.toList())
+					.queue();
 		}
 	}
 }

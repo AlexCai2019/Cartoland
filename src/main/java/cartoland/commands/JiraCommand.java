@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +32,8 @@ public class JiraCommand implements ICommand
 	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
 	private final Pattern numberRegex = Pattern.compile("\\d{1,6}"); //目前bug數還沒超過999999個 等超過了再來改
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
-	private static final int MOJANG_RED = -1101251; //new java.awt.Color(239, 50, 61, 255).getRGB();
+	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251;
+	private static final int DESCRIPTION_CHARACTERS = 200;
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -80,11 +82,9 @@ public class JiraCommand implements ICommand
 				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
 
 		StringBuilder description = new StringBuilder(textValue(issueContent.getElementById("description-val")).strip());
-		if (description.length() > 500) //小於等於500就全文放下
-		{
-			description.setLength(497);
-			description.append("...");
-		}
+		int descriptionLength = description.length();
+		if (descriptionLength > DESCRIPTION_CHARACTERS) //小於等於DESCRIPTION_CHARACTERS就全文放下
+			description.replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…");
 		bugEmbed.appendDescription(description) //bug描述
 
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
@@ -92,12 +92,12 @@ public class JiraCommand implements ICommand
 				.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true)
 				.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
 
-		Element allAffectsVersions = issueContent.getElementById("versions-field");
-		Elements affectsVersions = allAffectsVersions != null ? allAffectsVersions.children() : new Elements();
+		Element versionsField = issueContent.getElementById("versions-field");
+		Element allAffectsVersions = versionsField != null ? versionsField : new Element("span");
 
 		//此處不用getFirst()和getLast() 因為first()和last()會在沒有元素時回傳null 而不是擲出NoSuchElementException
-		bugEmbed.addField("First affects version", textValue(affectsVersions.first()), true)
-				.addField("Last affects version", textValue(affectsVersions.last()), true)
+		bugEmbed.addField("First affects version", textValue(allAffectsVersions.firstElementChild()), true)
+				.addField("Last affects version", textValue(allAffectsVersions.lastElementChild()), true)
 				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true)
 
 		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
@@ -107,10 +107,10 @@ public class JiraCommand implements ICommand
 
 				.addField("Checked", timeValue(issueContent.getElementById("customfield_10701-val")), true)
 				.addField("Votes", textValue(issueContent.getElementById("vote-data")), true)
-				.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true);
+				.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true)
 
-		Element projectAvatar = issueContent.getElementById("project-avatar");
-		bugEmbed.setFooter(textValue(issueContent.getElementById("project-name-val")), projectAvatar == null ? null : projectAvatar.attr("src"));
+				.setFooter(textValue(issueContent.getElementById("project-name-val")),
+						attributeValue(issueContent.getElementById("project-avatar"), "src", null));
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
@@ -133,11 +133,16 @@ public class JiraCommand implements ICommand
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
 		try
 		{
-			return "<t:" + ZonedDateTime.parse(timeTags.getFirst().attr("datetime"), dateTimeFormatter).toEpochSecond() + ":R>";
+			return "<t:" + ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", ""), dateTimeFormatter).toEpochSecond() + ":R>";
 		}
 		catch (DateTimeParseException e)
 		{
 			return "";
 		}
+	}
+
+	private String attributeValue(Element element, String attributeKey, String defaultValue)
+	{
+		return element != null ? element.attr(attributeKey) : defaultValue;
 	}
 }

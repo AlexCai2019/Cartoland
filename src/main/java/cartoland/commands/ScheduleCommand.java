@@ -4,29 +4,32 @@ import cartoland.Cartoland;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class ScheduleCommand extends HasSubcommands
 {
 	public static final String CREATE = "create";
-	public static final String CANCEL = "cancel";
+	public static final String DELETE = "delete";
+	public static final String LIST = "list";
 
 	public ScheduleCommand()
 	{
-		super(2);
+		super(3);
 		subcommands.put(CREATE, new CreateSubCommand());
-		subcommands.put(CANCEL, event ->
+		subcommands.put(DELETE, event ->
 		{
-			int time = event.getOption("time", 0, CommonFunctions.getAsInt); //時間 介於0到23之間
-			if (time < 0 || time > 23) //不得超出範圍
+			String scheduledEventName = event.getOption("name", " ", CommonFunctions.getAsString);
+			if (TimerHandle.hasScheduledEvent(scheduledEventName))
 			{
-				event.reply("Time must between 0 and 23!").setEphemeral(true).queue();
-				return;
+				event.reply("Removed scheduled " + scheduledEventName + " message.").queue();
+				TimerHandle.unregisterScheduledEvent(scheduledEventName);
 			}
-			TimerHandle.unregisterTimerEvent(time);
+			else
+				event.reply("There's no " + scheduledEventName + " event!").queue();
 		});
+		subcommands.put(LIST, event -> event.reply(String.join("\n", TimerHandle.scheduledEventsNames())).queue());
 	}
 
 	private static class CreateSubCommand implements ICommand
@@ -34,23 +37,17 @@ public class ScheduleCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			Integer timeBox = event.getOption("time", CommonFunctions.getAsInt); //時間 介於0到23之間
-			if (timeBox == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-			int time = timeBox;
+			int time = event.getOption("time", 0, CommonFunctions.getAsInt); //時間 介於0到23之間
 			if (time < 0 || time > 23) //不得超出範圍
 			{
 				event.reply("Time must between 0 and 23!").setEphemeral(true).queue();
 				return;
 			}
 
-			GuildChannel guildChannel = event.getOption("channel", OptionMapping::getAsChannel); //頻道
+			GuildChannel guildChannel = event.getOption("channel", CommonFunctions.getAsChannel); //頻道
 			if (guildChannel == null)
 			{
-				event.reply("Impossible, this is required!").queue();
+				event.reply("Error: The channel might be deleted, or I don't have permission to access it.").setEphemeral(true).queue();
 				return;
 			}
 			if (!guildChannel.getType().isMessage()) //必須要是訊息頻道
@@ -58,34 +55,40 @@ public class ScheduleCommand extends HasSubcommands
 				event.reply("Please input a message channel!").setEphemeral(true).queue();
 				return;
 			}
-			long channelID = guildChannel.getIdLong(); //頻道ID
-
-			String content = event.getOption("content", CommonFunctions.getAsString); //內容
-			if (content == null)
+			GuildMessageChannel guildMessageChannel = (GuildMessageChannel)guildChannel;
+			if (!guildMessageChannel.canTalk())
 			{
-				event.reply("Impossible, this is required!").queue();
+				event.reply("I don't have the permission to view or talk in this channel!").setEphemeral(true).queue();
 				return;
 			}
 
-			if (Boolean.TRUE.equals(event.getOption("once", CommonFunctions.getAsBoolean))) //代表是一次性的
-				TimerHandle.registerTimerEvent(time, new Runnable() //不可使用lambda 因為下面要用到this
-				{
-					@Override
-					public void run()
-					{
-						MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID);
-						if (channel != null)
-							channel.sendMessage(content).queue();
-						TimerHandle.unregisterTimerEvent(time, this);
-					}
-				});
-			else
-				TimerHandle.registerTimerEvent(time, () ->
-				{
-					MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID);
-					if (channel != null)
-						channel.sendMessage(content).queue();
-				});
+			String content = event.getOption("content", " ", CommonFunctions.getAsString); //內容
+			int contentLength = content.length();
+			String first20Characters = content.substring(0, Math.min(20, contentLength));
+			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名 + 時間 + 開頭前10個字
+
+			if (TimerHandle.hasScheduledEvent(name))
+			{
+				event.reply("Already has " + name + " event!").setEphemeral(true).queue();
+				return;
+			}
+
+			boolean once = event.getOption("once", Boolean.FALSE, CommonFunctions.getAsBoolean);
+
+			long channelID = guildChannel.getIdLong(); //頻道ID
+			Runnable sendMessageToChannel = () ->
+			{
+				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID);
+				if (channel != null)
+					channel.sendMessage(content).queue();
+			};
+			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent(time, once ? () ->
+			{
+				sendMessageToChannel.run();
+				TimerHandle.unregisterScheduledEvent(name);
+			} : sendMessageToChannel));
+
+			event.reply("The bot will send \"" + first20Characters + (contentLength > 20 ? "…" : "") + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}
 	}
 }

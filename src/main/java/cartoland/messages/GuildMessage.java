@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class GuildMessage implements IMessage
 {
 	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
-	private final Set<Long> commandBlockCategories = new HashSet<>(5);
+	private final Set<Long> commandBlockCategories = HashSet.newHashSet(5);
 
 	public GuildMessage()
 	{

@@ -191,12 +191,7 @@ public final class AddCommands
 							.addOptions(
 								new OptionData(OptionType.STRING, "rgba_or_argb", "RGBA integer, must be decimal or hexadecimal, the order can be RGBA or ARGB", true, false)
 									.setDescriptionLocalization(CHINESE_TAIWAN, "RGBA整數，必須是十進位或十六進位，順序可以是RGBA或ARGB")
-									.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB")),
-						new SubcommandData(ToolCommand.PACK_MCMETA, "Generate a pack.mcmeta")
-							.addOptions(
-								new OptionData(OptionType.STRING, "pack_type", "Whether this concerns a data pack or a resource pack", true, false)
-									.addChoice("Data Pack", "d")
-									.addChoice("Resource Pack", "r"))),
+									.setDescriptionLocalization(CHINESE_CHINA, "RGBA整数，必须是十进制或十六进制，顺序可以是RGBA或ARGB"))),
 
 			Commands.slash(QUOTE, "Display content from a message link")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "顯示一個訊息連結的內容")
@@ -494,6 +489,120 @@ public final class AddCommands
 										new Command.Choice("Double Hour", "double_hour")
 											.setNameLocalization(CHINESE_TAIWAN, "時辰")
 											.setNameLocalization(CHINESE_CHINA, "时辰")))),
+			Commands.slash(SCHEDULE, "Schedule a message to be send to a channel")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
+					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")
+					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE))
+					.setGuildOnly(true)
+					.addSubcommands(
+						new SubcommandData(ScheduleCommand.CREATE, "Create a scheduled message")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "建立一個訊息排程")
+							.setDescriptionLocalization(CHINESE_CHINA, "建立一个信息排程")
+							.addOptions(
+								new OptionData(OptionType.INTEGER, "time", "The time to send message", true, false)
+									.setNameLocalization(CHINESE_TAIWAN, "時間")
+									.setNameLocalization(CHINESE_CHINA, "时间")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "要發送訊息的時間")
+									.setDescriptionLocalization(CHINESE_CHINA, "要发送信息的时间")
+									.addChoices(
+										new Command.Choice("12 a.m.", 0L)
+											.setNameLocalization(CHINESE_TAIWAN, "半夜十二點")
+											.setNameLocalization(CHINESE_CHINA, "半夜十二点"),
+										new Command.Choice("1 a.m.", 1L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午一點")
+												.setNameLocalization(CHINESE_CHINA, "上午一点"),
+										new Command.Choice("2 a.m.", 2L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午兩點")
+												.setNameLocalization(CHINESE_CHINA, "上午两点"),
+										new Command.Choice("3 a.m.", 3L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午三點")
+												.setNameLocalization(CHINESE_CHINA, "上午三点"),
+										new Command.Choice("4 a.m.", 4L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午四點")
+												.setNameLocalization(CHINESE_CHINA, "上午四点"),
+										new Command.Choice("5 a.m.", 5L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午五點")
+												.setNameLocalization(CHINESE_CHINA, "上午五点"),
+										new Command.Choice("6 a.m.", 6L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午六點")
+												.setNameLocalization(CHINESE_CHINA, "上午六点"),
+										new Command.Choice("7 a.m.", 7L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午七點")
+											.setNameLocalization(CHINESE_CHINA, "上午七点"),
+										new Command.Choice("8 a.m.", 8L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午八點")
+											.setNameLocalization(CHINESE_CHINA, "上午八点"),
+										new Command.Choice("9 a.m.", 9L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午九點")
+											.setNameLocalization(CHINESE_CHINA, "上午九点"),
+										new Command.Choice("10 a.m.", 10L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午十點")
+											.setNameLocalization(CHINESE_CHINA, "上午十点"),
+										new Command.Choice("11 a.m.", 11L)
+											.setNameLocalization(CHINESE_TAIWAN, "上午十一點")
+											.setNameLocalization(CHINESE_CHINA, "上午十一点"),
+										new Command.Choice("12 p.m.", 12L)
+											.setNameLocalization(CHINESE_TAIWAN, "中午十二點")
+											.setNameLocalization(CHINESE_CHINA, "中午十二点"),
+										new Command.Choice("1 p.m.", 13L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午一點")
+											.setNameLocalization(CHINESE_CHINA, "下午一点"),
+										new Command.Choice("2 p.m.", 14L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午兩點")
+											.setNameLocalization(CHINESE_CHINA, "下午两点"),
+										new Command.Choice("3 p.m.", 15L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午三點")
+											.setNameLocalization(CHINESE_CHINA, "下午三点"),
+										new Command.Choice("4 p.m.", 16L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午四點")
+											.setNameLocalization(CHINESE_CHINA, "下午四点"),
+										new Command.Choice("5 p.m.", 17L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午五點")
+											.setNameLocalization(CHINESE_CHINA, "下午五点"),
+										new Command.Choice("6 p.m.", 18L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午六點")
+											.setNameLocalization(CHINESE_CHINA, "下午六点"),
+										new Command.Choice("7 p.m.", 19L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午七點")
+											.setNameLocalization(CHINESE_CHINA, "下午七点"),
+										new Command.Choice("8 p.m.", 20L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午八點")
+											.setNameLocalization(CHINESE_CHINA, "下午八点"),
+										new Command.Choice("9 p.m.", 21L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午九點")
+											.setNameLocalization(CHINESE_CHINA, "下午九点"),
+										new Command.Choice("10 p.m.", 22L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午十點")
+											.setNameLocalization(CHINESE_CHINA, "下午十点"),
+										new Command.Choice("11 p.m.", 23L)
+											.setNameLocalization(CHINESE_TAIWAN, "下午十一點")
+											.setNameLocalization(CHINESE_CHINA, "下午十一点")),
+								new OptionData(OptionType.CHANNEL, "channel", "The channel to send message", true, false)
+									.setNameLocalization(CHINESE_TAIWAN, "頻道")
+									.setNameLocalization(CHINESE_CHINA, "频道")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "要發送訊息的頻道")
+									.setDescriptionLocalization(CHINESE_CHINA, "要发送信息的频道"),
+								new OptionData(OptionType.STRING, "content", "The string to send", true, false)
+									.setNameLocalization(CHINESE_TAIWAN, "內容")
+									.setNameLocalization(CHINESE_CHINA, "内容")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "訊息的內容")
+									.setDescriptionLocalization(CHINESE_CHINA, "信息的内容"),
+								new OptionData(OptionType.BOOLEAN, "once", "Whether the message send is only once", false, false)
+									.setNameLocalization(CHINESE_TAIWAN, "一次性")
+									.setNameLocalization(CHINESE_CHINA, "一次性")
+									.setDescriptionLocalization(CHINESE_TAIWAN, "訊息發送是否為一次性的")
+									.setDescriptionLocalization(CHINESE_CHINA, "信息发送是否为一次性的")),
+						new SubcommandData(ScheduleCommand.DELETE, "Delete a scheduled message")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "刪除一個訊息排程")
+							.setDescriptionLocalization(CHINESE_CHINA, "删除一个信息排程")
+							.addOptions(new OptionData(OptionType.STRING, "name", "The name of a scheduled event", true, true)
+								.setNameLocalization(CHINESE_TAIWAN, "名字")
+								.setNameLocalization(CHINESE_CHINA, "名字")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "訊息排程的名字")
+								.setDescriptionLocalization(CHINESE_CHINA, "信息排程的名字")),
+						new SubcommandData(ScheduleCommand.LIST, "List of scheduled messages")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "訊息排程清單")
+							.setDescriptionLocalization(CHINESE_CHINA, "信息排程清单")),
 
 			Commands.slash(ONE_A_TWO_B, "Play a game of 1A2B")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場1A2B遊戲")

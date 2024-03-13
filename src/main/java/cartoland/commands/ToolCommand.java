@@ -21,7 +21,6 @@ public class ToolCommand extends HasSubcommands
 	public static final String UUID_ARRAY = "uuid_array";
 	public static final String COLOR_RGBA = "color_rgba";
 	public static final String COLOR_INTEGER = "color_integer";
-	public static final String PACK_MCMETA = "pack_mcmeta";
 
 	public ToolCommand()
 	{
@@ -30,7 +29,6 @@ public class ToolCommand extends HasSubcommands
 		subcommands.put(UUID_ARRAY, new UUIDArraySubCommand()); //tool uuid_array
 		subcommands.put(COLOR_RGBA, new ColorRGBASubCommand()); //tool color_rgba
 		subcommands.put(COLOR_INTEGER, new ColorIntegerSubCommand()); //tool color_rgb
-		subcommands.put(PACK_MCMETA, new PackMcmetaSubCommand()); //tool pack_mcmeta
 	}
 
 	/**
@@ -87,7 +85,7 @@ public class ToolCommand extends HasSubcommands
 				return;
 			}
 
-			int[] uuidArray = new int[]
+			int[] uuidArray =
 			{
 				(int) Long.parseLong(uuidStrings[0], 16), //先parse成long 再cast成int 這樣才能溢位成負數
 				(int) Long.parseLong(uuidStrings[1] + uuidStrings[2], 16),
@@ -97,7 +95,7 @@ public class ToolCommand extends HasSubcommands
 
 			event.reply("UUID: `" + dash + "`\n" +
 								"UUID (" + JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_string.without_dash") + "): `" + noDash + "`\n" +
-								"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
+								"UUID array: `" + Arrays.toString(uuidArray) + '`').queue();
 		}
 	}
 
@@ -132,7 +130,7 @@ public class ToolCommand extends HasSubcommands
 
 			event.reply("UUID: `" + String.join("-", uuidStrings) + "`\n" +
 								"UUID(" + JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_array.without_dash") + "): `" + String.join("", uuidStrings) + "`\n" +
-								"UUID array: `" + Arrays.toString(uuidArray) + "`").queue();
+								"UUID array: `" + Arrays.toString(uuidArray) + '`').queue();
 		}
 	}
 
@@ -240,54 +238,6 @@ public class ToolCommand extends HasSubcommands
 								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.float") + "):`" + Arrays.toString(colorsDouble) + "`\n" +
 								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.decimal") + "): `" + rgba + "`\n" +
 								"RGBA / ARGB: (" + JsonHandle.getString(userID, "tool.color_integer.hexadecimal") + "): `#" + String.format("%08X` `#%08x`", rgba, rgba)).queue();
-		}
-	}
-
-	/**
-	 * {@code PackMcmetaSubCommand} is a class that handles one of the subcommands of {@code /tool} command, which
-	 * is {@code /tool pack_mcmeta}.
-	 *
-	 * @since 1.4
-	 * @see ToolCommand
-	 * @author Alex Cai
-	 */
-	private static class PackMcmetaSubCommand implements ICommand
-	{
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
-		{
-			String packType = event.getOption("pack_type", "d", CommonFunctions.getAsString);
-
-			event.reply(switch (packType.charAt(0))
-			{
-				case 'd' ->
-						"""
-						```json
-						{
-							"pack":
-							{
-								"pack_format": 32,
-								"description": "Your description here"
-							}
-						}
-						```
-						""";
-
-				case 'r' ->
-						"""
-						```json
-						{
-							"pack":
-							{
-								"pack_format": 26,
-								"description": "Your description here"
-							}
-						}
-						```
-						""";
-
-				default -> "You need to choose whether you are making a datapack or a resourcepack.";
-			}).queue();
 		}
 	}
 }

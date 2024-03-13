@@ -14,12 +14,13 @@
 - 📁`logs/`
 - 📁`serialize/`，以及下列檔案：
   - 📄`all_members.ser`，從一个值是`Long`的`HashSet`串聯化而來。
-  - 📄`birthday_array.ser`，從一个值是`Long`的`ArrayList[]`串聯化而來。
   - 📄`birthday_map.ser`，從一个索引是`Long`、值是`Short`的`HashMap`串聯化而來。
   - 📄`has_start_message.ser`，從一个值是`Long`的`HashSet`串聯化而來。
   - 📄`idled_questions.ser`，從一个值是`Long`的`HashSet`串聯化而來。
   - 📄`introduction.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
   - 📄`lottery_data.ser`，從一个索引是`Long`、值是`cartoland.utilties.CommandBlocksHandle.LotteryData`的`HashMap`串聯化而來。
+  - 📄`private_to_underground.ser`，從一个索引佮值為`Long`的`HashMap`串聯化而來。
+  - 📄`scheduled_events.ser`，從一个索引是`String`、值是`cartoland.utilities.TimerHandle.TimerEvent`的`HashMap`串聯化而來。
   - 📄`temp_ban_list.ser`，從一个值是`long[]`的`HashSet`串聯化而來。
   - 📄`users.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
 

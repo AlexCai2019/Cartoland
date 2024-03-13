@@ -142,6 +142,9 @@ public class CommandUsage extends ListenerAdapter
 		//admin
 		commands.put(ADMIN, new AdminCommand());
 
+		//schedule
+		commands.put(SCHEDULE, new ScheduleCommand());
+
 		//one_a_two_b
 		commands.put(ONE_A_TWO_B, new OneATwoBCommand(games));
 

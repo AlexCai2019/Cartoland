@@ -95,9 +95,9 @@ public class BotCanTalkChannelMessage implements IMessage
 
 	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
-	private final Set<Long> canTalkCategories = new HashSet<>(4);
+	private final Set<Long> canTalkCategories = HashSet.newHashSet(4);
 
-	private final Map<String, String[]> keywords = new HashMap<>(4);
+	private final Map<String, String[]> keywords = HashMap.newHashMap(4);
 
 	public BotCanTalkChannelMessage()
 	{

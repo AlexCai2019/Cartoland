@@ -12,7 +12,7 @@ public final class CastToInstance
 	@SuppressWarnings("rawtypes")
 	public static Map modifiableMap(Object o)
 	{
-		return o != null ? switch (o)
+		return switch (o)
 		{
 			case HashMap hashMap -> hashMap;
 			case TreeMap treeMap -> treeMap;
@@ -20,19 +20,19 @@ public final class CastToInstance
 			case IdentityHashMap identityHashMap -> identityHashMap;
 			case WeakHashMap weakHashMap -> weakHashMap;
 			case Hashtable hashtable -> hashtable;
-			default -> new HashMap<>();
-		} : new HashMap<>();
+			case null, default -> new HashMap<>();
+		};
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static Set modifiableSet(Object o)
 	{
-		return o != null ? switch (o)
+		return switch (o)
 		{
 			case HashSet hashSet -> hashSet;
 			case TreeSet treeSet -> treeSet;
 			case EnumSet enumSet -> enumSet;
-			default -> new HashSet<>();
-		} : new HashSet<>();
+			case null, default -> new HashSet<>();
+		};
 	}
 }

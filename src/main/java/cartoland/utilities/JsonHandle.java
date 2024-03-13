@@ -26,8 +26,8 @@ public final class JsonHandle
 
 	@SuppressWarnings("unchecked")
 	private static final Map<Long, String> users = CastToInstance.modifiableMap(FileHandle.deserialize(USERS_FILE_NAME)); //使用者的語言設定 id為key en, tw 等等的語言字串為value
-	private static final Map<String, JSONObject> languageFileMap = new HashMap<>(7); //語言字串為key 語言檔案為value
-	private static final Map<String, List<String>> commandListMap = new HashMap<>(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
+	private static final Map<String, JSONObject> languageFileMap = HashMap.newHashMap(7); //語言字串為key 語言檔案為value
+	private static final Map<String, List<String>> commandListMap = HashMap.newHashMap(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
 
 	private static JSONObject englishFile; //英文檔案
 
@@ -77,7 +77,7 @@ public final class JsonHandle
 	{
 		return jsonArray.toList()
 				.stream()
-				.map(CommonFunctions.stringValue)
+				.map(String::valueOf)
 				.toList();
 	}
 

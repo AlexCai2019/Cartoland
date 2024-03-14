@@ -28,9 +28,11 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
-	private final Pattern bugIDRegex = Pattern.compile("(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
-	private final Pattern numberRegex = Pattern.compile("\\d{1,6}"); //目前bug數還沒超過999999個 等超過了再來改
+	private static final String BUG_NUMBER_REGEX = "\\d{1,6}";
+	private static final String BUG_ID_REGEX = "(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-" + BUG_NUMBER_REGEX;
+	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/" + BUG_ID_REGEX);
+	private final Pattern bugIDRegex = Pattern.compile(BUG_ID_REGEX);
+	private final Pattern numberRegex = Pattern.compile(BUG_NUMBER_REGEX); //目前bug數還沒超過999999個 等超過了再來改
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251;
 	private static final int DESCRIPTION_CHARACTERS = 200;

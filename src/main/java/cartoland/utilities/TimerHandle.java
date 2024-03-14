@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -26,7 +28,11 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public record TimerEvent(int hour, Runnable function) {}
+	public record TimerEvent(int hour, Runnable function) implements Serializable
+	{
+		@Serial
+		private static final long serialVersionUID = 2_718281828459045235L;
+	}
 
 	private static final short DAYS = 366; //一年有366天
 	private static final short MONTHS = 12; //一年有12月
@@ -41,7 +47,7 @@ public final class TimerHandle
 	private static final Set<Long>[] birthdayArray = new HashSet[DAYS];
 
 	@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
-	private static final Set<Runnable>[] hourRunFunctions = new HashSet[HOURS];
+	private static final Set<Runnable>[] hourRunFunctions = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
 	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
 	private static final Map<String, TimerEvent> scheduledEvents = CastToInstance.modifiableMap(FileHandle.deserialize(SCHEDULED_EVENTS)); //timer event是匿名的 scheduled event是有名字的
 	private static final Set<TimerEvent> toBeRemoved = new HashSet<>(); //不能直接在Runnable裡呼叫unregister
@@ -55,11 +61,11 @@ public final class TimerHandle
 		for (short i = 0; i < DAYS; i++)
 			birthdayArray[i] = new HashSet<>();
 		for (Map.Entry<Long, Short> idAndBirthday : birthdayMap.entrySet())
-			birthdayArray[idAndBirthday.getValue() - 1].add(idAndBirthday.getKey());
+			birthdayArray[idAndBirthday.getValue() - 1].add(idAndBirthday.getKey()); //別忘了陣列從0開始
 
 		//初始化時間事件
 		for (short i = 0; i < HOURS; i++)
-			hourRunFunctions[i] = new HashSet<>();
+			hourRunFunctions[i] = new LinkedHashSet<>();
 
 		//半夜12點
 		TimerHandle.registerTimerEvent(new TimerEvent(0, FileHandle::flushLog)); //更換log的日期

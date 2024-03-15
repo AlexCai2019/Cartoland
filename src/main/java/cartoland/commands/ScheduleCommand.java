@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.util.Set;
+
 public class ScheduleCommand extends HasSubcommands
 {
 	public static final String CREATE = "create";
@@ -29,7 +31,14 @@ public class ScheduleCommand extends HasSubcommands
 			else
 				event.reply("There's no " + scheduledEventName + " event!").queue();
 		});
-		subcommands.put(LIST, event -> event.reply(String.join("\n", TimerHandle.scheduledEventsNames())).queue());
+		subcommands.put(LIST, event ->
+		{
+			Set<String> eventNames = TimerHandle.scheduledEventsNames();
+			if (eventNames.isEmpty())
+				event.reply("There's no scheduled messages!").setEphemeral(true).queue();
+			else
+				event.reply(String.join("\n", eventNames)).queue();
+		});
 	}
 
 	private static class CreateSubCommand implements ICommand

@@ -175,11 +175,7 @@ public class CommandUsage extends ListenerAdapter
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event)
 	{
 		String commandName = event.getName();
-		ICommand commandExecution = commands.get(commandName);
-		if (commandExecution != null)
-			commandExecution.commandProcess(event);
-		else
-			event.reply("You can't use this!").setEphemeral(true).queue();
+		commands.get(commandName).commandProcess(event);
 		User user = event.getUser();
 		FileHandle.log(user.getEffectiveName(), '(', user.getId(), ") /", commandName); //IO放最後 避免超過3秒限制
 	}
@@ -199,6 +195,7 @@ public class CommandUsage extends ListenerAdapter
 		String argument = event.getOption(commandName + "_name", CommonFunctions.getAsString); //獲得參數
 		if (argument == null) //沒有參數
 			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
-		return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);
+		else //有參數
+			return JsonHandle.command(event.getUser().getIdLong(), commandName, argument);
 	}
 }

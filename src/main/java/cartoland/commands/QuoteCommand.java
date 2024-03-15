@@ -3,6 +3,7 @@ package cartoland.commands;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDs;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -13,8 +14,6 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.regex.Pattern;
-
 /**
  * {@code QuoteCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}.
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
  */
 public class QuoteCommand implements ICommand
 {
-	private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 	private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
 
 	@Override
@@ -34,7 +32,7 @@ public class QuoteCommand implements ICommand
 		long userID = user.getIdLong();
 		String link = event.getOption("link", "", CommonFunctions.getAsString);
 
-		if (!linkRegex.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
+		if (!RegularExpressions.CARTOLAND_MESSAGE_LINK_REGEX.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
 			event.reply(JsonHandle.getString(userID, "quote.invalid_link")).setEphemeral(true).queue();
 			return;

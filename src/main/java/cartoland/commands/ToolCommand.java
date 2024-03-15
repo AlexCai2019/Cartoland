@@ -2,10 +2,10 @@ package cartoland.commands;
 
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 /**
  * {@code ToolCommand} is an execution when a user uses /tool command. This class implements {@link ICommand} interface,
@@ -24,7 +24,7 @@ public class ToolCommand extends HasSubcommands
 
 	public ToolCommand()
 	{
-		super(5);
+		super(4);
 		subcommands.put(UUID_STRING, new UUIDStringSubCommand()); //tool uuid_string
 		subcommands.put(UUID_ARRAY, new UUIDArraySubCommand()); //tool uuid_array
 		subcommands.put(COLOR_RGBA, new ColorRGBASubCommand()); //tool color_rgba
@@ -42,31 +42,43 @@ public class ToolCommand extends HasSubcommands
 	 */
 	private static class UUIDStringSubCommand implements ICommand
 	{
-		//59c1027b-5559-4e6a-91e4-2b8b949656ce
-		private final Pattern dashRegex = Pattern.compile("[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}");
-		//59c1027b55594e6a91e42b8b949656ce
-		private final Pattern noDashRegex = Pattern.compile("[0-9A-Fa-f]{32}");
-
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String rawUUID = event.getOption("raw_uuid", CommonFunctions.getAsString);
-			if (rawUUID == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
+			String rawUUID = event.getOption("raw_uuid", "", CommonFunctions.getAsString);
 
 			String[] uuidStrings;
 			String dash, noDash;
 
-			if (dashRegex.matcher(rawUUID).matches())
+			if (RegularExpressions.UUID_DASH_REGEX.matcher(rawUUID).matches())
 			{
 				uuidStrings = rawUUID.split("-");
+				int length;
+
+				length = uuidStrings[0].length();
+				if (length < 8)
+					uuidStrings[0] = ("00000000" + uuidStrings[0]).substring(length);
+
+				length = uuidStrings[1].length();
+				if (length < 4)
+					uuidStrings[1] = ("0000" + uuidStrings[1]).substring(length);
+
+				length = uuidStrings[2].length();
+				if (length < 4)
+					uuidStrings[2] = ("0000" + uuidStrings[2]).substring(length);
+
+				length = uuidStrings[3].length();
+				if (length < 4)
+					uuidStrings[3] = ("0000" + uuidStrings[3]).substring(length);
+
+				length = uuidStrings[4].length();
+				if (length < 12)
+					uuidStrings[4] = ("000000000000" + uuidStrings[4]).substring(length);
+
 				dash = rawUUID;
 				noDash = String.join("", uuidStrings);
 			}
-			else if (noDashRegex.matcher(rawUUID).matches())
+			else if (RegularExpressions.UUID_NO_DASH_REGEX.matcher(rawUUID).matches())
 			{
 				uuidStrings = new String[]
 				{
@@ -114,8 +126,8 @@ public class ToolCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			Integer[] uuidArray = new Integer[4]; //裝箱類別應該比基本型別好 因為下面大量使用了String.format
-			for (int i = 0; i < 4; i++)
-				uuidArray[i] = event.getOption(Integer.toString(i), 0, CommonFunctions.getAsInt);
+			for (char c = '0'; c < '4'; c++)
+				uuidArray[c - '0'] = event.getOption(String.valueOf(c), 0, CommonFunctions.getAsInt);
 
 			//因為四個UUID是必填項 所以不須偵測是否存在 直接進程式
 			String[] uuidStrings = new String[5];
@@ -203,10 +215,6 @@ public class ToolCommand extends HasSubcommands
 	 */
 	private static class ColorIntegerSubCommand implements ICommand
 	{
-		private final Pattern decimalRegex = Pattern.compile("\\d{1,10}"); //最高4294967295 最低0
-		private final Pattern hexadecimalRegex = Pattern.compile("[0-9A-Fa-f]{6,8}"); //FFFFFF
-		private final Pattern leadingSharpHexadecimalRegex = Pattern.compile("#[0-9A-Fa-f]{6,8}"); //#FFFFFF
-
 		private static final float DIVIDE_255 = 1.0F / 255.0F;
 
 		@Override
@@ -216,11 +224,11 @@ public class ToolCommand extends HasSubcommands
 
 			long userID = event.getUser().getIdLong();
 			long rgbaInput;
-			if (decimalRegex.matcher(rgbString).matches())
+			if (RegularExpressions.DECIMAL_UNSIGNED_INT_REGEX.matcher(rgbString).matches())
 				rgbaInput = Long.parseLong(rgbString);
-			else if (hexadecimalRegex.matcher(rgbString).matches())
+			else if (RegularExpressions.HEXADECIMAL_UNSIGNED_INT_REGEX.matcher(rgbString).matches())
 				rgbaInput = Long.parseLong(rgbString, 16);
-			else if (leadingSharpHexadecimalRegex.matcher(rgbString).matches())
+			else if (RegularExpressions.LEADING_SHARP_HEXADECIMAL_UNSIGNED_INT_REGEX.matcher(rgbString).matches())
 				rgbaInput = Long.parseLong(rgbString.substring(1), 16);//像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 			else
 			{

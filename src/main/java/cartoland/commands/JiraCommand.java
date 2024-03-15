@@ -2,6 +2,7 @@ package cartoland.commands;
 
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -16,7 +17,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * {@code JiraCommand} is an execution when a user uses /jira command. This class implements {@link ICommand} interface,
@@ -28,11 +28,6 @@ import java.util.regex.Pattern;
  */
 public class JiraCommand implements ICommand
 {
-	private static final String BUG_NUMBER_REGEX = "\\d{1,6}";
-	private static final String BUG_ID_REGEX = "(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-" + BUG_NUMBER_REGEX;
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/" + BUG_ID_REGEX);
-	private final Pattern bugIDRegex = Pattern.compile(BUG_ID_REGEX);
-	private final Pattern numberRegex = Pattern.compile(BUG_NUMBER_REGEX); //目前bug數還沒超過999999個 等超過了再來改
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
 	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251;
 	private static final int DESCRIPTION_CHARACTERS = 200;
@@ -46,11 +41,11 @@ public class JiraCommand implements ICommand
 		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
 		String bugID; //將會變成像"MC-87984"那樣的bug ID
-		if (jiraLinkRegex.matcher(inputLink).matches()) //https://bugs.mojang.com/browse/MC-87984
+		if (RegularExpressions.JIRA_LINK_REGEX.matcher(inputLink).matches()) //https://bugs.mojang.com/browse/MC-87984
 			bugID = inputLink.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (bugIDRegex.matcher(inputLink).matches()) //MC-87984
+		else if (RegularExpressions.BUG_ID_REGEX.matcher(inputLink).matches()) //MC-87984
 			bugID = inputLink.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (numberRegex.matcher(inputLink).matches()) //87984
+		else if (RegularExpressions.BUG_NUMBER_REGEX.matcher(inputLink).matches()) //87984
 			bugID = "MC-" + inputLink;
 		else
 		{

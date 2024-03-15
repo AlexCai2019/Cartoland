@@ -130,7 +130,7 @@ public final class JsonHandle
 		//注意.json檔內一定不能有空字串 否則charAt會擲出StringIndexOutOfBoundsException
 		//為了讓機器人省去檢查 也為了省去動用result.startsWith 辛苦一下我們人類了
 		if (result.charAt(0) == '&') //以&開頭的json key 代表要去那個地方找 (&在C/C++中代表reference)
-			key = result.substring(1); //獲得新的key 進入下一輪迴圈
+			key = result.substring(1); //獲得新的key 進入下一次opt
 		else //並不是以&開頭
 			return result; //result就是最終找到的結果了 直接結束 注意若沒找到 會回傳內容為"null"的字串
 

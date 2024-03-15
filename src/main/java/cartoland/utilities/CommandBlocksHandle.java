@@ -7,7 +7,9 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@code CommandBlocksHandle} is a utility class that handles command blocks of users. Command blocks is a
@@ -63,16 +65,11 @@ public final class CommandBlocksHandle
 		return newUser; //絕不回傳null
 	}
 
-	public static int size()
-	{
-		return lotteryDataMap.size();
-	}
-
 	public static void initial()
 	{
 		JDA jda = Cartoland.getJDA();
-		for (long userID : lotteryDataMap.keySet()) //找到每位使用者
-			jda.retrieveUserById(userID).queue(user -> lotteryDataMap.get(userID).name = user.getEffectiveName()); //更新名字
+		for (Map.Entry<Long, LotteryData> idAndData : lotteryDataMap.entrySet()) //找到每位使用者
+			jda.retrieveUserById(idAndData.getKey()).queue(user -> idAndData.getValue().name = user.getEffectiveName()); //更新名字
 		changed = true;
 	}
 

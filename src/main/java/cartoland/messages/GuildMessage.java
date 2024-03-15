@@ -3,6 +3,7 @@ package cartoland.messages;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDs;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -15,7 +16,6 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * {@code GuildMessage} is a listener that triggers when a user types anything in any channel that the bot can access.
@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
  */
 public class GuildMessage implements IMessage
 {
-	private final Pattern jiraLinkRegex = Pattern.compile("https://bugs\\.mojang\\.com/browse/(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-\\d{1,6}");
 	private final Set<Long> commandBlockCategories = HashSet.newHashSet(5);
 
 	public GuildMessage()
@@ -77,7 +76,7 @@ public class GuildMessage implements IMessage
 			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
 			message.addReaction(Emoji.fromCustom("worship_a", IDs.WORSHIP_A_EMOJI_ID, true)).queue();
 		}
-		if (jiraLinkRegex.matcher(rawMessage).matches()) //是bug連結
+		if (RegularExpressions.JIRA_LINK_REGEX.matcher(rawMessage).matches()) //是bug連結
 		{
 			//這些程式不寫在BotCanTalkChannelMessage裡 是為了讓所有頻道都能受惠
 			String replyMessage = jiraLink(rawMessage); //獲得回覆訊息

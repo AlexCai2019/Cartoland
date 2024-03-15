@@ -215,7 +215,7 @@ public class BotCanTalkChannelMessage implements IMessage
 				break;
 		}
 
-		if (rawMessage.contains("惠惠") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()) || rawMessage.contains("めぐみん"))
+		if (rawMessage.contains("惠惠") || rawMessage.contains("めぐみん") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();

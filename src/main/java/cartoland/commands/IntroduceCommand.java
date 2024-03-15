@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * {@code IntroduceCommand} is an execution when a user uses /introduce command. This class implements
@@ -84,7 +83,6 @@ public class IntroduceCommand extends HasSubcommands
 	 */
 	private static class UpdateSubCommand implements ICommand
 	{
-		private final Pattern linkRegex = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
 		private static final int SUB_STRING_START = ("https://discord.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/").length();
 
 		@Override
@@ -99,7 +97,7 @@ public class IntroduceCommand extends HasSubcommands
 				return;
 			}
 
-			if (!linkRegex.matcher(content).matches()) //如果內容不是創聯群組連結
+			if (!RegularExpressions.CARTOLAND_MESSAGE_LINK_REGEX.matcher(content).matches()) //如果內容不是創聯群組連結
 			{
 				event.reply(JsonHandle.getString(userID, "introduce.update.update")).queue();
 				updateIntroduction(userID, content);

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * {@code LotteryCommand} is an execution when a user uses /lottery command. This class implements {@link ICommand}
@@ -23,8 +22,6 @@ public class LotteryCommand extends HasSubcommands
 	private static final Random random = new Random(); //不使用Algorithm.chance
 	private static final long MAXIMUM = 1000000L;
 	private static final byte INVALID_BET = -1;
-	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
-	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
 
 	public static final String GET = "get";
 	public static final String BET = "bet";
@@ -49,9 +46,9 @@ public class LotteryCommand extends HasSubcommands
 		//注意指令參數名一定要是bet 也許未來會變 但目前就是bet
 
 		long bet;
-		if (NUMBER_REGEX.matcher(betString).matches()) //賭數字
+		if (RegularExpressions.BET_NUMBER_REGEX.matcher(betString).matches()) //賭數字
 			bet = Long.parseLong(betString);
-		else if (PERCENT_REGEX.matcher(betString).matches()) //賭%數
+		else if (RegularExpressions.BET_PERCENT_REGEX.matcher(betString).matches()) //賭%數
 		{
 			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
 			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
@@ -205,15 +202,16 @@ public class LotteryCommand extends HasSubcommands
 			boolean sameUser = userID == lastUser;
 			lastUser = userID;
 
-			int page = event.getOption("page", 1, CommonFunctions.getAsInt); //page從1開始 預設1
+			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt); //page從1開始 預設1
+			int page;
 
 			//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
-			int maxPage = (CommandBlocksHandle.size() - 1) / 10 + 1;
-			if (page > maxPage) //超出範圍
+			int maxPage = (CommandBlocksHandle.lotteryDataList.size() - 1) / 10 + 1;
+			if (inputPage > maxPage) //超出範圍
 				page = maxPage; //同上例子 就改成顯示第3頁
-			else if (page < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
-				page = (-page < maxPage) ? maxPage + page + 1 : 1;
-			else if (page == 0)
+			else if (inputPage < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
+				page = (-inputPage < maxPage) ? maxPage + inputPage + 1 : 1;
+			else
 				page = 1;
 
 			if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
@@ -224,7 +222,7 @@ public class LotteryCommand extends HasSubcommands
 				return; //省略排序
 			}
 
-			forSort = CommandBlocksHandle.lotteryDataList;
+			forSort = CommandBlocksHandle.lotteryDataList; //直接copy reference
 
 			//排序
 			forSort.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面

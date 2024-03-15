@@ -1,26 +1,21 @@
 package cartoland.commands;
 
-import cartoland.events.CommandUsage;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.regex.Pattern;
-
 /**
  * {@code TransferCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
- * interface, which is for the commands HashMap in {@link CommandUsage}.
+ * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}.
  *
  * @since 1.5
  * @author Alex Cai
  */
 public class TransferCommand implements ICommand
 {
-	private static final Pattern NUMBER_REGEX = Pattern.compile("\\d{1,18}"); //防止輸入超過Long.MAX_VALUE
-	private static final Pattern PERCENT_REGEX = Pattern.compile("\\d{1,4}%"); //防止輸入超過Short.MAX_VALUE
-
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
 	{
@@ -52,9 +47,9 @@ public class TransferCommand implements ICommand
 
 		long nowHave = myData.getBlocks();
 		long transferAmount;
-		if (NUMBER_REGEX.matcher(transferAmountString).matches()) //轉數字
+		if (RegularExpressions.BET_NUMBER_REGEX.matcher(transferAmountString).matches()) //轉數字
 			transferAmount = Long.parseLong(transferAmountString);
-		else if (PERCENT_REGEX.matcher(transferAmountString).matches()) //轉%數
+		else if (RegularExpressions.BET_PERCENT_REGEX.matcher(transferAmountString).matches()) //轉%數
 		{
 			short percentage = Short.parseShort(transferAmountString.substring(0, transferAmountString.length() - 1));
 			if (percentage > 100) //百分比格式錯誤 不能賭超過100%

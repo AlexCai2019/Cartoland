@@ -7,12 +7,19 @@ import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@code QuoteCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
@@ -64,32 +71,37 @@ public class QuoteCommand implements ICommand
 			event.reply(JsonHandle.getString(userID, "quote.no_channel")).setEphemeral(true).queue();
 			return;
 		}
+
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同
-		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage ->
-		{
-			User linkAuthor = linkMessage.getAuthor(); //連結訊息的發送者
+		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage -> quoteMessage(event, linkChannel, linkMessage),
+			new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
+	}
 
-			EmbedBuilder embedBuilder = new EmbedBuilder()
-					.setAuthor(linkAuthor.getEffectiveName(), null, linkAuthor.getEffectiveAvatarUrl())
-					.setDescription(linkMessage.getContentRaw()) //訊息的內容
-					.setTimestamp(linkMessage.getTimeCreated()) //連結訊息的發送時間
-					.setFooter(linkChannel.getName(), null); //訊息的發送頻道
+	public static void quoteMessage(IReplyCallback event, MessageChannel channel, Message message)
+	{
+		User user = event.getUser();
+		long userID = user.getIdLong();
+		User author = message.getAuthor(); //連結訊息的發送者
+		List<MessageEmbed> embeds = new ArrayList<>();
+		embeds.add(new EmbedBuilder()
+				.setAuthor(author.getEffectiveName(), null, author.getEffectiveAvatarUrl())
+				.setDescription(message.getContentRaw()) //訊息的內容
+				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
+				.setFooter(channel != null ? channel.getName() : author.getName(), null) //訊息的發送頻道
+				.build());
 
-			//選擇連結訊息內的第一張圖片作為embed的圖片
-			for (Message.Attachment attachment : linkMessage.getAttachments())
-			{
-				if (attachment.isImage())
-				{
-					embedBuilder.setImage(attachment.getUrl());
-					break;
-				}
-			}
+		embeds.addAll(message.getAttachments()
+				.stream()
+				.filter(Message.Attachment::isImage)
+				.map(attachment -> new EmbedBuilder().setImage(attachment.getUrl()).build())
+				.toList());
 
-			(event.getOption("mention_author", false, CommonFunctions.getAsBoolean) ? //是否提及訊息作者
-					event.reply(JsonHandle.getString(userID, "quote.mention",
-							user.getEffectiveName(), linkAuthor.getAsMention())).addEmbeds(embedBuilder.build()) : //提及訊息作者
-					event.replyEmbeds(embedBuilder.build())) //不提及訊息作者
-				.addActionRow(Button.link(link, JsonHandle.getString(userID, "quote.jump_message"))).queue();
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
+		//提及訊息作者 vs 不提及訊息作者
+		ReplyCallbackAction replyAction;
+		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", false, CommonFunctions.getAsBoolean))
+			replyAction = event.reply(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
+		else
+			replyAction = event.replyEmbeds(embeds);
+		replyAction.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message"))).queue();
 	}
 }

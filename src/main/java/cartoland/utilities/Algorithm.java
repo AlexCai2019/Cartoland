@@ -37,12 +37,12 @@ public final class Algorithm
 	 */
 	public static void shuffle(int[] array)
 	{
-		for (int index = 0, endIndex = array.length - 1, destIndex, temp; index < endIndex; index++) //到endIndex為止 因為最後一項沒必要交換
+		for (int index = 0, endIndex = array.length - 1; index < endIndex; index++) //到endIndex為止 因為最後一項沒必要交換
 		{
-			destIndex = random.nextInt(array.length - index) + index; //0會得到0 ~ endIndex 1會得到1 ~ endIndex 2會得到2 ~ endIndex
+			int destinationIndex = random.nextInt(array.length - index) + index; //0會得到0 ~ endIndex 1會得到1 ~ endIndex 2會得到2 ~ endIndex
 			//交換
-			temp = array[destIndex];
-			array[destIndex] = array[index];
+			int temp = array[destinationIndex];
+			array[destinationIndex] = array[index];
 			array[index] = temp;
 		}
 	}
@@ -56,13 +56,12 @@ public final class Algorithm
 	 */
 	public static void shuffle(Object[] array)
 	{
-		Object temp;
-		for (int index = 0, endIndex = array.length - 1, destIndex; index < endIndex; index++) //到endIndex為止 因為最後一項沒必要交換
+		for (int index = 0, endIndex = array.length - 1; index < endIndex; index++) //到endIndex為止 因為最後一項沒必要交換
 		{
-			destIndex = random.nextInt(array.length - index) + index; //0會得到0~endIndex 1會得到1~endIndex 2會得到2~endIndex
+			int destinationIndex = random.nextInt(array.length - index) + index; //0會得到0~endIndex 1會得到1~endIndex 2會得到2~endIndex
 			//交換
-			temp = array[destIndex];
-			array[destIndex] = array[index];
+			Object temp = array[destinationIndex];
+			array[destinationIndex] = array[index];
 			array[index] = temp;
 		}
 	}

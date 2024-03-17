@@ -3,6 +3,7 @@ package cartoland.utilities;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,7 @@ public final class JsonHandle
 
 	public static List<String> commandList(String commandName)
 	{
-		return commandListMap.get(commandName + ".list");
+		return commandListMap.getOrDefault(commandName + ".list", Collections.emptyList());
 	}
 
 	private static List<String> buildStringListFromJsonArray(JSONArray jsonArray)

@@ -33,7 +33,7 @@ public final class ForumsHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final String RESOLVED_FORMAT = "<:resolved:" + Long.toUnsignedString(IDs.RESOLVED_EMOJI_ID) + '>';
+	private static final String RESOLVED_FORMAT = "<:resolved:" + IDs.RESOLVED_EMOJI_ID + '>';
 	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
 	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;

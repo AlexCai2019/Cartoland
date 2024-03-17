@@ -22,19 +22,19 @@ public class ScheduleCommand extends HasSubcommands
 		subcommands.put(CREATE, new CreateSubCommand());
 		subcommands.put(DELETE, event ->
 		{
-			String scheduledEventName = event.getOption("name", " ", CommonFunctions.getAsString);
-			if (TimerHandle.hasScheduledEvent(scheduledEventName))
+			String scheduledEventName = event.getOption("name", " ", CommonFunctions.getAsString); //事件名稱
+			if (TimerHandle.hasScheduledEvent(scheduledEventName)) //如果曾有schedule過該名稱的事件
 			{
 				event.reply("Removed scheduled " + scheduledEventName + " message.").queue();
-				TimerHandle.unregisterScheduledEvent(scheduledEventName);
+				TimerHandle.unregisterScheduledEvent(scheduledEventName); //移除事件
 			}
 			else
 				event.reply("There's no " + scheduledEventName + " event!").queue();
 		});
 		subcommands.put(LIST, event ->
 		{
-			Set<String> eventNames = TimerHandle.scheduledEventsNames();
-			if (eventNames.isEmpty())
+			Set<String> eventNames = TimerHandle.scheduledEventsNames(); //事件名稱們
+			if (eventNames.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
 				event.reply("There's no scheduled messages!").setEphemeral(true).queue();
 			else
 				event.reply(String.join("\n", eventNames)).queue();
@@ -72,30 +72,30 @@ public class ScheduleCommand extends HasSubcommands
 			}
 
 			String content = event.getOption("content", " ", CommonFunctions.getAsString); //內容
-			int contentLength = content.length();
-			String first20Characters = content.substring(0, Math.min(20, contentLength));
-			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名 + 時間 + 開頭前10個字
+			int contentLength = content.length(); //訊息的長度
+			String first20Characters = contentLength <= 20 ? content : content.substring(0, 20); //取其前20個字
+			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名_時間_開頭前20個字
 
-			if (TimerHandle.hasScheduledEvent(name))
+			if (TimerHandle.hasScheduledEvent(name)) //如果已經註冊過這個事件名稱了
 			{
 				event.reply("Already has " + name + " event!").setEphemeral(true).queue();
 				return;
 			}
 
-			boolean once = event.getOption("once", Boolean.FALSE, CommonFunctions.getAsBoolean);
+			boolean once = event.getOption("once", Boolean.FALSE, CommonFunctions.getAsBoolean); //是否為一次性
 
 			long channelID = guildChannel.getIdLong(); //頻道ID
-			Runnable sendMessageToChannel = () ->
+			Runnable sendMessageToChannel = () -> //事件內容的Runnable
 			{
-				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID);
-				if (channel != null)
-					channel.sendMessage(content).queue();
+				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
+				if (channel != null) //如果找到頻道
+					channel.sendMessage(content).queue(); //發送訊息
 			};
-			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent(time, once ? () ->
+			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent(time, once ? () -> //如果是一次性
 			{
-				sendMessageToChannel.run();
-				TimerHandle.unregisterScheduledEvent(name);
-			} : sendMessageToChannel));
+				sendMessageToChannel.run(); //執行Runnable
+				TimerHandle.unregisterScheduledEvent(name); //執行完後刪除事件
+			} : sendMessageToChannel)); //不是一次性 就直接把Runnable傳入
 
 			event.reply("The bot will send \"" + first20Characters + (contentLength > 20 ? "…" : "") + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}

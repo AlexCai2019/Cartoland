@@ -291,7 +291,7 @@ public class AdminCommand extends HasSubcommands
 			}
 
 			//可惜沒有getAsFloat
-			float time = (float) event.getOption("time", 0.0, CommonFunctions.getAsDouble).doubleValue(); //解包並轉float
+			float time = event.getOption("time", 0.0, CommonFunctions.getAsDouble).floatValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
 				event.reply(JsonHandle.getString(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();

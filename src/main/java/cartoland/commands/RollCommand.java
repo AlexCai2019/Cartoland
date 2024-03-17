@@ -51,7 +51,7 @@ public class RollCommand extends HasSubcommands
 				return; //結束
 			}
 
-			event.deferReply().queue();
+			event.deferReply().queue(); //使用deferReply 避免超過3秒限制
 
 			Role targetRole = event.getOption("role", cartoland.getRoleById(IDs.MEMBER_ROLE_ID), OptionMapping::getAsRole); //目標身分組
 
@@ -67,7 +67,7 @@ public class RollCommand extends HasSubcommands
 				event.getHook()
 						.sendMessage(member.getEffectiveName() + '(' + user.getName() + ')')
 						.setEmbeds(new EmbedBuilder()
-								.setDescription("<@" + userIDString + '>')
+								.setDescription("<@" + userIDString + '>') //注意此處的userIDString是字串 與慣例的long不同
 								.setAuthor(member.getEffectiveName(), null, member.getEffectiveAvatarUrl())
 								.setTimestamp(OffsetDateTime.now())
 								.setFooter(userIDString)

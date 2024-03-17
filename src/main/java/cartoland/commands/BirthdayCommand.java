@@ -29,25 +29,23 @@ public class BirthdayCommand extends HasSubcommands
 		subcommands.put(GET, event ->
 		{
 			User user = event.getUser(); //自己
-			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者
-			//如果沒有指定查詢的對象 預設是自己
-			short[] birthday = TimerHandle.getBirthday(target.getIdLong());
 			long userID = user.getIdLong();
-			if (birthday == null)
+			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
+			short[] birthday = TimerHandle.getBirthday(target.getIdLong());
+			if (birthday == null) //查不到生日
 			{
 				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
 				return;
 			}
-			event.reply(JsonHandle.getString(userID, "birthday.get.set_on",
-							target.getEffectiveName(),
-							JsonHandle.getString(userID, "birthday.month_" + birthday[0]),
-							JsonHandle.getString(userID, "birthday.date_" + birthday[1])))
+			event.reply(JsonHandle.getString(userID, "birthday.get.set_on", target.getEffectiveName(),
+							JsonHandle.getString(userID, "birthday.month_" + birthday[0]), //月
+							JsonHandle.getString(userID, "birthday.date_" + birthday[1]))) //日
 						.queue();
 		});
 		subcommands.put(DELETE, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			TimerHandle.deleteBirthday(userID);
+			TimerHandle.deleteBirthday(userID); //刪除自己的生日
 			event.reply(JsonHandle.getString(userID, "birthday.delete")).queue();
 		});
 	}
@@ -66,8 +64,8 @@ public class BirthdayCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 
-			int month = event.getOption("month", 1, CommonFunctions.getAsInt);
-			int date = event.getOption("date", 1, CommonFunctions.getAsInt);
+			int month = event.getOption("month", 1, CommonFunctions.getAsInt); //月
+			int date = event.getOption("date", 1, CommonFunctions.getAsInt); //日
 			if (month < 1 || month > 12) //月份不在1 ~ 12的區間
 			{
 				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();

@@ -56,9 +56,7 @@ public class AutoComplete extends ListenerAdapter
 	@Override
 	public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event)
 	{
-		GenericComplete complete = commands.get(event.getName());
-		if (complete != null)
-			complete.completeProcess(event);
+		commands.get(event.getName()).completeProcess(event);
 	}
 
 	/**

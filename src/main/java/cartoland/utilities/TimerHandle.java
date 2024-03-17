@@ -279,9 +279,9 @@ public final class TimerHandle
 		//舉例 生日在2月10號, birthday = 31(1月的天數) + 10 = 41
 		//第一次迴圈(month = 2), daysReachThisMonth = 31(1月的天數), 31 < 41, 不通過
 		//第二次迴圈(month = 3), daysReachThisMonth = 31 + 29, 60 >= 41, 因此return {3 - 1, 41 - 31}
-		for (short month = 2, daysReachThisMonth; month <= MONTHS; month++) //從2月開始 一路到12月
+		for (short month = 2; month <= MONTHS; month++) //從2月開始 一路到12月
 		{
-			daysReachThisMonth = getDaysReachMonth(month);
+			short daysReachThisMonth = getDaysReachMonth(month);
 			if (daysReachThisMonth >= birthday) //總共的天數 - 抵達這個月需要的天數 >= 生日
 				return new short[]{(short) (month - 1), (short) (birthday - daysReachLastMonth)};
 			daysReachLastMonth = daysReachThisMonth;

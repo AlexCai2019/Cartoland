@@ -1,19 +1,16 @@
 package cartoland.events;
 
+import cartoland.commands.QuoteCommand;
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
-import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
@@ -83,31 +80,7 @@ public class ContextMenu extends ListenerAdapter
 					}));
 			}
 
-			case QUOTE_ ->
-			{
-				Message message = event.getTarget();
-				User linkAuthor = message.getAuthor(); //連結訊息的發送者
-				String linkAuthorName = linkAuthor.getEffectiveName();
-				MessageChannel channel = event.getChannel();
-
-				EmbedBuilder embedBuilder = new EmbedBuilder().setAuthor(linkAuthorName, null, linkAuthor.getEffectiveAvatarUrl())
-						.setDescription(message.getContentRaw()) //訊息的內容
-						.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
-						.setFooter(channel != null ? channel.getName() : linkAuthorName, null); //訊息的發送頻道
-
-				//選擇訊息內的第一張圖片作為embed的圖片
-				for (Message.Attachment attachment : message.getAttachments())
-				{
-					if (attachment.isImage())
-					{
-						embedBuilder.setImage(attachment.getUrl());
-						break;
-					}
-				}
-				event.replyEmbeds(embedBuilder.build())
-					.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message")))
-					.queue();
-			}
+			case QUOTE_ -> QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());
 
 			case PIN ->
 			{

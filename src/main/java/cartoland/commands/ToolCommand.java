@@ -57,23 +57,23 @@ public class ToolCommand extends HasSubcommands
 
 				length = uuidStrings[0].length();
 				if (length < 8)
-					uuidStrings[0] = ("00000000" + uuidStrings[0]).substring(length);
+					uuidStrings[0] = ("00000000" + uuidStrings[0]).substring(length); //不滿8個數字就補上前綴0
 
 				length = uuidStrings[1].length();
 				if (length < 4)
-					uuidStrings[1] = ("0000" + uuidStrings[1]).substring(length);
+					uuidStrings[1] = ("0000" + uuidStrings[1]).substring(length); //不滿4個數字就補上前綴0
 
 				length = uuidStrings[2].length();
 				if (length < 4)
-					uuidStrings[2] = ("0000" + uuidStrings[2]).substring(length);
+					uuidStrings[2] = ("0000" + uuidStrings[2]).substring(length); //不滿4個數字就補上前綴0
 
 				length = uuidStrings[3].length();
 				if (length < 4)
-					uuidStrings[3] = ("0000" + uuidStrings[3]).substring(length);
+					uuidStrings[3] = ("0000" + uuidStrings[3]).substring(length); //不滿4個數字就補上前綴0
 
 				length = uuidStrings[4].length();
 				if (length < 12)
-					uuidStrings[4] = ("000000000000" + uuidStrings[4]).substring(length);
+					uuidStrings[4] = ("000000000000" + uuidStrings[4]).substring(length); //不滿12個數字就補上前綴0
 
 				dash = rawUUID;
 				noDash = String.join("", uuidStrings);

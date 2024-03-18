@@ -78,7 +78,7 @@ public final class JsonHandle
 	{
 		return jsonArray.toList()
 				.stream()
-				.map(String::valueOf)
+				.map(Object::toString)
 				.toList();
 	}
 

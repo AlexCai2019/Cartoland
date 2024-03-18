@@ -9,7 +9,7 @@ public final class CastToInstance
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static Map modifiableMap(Object o)
 	{
 		return switch (o)
@@ -20,11 +20,12 @@ public final class CastToInstance
 			case IdentityHashMap identityHashMap -> identityHashMap;
 			case WeakHashMap weakHashMap -> weakHashMap;
 			case Hashtable hashtable -> hashtable;
+			case Map map -> new HashMap<>(map);
 			case null, default -> new HashMap<>();
 		};
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static Set modifiableSet(Object o)
 	{
 		return switch (o)
@@ -32,6 +33,7 @@ public final class CastToInstance
 			case HashSet hashSet -> hashSet;
 			case TreeSet treeSet -> treeSet;
 			case EnumSet enumSet -> enumSet;
+			case Set set -> new HashSet<>(set);
 			case null, default -> new HashSet<>();
 		};
 	}

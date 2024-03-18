@@ -177,7 +177,7 @@ public class CommandUsage extends ListenerAdapter
 		String commandName = event.getName();
 		commands.get(commandName).commandProcess(event);
 		User user = event.getUser();
-		FileHandle.log(user.getEffectiveName(), '(', user.getId(), ") /", commandName); //IO放最後 避免超過3秒限制
+		FileHandle.log(user.getName(), '(', user.getId(), ") /", commandName, ' ', event.getSubcommandName()); //IO放最後 避免超過3秒限制
 	}
 
 	/**

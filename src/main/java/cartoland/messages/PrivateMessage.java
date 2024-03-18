@@ -50,6 +50,6 @@ public class PrivateMessage implements IMessage
 
 		stringAndChannel.channel().sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
 				.queue(undergroundMessage -> AnonymousHandle.addConnection(message.getIdLong(), undergroundMessage.getIdLong()));
-		FileHandle.log(author.getName(), '(', author.getId(), ") dm \"", message.getContentRaw(), "\" w ", attachmentsCount);
+		FileHandle.dmLog(author.getName(), '(', author.getId(), ") dm \"", message.getContentRaw(), "\" w ", attachmentsCount);
 	}
 }

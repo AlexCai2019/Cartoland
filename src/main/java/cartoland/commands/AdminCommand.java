@@ -168,6 +168,7 @@ public class AdminCommand extends HasSubcommands
 
 			event.reply(replyStringBuilder.toString()).queue();
 			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
+			FileHandle.log(member.getUser().getName(), '(', member.getId(), ") mute ", target.getUser().getName(), '(', target.getId(), ')', mutedTime, ' ', reason);
 		}
 	}
 
@@ -254,6 +255,7 @@ public class AdminCommand extends HasSubcommands
 			banData[BANNED_SERVER] = guild.getIdLong(); //紀錄被ban的人的群組
 			tempBanSet.add(banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
+			FileHandle.log(member.getUser().getName(), '(', member.getId(), ") temp_ban ", target.getUser().getName(), '(', target.getId(), ')', bannedTime, ' ', reason);
 		}
 	}
 

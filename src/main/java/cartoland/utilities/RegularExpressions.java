@@ -20,6 +20,7 @@ public final class RegularExpressions
 	public static final Pattern DECIMAL_UNSIGNED_INT_REGEX = Pattern.compile("\\d{1,10}"); //最高4294967295 最低0
 	public static final Pattern HEXADECIMAL_UNSIGNED_INT_REGEX = Pattern.compile("[0-9A-Fa-f]{6,8}"); //從六個0到八個F
 	public static final Pattern LEADING_SHARP_HEXADECIMAL_UNSIGNED_INT_REGEX = Pattern.compile("#[0-9A-Fa-f]{6,8}"); //#FFFFFF
+	public static final Pattern MEGUMIN_REGEX = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
 	static
 	{

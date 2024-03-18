@@ -2,6 +2,7 @@ package cartoland.messages;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * {@code BotCanTalkChannelMessage} is a listener that triggers when a user types anything in any channel that the
@@ -49,6 +49,7 @@ public class BotCanTalkChannelMessage implements IMessage
 	private final String[] replyMention =
 	{
 		"你媽沒教你不要亂tag人嗎？",
+		"你媽知道你都在Discord亂tag人嗎？",
 		"勸你小心點，我認識這群群主。",
 		"tag我都小雞雞。",
 		"不要耍智障好不好。",
@@ -93,8 +94,6 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/Aax1R2U", //我要走向電話
 		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
-
-	private final Pattern meguminRegex = Pattern.compile("(?i).*megumin.*"); //containsIgnoreCase
 
 	private final Set<Long> canTalkCategories = HashSet.newHashSet(4);
 
@@ -216,7 +215,7 @@ public class BotCanTalkChannelMessage implements IMessage
 				break;
 		}
 
-		if (rawMessage.contains("惠惠") || rawMessage.contains("めぐみん") || (rawMessageLength >= 7 && meguminRegex.matcher(rawMessage).matches()))
+		if (rawMessage.contains("惠惠") || rawMessage.contains("めぐみん") || (rawMessageLength >= 7 && RegularExpressions.MEGUMIN_REGEX.matcher(rawMessage).matches()))
 			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
 		if (rawMessage.contains("聰明"))
 			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();

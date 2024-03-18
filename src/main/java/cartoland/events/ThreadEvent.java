@@ -11,8 +11,7 @@ import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * {@code ThreadEvent} is a listener that triggers when a user create a thread or a thread archived. For now, this only
@@ -58,11 +57,11 @@ public class ThreadEvent extends ListenerAdapter
 		ForumChannel questionsChannel = forumPost.getParentChannel().asForumChannel(); //問題論壇
 		ForumTag resolvedForumTag = questionsChannel.getAvailableTagById(IDs.RESOLVED_FORUM_TAG_ID); //已解決
 		ForumTag unresolvedForumTag = questionsChannel.getAvailableTagById(IDs.UNRESOLVED_FORUM_TAG_ID); //未解決
-		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
+		List<ForumTag> tags = new ArrayList<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
 		tags.remove(resolvedForumTag); //移除resolved
 		tags.add(unresolvedForumTag); //新增unresolved 因為是set所以不用擔心重複
 		forumPost.getManager()
-				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : new ArrayList<>(tags).subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
+				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : tags.subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
 				.queue(); //貼文狀態為未解決
 	}
 }

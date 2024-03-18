@@ -125,22 +125,26 @@ public class AutoComplete extends ListenerAdapter
 	private static class YouTuberComplete extends GenericComplete
 	{
 		//這是TreeMap的排序方式 若要新增YouTuber 必須寫一個小程式測試TreeMap會怎麼排序
-		private final List<YouTuber> youtubers = Arrays.asList(
-				new YouTuber("Cloud Wolf", "@CloudWolfMinecraft"),
-				new YouTuber("Phoenix SC", "@PhoenixSC"),
-				new YouTuber("SethBling", "@SethBling"),
-				new YouTuber("kingbdogz", "@kingbdogz"),
-				new YouTuber("slicedlime", "@slicedlime"),
-				new YouTuber("天豹星雲", "@nebulirion"),
-				new YouTuber("惡靈oreki", "@oreki20"),
-				new YouTuber("收音機", "@radio0529"));
+		//Map<String, String> map = new TreeMap<>();
+		//map.put("Cloud Wolf", "@CloudWolfMinecraft") ... ...
+		private final YouTuber[] youtubers =
+		{
+			new YouTuber("Cloud Wolf", "@CloudWolfMinecraft"),
+			new YouTuber("Phoenix SC", "@PhoenixSC"),
+			new YouTuber("SethBling", "@SethBling"),
+			new YouTuber("kingbdogz", "@kingbdogz"),
+			new YouTuber("slicedlime", "@slicedlime"),
+			new YouTuber("天豹星雲", "@nebulirion"),
+			new YouTuber("惡靈oreki", "@oreki20"),
+			new YouTuber("收音機", "@radio0529")
+		};
 
 		@Override
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			String optionValue = event.getFocusedOption().getValue(); //將字串串流轉換為選項列表
 			event.replyChoices(
-					youtubers.stream()
+					Arrays.stream(youtubers)
 							.filter(youtuber -> youtuber.nameContains(optionValue))
 							.limit(CHOICES_LIMIT)
 							.map(YouTuber::toChoice)

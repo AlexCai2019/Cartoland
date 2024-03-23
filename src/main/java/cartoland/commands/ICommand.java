@@ -1,7 +1,10 @@
 package cartoland.commands;
 
-import cartoland.mini_games.IMiniGame;
+import cartoland.mini_games.MiniGame;
+import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,10 +96,22 @@ class HasSubcommands implements ICommand
 
 abstract class GameSubcommand implements ICommand
 {
-	protected final IMiniGame.MiniGameMap games;
+	protected final MiniGame.MiniGameMap games;
 
-	protected GameSubcommand(IMiniGame.MiniGameMap games)
+	protected GameSubcommand(MiniGame.MiniGameMap games)
 	{
 		this.games = games;
+	}
+
+	protected void gameOver(SlashCommandInteractionEvent event, String replyMessage)
+	{
+		User user = event.getUser();
+		MiniGame game = games.remove(user.getIdLong());
+		event.reply(replyMessage)
+				.addFiles(FileUpload.fromData(game.getRecord().getBytes(),
+						user.getEffectiveName() + '_' +
+								TimerHandle.getDateString() + '_' +
+								TimerHandle.getTimeString().replace(':', ';') + ".txt"))
+				.queue(); //傳送最終結果並上傳紀錄
 	}
 }

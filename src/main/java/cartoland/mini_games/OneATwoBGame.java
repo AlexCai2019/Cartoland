@@ -2,8 +2,6 @@ package cartoland.mini_games;
 
 import cartoland.utilities.Algorithm;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 
 /**
@@ -15,14 +13,13 @@ import java.util.Arrays;
  * @see cartoland.commands.OneATwoBCommand The frontend of the 1A2B game.
  * @author Alex Cai
  */
-public class OneATwoBGame implements IMiniGame
+public class OneATwoBGame extends MiniGame
 {
 	public static final int ANSWER_LENGTH = 4; //答案的長度
 
 	private final int[] answer = new int[ANSWER_LENGTH]; //答案
 	private final boolean[] metBefore = new boolean[10];
 	private final boolean[] inAnswer = { false,false,false,false,false,false,false,false,false,false };
-	private final Instant begin;
 	private int guesses = 0;
 
 	public OneATwoBGame()
@@ -35,8 +32,6 @@ public class OneATwoBGame implements IMiniGame
 			answer[i] = zeroToNine[i];
 			inAnswer[answer[i]] = true;
 		}
-
-		begin = Instant.now();
 	}
 
 	@Override
@@ -69,12 +64,14 @@ public class OneATwoBGame implements IMiniGame
 			input /= 10; //下一個數字
 		}
 
+		recordBuilder.append(String.format("%0" + ANSWER_LENGTH + "d", input))
+				.append(" = ")
+				.append(ab[0])
+				.append('A')
+				.append(ab[1])
+				.append("B\n");
+
 		return ab; //結果
-	}
-	//計時結束
-	public long getTimePassed()
-	{
-		return Duration.between(begin, Instant.now()).toSeconds();
 	}
 
 	public int getGuesses()

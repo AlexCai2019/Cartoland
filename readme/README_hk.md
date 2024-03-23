@@ -15,7 +15,7 @@
 - 📁`logs/`
 - 📁`serialize/` with these following files:
   - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`birthday_map.ser` serialized from a `HashMap` which use `Long` as key and `Short` as value.
+  - 📄`birthday_map.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.TimerHandle.Birthday` as value.
   - 📄`has_start_message.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`idled_questions.ser` serialized from a `HashSet` which use `Long` as value.
   - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.

@@ -65,10 +65,9 @@ public class ClickedButton extends ListenerAdapter
 					return;
 				}
 
-				newTitleInputBuilder.setValue(channel.getName());
 				event.replyModal(
 						Modal.create(ReceiveModal.NEW_TITLE_MODAL_ID, JsonHandle.getString(userID, "rename_thread.set_new_thread_title"))
-								.addComponents(ActionRow.of(newTitleInputBuilder.build()))
+								.addComponents(ActionRow.of(newTitleInputBuilder.setValue(channel.getName()).build()))
 								.build()).queue(); //如果Modal可以事先建好就好了
 			}
 		}

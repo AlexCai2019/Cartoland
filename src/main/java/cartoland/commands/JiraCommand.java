@@ -29,7 +29,7 @@ import java.util.Locale;
 public class JiraCommand implements ICommand
 {
 	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
-	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251;
+	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251
 	private static final int DESCRIPTION_CHARACTERS = 200;
 
 	@Override
@@ -130,7 +130,7 @@ public class JiraCommand implements ICommand
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
 		try
 		{
-			return "<t:" + ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", ""), dateTimeFormatter).toEpochSecond() + ":R>";
+			return "<t:" + ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", "1970-01-01T00:00:00+0000"), dateTimeFormatter).toEpochSecond() + ":R>";
 		}
 		catch (DateTimeParseException e)
 		{

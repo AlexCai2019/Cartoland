@@ -749,7 +749,10 @@ public final class AddCommands
 									.setDescriptionLocalization(CHINESE_CHINA, "棋盘上的直列")),
 						new SubcommandData(ConnectFourCommand.BOARD, "Get the current board")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "獲得目前的棋盤")
-							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘")),
+							.setDescriptionLocalization(CHINESE_CHINA, "获得目前的棋盘"),
+						new SubcommandData(LightOutCommand.GIVE_UP, "Give up the game")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "放棄遊戲")
+							.setDescriptionLocalization(CHINESE_CHINA, "放弃游戏")),
 			Commands.slash(LIGHT_OUT, "Play a game of Light Out")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "玩一場關燈遊戲")
 					.setDescriptionLocalization(CHINESE_CHINA, "玩一场关灯游戏")

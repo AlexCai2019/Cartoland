@@ -2,7 +2,7 @@ package cartoland.mini_games;
 
 import cartoland.utilities.Algorithm;
 
-public class LightOutGame implements IMiniGame
+public class LightOutGame extends MiniGame
 {
 	private static final char ON = '▫';
 	private static final char OFF = '▪';
@@ -70,6 +70,7 @@ public class LightOutGame implements IMiniGame
 		safeFlip(row + 1, column); //下面翻面
 		safeFlip(row, column - 1); //左邊翻面
 		safeFlip(row, column + 1); //右邊翻面
+		recordBuilder.append(boardBuilder.substring(3, boardBuilder.length() - 3)).append('\n');
 		return onCount == 0; //沒有on代表贏了
 	}
 

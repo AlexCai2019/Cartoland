@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.awt.Color;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public final class ForumsHandle
 	}
 
 	private static final String RESOLVED_FORMAT = "<:resolved:" + IDs.RESOLVED_EMOJI_ID + '>';
-	private static final int CARTOLAND_GREEN = -8009369; //new java.awt.Color(133, 201, 103, 255).getRGB();
+	private static final int CARTOLAND_GREEN = new Color(133, 201, 103, 255).getRGB(); //-8009369
 	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;
 	private static final MessageEmbed startEmbed = new EmbedBuilder()

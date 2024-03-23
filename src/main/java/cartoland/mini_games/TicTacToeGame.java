@@ -13,14 +13,14 @@ import java.util.Arrays;
  * @see TicTacToeCommand The frontend of the Tic-Tac-Toe game.
  * @author Alex Cai
  */
-public class TicTacToeGame implements IMiniGame
+public class TicTacToeGame extends MiniGame
 {
 	private static final int BOARD_SIDE = 3;
 	private static final int LEFT_CORNER = 0;
 	private static final int CENTER = BOARD_SIDE * BOARD_SIDE >> 1;
 	private static final StringBuilder BOARD_TEMPLATE = new StringBuilder("```\nr\\c"); //棋盤範本
 
-	private static final int[][] winningCombinations =
+	private static final int[][] WINNING_COMBINATIONS =
 	{
 		{0, 1, 2}, {3, 4, 5}, {6, 7, 8},  // 橫列
 		{0, 3, 6}, {1, 4, 7}, {2, 5, 8},  // 直行
@@ -106,6 +106,7 @@ public class TicTacToeGame implements IMiniGame
 		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * row + 2 + (column << 2), NOUGHT);
 		//省略 開頭的四個字元 (頭上的列 = -符號 和 其他棋盤列) + 2 等差數列 注意row和column從1開始
 		//上一列加上換行字元 有ROW_LENGTH個字元 -符號有ROW_LENGTH個 加上換行字元
+		recordBuilder.append(boardBuilder.substring(3, boardBuilder.length() - 3)).append('\n');
 
 		spaces--; //空棋盤少一格
 		return round > 2 && checkWin(NOUGHT); //進行到第三回合才有可能有輸贏
@@ -123,6 +124,7 @@ public class TicTacToeGame implements IMiniGame
 		board[index] = CROSS; //機器人放置棋子
 		int[] co = arrayOfRowAndColumn(index); // co[0] = row, co[1] = column
 		boardBuilder.setCharAt(4 + ((ROW_LENGTH << 1) + 1) * co[0] + 2 + (co[1] << 2), CROSS);
+		recordBuilder.append(boardBuilder.substring(3, boardBuilder.length() - 3)).append('\n');
 		spaces--; //空棋盤少一格
 		return round++ > 2 && checkWin(CROSS); //進行到第三回合才有可能有輸贏
 	}
@@ -169,7 +171,7 @@ public class TicTacToeGame implements IMiniGame
 
 	private boolean checkWin(char symbol)
 	{
-		for (int[] winLine : winningCombinations) //檢查所有勝利的可能性
+		for (int[] winLine : WINNING_COMBINATIONS) //檢查所有勝利的可能性
 			if (matchWinLine(winLine, symbol)) //如果有任何一條中了勝利的組合
 				return true; //勝利
 		return false; //尚未勝利
@@ -341,12 +343,12 @@ public class TicTacToeGame implements IMiniGame
 		{
 			synchronized (TicTacToeGame.class) //避免洗牌時造成干擾
 			{
-				Algorithm.shuffle(winningCombinations); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
+				Algorithm.shuffle(WINNING_COMBINATIONS); //隨機更換檢測勝利的順序 為人類玩家的策略帶來不定性
 			}
 
 			int first, second, third;
 			char f, s, t;
-			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果O確實即將連線則阻止
+			for (int[] winLine: WINNING_COMBINATIONS) //檢查O是否即將連線 如果O確實即將連線則阻止
 			{
 				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
 				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中
@@ -400,7 +402,7 @@ public class TicTacToeGame implements IMiniGame
 			int first, second, third;
 			char f, s, t;
 
-			for (int[] winLine: winningCombinations) //檢查X是否即將連線 如果是則執行
+			for (int[] winLine: WINNING_COMBINATIONS) //檢查X是否即將連線 如果是則執行
 			{
 				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
 				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中
@@ -413,7 +415,7 @@ public class TicTacToeGame implements IMiniGame
 					return first;
 			}
 
-			for (int[] winLine: winningCombinations) //檢查O是否即將連線 如果是則阻止
+			for (int[] winLine: WINNING_COMBINATIONS) //檢查O是否即將連線 如果是則阻止
 			{
 				f = game.board[first = winLine[0]]; //可能連線的第一格 同時將索引存進first中
 				s = game.board[second = winLine[1]]; //可能連線的第二格 同時將索引存進second中

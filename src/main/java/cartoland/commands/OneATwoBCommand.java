@@ -1,6 +1,6 @@
 package cartoland.commands;
 
-import cartoland.mini_games.IMiniGame;
+import cartoland.mini_games.MiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.CommonFunctions;
@@ -26,13 +26,13 @@ public class OneATwoBCommand extends HasSubcommands
 	public static final String PLAY = "play";
 	public static final String GIVE_UP = "give_up";
 
-	public OneATwoBCommand(IMiniGame.MiniGameMap games)
+	public OneATwoBCommand(MiniGame.MiniGameMap games)
 	{
 		super(3);
 		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲 還用start
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
@@ -51,7 +51,7 @@ public class OneATwoBCommand extends HasSubcommands
 		subcommands.put(GIVE_UP, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 			if (playing == null)
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.no_game_gave_up")).setEphemeral(true).queue();
@@ -64,7 +64,7 @@ public class OneATwoBCommand extends HasSubcommands
 						.queue();
 				return;
 			}
-			games.remove(event.getUser().getIdLong());
+			games.remove(userID);
 			event.reply(JsonHandle.getString(userID, "one_a_two_b.gave_up") + oneATwoB.getAnswerString()).queue();
 		});
 	}
@@ -78,7 +78,7 @@ public class OneATwoBCommand extends HasSubcommands
 	 */
 	private static class PlaySubcommand extends GameSubcommand
 	{
-		private PlaySubcommand(IMiniGame.MiniGameMap games)
+		private PlaySubcommand(MiniGame.MiniGameMap games)
 		{
 			super(games);
 		}
@@ -87,7 +87,7 @@ public class OneATwoBCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 			if (playing == null) //沒有在玩遊戲 但還是用了/one_a_two_b play
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.not_playing", "</tic_tac_toe start:1123462079546937485>"))
@@ -129,19 +129,17 @@ public class OneATwoBCommand extends HasSubcommands
 			}
 
 			//猜出ANSWER_LENGTH個A 遊戲結束
-			long second = oneATwoB.getTimePassed();
 			int guesses = oneATwoB.getGuesses();
-			String replyString = JsonHandle.getString(userID, "one_a_two_b.game_over", shouldReply, answer, second / 60, second % 60, guesses);
+			long second = oneATwoB.getTimePassed();
+			String replyString = JsonHandle.getString(userID, "one_a_two_b.game_over", shouldReply, answer, guesses) + JsonHandle.getString(userID, "mini_game.used_time", second / 60, second % 60);
 
 			if (second <= MAX_MINUTE * 60L && guesses <= MAX_GUESSES) //如果在2分鐘內猜出來 且不大於7次
 			{
-				//因為許多時候並不會需要進來這個區塊 所以不必用StringBuilder 更為簡便的+=即可
-				replyString += JsonHandle.getString(userID, "one_a_two_b.reward", MAX_MINUTE, MAX_GUESSES, REWARD);
 				CommandBlocksHandle.getLotteryData(userID).addBlocks(REWARD); //獎勵REWARD顆指令方塊
+				gameOver(event, replyString + JsonHandle.getString(userID, "one_a_two_b.reward", MAX_MINUTE, MAX_GUESSES, REWARD));
 			}
-
-			event.reply(replyString).queue();
-			games.remove(userID);
+			else
+				gameOver(event, replyString);
 		}
 	}
 }

@@ -2,7 +2,7 @@ package cartoland.events;
 
 import cartoland.Cartoland;
 import cartoland.commands.*;
-import cartoland.mini_games.IMiniGame;
+import cartoland.mini_games.MiniGame;
 import cartoland.utilities.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,11 +29,6 @@ public class CommandUsage extends ListenerAdapter
 	 * The key of this map is the n of a command, and the value is the execution.
 	 */
 	private final Map<String, ICommand> commands = new HashMap<>();
-
-	/**
-	 * The key of this map is the n of a game, and the value is the actual game.
-	 */
-	public final IMiniGame.MiniGameMap games = new IMiniGame.MiniGameMap();
 
 	/**
 	 * 403 images about Megumin.
@@ -144,6 +139,8 @@ public class CommandUsage extends ListenerAdapter
 
 		//schedule
 		commands.put(SCHEDULE, new ScheduleCommand());
+
+		MiniGame.MiniGameMap games = new MiniGame.MiniGameMap();
 
 		//one_a_two_b
 		commands.put(ONE_A_TWO_B, new OneATwoBCommand(games));

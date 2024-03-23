@@ -1,7 +1,7 @@
 package cartoland.commands;
 
-import cartoland.mini_games.IMiniGame;
 import cartoland.mini_games.LightOutGame;
+import cartoland.mini_games.MiniGame;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -13,13 +13,13 @@ public class LightOutCommand extends HasSubcommands
 	public static final String BOARD = "board";
 	public static final String GIVE_UP = "give_up";
 
-	public LightOutCommand(IMiniGame.MiniGameMap games)
+	public LightOutCommand(MiniGame.MiniGameMap games)
 	{
 		super(4);
 		subcommands.put(START, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 			if (playing != null) //已經有在玩遊戲
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
@@ -37,7 +37,7 @@ public class LightOutCommand extends HasSubcommands
 		subcommands.put(BOARD, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 
 			if (playing == null) //沒有在玩遊戲 但還是使用了/light_out board
 			{
@@ -48,7 +48,7 @@ public class LightOutCommand extends HasSubcommands
 			}
 
 			//已經有在玩遊戲
-			event.reply(playing instanceof LightOutGame lightOut ? //是在玩井字遊戲
+			event.reply(playing instanceof LightOutGame lightOut ? //是在玩關燈遊戲
 							lightOut.getBoard() :
 							JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 					.setEphemeral(true)
@@ -58,7 +58,7 @@ public class LightOutCommand extends HasSubcommands
 		subcommands.put(GIVE_UP, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 			if (playing == null)
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.no_game_gave_up")).queue();
@@ -78,7 +78,7 @@ public class LightOutCommand extends HasSubcommands
 
 	private static class FlipSubcommand extends GameSubcommand
 	{
-		private FlipSubcommand(IMiniGame.MiniGameMap games)
+		private FlipSubcommand(MiniGame.MiniGameMap games)
 		{
 			super(games);
 		}
@@ -87,7 +87,7 @@ public class LightOutCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			IMiniGame playing = games.get(userID);
+			MiniGame playing = games.get(userID);
 
 			if (playing == null) //沒有在玩任何遊戲
 			{
@@ -115,8 +115,7 @@ public class LightOutCommand extends HasSubcommands
 
 			if (lightOut.flip(row, column)) //翻面之後贏了
 			{
-				event.reply("You won!\n" + lightOut.getBoard()).queue();
-				games.remove(userID);
+				gameOver(event, "You won!\n" + lightOut.getBoard());
 				return;
 			}
 

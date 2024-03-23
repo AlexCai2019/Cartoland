@@ -15,7 +15,7 @@
 - 📁`logs/`
 - 📁`serialize/`，以及下列檔案：
   - 📄`all_members.ser`，從一个值是`Long`的`HashSet`串聯化而來。
-  - 📄`birthday_map.ser`，從一个索引是`Long`、值是`Short`的`HashMap`串聯化而來。
+  - 📄`birthday_map.ser`，從一个索引是`Long`、值是`cartoland.utilities.TimerHandle.Birthday`的`HashMap`串聯化而來。
   - 📄`has_start_message.ser`，從一个值是`Long`的`HashSet`串聯化而來。
   - 📄`idled_questions.ser`，從一个值是`Long`的`HashSet`串聯化而來。
   - 📄`introduction.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。

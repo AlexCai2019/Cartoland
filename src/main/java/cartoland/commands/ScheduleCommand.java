@@ -91,7 +91,7 @@ public class ScheduleCommand extends HasSubcommands
 				if (channel != null) //如果找到頻道
 					channel.sendMessage(content).queue(); //發送訊息
 			};
-			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent(time, once ? () -> //如果是一次性
+			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent((byte) time, once ? () -> //如果是一次性
 			{
 				sendMessageToChannel.run(); //執行Runnable
 				TimerHandle.unregisterScheduledEvent(name); //執行完後刪除事件

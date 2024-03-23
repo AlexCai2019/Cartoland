@@ -31,15 +31,15 @@ public class BirthdayCommand extends HasSubcommands
 			User user = event.getUser(); //自己
 			long userID = user.getIdLong();
 			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
-			short[] birthday = TimerHandle.getBirthday(target.getIdLong());
+			TimerHandle.Birthday birthday = TimerHandle.getBirthday(target.getIdLong());
 			if (birthday == null) //查不到生日
 			{
 				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
 				return;
 			}
 			event.reply(JsonHandle.getString(userID, "birthday.get.set_on", target.getEffectiveName(),
-							JsonHandle.getString(userID, "birthday.month_" + birthday[0]), //月
-							JsonHandle.getString(userID, "birthday.date_" + birthday[1]))) //日
+							JsonHandle.getString(userID, "birthday.month_" + birthday.month()), //月
+							JsonHandle.getString(userID, "birthday.date_" + birthday.date()))) //日
 						.queue();
 		});
 		subcommands.put(DELETE, event ->

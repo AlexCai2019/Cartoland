@@ -2,8 +2,6 @@ package cartoland.utilities;
 
 import cartoland.Cartoland;
 import cartoland.commands.AdminCommand;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -154,13 +152,18 @@ public final class TimerHandle
 		{
 			for (TimerEvent removeTimerEvent : toBeRemoved) //移除要被移除的事件們
 				hourRunFunctions[removeTimerEvent.hour].remove(removeTimerEvent.function);
-			toBeRemoved.clear();
+			toBeRemoved.clear(); //清空將被移除事件的紀錄
 		}
 
 		for (Runnable event : hourRunFunctions[nowHour]) //走訪被註冊的事件們
 			event.run(); //執行
 
-		unbanMembers(); //時間到了的話就解除封鎖
+		//根據現在的時間 決定是否解ban
+		if (AdminCommand.tempBanSet.isEmpty()) //沒有人被temp_ban
+			return; //不用執行
+		for (AdminCommand.BanData bannedMember : new HashSet<>(AdminCommand.tempBanSet)) //建立新物件 以免修改到原set
+			bannedMember.tryUnban(); //嘗試解ban
+
 	}, secondsUntil((nowHour + 1) % HOURS), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	public static long getHoursFrom1970()
@@ -235,28 +238,6 @@ public final class TimerHandle
 
 		//如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了 那就明天再執行 否則今天就可執行
 		return Duration.between(now, now.isAfter(untilTime) ? untilTime.plusDays(1L) : untilTime).getSeconds();
-	}
-
-	private static void unbanMembers()
-	{
-		//根據現在的時間 決定是否解ban
-		//TODO: 注意陣列的equals是==
-		Set<long[]> tempBanSet = AdminCommand.tempBanSet;
-		if (tempBanSet.isEmpty()) //沒有人被temp_ban
-			return; //不用執行
-		//這以下是有關解ban的程式碼
-		Set<long[]> bannedMembers = new HashSet<>(tempBanSet); //建立新物件 以免修改到原set
-		JDA jda = Cartoland.getJDA();
-		for (long[] bannedMember : bannedMembers)
-		{
-			if (hoursFrom1970 < bannedMember[AdminCommand.BANNED_TIME]) //還沒到這個人要被解ban的時間
-				continue; //下面一位
-			Guild bannedServer = jda.getGuildById(bannedMember[AdminCommand.BANNED_SERVER]); //找到當初ban他的群組
-			if (bannedServer != null) //群組還在
-				jda.retrieveUserById(bannedMember[AdminCommand.USER_ID_INDEX]) //找到這名使用者後解ban他
-						.queue(user -> bannedServer.unban(user).queue()); //解ban
-			AdminCommand.tempBanSet.remove(bannedMember); //不再紀錄這名使用者
-		}
 	}
 
 	private static void registerTimerEvent(TimerEvent timerEvent)

@@ -22,7 +22,7 @@
   - 📄`lottery_data.ser`，从一个键为`Long`、值为`cartoland.utilities.CommandBlocksHandle.LotteryData`的`HashMap`序列化而来。
   - 📄`private_to_underground.ser`，從一个键和值为`Long`的`HashMap`序列化而来。
   - 📄`scheduled_events.ser`，从一个键为`String`、值为`cartoland.utilities.TimerHandle.TimerEvent`的`HashMap`序列化而来。
-  - 📄`temp_ban_list.ser`，从一个值为`long[]`的`HashSet`序列化而来。
+  - 📄`temp_ban_list.ser`，从一个值为`cartoland.commands.AdminCommand.BanData`的`HashSet`序列化而来。
   - 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
 
 ## 激活

@@ -22,7 +22,7 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
   - 📄`lottery_data.ser` serialized from a `HashMap` which use `Long` as key and `cartoland.utilities.CommandBlocksHandle.LotteryData` as value.
   - 📄`private_to_underground.ser` serialized from a `HashMap` which use `Long` as key and value.
   - 📄`scheduled_events.ser` serialized from a `HashMap` which use `String` as key and `cartoland.utilities.TimerHandle.TimerEvent` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashSet` which use `long[]` as value.
+  - 📄`temp_ban_list.ser` serialized from a `HashSet` which use `cartoland.commands.AdminCommand.BanData` as value.
   - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## Launching

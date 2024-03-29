@@ -64,8 +64,8 @@ public class OneATwoBCommand extends HasSubcommands
 						.queue();
 				return;
 			}
-			games.remove(userID);
 			event.reply(JsonHandle.getString(userID, "one_a_two_b.gave_up") + oneATwoB.getAnswerString()).queue();
+			games.remove(userID);
 		});
 	}
 

@@ -78,7 +78,14 @@ public class BirthdayCommand extends HasSubcommands
 				return;
 			}
 
-			if (isWrongDate(month, date)) //如果日期對不上月份 例如2月30日、4月31日等
+			if (switch (month) //如果日期對不上月份 例如2月30日、4月31日等
+			{
+				case 4, 6, 9, 11 -> date == 31; //小月不得超過30
+
+				case 2 -> date > 29; //2月不得超過29
+
+				default -> false; //因為前面已經檢查過31了 所以大月是不會錯的
+			})
 			{
 				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_date_in_month",
 						JsonHandle.getString(userID, "birthday.month_" + month),
@@ -90,18 +97,6 @@ public class BirthdayCommand extends HasSubcommands
 					JsonHandle.getString(userID, "birthday.month_" + month),
 					JsonHandle.getString(userID, "birthday.date_" + date))).queue();
 			TimerHandle.setBirthday(userID, month, date);
-		}
-
-		private boolean isWrongDate(int month, int date)
-		{
-			return switch (month)
-			{
-				case 4, 6, 9, 11 -> date > 30; //小月不得超過30
-
-				case 2 -> date > 29; //2月不得超過29
-
-				default -> false; //因為前面已經檢查過31了 所以大月是不會錯的
-			};
 		}
 	}
 }

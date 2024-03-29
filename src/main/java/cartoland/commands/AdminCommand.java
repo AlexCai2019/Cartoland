@@ -1,12 +1,16 @@
 package cartoland.commands;
 
+import cartoland.Cartoland;
 import cartoland.utilities.*;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -23,13 +27,24 @@ import java.util.concurrent.TimeUnit;
 public class AdminCommand extends HasSubcommands
 {
 	private static final String TEMP_BAN_SET = "serialize/temp_ban_set.ser";
+	public record BanData(long userID, long unbanTime, long bannedServerID) implements Serializable
+	{
+		@Serial
+		private static final long serialVersionUID = 23_14069263277926900L;
 
-	//userID為value[0] ban time為value[1] ban guild為value[2]
+		public void tryUnban()
+		{
+			if (TimerHandle.getHoursFrom1970() < unbanTime) //還沒到這個人要被解ban的時間
+				return; //結束
+			JDA jda = Cartoland.getJDA();
+			Guild bannedServer = jda.getGuildById(bannedServerID); //找到當初ban他的群組
+			if (bannedServer != null) //群組還在
+				jda.retrieveUserById(userID).queue(user -> bannedServer.unban(user).queue()); //找到這名使用者後解ban他
+			tempBanSet.remove(this); //不再紀錄這名使用者 無論群組是否已經不在了
+		}
+	}
 	@SuppressWarnings("unchecked")
-	public static final Set<long[]> tempBanSet = CastToInstance.modifiableSet(FileHandle.deserialize(TEMP_BAN_SET));
-	public static final byte USER_ID_INDEX = 0;
-	public static final byte BANNED_TIME = 1;
-	public static final byte BANNED_SERVER = 2;
+	public static final Set<BanData> tempBanSet = CastToInstance.modifiableSet(FileHandle.deserialize(TEMP_BAN_SET));
 
 	public static final String MUTE = "mute";
 	public static final String TEMP_BAN = "temp_ban";
@@ -248,12 +263,9 @@ public class AdminCommand extends HasSubcommands
 			//回覆完再開始動作 避免超過三秒限制
 
 			Guild guild = target.getGuild();
-			long[] banData = new long[3];
-			banData[USER_ID_INDEX] = target.getIdLong(); //紀錄被ban的人的ID
-			banData[BANNED_TIME] = Algorithm.safeAdd(TimerHandle.getHoursFrom1970(), durationHours); //紀錄被ban的人的解除時間
+			//紀錄被ban的人的ID, 解除時間, 群組
+			tempBanSet.add(new BanData(target.getIdLong(), Algorithm.safeAdd(TimerHandle.getHoursFrom1970(), durationHours), guild.getIdLong()));
 			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
-			banData[BANNED_SERVER] = guild.getIdLong(); //紀錄被ban的人的群組
-			tempBanSet.add(banData); //紀錄ban了這個人
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
 			FileHandle.log(member.getUser().getName(), '(', member.getId(), ") temp_ban ", target.getUser().getName(), '(', target.getId(), ')', bannedTime, ' ', reason);
 		}

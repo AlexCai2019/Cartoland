@@ -93,7 +93,7 @@ public class ToolCommand extends HasSubcommands
 			}
 			else //不是一個合法的UUID字串
 			{
-				event.reply(JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).queue();
+				event.reply(JsonHandle.getString(event.getUser().getIdLong(), "tool.uuid_string.invalid_string")).setEphemeral(true).queue();
 				return;
 			}
 
@@ -170,13 +170,13 @@ public class ToolCommand extends HasSubcommands
 			int rgba = 0, argb = 0, rgb = 0;
 
 			long userID = event.getUser().getIdLong();
-			for (int i = 0, offset = 24, rgbaTemp, argbTemp; i < 4; i++)
+			for (int i = 0, offset = 24; i < 4; i++)
 			{
-				rgbaTemp = rgbaColors[i]; //避免重複解包
-				argbTemp = argbColors[i];
+				int rgbaTemp = rgbaColors[i]; //避免重複解包
+				int argbTemp = argbColors[i];
 				if (notInRange(rgbaTemp) || notInRange(argbTemp))
 				{
-					event.reply(JsonHandle.getString(userID, "tool.color_rgba.wrong_range")).queue();
+					event.reply(JsonHandle.getString(userID, "tool.color_rgba.wrong_range")).setEphemeral(true).queue();
 					return;
 				}
 
@@ -232,7 +232,7 @@ public class ToolCommand extends HasSubcommands
 				rgbaInput = Long.parseLong(rgbString.substring(1), 16);//像#FFFFFF這樣開頭帶一個#的形式 並去掉開頭的#
 			else
 			{
-				event.reply(JsonHandle.getString(userID, "tool.color_integer.wrong_argument")).queue();
+				event.reply(JsonHandle.getString(userID, "tool.color_integer.wrong_argument")).setEphemeral(true).queue();
 				return;
 			}
 			long rgba = Math.min(rgbaInput, 0xFFFF_FFFFL);

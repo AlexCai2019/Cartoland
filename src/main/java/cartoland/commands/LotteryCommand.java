@@ -194,30 +194,34 @@ public class LotteryCommand extends HasSubcommands
 		private String lastReply; //上一次回覆過的字串
 		private int lastPage = -1; //上一次查看的頁面
 		private long lastUser = -1L; //上一次使用指令的使用者
+		private int maxPage; //目前有幾頁
 
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			boolean sameUser = userID == lastUser;
-			lastUser = userID;
 
 			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt); //page從1開始 預設1
 			int page;
 
 			//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
-			int maxPage = (CommandBlocksHandle.lotteryDataList.size() - 1) / 10 + 1;
+			maxPage = (CommandBlocksHandle.lotteryDataList.size() - 1) / 10 + 1;
 			if (inputPage > maxPage) //超出範圍
 				page = maxPage; //同上例子 就改成顯示第3頁
 			else if (inputPage < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
 				page = (-inputPage < maxPage) ? maxPage + inputPage + 1 : 1;
 			else
-				page = 1;
+				page = inputPage;
+
+			boolean sameUser = userID == lastUser;
+			lastUser = userID;
+			boolean samePage = page == lastPage;
+			lastPage = page; //換過頁了
 
 			if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
 			{
-				if (page != lastPage || !sameUser) //有換頁 或 不是同一位使用者
-					lastReply = replyString(userID, page, maxPage); //重新建立字串
+				if (!samePage || !sameUser) //有換頁 或 不是同一位使用者
+					lastReply = replyString(userID, page); //重新建立字串
 				event.reply(lastReply).queue();
 				return; //省略排序
 			}
@@ -227,9 +231,8 @@ public class LotteryCommand extends HasSubcommands
 			//排序
 			forSort.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面
 
-			event.reply(lastReply = replyString(userID, page, maxPage)).queue();
+			event.reply(lastReply = replyString(userID, page)).queue();
 			CommandBlocksHandle.changed = false; //已經排序過了
-			lastPage = page; //換過頁了
 		}
 
 		private final StringBuilder rankBuilder = new StringBuilder();
@@ -239,12 +242,11 @@ public class LotteryCommand extends HasSubcommands
 		 *
 		 * @param userID The ID of the user who used the command.
 		 * @param page The page that the command user want to check.
-		 * @param maxPage Maximum of pages that the ranking list has.
 		 * @return A page of the ranking list into a single string.
 		 * @since 1.6
 		 * @author Alex Cai
 		 */
-		private String replyString(long userID, int page, int maxPage)
+		private String replyString(long userID, int page)
 		{
 			//page 從1開始
 			int startElement = (page - 1) * 10; //開始的那個元素

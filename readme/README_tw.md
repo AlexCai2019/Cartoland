@@ -22,7 +22,7 @@
   - 📄`lottery_data.ser`，從一個索引為`Long`、值為`cartoland.utilties.CommandBlocksHandle.LotteryData`的`HashMap`串聯化而來。
   - 📄`private_to_underground.ser`，從一個索引和值為`Long`的`HashMap`串聯化而來。
   - 📄`scheduled_events.ser`，從一個索引為`String`、值為`cartoland.utilities.TimerHandle.TimerEvent`的`HashMap`串聯化而來。
-  - 📄`temp_ban_list.ser`，從一個值為`long[]`的`HashSet`串聯化而來。
+  - 📄`temp_ban_list.ser`，從一個值為`cartoland.commands.AdminCommand.BanData`的`HashSet`串聯化而來。
   - 📄`users.ser`，從一個索引為`Long`、值為`String`的`HashMap`串聯化而來。
 
 ## 啟動

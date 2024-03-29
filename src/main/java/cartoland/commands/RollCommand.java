@@ -33,7 +33,7 @@ public class RollCommand extends HasSubcommands
 			int maximum = event.getOption("maximum", 0, CommonFunctions.getAsInt);
 
 			if (minimum > maximum)
-				event.reply("Minimum mustn't larger than maximum!").queue();
+				event.reply("Minimum mustn't larger than maximum!").setEphemeral(true).queue();
 			else
 				event.reply(Integer.toString(new Random().nextInt(minimum, Algorithm.safeAdd(maximum, 1)))).queue();
 		});

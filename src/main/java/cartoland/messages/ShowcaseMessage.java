@@ -19,6 +19,8 @@ public class ShowcaseMessage implements IMessage
 {
 	private final Button archiveButton = Button.success(ClickedButton.ARCHIVE_THREAD, "Archive Thread")
 			.withEmoji(Emoji.fromUnicode("📁"));
+	private final Button deleteButton = Button.danger(ClickedButton.DELETE_THREAD, "Delete Thread")
+			.withEmoji(Emoji.fromUnicode("❌"));
 	private final Button renameButton = Button.primary(ClickedButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
 
@@ -37,6 +39,6 @@ public class ShowcaseMessage implements IMessage
 		String name = event.getAuthor().getEffectiveName();
 		event.getMessage().createThreadChannel(name + '(' + TimerHandle.getDateString() + ')').queue(threadChannel ->
 			threadChannel.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention())
-					.addActionRow(archiveButton, renameButton).queue(message -> message.pin().queue()));
+					.addActionRow(archiveButton, deleteButton, renameButton).queue(message -> message.pin().queue()));
 	}
 }

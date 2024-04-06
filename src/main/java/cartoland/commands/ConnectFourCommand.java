@@ -1,7 +1,6 @@
 package cartoland.commands;
 
 import cartoland.mini_games.ConnectFourGame;
-import cartoland.mini_games.LightOutGame;
 import cartoland.mini_games.MiniGame;
 import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
@@ -76,7 +75,7 @@ public class ConnectFourCommand extends HasSubcommands
 				event.reply(JsonHandle.getString(userID, "mini_game.no_game_gave_up")).queue();
 				return;
 			}
-			if (!(playing instanceof LightOutGame lightOut))
+			if (!(playing instanceof ConnectFourGame connectFour))
 			{
 				event.reply(JsonHandle.getString(userID, "mini_game.playing_another_game", JsonHandle.getString(userID, playing.gameName() + ".name")))
 						.setEphemeral(true)
@@ -84,7 +83,7 @@ public class ConnectFourCommand extends HasSubcommands
 				return;
 			}
 			games.remove(userID);
-			event.reply(JsonHandle.getString(userID, "light_out.gave_up") + lightOut.getBoard()).queue();
+			event.reply(JsonHandle.getString(userID, "light_out.gave_up") + connectFour.getBoard()).queue();
 		});
 	}
 

@@ -21,7 +21,8 @@ public class MessageEvent extends ListenerAdapter
 		new BotCanTalkChannelMessage(),
 		new ForumMessage(),
 		new IntroduceMessage(),
-		new ShowcaseMessage()
+		new ShowcaseMessage(),
+		new TrapMessage()
 	};
 
 	@Override

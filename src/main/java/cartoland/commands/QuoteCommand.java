@@ -14,9 +14,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,26 +80,45 @@ public class QuoteCommand implements ICommand
 		User user = event.getUser();
 		long userID = user.getIdLong();
 		User author = message.getAuthor(); //連結訊息的發送者
+		String url = message.getJumpUrl();
 		List<MessageEmbed> embeds = new ArrayList<>();
-		embeds.add(new EmbedBuilder()
+		EmbedBuilder messageEmbed = new EmbedBuilder()
+				.setTitle(JsonHandle.getString(userID, "quote.jump_message"), url)
 				.setAuthor(author.getEffectiveName(), null, author.getEffectiveAvatarUrl())
-				.setDescription(message.getContentRaw()) //訊息的內容
+				.appendDescription(message.getContentRaw()) //訊息的內容
 				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
-				.setFooter(channel != null ? channel.getName() : author.getName(), null) //訊息的發送頻道
-				.build());
+				.setFooter(channel != null ? channel.getName() : author.getName(), null); //訊息的發送頻道
 
-		embeds.addAll(message.getAttachments()
-				.stream()
-				.filter(Message.Attachment::isImage)
-				.map(attachment -> new EmbedBuilder().setImage(attachment.getUrl()).build())
-				.toList());
+		List<Message.Attachment> attachments = message.getAttachments(); //訊息的附件
+		if (attachments.isEmpty()) //沒有任何附件
+			embeds.add(messageEmbed.build());
+		else //有附件
+			addImageAttachments(messageEmbed, embeds, attachments.stream().filter(Message.Attachment::isImage).toList());
 
 		//提及訊息作者 vs 不提及訊息作者
-		ReplyCallbackAction replyAction;
-		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", false, CommonFunctions.getAsBoolean))
-			replyAction = event.reply(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
+		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", Boolean.FALSE, CommonFunctions.getAsBoolean))
+			event.reply(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds).queue();
 		else
-			replyAction = event.replyEmbeds(embeds);
-		replyAction.addActionRow(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message"))).queue();
+			event.replyEmbeds(embeds).queue();
+	}
+
+	private static void addImageAttachments(EmbedBuilder messageEmbed, List<MessageEmbed> embeds, List<Message.Attachment> images)
+	{
+		if (images.isEmpty()) //沒有圖片
+		{
+			embeds.add(messageEmbed.build()); //直接放上訊息embed
+			return; //結束
+		}
+
+		MessageEmbed embed = messageEmbed.setImage(images.getFirst().getUrl()).build(); //建立訊息embed
+		embeds.add(embed); //第一個要放訊息embed
+
+		String title = embed.getTitle(); //訊息embed的title
+		String url = embed.getUrl(); //訊息embed的url
+		for (int i = 1, size = Math.min(images.size(), Message.MAX_EMBED_COUNT); i < size; i++) //剩下的要開新embed, 注意總數不能超過10個
+			embeds.add(new EmbedBuilder()
+					.setTitle(title, url) //title必須和訊息embed一樣
+					.setImage(images.get(i).getUrl())
+					.build());
 	}
 }

@@ -29,6 +29,8 @@ public final class IDs
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
+	public static final long TRAP_CHANNEL_ID = 1225886187017732256L; //創聯的陷阱頻道
+	public static final long STRANGERS_ROOM_CHANNEL_ID = 1226038026170400769L; //創聯的會客室頻道
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
 	public static final long RESOLVED_FORUM_TAG_ID = 1079074167468605490L; //已解決的tag
 	public static final long UNRESOLVED_FORUM_TAG_ID = 1079074098493280347L; //未解決的tag

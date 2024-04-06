@@ -137,7 +137,7 @@ public final class FileHandle
 		logger.append(TimerHandle.getTimeString()).append('\t');
 		for (Object output : outputs)
 		{
-			if (output instanceof Character c)
+			if (output instanceof Character c) //StringBuilder面對char時不會套用String.valueOf
 				logger.append(c.charValue());
 			else
 				logger.append(output);

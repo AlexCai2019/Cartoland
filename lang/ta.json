@@ -323,6 +323,8 @@
 	"archive_thread.already_archived": "這个討論串已經予人關起來矣！",
 	"archive_thread.no_permission": "你無權共這个討論串關起來！",
 	"archive_thread.archived": "%s 共這个討論串關起來矣。",
+	"delete_thread.no_permission": "You don't have the permission to delete this thread!",
+	"delete_thread.deleted": "%s deleted this thread.",
 	"rename_thread.no_permission": "你無權共這个討論串重新號名！",
 	"rename_thread.set_new_thread_title": "設置新的討論串標題"
 }

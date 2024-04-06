@@ -108,7 +108,7 @@ public class LotteryCommand extends HasSubcommands
 			}
 
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (!event.getOption("display_detail", false, CommonFunctions.getAsBoolean)) //不顯示細節
+			if (!event.getOption("display_detail", Boolean.FALSE, CommonFunctions.getAsBoolean)) //不顯示細節
 			{
 				event.reply(JsonHandle.getString(user.getIdLong(), "lottery.get.query", lotteryData.getName(), lotteryData.getBlocks())).queue();
 				return;

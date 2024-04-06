@@ -332,6 +332,8 @@
 	"archive_thread.already_archived": "呢個討論串已被關閉！",
 	"archive_thread.no_permission": "你並無權限去關閉呢個討論串！",
 	"archive_thread.archived": "%s 關閉咗討論串。",
+	"delete_thread.no_permission": "You don't have the permission to delete this thread!",
+	"delete_thread.deleted": "%s deleted this thread.",
 	"rename_thread.no_permission": "你並無權限去重新命名呢個討論串。",
 	"rename_thread.set_new_thread_title": "設定新嘅討論串標題"
 }

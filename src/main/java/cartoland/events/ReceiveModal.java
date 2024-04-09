@@ -1,6 +1,8 @@
 package cartoland.events;
 
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.modals.ModalMapping;
@@ -14,24 +16,45 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
  */
 public class ReceiveModal extends ListenerAdapter
 {
+	public static final String CONFIRM_DELETION_MODAL_ID = "confirm_deletion";
+	public static final String CONFIRM_DELETION_TEXT = "confirm_deletion";
 	public static final String NEW_TITLE_MODAL_ID = "new_title";
 	public static final String NEW_TITLE_TEXT = "new_title";
 
 	@Override
 	public void onModalInteraction(ModalInteractionEvent event)
 	{
-		if (NEW_TITLE_MODAL_ID.equals(event.getModalId()))
+		User user = event.getUser();
+		long userID = user.getIdLong();
+		switch (event.getModalId())
 		{
-			ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
-			if (newTitle == null)
+			case NEW_TITLE_MODAL_ID ->
 			{
-				event.reply("Impossible, this is required!").queue();
-				return;
+				ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
+				if (newTitle == null)
+				{
+					event.reply("Impossible, this is required!").setEphemeral(true).queue();
+					return;
+				}
+
+				String newTitleString = newTitle.getAsString(); //新標題
+				event.reply(JsonHandle.getString(userID, "rename_thread.changed", user.getEffectiveName(), newTitleString)).queue();
+				event.getGuildChannel().getManager().setName(newTitleString).queue();
 			}
 
-			String newTitleString = newTitle.getAsString(); //新標題
-			((ThreadChannel) event.getChannel()).getManager().setName(newTitleString).queue();
-			event.reply(event.getUser().getEffectiveName() + " changed thread title to " + newTitleString + ".").queue();
+			case CONFIRM_DELETION_MODAL_ID ->
+			{
+				ModalMapping threadName = event.getValue(CONFIRM_DELETION_TEXT);
+				if (threadName == null)
+				{
+					event.reply("Impossible, this is required!").setEphemeral(true).queue();
+					return;
+				}
+
+				Channel channel = event.getChannel();
+				if (channel.getName().equals(threadName.getAsString()))
+					event.reply(JsonHandle.getString(userID, "delete_thread.deleted", user.getEffectiveName())).queue(hook -> channel.delete().queue());
+			}
 		}
 	}
 }

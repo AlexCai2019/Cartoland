@@ -277,6 +277,7 @@
 	"one_a_two_b.not_unique": "無效的猜想：請輸入 %d 个無仝的數字。",
 	"one_a_two_b.game_over": "%s\n遊戲結束！答案是 **%04d**。\n臆 %d 擺\n",
 	"one_a_two_b.reward": "\n你佇咧 %d 分鐘內臆 %d 擺著臆著矣，獎勵 %d 个指令四方體。",
+	"one_a_two_b.gave_up": "You gave up!\nThe answer is ",
 	"lottery.get.query": "%s 這馬有 %,d 個指令四方體。",
 	"lottery.get.query_detail": "%s 這馬有 %,d 個指令四方體。\n跋了 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n梭哈 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n轉了 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n梭哈 %d 次\n- 贏了 %d 次\n- 輸了 %d 次",
 	"lottery.bet.win": "贏囉！",
@@ -320,11 +321,19 @@
 	"connect_four.lose": "你輸矣...\n",
 	"connect_four.your_move": "你落佇咧：\n",
 	"connect_four.bot_s_move": "機器人落佇咧：\n",
+	"light_out.name": "Light Out",
+	"light_out.start": "Start a game of Light Out! Your objective is to make the table full of ▪. Type </light_out flip:1211761952276217856>` <row> <column>` to make a move\n",
+	"light_out.gave_up": "You gave up!\n",
+	"showcase_thread_button.no_owner": "Can't find the owner of this thread!",
 	"archive_thread.already_archived": "這个討論串已經予人關起來矣！",
 	"archive_thread.no_permission": "你無權共這个討論串關起來！",
 	"archive_thread.archived": "%s 共這个討論串關起來矣。",
 	"delete_thread.no_permission": "You don't have the permission to delete this thread!",
+	"delete_thread.confirm_deletion": "Confirm Deletion",
+	"delete_thread.type_thread_name": "Input the name of this thread to confirm deletion.",
 	"delete_thread.deleted": "%s deleted this thread.",
 	"rename_thread.no_permission": "你無權共這个討論串重新號名！",
-	"rename_thread.set_new_thread_title": "設置新的討論串標題"
+	"rename_thread.new_title": "New Title",
+	"rename_thread.set_new_thread_title": "設置新的討論串標題",
+	"rename_thread.changed": "%s changed thread title to %s."
 }

@@ -275,6 +275,7 @@
 	"one_a_two_b.not_unique": "无效的输入，请输入 %d 个不一样的整数。",
 	"one_a_two_b.game_over": "%s\n游戏结束！答案是 **%04d**。\n猜测次数： %d 次\n",
 	"one_a_two_b.reward": "\n你在 %d 分钟和 %d 次猜测内解开了问题，奖励 %d 个命令方块。",
+	"one_a_two_b.gave_up": "你放弃了！\n答案是 ",
 	"lottery.invalid_get": "你不能查看这名用户的命令方块！",
 	"lottery.get.query": "%s 目前有 %,d 个命令方块。",
 	"lottery.get.query_detail": "%s 目前有 %,d 个命令方块。\n赌了 %d 次\n- 赢了 %d 次\n- 输了 %d 次\n梭哈 %d 次\n- 赢了 %d 次\n- 输了 %d 次\n转了 %d 次\n- 赢了 %d 次\n- 输了 %d 次\n梭哈 %d 次\n- 赢了 %d 次\n- 输了 %d 次",
@@ -319,11 +320,19 @@
 	"connect_four.lose": "你输了...\n",
 	"connect_four.your_move": "你的落子：\n",
 	"connect_four.bot_s_move": "机器人的落子：\n",
+	"light_out.name": "关灯游戏",
+	"light_out.start": "开始一场关灯游戏！ 目标是让棋盘里只有▪。输入 </light_out flip:1211761952276217856>` <横行> <直列>` 进行一次落子\n",
+	"light_out.gave_up": "你放弃了！\n",
+	"showcase_thread_button.no_owner": "找不到此子区的拥有者！",
 	"archive_thread.already_archived": "此子区已被关闭！",
 	"archive_thread.no_permission": "你没有关闭此子区的权限！",
 	"archive_thread.archived": "%s 关闭了子区。",
 	"delete_thread.no_permission": "你没有删除此子区的权限！",
+	"delete_thread.confirm_deletion": "确认删除",
+	"delete_thread.type_thread_name": "输入讨论串的名称以确认删除",
 	"delete_thread.deleted": "%s 删除了子区。",
 	"rename_thread.no_permission": "你没有重命名此子区的权限！",
-	"rename_thread.set_new_thread_title": "设置新的子区标题"
+	"rename_thread.new_title": "新的名称",
+	"rename_thread.set_new_thread_title": "设置新的子区标题",
+	"rename_thread.changed": "%s 将子区名称更改为 %s。"
 }

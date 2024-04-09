@@ -94,7 +94,7 @@ public class NewMember extends ListenerAdapter
 			return;
 		String mentionUser = user.getAsMention();
 		String serverName = cartoland.getName();
-		lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + "\n" + mentionUser + ", welcome to " + serverName)
+		lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + '\n' + mentionUser + ", welcome to " + serverName)
 				.queue(message -> message.addReaction(Emoji.fromUnicode("👋")).queue());
 	}
 

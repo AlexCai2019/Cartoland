@@ -1,6 +1,6 @@
 package cartoland.messages;
 
-import cartoland.events.ClickedButton;
+import cartoland.buttons.IButton;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -17,11 +17,11 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
  */
 public class ShowcaseMessage implements IMessage
 {
-	private final Button archiveButton = Button.success(ClickedButton.ARCHIVE_THREAD, "Archive Thread")
+	private final Button archiveButton = Button.success(IButton.ARCHIVE_THREAD, "Archive Thread")
 			.withEmoji(Emoji.fromUnicode("📁"));
-	private final Button deleteButton = Button.danger(ClickedButton.DELETE_THREAD, "Delete Thread")
-			.withEmoji(Emoji.fromUnicode("❌"));
-	private final Button renameButton = Button.primary(ClickedButton.RENAME_THREAD, "Edit Title")
+	private final Button deleteButton = Button.danger(IButton.DELETE_THREAD, "Delete Thread")
+			.withEmoji(Emoji.fromUnicode("🗑️"));
+	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
 
 	@Override

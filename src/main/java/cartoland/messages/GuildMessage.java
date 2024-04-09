@@ -84,10 +84,10 @@ public class GuildMessage implements IMessage
 				message.reply(replyMessage).mentionRepliedUser(false).queue(); //回覆
 		}
 
-		Category category = event.getMessage().getCategory(); //嘗試從訊息獲取類別
+		Category category = message.getCategory(); //嘗試從訊息獲取類別
 		//在一般、技術討論區、創作展示或公眾區域類別 且不是在機器人專區
 		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && category != null && commandBlockCategories.contains(category.getIdLong()))
-			CommandBlocksHandle.getLotteryData(event.getAuthor().getIdLong())
+			CommandBlocksHandle.getLotteryData(message.getAuthor().getIdLong())
 					.addBlocks(rawMessage.length() + 1 + message.getAttachments().size() + message.getStickers().size()); //說話加等級 +1當作加上\0 附加一個檔案或貼圖算1個
 	}
 

@@ -470,11 +470,16 @@
 	"light_out.name": "Light Out",
 	"light_out.start": "Start a game of Light Out! Your objective is to make the table full of ▪. Type </light_out flip:1211761952276217856>` <row> <column>` to make a move\n",
 	"light_out.gave_up": "You gave up!\n",
+	"showcase_thread_button.no_owner": "Can't find the owner of this thread!",
 	"archive_thread.already_archived": "This thread is already archived!",
 	"archive_thread.no_permission": "You don't have the permission to archive this thread!",
 	"archive_thread.archived": "%s archived this thread.",
 	"delete_thread.no_permission": "You don't have the permission to delete this thread!",
+	"delete_thread.confirm_deletion": "Confirm Deletion",
+	"delete_thread.type_thread_name": "Input the name of this thread to confirm deletion.",
 	"delete_thread.deleted": "%s deleted this thread.",
 	"rename_thread.no_permission": "You don't have the permission to rename this thread!",
-	"rename_thread.set_new_thread_title": "Set New Thread Title"
+	"rename_thread.new_title": "New Title",
+	"rename_thread.set_new_thread_title": "Set new thread title",
+	"rename_thread.changed": "%s changed thread title to %s."
 }

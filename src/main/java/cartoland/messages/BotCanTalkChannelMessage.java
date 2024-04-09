@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,22 +93,13 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
 
-	private final Set<Long> canTalkCategories = HashSet.newHashSet(4);
+	private final Set<Long> canTalkCategories = Set.of(IDs.GENERAL_CATEGORY_ID, IDs.FORUM_CATEGORY_ID, IDs.VOICE_CATEGORY_ID, IDs.DANGEROUS_CATEGORY_ID);
 
-	private final Map<String, String[]> keywords = HashMap.newHashMap(4);
-
-	public BotCanTalkChannelMessage()
-	{
-		canTalkCategories.add(IDs.GENERAL_CATEGORY_ID);
-		canTalkCategories.add(IDs.FORUM_CATEGORY_ID);
-		canTalkCategories.add(IDs.VOICE_CATEGORY_ID);
-		canTalkCategories.add(IDs.DANGEROUS_CATEGORY_ID);
-
-		keywords.put("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling","道聲「早安」\n卻又讓我做了夢\n自然而然的生活方式不是很好嗎？" });
-		keywords.put("午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }); //後面那句由 brick-bk 新增
-		keywords.put("晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/kfc-fried-chicken-kentucky-fried-chicken-fast-food-gif-26996460","https://tenor.com/view/burger-butter-cooking-gif-3340446" });
-		keywords.put("安安", new String[]{ "安安你好幾歲住哪","安安各位大家好","https://static.wikia.nocookie.net/theamazingworldofgumball/images/1/10/Season_3_Anais.png/" });
-	}
+	private final Map<String, String[]> keywords =
+		Map.of("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling","道聲「早安」\n卻又讓我做了夢\n自然而然的生活方式不是很好嗎？" },
+			"午安", new String[]{ "午安你好，記得天下沒有白吃的午餐" }, //後面那句由 brick-bk 新增
+			"晚安", new String[]{ "那我也要睡啦","https://tenor.com/view/food-goodnight-gif-18740706","https://tenor.com/view/kfc-fried-chicken-kentucky-fried-chicken-fast-food-gif-26996460","https://tenor.com/view/burger-butter-cooking-gif-3340446" },
+			"安安", new String[]{ "安安你好幾歲住哪","安安各位大家好","https://static.wikia.nocookie.net/theamazingworldofgumball/images/1/10/Season_3_Anais.png/" });
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)

@@ -284,6 +284,7 @@
 	"one_a_two_b.not_unique": "無效的輸入，請輸入 %d 個不一樣的整數。",
 	"one_a_two_b.game_over": "%s\n遊戲結束！答案是 **%04d**。\n猜測次數： %d 次\n",
 	"one_a_two_b.reward": "\n你在 %d 分鐘和 %d 次猜測內解開了問題，獎勵 %d 個指令方塊。",
+	"one_a_two_b.gave_up": "你放棄了！\n答案是 ",
 	"lottery.get.invalid_get": "你不能查看這名使用者的指令方塊！",
 	"lottery.get.query": "%s 目前有 %,d 個指令方塊。",
 	"lottery.get.query_detail": "%s 目前有 %,d 個指令方塊。\n賭了 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n梭哈 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n轉了 %d 次\n- 贏了 %d 次\n- 輸了 %d 次\n梭哈 %d 次\n- 贏了 %d 次\n- 輸了 %d 次",
@@ -330,11 +331,19 @@
 	"connect_four.lose": "你輸了...\n",
 	"connect_four.your_move": "你的落子：\n",
 	"connect_four.bot_s_move": "機器人的落子：\n",
+	"light_out.name": "關燈遊戲",
+	"light_out.start": "開始一場關燈遊戲！目標是讓棋盤裡只有▪。輸入 </light_out flip:1211761952276217856>` <橫列> <直行>` 進行一次落子\n",
+	"light_out.gave_up": "你放棄了！\n",
+	"showcase_thread_button.no_owner": "找不到此討論串的擁有者！",
 	"archive_thread.already_archived": "此討論串已被關閉！",
 	"archive_thread.no_permission": "你沒有關閉此討論串的權限！",
 	"archive_thread.archived": "%s 關閉了討論串。",
 	"delete_thread.no_permission": "你沒有刪除此討論串的權限！",
+	"delete_thread.confirm_deletion": "確認刪除",
+	"delete_thread.type_thread_name": "輸入討論串的名稱以確認刪除",
 	"delete_thread.deleted": "%s 刪除了討論串。",
 	"rename_thread.no_permission": "你沒有重新命名此討論串的權限！",
-	"rename_thread.set_new_thread_title": "設定新的討論串標題"
+	"rename_thread.new_title": "新的名稱",
+	"rename_thread.set_new_thread_title": "設定新的討論串名稱",
+	"rename_thread.changed": "%s 將討論串名稱更改為 %s。"
 }

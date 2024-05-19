@@ -14,7 +14,7 @@ public class EditMessage extends ListenerAdapter
 			return; //結束
 
 		Message dm = event.getMessage(); //私訊
-		Long undergroundMessageID = AnonymousHandle.getConnection(dm.getIdLong()); //查看有沒有記錄到這則訊息
+		Long undergroundMessageID = AnonymousHandle.getConnection(event.getMessageIdLong()); //查看有沒有記錄到這則訊息
 		if (undergroundMessageID == null) //沒有
 			return; //結束
 		AnonymousHandle.StringAndChannel stringAndChannel = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong());

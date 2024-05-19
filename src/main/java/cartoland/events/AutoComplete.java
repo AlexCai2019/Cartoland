@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.AutoCompleteQuery;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.*;
 
@@ -70,8 +71,6 @@ public class AutoComplete extends ListenerAdapter
 	 */
 	private static abstract class GenericComplete
 	{
-		protected static final int CHOICES_LIMIT = 25; //最多只能有25個建議
-
 		abstract void completeProcess(CommandAutoCompleteInteractionEvent event);
 
 		protected static Command.Choice stringToChoice(String keyAndValue)
@@ -109,7 +108,7 @@ public class AutoComplete extends ListenerAdapter
 			event.replyChoices( //將字串串流轉換為選項列表
 					commandList.stream()
 							.filter(word -> word.startsWith(optionValue))
-							.limit(CHOICES_LIMIT)
+							.limit(OptionData.MAX_CHOICES)
 							.map(GenericComplete::stringToChoice)
 							.toList()).queue();
 		}
@@ -146,7 +145,7 @@ public class AutoComplete extends ListenerAdapter
 			event.replyChoices(
 					Arrays.stream(youtubers)
 							.filter(youtuber -> youtuber.nameContains(optionValue))
-							.limit(CHOICES_LIMIT)
+							.limit(OptionData.MAX_CHOICES)
 							.map(YouTuber::toChoice)
 							.toList()).queue();
 		}
@@ -193,8 +192,8 @@ public class AutoComplete extends ListenerAdapter
 		private BirthdayComplete()
 		{
 			//直接轉成固定大小的List 應該會比ArrayList快
-			Command.Choice[] twentyFiveArray = new Command.Choice[CHOICES_LIMIT]; //1 ~ 25
-			for (byte b = 0; b < CHOICES_LIMIT; b++)
+			Command.Choice[] twentyFiveArray = new Command.Choice[OptionData.MAX_CHOICES]; //1 ~ 25
+			for (byte b = 0; b < OptionData.MAX_CHOICES; b++)
 				twentyFiveArray[b] = new Command.Choice(dates[b], b + 1L); //dates[0] ~ dates[24] 對應到1 ~ 25
 			twentyFive = Arrays.asList(twentyFiveArray); //event.replyChoices可以接受陣列 不過內部也是呼叫asList 不如事先呼叫好
 		}
@@ -219,7 +218,7 @@ public class AutoComplete extends ListenerAdapter
 				if (!dates[b].contains(optionValue)) //如果日期字串內沒有包含
 					continue; //下一個日期
 				choices.add(new Command.Choice(dates[b], b + 1L)); //給予選項 dates[0] 對應到1 依此類推
-				if (++choicesCount == CHOICES_LIMIT) //不得超過25個
+				if (++choicesCount == OptionData.MAX_CHOICES) //不得超過25個
 					break;
 			}
 			event.replyChoices(choices).queue();
@@ -239,7 +238,7 @@ public class AutoComplete extends ListenerAdapter
 					TimerHandle.scheduledEventsNames()
 							.stream()
 							.filter(name -> name.contains(optionValue))
-							.limit(CHOICES_LIMIT)
+							.limit(OptionData.MAX_CHOICES)
 							.map(GenericComplete::stringToChoice)
 							.toList())
 					.queue();

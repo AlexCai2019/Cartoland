@@ -2,7 +2,6 @@ package cartoland.buttons;
 
 import cartoland.events.ReceiveModal;
 import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -14,13 +13,13 @@ public class DeleteThreadButton extends ShowcaseThreadButtons
 {
 	public DeleteThreadButton()
 	{
-		super("delete_thread");
+		super(DELETE_THREAD);
 	}
 
 	@Override
-	public void hasPermission(ButtonInteractionEvent event, ThreadChannel channel, Member member)
+	public void adminManage(ButtonInteractionEvent event, ThreadChannel channel)
 	{
-		long userID = member.getIdLong();
+		long userID = event.getUser().getIdLong();
 		TextInput confirmDeletionInput = TextInput.create(ReceiveModal.CONFIRM_DELETION_TEXT, JsonHandle.getString(userID, "delete_thread.type_thread_name"), TextInputStyle.SHORT)
 				.setRequiredRange(0, 100)
 				.build();

@@ -61,7 +61,7 @@ public class ThreadEvent extends ListenerAdapter
 		tags.remove(resolvedForumTag); //移除resolved
 		tags.add(unresolvedForumTag); //新增unresolved 因為是set所以不用擔心重複
 		forumPost.getManager()
-				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : tags.subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
+				.setAppliedTags(tags.size() <= ForumChannel.MAX_POST_TAGS ? tags : tags.subList(0, ForumChannel.MAX_POST_TAGS)) //最多只能5個tag
 				.queue(); //貼文狀態為未解決
 	}
 }

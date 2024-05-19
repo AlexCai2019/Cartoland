@@ -21,9 +21,9 @@ abstract class ShowcaseThreadButtons implements IButton
 {
 	private final String jsonKey;
 
-	public ShowcaseThreadButtons(String jsonKey)
+	public ShowcaseThreadButtons(String buttonName)
 	{
-		this.jsonKey = jsonKey;
+		this.jsonKey = buttonName;
 	}
 
 	@Override
@@ -40,17 +40,20 @@ abstract class ShowcaseThreadButtons implements IButton
 
 		ThreadChannel channel = (ThreadChannel) event.getChannel();
 		if (member.hasPermission(Permission.MANAGE_THREADS)) //有權限
-			hasPermission(event, channel, member);
+		{
+			adminManage(event, channel); //直接執行
+			return; //不用再追溯了
+		}
 
 		channel.retrieveParentMessage().queue(parentMessage -> //追溯到開啟的訊息
 		{
 			if (userID == parentMessage.getAuthor().getIdLong()) //是討論串開啟者
-				hasPermission(event, channel, member);
+				adminManage(event, channel); //可以執行
 			else
 				event.reply(JsonHandle.getString(userID, jsonKey + ".no_permission")).setEphemeral(true).queue();
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE,
+		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, //找不到開啟的訊息
 				e -> event.reply(JsonHandle.getString(userID, "showcase_thread_button.no_owner")).setEphemeral(true).queue()));
 	}
 
-	public abstract void hasPermission(ButtonInteractionEvent event, ThreadChannel channel, Member member);
+	public abstract void adminManage(ButtonInteractionEvent event, ThreadChannel channel);
 }

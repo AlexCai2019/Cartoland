@@ -52,8 +52,14 @@ public class ReceiveModal extends ListenerAdapter
 				}
 
 				Channel channel = event.getChannel();
-				if (channel.getName().equals(threadName.getAsString()))
-					event.reply(JsonHandle.getString(userID, "delete_thread.deleted", user.getEffectiveName())).queue(hook -> channel.delete().queue());
+				if (!channel.getName().equals(threadName.getAsString()))
+				{
+					event.reply("Wrong thread title!").setEphemeral(true).queue();
+					return;
+				}
+
+				event.reply(JsonHandle.getString(userID, "delete_thread.deleted", user.getEffectiveName())).complete();
+				channel.delete().queue();
 			}
 		}
 	}

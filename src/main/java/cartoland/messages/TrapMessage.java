@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 public class TrapMessage implements IMessage
 {
+	private static final int DELETE_MESSAGES_MINUTES = 30;
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -26,7 +28,7 @@ public class TrapMessage implements IMessage
 		Guild cartoland = event.getGuild(); //創聯
 		if (!cartoland.getSelfMember().canInteract(member)) //只能封鎖比機器人身分更低的成員
 			return;
-		cartoland.ban(member, 2, TimeUnit.MINUTES).reason('在' + event.getChannel().getName() + "傳送訊息。").queue();
+		cartoland.ban(member, DELETE_MESSAGES_MINUTES, TimeUnit.MINUTES).reason('在' + event.getChannel().getName() + "傳送訊息。").queue();
 		ThreadChannel strangersRoom = cartoland.getThreadChannelById(IDs.STRANGERS_ROOM_CHANNEL_ID); //討論串
 		if (strangersRoom != null)
 		{

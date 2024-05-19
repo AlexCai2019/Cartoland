@@ -62,21 +62,22 @@ public class ContextMenu extends ListenerAdapter
 			{
 				String rawContent = event.getTarget().getContentRaw();
 				int contentLength = rawContent.length();
-				if (contentLength <= 1992) //因為前後要加```\n和\n``` 因此以1992為界線
+				final int maxLength = Message.MAX_CONTENT_LENGTH - 8;
+				if (contentLength <= maxLength) //因為前後要加```\n和\n``` 因此以1992為界線
 				{
 					event.reply("```\n" + rawContent + "\n```").queue();
-					return;
+					break;
 				}
 
 				//先回覆前1992個字 以及格式
-				event.reply("```\n" + rawContent.substring(0, 1992) + "\n```").queue(interactionHook ->
+				event.reply("```\n" + rawContent.substring(0, maxLength) + "\n```").queue(interactionHook ->
 					interactionHook.retrieveOriginal().queue(message ->
 					{
-						if (contentLength <= 1992 + 1992) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
-							message.reply("```\n" + rawContent.substring(1992) + "\n```").mentionRepliedUser(false).queue();
+						if (contentLength <= maxLength + maxLength) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
+							message.reply("```\n" + rawContent.substring(maxLength) + "\n```").mentionRepliedUser(false).queue();
 						else
-							message.reply("```\n" + rawContent.substring(1992, 1992 + 1992) + "\n```").mentionRepliedUser(false)
-								.queue(message1 -> message1.reply("```\n" + rawContent.substring(1992 + 1992) + "\n```").mentionRepliedUser(false).queue());
+							message.reply("```\n" + rawContent.substring(maxLength, maxLength + maxLength) + "\n```").mentionRepliedUser(false)
+								.queue(message1 -> message1.reply("```\n" + rawContent.substring(maxLength + maxLength) + "\n```").mentionRepliedUser(false).queue());
 					}));
 			}
 
@@ -101,7 +102,7 @@ public class ContextMenu extends ListenerAdapter
 				if (!isDiscussPostOwner && !member.hasPermission(Permission.MESSAGE_MANAGE)) //如果不是地圖專版貼文不是開啟者且沒有權限
 				{
 					event.reply("You don't have the permission to pin this message!").setEphemeral(true).queue();
-					return;
+					break;
 				}
 
 				if (target.isPinned())

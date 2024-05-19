@@ -1,7 +1,7 @@
 package cartoland.buttons;
 
 import cartoland.utilities.JsonHandle;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
@@ -9,7 +9,7 @@ public class ArchiveThreadButton extends ShowcaseThreadButtons
 {
 	public ArchiveThreadButton()
 	{
-		super("archive_thread");
+		super(ARCHIVE_THREAD);
 	}
 
 	@Override
@@ -22,10 +22,11 @@ public class ArchiveThreadButton extends ShowcaseThreadButtons
 	}
 
 	@Override
-	public void hasPermission(ButtonInteractionEvent event, ThreadChannel channel, Member member)
+	public void adminManage(ButtonInteractionEvent event, ThreadChannel channel)
 	{
 		//complete 才不會導致討論串被關了後才回覆
-		event.reply(JsonHandle.getString(member.getIdLong(), "archive_thread.archived", member.getEffectiveName())).complete();
+		User user = event.getUser();
+		event.reply(JsonHandle.getString(user.getIdLong(), "archive_thread.archived", user.getEffectiveName())).complete();
 		channel.getManager().setArchived(true).queue();
 	}
 }

@@ -36,19 +36,18 @@ public final class ForumsHandle
 
 	private static final String RESOLVED_FORMAT = "<:resolved:" + IDs.RESOLVED_EMOJI_ID + '>';
 	private static final int CARTOLAND_GREEN = new Color(133, 201, 103, 255).getRGB(); //-8009369
-	public static final int MAX_TAG = 5;
 	private static final long LAST_MESSAGE_HOUR = 48L;
 	private static final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.appendDescription("""
 								-=發問指南=-
-															
+								
 								• 請清楚說明你想做什麼，並想要什麼結果。
 								• 請提及你正在使用的Minecraft版本，以及是否正在使用任何模組。
 								• 討論完成後，使用 `:resolved:` %s 表情符號關閉貼文。
-															
+								
 								-=Guidelines=-
-								       
+								
 								• Ask your question straight and clearly, tell us what you are trying to do.
 								• Mention which Minecraft version you are using and any mods.
 								• Remember to use `:resolved:` %s to close the post after resolved.
@@ -124,7 +123,7 @@ public final class ForumsHandle
 		//如果使用者沒有自己加unresolved
 		tags.add(unresolvedForumTag); //直接加上去 反正前面有檢測過了 況且這是set 不會有重複的情況
 		forumPost.getManager()
-				.setAppliedTags(tags.size() <= ForumsHandle.MAX_TAG ? tags : new ArrayList<>(tags).subList(0, ForumsHandle.MAX_TAG)) //最多只能5個tag
+				.setAppliedTags(tags.size() <= ForumChannel.MAX_POST_TAGS ? tags : new ArrayList<>(tags).subList(0, ForumChannel.MAX_POST_TAGS)) //最多只能5個tag
 				.queue(); //貼文狀態為未解決
 	}
 

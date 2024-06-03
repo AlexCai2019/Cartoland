@@ -2,8 +2,10 @@ package cartoland.messages;
 
 import cartoland.utilities.AnonymousHandle;
 import cartoland.utilities.FileHandle;
+import cartoland.utilities.ObjectAndString;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -31,8 +33,8 @@ public class PrivateMessage implements IMessage
 		Message message = event.getMessage();
 		User author = event.getAuthor();
 
-		AnonymousHandle.StringAndChannel stringAndChannel = AnonymousHandle.checkMemberValid(author.getIdLong());
-		String errorMessage = stringAndChannel.string();
+		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(author.getIdLong());
+		String errorMessage = channelAndString.string();
 		if (!errorMessage.isEmpty()) //空字串代表沒有錯誤
 		{
 			message.reply(errorMessage).mentionRepliedUser(false).queue();
@@ -48,7 +50,7 @@ public class PrivateMessage implements IMessage
 						.map(attachment -> FileUpload.fromStreamSupplier(attachment.getFileName(), () -> attachment.getProxy().download().join()))
 						.toList());
 
-		stringAndChannel.channel().sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
+		((TextChannel) channelAndString.object()).sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
 				.queue(undergroundMessage -> AnonymousHandle.addConnection(message.getIdLong(), undergroundMessage.getIdLong()));
 		FileHandle.dmLog(author.getName(), '(', author.getId(), ") dm \"", message.getContentRaw(), "\" w ", attachmentsCount);
 	}

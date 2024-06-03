@@ -139,7 +139,7 @@ public class OneATwoBCommand extends HasSubcommands
 				gameOver(event, replyString + JsonHandle.getString(userID, "one_a_two_b.reward", MAX_MINUTE, MAX_GUESSES, REWARD));
 			}
 			else
-				gameOver(event, replyString);
+				gameOver(event, replyString); //只是普通的結束
 		}
 	}
 }

@@ -299,7 +299,7 @@
 	"dtp.name.oreki20": "Wiki: https://minecraft.wiki/w/Custom_world_generation\nGenerator: https://misode.github.io/worldgen/",
 	"jira.invalid_link": "Please enter a valid Minecraft bug link or ID, such as `https://bugs.mojang.com/browse/MC-87984` or `MC-87984` or `87984`.",
 	"jira.no_bug": "There's no bug report for %s",
-	"jira.no_issue": "Can't get issue content",
+	"jira.no_issue": "Can't get issue content. URL: %s",
 	"tool.uuid_string.invalid_string": "Incorrect syntax: please enter the UUID string in the correct format! Such as `59c1027b-5559-4e6a-91e4-2b8b949656ce` or `59c1027b55594e6a91e42b8b949656ce`",
 	"tool.uuid_string.without_dash": "without dash",
 	"tool.uuid_array.without_dash": "without dash",

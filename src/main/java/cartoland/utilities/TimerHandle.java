@@ -287,8 +287,14 @@ public final class TimerHandle
 
 	public static String getTimeString()
 	{
+		int[] now = getTime();
+		return String.format("%02d:%02d:%02d", now[0], now[1], now[2]);
+	}
+
+	public static int[] getTime()
+	{
 		LocalTime now = LocalTime.now(); //現在
-		return String.format("%02d:%02d:%02d", now.getHour(), now.getMinute(), now.getSecond());
+		return new int[] {now.getHour(), now.getMinute(), now.getSecond()};
 	}
 
 	public static String getDateString()

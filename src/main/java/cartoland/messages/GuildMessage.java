@@ -26,14 +26,13 @@ import java.util.Set;
  */
 public class GuildMessage implements IMessage
 {
-	private final Set<Long> commandBlockCategories = HashSet.newHashSet(5);
+	private final Set<Long> commandBlockCategories = HashSet.newHashSet(4);
 
 	public GuildMessage()
 	{
 		commandBlockCategories.add(IDs.GENERAL_CATEGORY_ID);
 		commandBlockCategories.add(IDs.TECH_TALK_CATEGORY_ID);
 		commandBlockCategories.add(IDs.FORUM_CATEGORY_ID);
-		commandBlockCategories.add(IDs.SHOWCASE_CATEGORY_ID);
 		commandBlockCategories.add(IDs.VOICE_CATEGORY_ID);
 	}
 
@@ -76,7 +75,7 @@ public class GuildMessage implements IMessage
 			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
 			message.addReaction(Emoji.fromCustom("worship_a", IDs.WORSHIP_A_EMOJI_ID, true)).queue();
 		}
-		if (RegularExpressions.JIRA_LINK_REGEX.matcher(rawMessage).matches()) //是bug連結
+		if (RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(rawMessage).matches()) //是bug連結
 		{
 			//這些程式不寫在BotCanTalkChannelMessage裡 是為了讓所有頻道都能受惠
 			String replyMessage = jiraLink(rawMessage); //獲得回覆訊息

@@ -39,12 +39,9 @@ public class LotteryCommand extends HasSubcommands
 		subcommands.put(SLOT, new SlotSubCommand());
 	}
 
-	private static long createValidBet(SlashCommandInteractionEvent event, long userID, long nowHave)
+	private static ObjectAndString createValidBet(String betString, long userID, long nowHave)
 	{
-		//此方法同時在BetSubCommand和SlotSubCommand中使用
-		String betString = event.getOption("bet", "", CommonFunctions.getAsString);
-		//注意指令參數名一定要是bet 也許未來會變 但目前就是bet
-
+		ObjectAndString validBet = new ObjectAndString();
 		long bet;
 		if (RegularExpressions.BET_NUMBER_REGEX.matcher(betString).matches()) //賭數字
 			bet = Long.parseLong(betString);
@@ -52,10 +49,7 @@ public class LotteryCommand extends HasSubcommands
 		{
 			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
 			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
-			{
-				event.reply(JsonHandle.getString(userID, "lottery.bet.wrong_percent", betString)).setEphemeral(true).queue();
-				return INVALID_BET;
-			}
+				return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_percent", betString));
 			bet = nowHave * percentage / 100;
 		}
 		else if ("all".equalsIgnoreCase(betString))
@@ -63,28 +57,16 @@ public class LotteryCommand extends HasSubcommands
 		else if ("half".equalsIgnoreCase(betString))
 			bet = nowHave >> 1;
 		else //都不是
-		{
-			event.reply(JsonHandle.getString(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue(); //格式錯誤
-			return INVALID_BET;
-		}
+			return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
 
 		if (bet == 0L) //不能賭0
-		{
-			event.reply(JsonHandle.getString(userID, "lottery.bet.wrong_argument")).setEphemeral(true).queue();
-			return INVALID_BET;
-		}
+			return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
 		if (bet > MAXIMUM) //限紅
-		{
-			event.reply(JsonHandle.getString(userID, "lottery.bet.too_much", bet, MAXIMUM)).setEphemeral(true).queue();
-			return INVALID_BET;
-		}
+			return validBet.string(JsonHandle.getString(userID, "lottery.bet.too_much", bet, MAXIMUM));
 		if (nowHave < bet) //如果現有的比要賭的還少
-		{
-			event.reply(JsonHandle.getString(userID, "lottery.bet.not_enough", bet, nowHave)).setEphemeral(true).queue();
-			return INVALID_BET;
-		}
+			return validBet.string(JsonHandle.getString(userID, "lottery.bet.not_enough", bet, nowHave));
 
-		return bet;
+		return validBet.object(bet);
 	}
 
 	/**
@@ -146,10 +128,14 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			long bet = createValidBet(event, userID, nowHave);
-			if (bet == INVALID_BET) //輸入有誤
-				return; //直接結束 createValidBet方法內已經reply過了
-
+			ObjectAndString validBet = createValidBet(event.getOption("bet", "", CommonFunctions.getAsString), userID, nowHave);
+			String errorMessage = validBet.string();
+			if (!errorMessage.isEmpty()) //有錯誤訊息
+			{
+				event.reply(errorMessage).setEphemeral(true).queue();
+				return;
+			}
+			long bet = (Long) validBet.object(); //沒有錯誤訊息 就轉換
 			long afterBet;
 			String result;
 			boolean win = random.nextBoolean(); //輸贏
@@ -387,7 +373,14 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			long bet = createValidBet(event, userID, nowHave);
+			ObjectAndString validBet = createValidBet(event.getOption("bet", "", CommonFunctions.getAsString), userID, nowHave);
+			String errorMessage = validBet.string();
+			if (!errorMessage.isEmpty()) //有錯誤訊息
+			{
+				event.reply(errorMessage).setEphemeral(true).queue();
+				return;
+			}
+			long bet = (Long) validBet.object(); //沒有錯誤訊息 就轉換
 			if (bet == INVALID_BET) //輸入有誤
 				return; //直接結束 createValidBet方法內已經reply過了
 

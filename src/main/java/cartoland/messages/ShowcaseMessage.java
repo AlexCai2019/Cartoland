@@ -3,10 +3,12 @@ package cartoland.messages;
 import cartoland.buttons.IButton;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
-import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@code ShowcaseMessage} is a listener that triggers when a user types anything in text channels (excluding thread
@@ -23,14 +25,20 @@ public class ShowcaseMessage implements IMessage
 			.withEmoji(Emoji.fromUnicode("🗑️"));
 	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
+	private final Set<Long> showcaseChannels = HashSet.newHashSet(4);
+
+	public ShowcaseMessage()
+	{
+		showcaseChannels.add(IDs.DATAPACK_SHOWCASE_CHANNEL_ID);
+		showcaseChannels.add(IDs.MAP_SHOWCASE_CHANNEL_ID);
+		showcaseChannels.add(IDs.BUILDING_SHOWCASE_CHANNEL_ID);
+		showcaseChannels.add(IDs.MODEL_SHOWCASE_CHANNEL_ID);
+	}
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		if (event.isFromThread()) //是在討論串內
-			return false; //不應通過
-		Category category = event.getMessage().getCategory(); //嘗試獲取類別
-		return category != null && category.getIdLong() == IDs.SHOWCASE_CATEGORY_ID;
+		return showcaseChannels.contains(event.getChannel().getIdLong()); //在創作展示四頻道內
 	}
 
 	@Override

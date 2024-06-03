@@ -30,12 +30,12 @@ import java.util.Set;
 public class NewMember extends ListenerAdapter
 {
 	private final String welcomeMessage =
-			"""
-			歡迎你，%%s，來到 %%s。
-			記得先詳閱 <#%d> 內的訊息，並遵守一切公告規則。
-			%%s, welcome to %%s.
-			Please read messages in <#%d>, and follow all rules.
-			""".formatted(IDs.READ_ME_CHANNEL_ID, IDs.READ_ME_CHANNEL_ID);
+			"歡迎你，%s，來到 %s。\n" +
+			"記得先詳閱 <#" + IDs.READ_ME_CHANNEL_ID +"> 內的訊息，並遵守一切公告規則。\n" +
+			"使用 </language:1102681768840138936> 設定本機器人的語言。\n" +
+			"%s, welcome to %s.\n" +
+			"Please read messages in <#" + IDs.READ_ME_CHANNEL_ID + ">, and follow all rules.\n" +
+			"Set the language of this bot through </language:1102681768840138936> .";
 	private static final String ALL_MEMBERS = "serialize/all_members.ser";
 
 	@SuppressWarnings("unchecked")
@@ -59,8 +59,6 @@ public class NewMember extends ListenerAdapter
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
 	{
 		User user = event.getUser();
-		if (!user.hasPrivateChannel())
-			return;
 		Guild cartoland = event.getGuild();
 		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
 			return;

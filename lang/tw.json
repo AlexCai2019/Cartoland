@@ -170,7 +170,7 @@
 	"dtp.name.oreki20": "維基： https://zh.minecraft.wiki/w/自訂世界生成?variant=zh-tw\n產生器： https://misode.github.io/worldgen/",
 	"jira.invalid_link": "請輸入一個有效的Minecraft漏洞連結或ID，例如 `https://bugs.mojang.com/browse/MC-87984` 或 `MC-87984` 或 `87984`。",
 	"jira.no_bug": "不存在 %s 漏洞回報",
-	"jira.no_issue": "無法獲得問題內容",
+	"jira.no_issue": "無法獲得問題內容。網址：%s",
 	"tool.uuid_string.invalid_string": "請輸入正確格式的UUID字串！例如 `59c1027b-5559-4e6a-91e4-2b8b949656ce` 或 `59c1027b55594e6a91e42b8b949656ce`",
 	"tool.uuid_string.without_dash": "不含橫線",
 	"tool.uuid_array.without_dash": "不含橫線",

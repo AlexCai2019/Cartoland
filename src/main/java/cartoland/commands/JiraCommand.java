@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+import java.util.regex.Matcher;
 
 /**
  * {@code JiraCommand} is an execution when a user uses /jira command. This class implements {@link ICommand} interface,
@@ -28,7 +29,8 @@ import java.util.Locale;
  */
 public class JiraCommand implements ICommand
 {
-	private final int subStringStart = "https://bugs.mojang.com/browse/".length();
+	private final int browseStart = "https://bugs.mojang.com/browse/".length();
+	private final int projectStart = "https://bugs.mojang.com/projects/MC/issues/".length();
 	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251
 	private static final int DESCRIPTION_CHARACTERS = 200;
 
@@ -40,14 +42,8 @@ public class JiraCommand implements ICommand
 		long userID = event.getUser().getIdLong();
 		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
-		String bugID; //將會變成像"MC-87984"那樣的bug ID
-		if (RegularExpressions.JIRA_LINK_REGEX.matcher(inputLink).matches()) //https://bugs.mojang.com/browse/MC-87984
-			bugID = inputLink.substring(subStringStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (RegularExpressions.BUG_ID_REGEX.matcher(inputLink).matches()) //MC-87984
-			bugID = inputLink.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
-		else if (RegularExpressions.BUG_NUMBER_REGEX.matcher(inputLink).matches()) //87984
-			bugID = "MC-" + inputLink;
-		else
+		String bugID = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
+		if (bugID.isEmpty())
 		{
 			hook.sendMessage(JsonHandle.getString(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
@@ -55,7 +51,6 @@ public class JiraCommand implements ICommand
 		String link = "https://bugs.mojang.com/browse/" + bugID;
 
 		Document document; //HTML文件
-
 		try
 		{
 			document = Jsoup.connect(link).get(); //嘗試連線
@@ -69,7 +64,7 @@ public class JiraCommand implements ICommand
 		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
 		if (issueContent == null) //如果不存在id為issue-content的標籤
 		{
-			hook.sendMessage(JsonHandle.getString(userID, "jira.no_issue")).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.no_issue", link)).setEphemeral(true).queue();
 			return;
 		}
 
@@ -78,11 +73,9 @@ public class JiraCommand implements ICommand
 				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
 				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
 
-		StringBuilder description = new StringBuilder(textValue(issueContent.getElementById("description-val")).strip());
-		int descriptionLength = description.length();
-		if (descriptionLength > DESCRIPTION_CHARACTERS) //小於等於DESCRIPTION_CHARACTERS就全文放下
-			description.replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…");
-		bugEmbed.appendDescription(description) //bug描述
+		String description = textValue(issueContent.getElementById("description-val")).strip(); //bug描述
+		int descriptionLength = description.length(); //小於等於DESCRIPTION_CHARACTERS就全文放下
+		bugEmbed.appendDescription(descriptionLength <= DESCRIPTION_CHARACTERS ? description : new StringBuilder(description).replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…"))
 
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
 				.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true)
@@ -110,6 +103,26 @@ public class JiraCommand implements ICommand
 						attributeValue(issueContent.getElementById("project-avatar"), "src", null));
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
+	}
+
+	private String findBugID(String inputLink)
+	{
+		if (RegularExpressions.BUG_ID_REGEX.matcher(inputLink).matches()) //MC-87984
+			return inputLink.toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+
+		if (RegularExpressions.BUG_NUMBER_REGEX.matcher(inputLink).matches()) //87984
+			return "MC-" + inputLink;
+
+		//https://stackoverflow.com/questions/4662215/how-to-extract-a-substring-using-regex
+		Matcher browseMatcher = RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(inputLink); //https://bugs.mojang.com/browse/MC-87984
+		if (browseMatcher.find())
+			return browseMatcher.group(1).substring(browseStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+
+		Matcher projectMatcher = RegularExpressions.JIRA_PROJECT_LINK_REGEX.matcher(inputLink);
+		if (projectMatcher.find()) //https://bugs.mojang.com/projects/MC/issues/MC-87984
+			return projectMatcher.group(1).substring(projectStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+
+		return "";
 	}
 
 	private String textValue(Element element)

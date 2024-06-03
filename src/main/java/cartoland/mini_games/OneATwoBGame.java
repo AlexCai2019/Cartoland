@@ -44,15 +44,15 @@ public class OneATwoBGame extends MiniGame
 
 	public int[] calculateAAndB(int input)
 	{
-		guesses++;
-		ab[0] = ab[1] = 0;
+		guesses++; //增加猜測數
+		ab[0] = ab[1] = 0; //初始化A和B
 		Arrays.fill(metBefore, false);
 
-		for (int i = ANSWER_LENGTH - 1, digit; i >= 0; i--) //從後面檢測回來
+		for (int i = ANSWER_LENGTH - 1, digits = input; i >= 0; i--) //從後面檢測回來
 		{
-			digit = input % 10; //取最右邊一位數字
+			int digit = digits % 10; //取最右邊一位數字
 			if (metBefore[digit]) //遇過這個數字了
-				return null; //回傳null 不必擲出exception
+				return null; //回傳null 不必擲出exception 也不必記錄
 
 			metBefore[digit] = true; //記錄遇過這個數字了
 
@@ -61,7 +61,7 @@ public class OneATwoBGame extends MiniGame
 			else if (inAnswer[digit]) //只有數字中 位置錯了
 				ab[1]++; //b++
 
-			input /= 10; //下一個數字
+			digits /= 10; //下一個數字
 		}
 
 		recordBuilder.append(String.format("%0" + ANSWER_LENGTH + "d", input))
@@ -69,7 +69,9 @@ public class OneATwoBGame extends MiniGame
 				.append(ab[0])
 				.append('A')
 				.append(ab[1])
-				.append("B\n");
+				.append("B"); //記錄下來
+		if (ab[0] != ANSWER_LENGTH) //如果還要繼續
+			recordBuilder.append('\n'); //記錄換行
 
 		return ab; //結果
 	}

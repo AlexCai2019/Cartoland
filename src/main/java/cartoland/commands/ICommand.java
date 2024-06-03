@@ -107,11 +107,10 @@ abstract class GameSubcommand implements ICommand
 	{
 		User user = event.getUser();
 		MiniGame game = games.remove(user.getIdLong());
-		event.reply(replyMessage)
-				.addFiles(FileUpload.fromData(game.getRecord().getBytes(),
-						user.getEffectiveName() + '_' +
-								TimerHandle.getDateString() + '_' +
-								TimerHandle.getTimeString().replace(':', ';') + ".txt"))
-				.queue(); //傳送最終結果並上傳紀錄
+		int[] time = TimerHandle.getTime();
+		event.reply(replyMessage) //回覆訊息
+			.addFiles(FileUpload.fromData(game.getRecord().getBytes(), //附上紀錄
+					user.getEffectiveName() + '_' + TimerHandle.getDateString() + '_' + String.format("%02d%02d%02d", time[0], time[1], time[2]) + ".txt"))
+			.queue(); //傳送最終結果並上傳紀錄
 	}
 }

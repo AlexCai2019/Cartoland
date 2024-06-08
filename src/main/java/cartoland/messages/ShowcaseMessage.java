@@ -3,6 +3,7 @@ package cartoland.messages;
 import cartoland.buttons.IButton;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -25,7 +26,7 @@ public class ShowcaseMessage implements IMessage
 			.withEmoji(Emoji.fromUnicode("🗑️"));
 	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
-	private final Set<Long> showcaseChannels = HashSet.newHashSet(4);
+	private final Set<Long> showcaseChannels = HashSet.newHashSet(5);
 
 	public ShowcaseMessage()
 	{
@@ -33,6 +34,7 @@ public class ShowcaseMessage implements IMessage
 		showcaseChannels.add(IDs.MAP_SHOWCASE_CHANNEL_ID);
 		showcaseChannels.add(IDs.BUILDING_SHOWCASE_CHANNEL_ID);
 		showcaseChannels.add(IDs.MODEL_SHOWCASE_CHANNEL_ID);
+		showcaseChannels.add(IDs.VIDEOS_AND_STREAMS_CHANNEL_ID);
 	}
 
 	@Override
@@ -45,8 +47,10 @@ public class ShowcaseMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		String name = event.getAuthor().getEffectiveName();
-		event.getMessage().createThreadChannel(name + '(' + TimerHandle.getDateString() + ')').queue(threadChannel ->
-			threadChannel.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention())
-					.addActionRow(archiveButton, deleteButton, renameButton).queue(message -> message.pin().queue()));
+		event.getMessage()
+				.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
+				.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention()).addActionRow(archiveButton, deleteButton, renameButton))
+				.flatMap(Message::pin)
+				.queue();
 	}
 }

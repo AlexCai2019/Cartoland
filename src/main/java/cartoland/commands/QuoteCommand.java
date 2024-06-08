@@ -80,17 +80,18 @@ public class QuoteCommand implements ICommand
 
 	public static void quoteMessage(IReplyCallback event, MessageChannel channel, Message message)
 	{
-		User user = event.getUser();
+		User user = event.getUser(); //使用指令的使用者
 		long userID = user.getIdLong();
 		User author = message.getAuthor(); //連結訊息的發送者
 		String authorName = author.getName();
+		String messageLink = message.getJumpUrl();
 		List<MessageEmbed> embeds = new ArrayList<>();
 		EmbedBuilder messageEmbed = new EmbedBuilder()
-				.setTitle(authorName)
+				.setTitle(author.getEffectiveName(), messageLink)
 				.setAuthor(authorName, null, author.getEffectiveAvatarUrl())
 				.appendDescription(message.getContentRaw()) //訊息的內容
 				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
-				.setFooter(channel != null ? channel.getName() : author.getName(), null); //訊息的發送頻道
+				.setFooter(channel != null ? channel.getName() : authorName, null); //訊息的發送頻道
 
 		List<Message.Attachment> attachments = message.getAttachments(); //訊息的附件
 		if (attachments.isEmpty()) //沒有任何附件
@@ -104,7 +105,7 @@ public class QuoteCommand implements ICommand
 			replyCallbackAction = event.reply(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
 		else
 			replyCallbackAction = event.replyEmbeds(embeds); //不標註作者
-		replyCallbackAction.addComponents(ActionRow.of(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message")))).queue();
+		replyCallbackAction.addComponents(ActionRow.of(Button.link(messageLink, JsonHandle.getString(userID, "quote.jump_message")))).queue();
 	}
 
 	private static void addImageAttachments(EmbedBuilder headEmbed, List<MessageEmbed> embeds, List<Message.Attachment> images)
@@ -118,7 +119,8 @@ public class QuoteCommand implements ICommand
 		MessageEmbed headEmbedBuilt = headEmbed.setImage(images.getFirst().getUrl()).build();
 		embeds.add(headEmbedBuilt); //第一個要放訊息embed
 		String title = headEmbedBuilt.getTitle();
+		String link = headEmbedBuilt.getUrl();
 		for (int i = 1, size = Math.min(images.size(), Message.MAX_EMBED_COUNT); i < size; i++) //剩下的要開新embed, 注意總數不能超過10個
-			embeds.add(new EmbedBuilder().setTitle(title).setImage(images.get(i).getUrl()).build());
+			embeds.add(new EmbedBuilder().setTitle(title, link).setImage(images.get(i).getUrl()).build());
 	}
 }

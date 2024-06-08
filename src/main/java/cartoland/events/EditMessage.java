@@ -49,11 +49,17 @@ public class EditMessage extends ListenerAdapter
 
 			//有人被刪掉了
 			if (dmAttachmentsSize == 0) //如果全刪
+			{
 				message.editMessage(dm.getContentRaw()).setAttachments((List<Message.Attachment>) null).queue(); //將附加物清除
-			else //不是全刪
-				message.editMessage(dm.getContentRaw()).setFiles(dmAttachments.stream()
-					.map(attachment -> FileUpload.fromStreamSupplier(attachment.getFileName(), () -> attachment.getProxy().download().join()))
-					.toList());
+				return; //結束
+			}
+
+			//不是全刪
+			message.editMessage(dm.getContentRaw())
+					.setFiles(dmAttachments.stream()
+							.map(attachment -> FileUpload.fromStreamSupplier(attachment.getFileName(), () -> attachment.getProxy().download().join()))
+							.toList())
+					.queue();
 		}); //編輯訊息內文和附加物
 	}
 }

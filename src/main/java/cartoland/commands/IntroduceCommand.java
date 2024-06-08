@@ -145,7 +145,7 @@ public class IntroduceCommand extends HasSubcommands
 					introductionString = introduceBuilder.toString();
 				}
 				updateIntroduction(linkMessage.getAuthor().getIdLong(), introductionString); //更新介紹
-			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
+			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> //找不到訊息
 			{
 				event.reply(JsonHandle.getString(userID, "introduce.update.no_message")).queue();
 				updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中

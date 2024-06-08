@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.nio.charset.StandardCharsets;
@@ -70,15 +71,16 @@ public class ContextMenu extends ListenerAdapter
 				}
 
 				//先回覆前1992個字 以及格式
-				event.reply("```\n" + rawContent.substring(0, maxLength) + "\n```").queue(interactionHook ->
-					interactionHook.retrieveOriginal().queue(message ->
-					{
-						if (contentLength <= maxLength + maxLength) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
-							message.reply("```\n" + rawContent.substring(maxLength) + "\n```").mentionRepliedUser(false).queue();
-						else
-							message.reply("```\n" + rawContent.substring(maxLength, maxLength + maxLength) + "\n```").mentionRepliedUser(false)
-								.queue(message1 -> message1.reply("```\n" + rawContent.substring(maxLength + maxLength) + "\n```").mentionRepliedUser(false).queue());
-					}));
+				event.reply("```\n" + rawContent.substring(0, maxLength) + "\n```")
+						.flatMap(InteractionHook::retrieveOriginal)
+						.queue(message ->
+						{
+							if (contentLength <= maxLength + maxLength) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
+								message.reply("```\n" + rawContent.substring(maxLength) + "\n```").mentionRepliedUser(false).queue();
+							else
+								message.reply("```\n" + rawContent.substring(maxLength, maxLength + maxLength) + "\n```").mentionRepliedUser(false)
+									.queue(message1 -> message1.reply("```\n" + rawContent.substring(maxLength + maxLength) + "\n```").mentionRepliedUser(false).queue());
+						});
 			}
 
 			case QUOTE_ -> QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());

@@ -31,7 +31,7 @@ public class AddReaction extends ListenerAdapter
 			return; //不用執行
 		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
 		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned)) //20%的機率跟著其他人按
-			event.retrieveMessage().queue(message -> message.addReaction(learned).queue());
+			event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
 
 		//這以下是和問題論壇的resolved有關
 		if (!ForumsHandle.typedResolved(event.getReaction())) //不是resolved

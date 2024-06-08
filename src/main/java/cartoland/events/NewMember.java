@@ -5,14 +5,12 @@ import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,42 +56,18 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
 	{
-		User user = event.getUser();
 		Guild cartoland = event.getGuild();
-		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID)
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不是創聯
+			return; //結束
+		User user = event.getUser();
+		if (user.isBot() && user.isSystem())
 			return;
-		String serverName = cartoland.getName();
 		String userName = user.getEffectiveName();
-		user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)).queue());
-	}
-
-	@Override
-	public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event)
-	{
-		User user = event.getUser();
-		long userID = user.getIdLong();
-		if (allMembers.contains(userID)) //群內已經有這個人了
-			return;
-
-		Guild cartoland = event.getGuild();
-		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不是在創聯
-			return;
-
-		Role memberRole = cartoland.getRoleById(IDs.MEMBER_ROLE_ID);
-		if (memberRole == null) //找不到會員身分組
-			return;
-		if (!event.getRoles().contains(memberRole)) //不是因為會員身分組
-			return;
-
-		allMembers.add(userID);
-
-		TextChannel lobbyChannel = cartoland.getTextChannelById(IDs.LOBBY_CHANNEL_ID);
-		if (lobbyChannel == null) //找不到大廳頻道
-			return;
-		String mentionUser = user.getAsMention();
 		String serverName = cartoland.getName();
-		lobbyChannel.sendMessage("歡迎 " + mentionUser + " 加入 " + serverName + '\n' + mentionUser + ", welcome to " + serverName)
-				.queue(message -> message.addReaction(Emoji.fromUnicode("👋")).queue());
+		user.openPrivateChannel()
+				.flatMap(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)))
+				.queue(null, new ErrorHandler().ignore(ErrorResponse.CANNOT_SEND_TO_USER)); //不能傳送私訊就算了
+		allMembers.add(user.getIdLong()); //記錄下每個成員
 	}
 
 	@Override

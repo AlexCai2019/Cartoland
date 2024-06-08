@@ -54,13 +54,11 @@ public final class ForumsHandle
 								""".formatted(RESOLVED_FORMAT, RESOLVED_FORMAT))
 			.setColor(CARTOLAND_GREEN) //創聯的綠色
 			.build();
-	private static final String remindMessage =
-    		"""
-			%%s，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` %s 表情符號關閉貼文。
-			如果還沒解決，可以嘗試在問題中加入更多資訊。
-			%%s, did your question got a solution? If it did, remember to close this post using `:resolved:` %s emoji.
-			If it didn't, try offer more information of question.
-			""".formatted(RESOLVED_FORMAT, RESOLVED_FORMAT);
+	private static final String REMIND_MESSAGE =
+			"%s，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` " + RESOLVED_FORMAT + " 表情符號關閉貼文。\n" +
+			"如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
+			"%s, did your question got a solution? If it did, remember to close this post using `:resolved:` " + RESOLVED_FORMAT+ " emoji.\n" +
+			"If it didn't, try offer more information of question.";
 
 	private static final String IDLED_QUESTIONS_SET_FILE_NAME = "serialize/idled_questions.ser";
 	private static final String HAS_START_MESSAGE_FILE_NAME = "serialize/has_start_message.ser";
@@ -93,7 +91,7 @@ public final class ForumsHandle
 	{
 		long parentChannelID = forumPost.getParentChannel().getIdLong(); //貼文所在的論壇頻道ID
 		if (parentChannelID == IDs.MAP_DISCUSS_CHANNEL_ID) //是地圖專版
-			forumPost.retrieveStartMessage().queue(message -> message.pin().queue()); //釘選第一則訊息
+			forumPost.retrieveStartMessage().flatMap(Message::pin).queue(); //釘選第一則訊息
 		else if (parentChannelID == IDs.QUESTIONS_CHANNEL_ID) //是問題論壇
 			forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 		hasStartMessageForumPosts.add(forumPost.getIdLong());
@@ -174,16 +172,16 @@ public final class ForumsHandle
 				return;
 
 			String mentionOwner = "<@" + forumPost.getOwnerId() + ">"; //注意這裡使用String型別的get id
-			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue(); //提醒開串者
+			forumPost.sendMessage(String.format(REMIND_MESSAGE, mentionOwner, mentionOwner)).queue(); //提醒開串者
 
 			idledQuestionForumPosts.add(forumPost.getIdLong()); //記錄這個貼文正在idle
 
 			//增加🎗️
-			forumPost.retrieveStartMessage().queue(message -> message.addReaction(Emoji.fromUnicode("🎗️")).queue());
+			forumPost.retrieveStartMessage().flatMap(message -> message.addReaction(Emoji.fromUnicode("🎗️"))).queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e ->
 		{
 			String mentionOwner = "<@" + forumPost.getOwnerId() + ">"; //注意這裡使用String型別的get id
-			forumPost.sendMessage(String.format(remindMessage, mentionOwner, mentionOwner)).queue();
+			forumPost.sendMessage(String.format(REMIND_MESSAGE, mentionOwner, mentionOwner)).queue();
 		}));
 	}
 

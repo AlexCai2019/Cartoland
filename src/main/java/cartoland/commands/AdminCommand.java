@@ -39,7 +39,7 @@ public class AdminCommand extends HasSubcommands
 			JDA jda = Cartoland.getJDA();
 			Guild bannedServer = jda.getGuildById(bannedServerID); //找到當初ban他的群組
 			if (bannedServer != null) //群組還在
-				jda.retrieveUserById(userID).queue(user -> bannedServer.unban(user).queue()); //找到這名使用者後解ban他
+				jda.retrieveUserById(userID).flatMap(bannedServer::unban).queue(); //找到這名使用者後解ban他
 			tempBanSet.remove(this); //不再紀錄這名使用者 無論群組是否已經不在了
 		}
 	}

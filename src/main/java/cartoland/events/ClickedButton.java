@@ -25,7 +25,7 @@ public class ClickedButton extends ListenerAdapter
 	public ClickedButton()
 	{
 		buttons.put(ARCHIVE_THREAD, new ArchiveThreadButton());
-		buttons.put(DELETE_THREAD, new DeleteThreadButton());
+		buttons.put(DELETE_THREAD, event -> event.reply("This feature is no longer supported.").setEphemeral(true).queue());
 		buttons.put(RENAME_THREAD, new RenameThreadButton());
 	}
 

@@ -22,6 +22,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BotOnlineOffline extends ListenerAdapter
 {
+	private final boolean initialCommandBlocks;
+
+	public BotOnlineOffline(boolean initialCommandBlocks)
+	{
+		this.initialCommandBlocks = initialCommandBlocks;
+	}
+
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will send online
 	 * message to bot channel.
@@ -33,7 +40,8 @@ public class BotOnlineOffline extends ListenerAdapter
 	@Override
 	public void onReady(@NotNull ReadyEvent event)
 	{
-		CommandBlocksHandle.initial(); //初始化idAndName
+		if (initialCommandBlocks)
+			CommandBlocksHandle.initial(); //初始化idAndName
 
 		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
 		if (botChannel != null)

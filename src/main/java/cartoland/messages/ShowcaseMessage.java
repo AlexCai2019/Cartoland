@@ -22,8 +22,6 @@ public class ShowcaseMessage implements IMessage
 {
 	private final Button archiveButton = Button.success(IButton.ARCHIVE_THREAD, "Archive Thread")
 			.withEmoji(Emoji.fromUnicode("📁"));
-	private final Button deleteButton = Button.danger(IButton.DELETE_THREAD, "Delete Thread")
-			.withEmoji(Emoji.fromUnicode("🗑️"));
 	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
 	private final Set<Long> showcaseChannels = HashSet.newHashSet(5);
@@ -49,7 +47,7 @@ public class ShowcaseMessage implements IMessage
 		String name = event.getAuthor().getEffectiveName();
 		event.getMessage()
 				.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
-				.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention()).addActionRow(archiveButton, deleteButton, renameButton))
+				.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention()).addActionRow(archiveButton, renameButton))
 				.flatMap(Message::pin)
 				.queue();
 	}

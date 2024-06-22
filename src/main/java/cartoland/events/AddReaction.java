@@ -1,8 +1,8 @@
 package cartoland.events;
 
 import cartoland.utilities.Algorithm;
-import cartoland.utilities.forums.ForumsHandle;
 import cartoland.utilities.IDs;
+import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -32,7 +32,7 @@ public class AddReaction extends ListenerAdapter
 		}
 
 		//有關疑難雜症
-		if (event.getChannel() instanceof ThreadChannel thread)
-			ForumsHandle.getHandle(thread).reactionEvent(event); //加表情的事件
+		if (event.getChannel() instanceof ThreadChannel thread && QuestionForumHandle.isQuestionPost(thread))
+			QuestionForumHandle.getInstance(thread).reactionEvent(event); //加表情的事件
 	}
 }

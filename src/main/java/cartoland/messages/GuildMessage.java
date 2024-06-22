@@ -14,7 +14,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -26,15 +25,7 @@ import java.util.Set;
  */
 public class GuildMessage implements IMessage
 {
-	private final Set<Long> commandBlockCategories = HashSet.newHashSet(4);
-
-	public GuildMessage()
-	{
-		commandBlockCategories.add(IDs.GENERAL_CATEGORY_ID);
-		commandBlockCategories.add(IDs.TECH_TALK_CATEGORY_ID);
-		commandBlockCategories.add(IDs.FORUM_CATEGORY_ID);
-		commandBlockCategories.add(IDs.VOICE_CATEGORY_ID);
-	}
+	private final Set<Long> commandBlockCategories = Set.of(IDs.GENERAL_CATEGORY_ID, IDs.TECH_TALK_CATEGORY_ID, IDs.FORUM_CATEGORY_ID, IDs.VOICE_CATEGORY_ID);
 
 	/**
 	 * The method that implements from {@link IMessage}, check if the message event need to process.

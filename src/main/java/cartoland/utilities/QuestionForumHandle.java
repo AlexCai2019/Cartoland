@@ -1,6 +1,5 @@
-package cartoland.utilities.forums;
+package cartoland.utilities;
 
-import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,8 +11,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
-import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
@@ -24,7 +21,7 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class QuestionForumHandle extends ForumsHandle
+public final class QuestionForumHandle
 {
 	private static final QuestionForumHandle instance = new QuestionForumHandle();
 	public static QuestionForumHandle getInstance(ThreadChannel forumPost)
@@ -33,14 +30,17 @@ public final class QuestionForumHandle extends ForumsHandle
 		return instance;
 	}
 
+	private static final String UNRESOLVED_QUESTIONS_SET = "unresolved_questions.ser";
 	private static final String RESOLVED_FORMAT = "<:resolved:" + IDs.RESOLVED_EMOJI_ID + '>';
 	private static final long LAST_MESSAGE_HOUR = 48L;
-	private static final String REMIND_MESSAGE =
-			"%s，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` " + RESOLVED_FORMAT + " 表情符號關閉貼文。\n" +
-			"如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
-			"%s, did your question got a solution? If it did, remember to close this post using `:resolved:` " + RESOLVED_FORMAT+ " emoji.\n" +
-			"If it didn't, try offer more information of question.";
+	public static boolean isQuestionPost(ThreadChannel forumPost)
+	{
+		return forumPost.getParentChannel().getIdLong() == IDs.QUESTIONS_CHANNEL_ID;
+	}
 
+	private QuestionForumHandle() {}
+
+	private ThreadChannel forumPost;
 	private final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.appendDescription("""
@@ -58,10 +58,10 @@ public final class QuestionForumHandle extends ForumsHandle
 								""".formatted(RESOLVED_FORMAT, RESOLVED_FORMAT))
 			.setColor(new Color(133, 201, 103, 255).getRGB()) //創聯的綠色 -8009369
 			.build();
-	private final Set<Long> unresolvedPosts = new HashSet<>();
+	@SuppressWarnings("unchecked")
+	private final Set<Long> unresolvedPosts = CastToInstance.modifiableSet(FileHandle.deserialize(UNRESOLVED_QUESTIONS_SET));
 
-	@Override
-	public void createEvent(ChannelCreateEvent event)
+	public void createEvent()
 	{
 		TwoTags twoTags = getTwoTags();
 
@@ -80,17 +80,15 @@ public final class QuestionForumHandle extends ForumsHandle
 		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
 	}
 
-	@Override
 	public void messageEvent(MessageReceivedEvent event)
 	{
 		if (forumPost.getMessageCount() == 1) //是第一則訊息
 			forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 		Message message = event.getMessage();
-		if (message.getContentRaw().equals(RESOLVED_FORMAT))
+		if (message.getContentRaw().equals(RESOLVED_FORMAT)) //輸入了resolved表情符號
 			typedResolved(message);
 	}
 
-	@Override
 	public void reactionEvent(MessageReactionAddEvent event)
 	{
 		Member member = event.getMember();
@@ -99,11 +97,7 @@ public final class QuestionForumHandle extends ForumsHandle
 			event.retrieveMessage().queue(this::typedResolved); //進入處理階段
 	}
 
-	@Override
-	public void postSleepEvent(ChannelUpdateArchivedEvent event) {}
-
-	@Override
-	public void postWakeUpEvent(ChannelUpdateArchivedEvent event)
+	public void postWakeUpEvent()
 	{
 		TwoTags twoTags = getTwoTags();
 		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
@@ -114,17 +108,20 @@ public final class QuestionForumHandle extends ForumsHandle
 
 	public void remind()
 	{
+		if (forumPost.isArchived())
+			return;
 		forumPost.retrieveMessageById(forumPost.getLatestMessageIdLong()).queue(lastMessage ->
 		{
 			User author = lastMessage.getAuthor();
-			if (author.isBot() || author.isSystem()) //是機器人或系統
-				return; //不用執行
-
-			if (Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() != LAST_MESSAGE_HOUR) //LAST_MESSAGE_HOUR小時內有人發言
-				return;
+			if (author.isBot() || author.isSystem() || Duration.between(lastMessage.getTimeCreated(), OffsetDateTime.now()).toHours() != LAST_MESSAGE_HOUR)
+				return; //是機器人或系統 或上次有人發言不是在LAST_MESSAGE_HOUR小時前 就不用執行
 
 			String mentionOwner = "<@" + forumPost.getOwnerId() + ">"; //注意這裡使用String型別的get id
-			forumPost.sendMessage(String.format(REMIND_MESSAGE, mentionOwner, mentionOwner)).queue(); //提醒開串者
+			forumPost.sendMessage(mentionOwner + "，你的問題解決了嗎？如果已經解決了，記得使用`:resolved:` " + RESOLVED_FORMAT + " 表情符號關閉貼文。\n" +
+								"如果還沒解決，可以嘗試在問題中加入更多資訊。\n" +
+								mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` " + RESOLVED_FORMAT + " emoji.\n" +
+								"If it didn't, try offer more information of question.")
+					.queue(); //提醒開串者
 		});
 	}
 

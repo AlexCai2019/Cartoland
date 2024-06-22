@@ -1,6 +1,8 @@
 package cartoland.messages;
 
-import cartoland.utilities.forums.ForumsHandle;
+import cartoland.utilities.IDs;
+import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -26,6 +28,12 @@ public class ForumMessage implements IMessage
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		ForumsHandle.getHandle(forumPost).messageEvent(event); //找到handle並執行事件
+		if (forumPost.getParentChannel().getIdLong() == IDs.MAP_DISCUSS_CHANNEL_ID) //是地圖論壇
+		{
+			if (forumPost.getMessageCount() == 1) //是第一則訊息
+				forumPost.retrieveStartMessage().flatMap(Message::pin).queue(); //釘選訊息
+		}
+		else if (QuestionForumHandle.isQuestionPost(forumPost)) //是疑難雜症
+			QuestionForumHandle.getInstance(forumPost).messageEvent(event); //找到handle並執行事件
 	}
 }

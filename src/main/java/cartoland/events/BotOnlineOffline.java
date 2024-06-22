@@ -1,14 +1,10 @@
 package cartoland.events;
 
-import cartoland.buttons.IButton;
 import cartoland.utilities.*;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -50,31 +46,6 @@ public class BotOnlineOffline extends ListenerAdapter
 		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);
-
-
-		var dtpChannel = event.getJDA().getNewsChannelById(IDs.DATAPACK_SHOWCASE_CHANNEL_ID);
-		if (dtpChannel == null)
-			return;
-		final Button archiveButton = Button.success(IButton.ARCHIVE_THREAD, "Archive Thread")
-				.withEmoji(Emoji.fromUnicode("📁"));
-		final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
-				.withEmoji(Emoji.fromUnicode("✏️"));
-		dtpChannel.retrieveMessageById(1252810824641155123L).queue(message ->
-		{
-			String name = message.getAuthor().getEffectiveName();
-			message.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
-					.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + dtpChannel.getAsMention()).addActionRow(archiveButton, renameButton))
-					.flatMap(Message::pin)
-					.queue();
-		});
-		dtpChannel.retrieveMessageById(1252832677455986768L).queue(message ->
-		{
-			String name = message.getAuthor().getEffectiveName();
-			message.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
-					.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + dtpChannel.getAsMention()).addActionRow(archiveButton, renameButton))
-					.flatMap(Message::pin)
-					.queue();
-		});
 	}
 
 	/**

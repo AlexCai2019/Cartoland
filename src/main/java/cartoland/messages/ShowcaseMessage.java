@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,16 +23,8 @@ public class ShowcaseMessage implements IMessage
 			.withEmoji(Emoji.fromUnicode("📁"));
 	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
 			.withEmoji(Emoji.fromUnicode("✏️"));
-	private final Set<Long> showcaseChannels = HashSet.newHashSet(5);
-
-	public ShowcaseMessage()
-	{
-		showcaseChannels.add(IDs.DATAPACK_SHOWCASE_CHANNEL_ID);
-		showcaseChannels.add(IDs.MAP_SHOWCASE_CHANNEL_ID);
-		showcaseChannels.add(IDs.BUILDING_SHOWCASE_CHANNEL_ID);
-		showcaseChannels.add(IDs.MODEL_SHOWCASE_CHANNEL_ID);
-		showcaseChannels.add(IDs.VIDEOS_AND_STREAMS_CHANNEL_ID);
-	}
+	private final Set<Long> showcaseChannels = Set.of(IDs.DATAPACK_SHOWCASE_CHANNEL_ID, IDs.MAP_SHOWCASE_CHANNEL_ID,
+			IDs.BUILDING_SHOWCASE_CHANNEL_ID, IDs.MODEL_SHOWCASE_CHANNEL_ID, IDs.VIDEOS_AND_STREAMS_CHANNEL_ID);
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)

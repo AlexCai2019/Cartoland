@@ -1,6 +1,6 @@
 package cartoland.events;
 
-import cartoland.utilities.forums.ForumsHandle;
+import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.update.ChannelUpdateArchivedEvent;
@@ -25,16 +25,14 @@ public class ThreadEvent extends ListenerAdapter
 		ThreadChannel threadChannel = (ThreadChannel) event.getChannel();
 		threadChannel.join().queue(); //加入討論串
 
-		ForumsHandle.getHandle(threadChannel).createEvent(event); //是地圖專版或疑難雜症就處理事件
+		if (QuestionForumHandle.isQuestionPost(threadChannel))
+			QuestionForumHandle.getInstance(threadChannel).createEvent(); //疑難雜症新增時傳送指南
 	}
 
 	@Override
 	public void onChannelUpdateArchived(ChannelUpdateArchivedEvent event)
 	{
-		ForumsHandle handle = ForumsHandle.getHandle((ThreadChannel) event.getChannel()); //是地圖專版或疑難雜症就處理事件
-		if (Boolean.TRUE.equals(event.getNewValue())) //變成關閉
-			handle.postSleepEvent(event);
-		else //變成開啟
-			handle.postWakeUpEvent(event);
+		if (event.getChannel() instanceof ThreadChannel thread && QuestionForumHandle.isQuestionPost(thread) && !thread.isArchived())
+			QuestionForumHandle.getInstance(thread).postWakeUpEvent(); //疑難雜症從關閉變成開啟時的事件
 	}
 }

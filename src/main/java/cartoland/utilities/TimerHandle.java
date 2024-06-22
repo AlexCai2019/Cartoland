@@ -124,17 +124,6 @@ public final class TimerHandle
 			undergroundChannel.sendMessage("https://i.imgur.com/c0HCirP.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
 			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
 		}));
-
-		/*final byte twelve = 12;
-		//中午12點
-		TimerHandle.registerTimerEvent(new TimerEvent(twelve, () -> //中午十二點時處理並提醒未解決的論壇貼文
-		{
-			ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
-			if (questionsChannel == null)
-				return; //找不到就算了
-			for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
-				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
-		}));*/
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -157,6 +146,11 @@ public final class TimerHandle
 
 		for (Runnable event : hourRunFunctions[nowHour]) //走訪被註冊的事件們
 			event.run(); //執行
+
+		ForumChannel questionsChannel = Cartoland.getJDA().getForumChannelById(IDs.QUESTIONS_CHANNEL_ID); //疑難雜症頻道
+		if (questionsChannel != null) //找不到就算了
+			for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
+				QuestionForumHandle.getInstance(forumPost).remind(); //試著提醒
 
 		//根據現在的時間 決定是否解ban
 		if (AdminCommand.tempBanSet.isEmpty()) //沒有人被temp_ban

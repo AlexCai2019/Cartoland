@@ -93,7 +93,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"https://imgur.com/gPlBEMV" //我越來越接近電話了
 	};
 
-	private final Set<Long> canTalkCategories = Set.of(IDs.GENERAL_CATEGORY_ID, IDs.FORUM_CATEGORY_ID, IDs.VOICE_CATEGORY_ID, IDs.DANGEROUS_CATEGORY_ID);
+	private final Set<Long> canTalkCategories = Set.of(IDs.GENERAL_CATEGORY_ID, IDs.VOICE_CATEGORY_ID, IDs.DANGEROUS_CATEGORY_ID);
 
 	private final Map<String, String[]> keywords =
 		Map.of("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling","道聲「早安」\n卻又讓我做了夢\n自然而然的生活方式不是很好嗎？" },

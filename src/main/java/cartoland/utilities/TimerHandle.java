@@ -125,7 +125,7 @@ public final class TimerHandle
 			undergroundChannel.sendMessage("https://i.imgur.com/EGO35hf.jpg").queue(); //好棒，三點了
 		}));
 
-		final byte twelve = 12;
+		/*final byte twelve = 12;
 		//中午12點
 		TimerHandle.registerTimerEvent(new TimerEvent(twelve, () -> //中午十二點時處理並提醒未解決的論壇貼文
 		{
@@ -134,7 +134,7 @@ public final class TimerHandle
 				return; //找不到就算了
 			for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
 				ForumsHandle.tryIdleQuestionForumPost(forumPost); //試著讓它們idle
-		}));
+		}));*/
 	}
 
 	//https://stackoverflow.com/questions/65984126

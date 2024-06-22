@@ -1,10 +1,8 @@
 package cartoland.events;
 
 import cartoland.utilities.Algorithm;
+import cartoland.utilities.forums.ForumsHandle;
 import cartoland.utilities.IDs;
-import cartoland.utilities.ForumsHandle;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -23,29 +21,18 @@ public class AddReaction extends ListenerAdapter
 	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
-		Member member = event.getMember(); //按表情的成員
-		if (member == null) //找不到成員
-			return; //結束
-		User user = member.getUser(); //按表情的使用者
-		if (user.isBot() || user.isSystem()) //是機器人或系統
+		User user = event.getUser(); //按表情的使用者
+		if (user == null || user.isBot() || user.isSystem()) //是機器人或系統
 			return; //不用執行
-		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
-		if (Algorithm.chance(20) && event.getReaction().getEmoji().equals(learned)) //20%的機率跟著其他人按
-			event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
+		if (Algorithm.chance(20)) //20%的機率跟著其他人按
+		{
+			Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
+			if (event.getReaction().getEmoji().equals(learned))
+				event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
+		}
 
-		//這以下是和問題論壇的resolved有關
-		if (!ForumsHandle.typedResolved(event.getReaction())) //不是resolved
-			return;
-		if (!event.getChannelType().isThread()) //不是討論串 or 論壇貼文
-			return;
-		ThreadChannel forumPost = (ThreadChannel) event.getChannel();
-		if (forumPost.getParentChannel().getIdLong() != IDs.QUESTIONS_CHANNEL_ID) //不在問題論壇
-			return;
-		if (forumPost.isArchived()) //關閉著的
-			return;
-		if (user.getIdLong() != forumPost.getOwnerIdLong() && !member.hasPermission(Permission.MANAGE_THREADS)) //不是貼文的擁有者 且沒有管理貼文的權限
-			return;
-
-		event.retrieveMessage().queue(message -> ForumsHandle.archiveForumPost(forumPost, message));
+		//有關疑難雜症
+		if (event.getChannel() instanceof ThreadChannel thread)
+			ForumsHandle.getHandle(thread).reactionEvent(event); //加表情的事件
 	}
 }

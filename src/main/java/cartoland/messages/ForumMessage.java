@@ -1,11 +1,7 @@
 package cartoland.messages;
 
-import cartoland.utilities.ForumsHandle;
-import cartoland.utilities.IDs;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import cartoland.utilities.forums.ForumsHandle;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -19,32 +15,17 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
  */
 public class ForumMessage implements IMessage
 {
+	private ThreadChannel forumPost;
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		Category category = event.getMessage().getCategory();
-		//獲取類別失敗就不執行後面那個
-		return category != null && category.getIdLong() == IDs.FORUM_CATEGORY_ID;
+		return event.getChannel() instanceof ThreadChannel thread && (forumPost = thread).getParentChannel().getType() == ChannelType.FORUM;
 	}
 
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		ThreadChannel forumPost = (ThreadChannel) event.getChannel();
-		Message message = event.getMessage();
-
-		if (ForumsHandle.questionForumPostIsIdled(forumPost)) //是問題貼文 且處在閒置狀態
-			ForumsHandle.unIdleQuestionForumPost(forumPost, false);
-
-		if (ForumsHandle.isFirstMessage(forumPost)) //如果是第一次傳送初始訊息
-			ForumsHandle.startStuff(forumPost); //傳送指南
-
-		if (!ForumsHandle.typedResolved(message)) //不是:resolved:表情符號
-			return;
-
-		Member member = event.getMember();
-		if (member == null || (member.getIdLong() != forumPost.getOwnerIdLong() && member.hasPermission(Permission.MANAGE_THREADS)))
-			return; //不是討論串擁有者 且 沒有管理討論串的權限
-		ForumsHandle.archiveForumPost(forumPost, message);
+		ForumsHandle.getHandle(forumPost).messageEvent(event); //找到handle並執行事件
 	}
 }

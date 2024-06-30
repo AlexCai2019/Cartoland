@@ -98,24 +98,29 @@ public class CommandUsage extends ListenerAdapter
 		{
 			if (event.getUser().getIdLong() != IDs.AC_ID) //不是我
 			{
-				event.reply("You can't do that.").queue();
+				event.reply("You can't do that.").setEphemeral(true).queue();
 				return;
 			}
 
-			event.reply("Shutting down...").complete(); //先送訊息 再下線
-
-			JDA jda = Cartoland.getJDA();
-			Guild cartoland = jda.getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
-			if (cartoland == null) //如果找不到創聯
+			event.reply("Shutting down...").queue(hook -> //先送訊息 再下線
 			{
-				jda.shutdown(); //直接結束 不傳訊息了
-				return;
-			}
+				JDA jda = Cartoland.getJDA();
+				Guild cartoland = jda.getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
+				if (cartoland == null) //如果找不到創聯
+				{
+					jda.shutdown(); //直接結束 不傳訊息了
+					return;
+				}
 
-			TextChannel botChannel = cartoland.getTextChannelById(IDs.BOT_CHANNEL_ID); //創聯的機器人頻道
-			if (botChannel != null) //找到頻道了
-				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").complete();
-			jda.shutdown(); //關機下線
+				TextChannel botChannel = cartoland.getTextChannelById(IDs.BOT_CHANNEL_ID); //創聯的機器人頻道
+				if (botChannel == null) //找不到頻道
+				{
+					jda.shutdown();
+					return;
+				}
+
+				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue(message -> jda.shutdown()); //關機下線
+			});
 		});
 
 		//roll
@@ -126,7 +131,7 @@ public class CommandUsage extends ListenerAdapter
 		{
 			if (event.getUser().getIdLong() != IDs.AC_ID) //不是我
 			{
-				event.reply("You can't do that.").queue();
+				event.reply("You can't do that.").setEphemeral(true).queue();
 				return;
 			}
 

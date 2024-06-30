@@ -50,11 +50,13 @@ public class ToolCommand extends HasSubcommands
 			String[] uuidStrings;
 			String dash, noDash;
 
-			if (RegularExpressions.UUID_DASH_REGEX.matcher(rawUUID).matches())
+			if (RegularExpressions.UUID_DASH_REGEX.matcher(rawUUID).matches()) //有橫線
 			{
 				uuidStrings = rawUUID.split("-");
 				int length;
 
+				//不用String.format("%8x")的方式補前綴0
+				//因為還要將uuidStrings[0]轉成int
 				length = uuidStrings[0].length();
 				if (length < 8)
 					uuidStrings[0] = ("00000000" + uuidStrings[0]).substring(length); //不滿8個數字就補上前綴0
@@ -78,7 +80,7 @@ public class ToolCommand extends HasSubcommands
 				dash = rawUUID;
 				noDash = String.join("", uuidStrings);
 			}
-			else if (RegularExpressions.UUID_NO_DASH_REGEX.matcher(rawUUID).matches())
+			else if (RegularExpressions.UUID_NO_DASH_REGEX.matcher(rawUUID).matches()) //沒有橫線
 			{
 				uuidStrings = new String[]
 				{
@@ -174,10 +176,10 @@ public class ToolCommand extends HasSubcommands
 			{
 				int rgbaTemp = rgbaColors[i]; //避免重複解包
 				int argbTemp = argbColors[i];
-				if (notInRange(rgbaTemp) || notInRange(argbTemp))
+				if (notInRange(rgbaTemp) || notInRange(argbTemp)) //範圍不對
 				{
 					event.reply(JsonHandle.getString(userID, "tool.color_rgba.wrong_range")).setEphemeral(true).queue();
-					return;
+					return; //直接結束
 				}
 
 				rgba += rgbaTemp << offset; //舉例 如果是13,24,247,12 那麼作為紅色的13往左推24 bits 綠色是24左推16bits 藍色是247左推8 不透明度是12左推0 結果是#0D18F70C

@@ -52,7 +52,7 @@ abstract class ShowcaseThreadButtons implements IButton
 			else
 				event.reply(JsonHandle.getString(userID, jsonKey + ".no_permission")).setEphemeral(true).queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, //找不到開啟的訊息
-				e -> event.reply(JsonHandle.getString(userID, "showcase_thread_button.no_owner")).setEphemeral(true).queue()));
+				e -> event.reply(JsonHandle.getString(userID, "showcase_thread.no_owner")).setEphemeral(true).queue()));
 	}
 
 	public abstract void adminManage(ButtonInteractionEvent event, ThreadChannel channel);

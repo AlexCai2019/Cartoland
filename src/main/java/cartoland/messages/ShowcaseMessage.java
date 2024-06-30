@@ -2,8 +2,10 @@ package cartoland.messages;
 
 import cartoland.buttons.IButton;
 import cartoland.utilities.IDs;
+import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -19,10 +21,6 @@ import java.util.Set;
  */
 public class ShowcaseMessage implements IMessage
 {
-	private final Button archiveButton = Button.success(IButton.ARCHIVE_THREAD, "Archive Thread")
-			.withEmoji(Emoji.fromUnicode("📁"));
-	private final Button renameButton = Button.primary(IButton.RENAME_THREAD, "Edit Title")
-			.withEmoji(Emoji.fromUnicode("✏️"));
 	private final Set<Long> showcaseChannels = Set.of(IDs.DATAPACK_SHOWCASE_CHANNEL_ID, IDs.MAP_SHOWCASE_CHANNEL_ID,
 			IDs.BUILDING_SHOWCASE_CHANNEL_ID, IDs.MODEL_SHOWCASE_CHANNEL_ID, IDs.VIDEOS_AND_STREAMS_CHANNEL_ID);
 
@@ -35,11 +33,16 @@ public class ShowcaseMessage implements IMessage
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		String name = event.getAuthor().getEffectiveName();
+		User author = event.getAuthor();
+		long userID = author.getIdLong();
+		String name = author.getEffectiveName();
+
+		Button archiveButton = Button.success(IButton.ARCHIVE_THREAD, JsonHandle.getString(userID, "archive_thread.name")).withEmoji(Emoji.fromUnicode("📁"));
+		Button renameButton = Button.primary(IButton.RENAME_THREAD, JsonHandle.getString(userID, "rename_thread.name")).withEmoji(Emoji.fromUnicode("✏️"));
 		event.getMessage()
-				.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
-				.flatMap(thread -> thread.sendMessage("Thread automatically created by " + name + " in " + event.getChannel().getAsMention()).addActionRow(archiveButton, renameButton))
-				.flatMap(Message::pin)
-				.queue();
+			.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
+			.flatMap(thread -> thread.sendMessage(JsonHandle.getString(userID, "showcase_thread.creation", name)).addActionRow(archiveButton, renameButton))
+			.flatMap(Message::pin)
+			.queue();
 	}
 }

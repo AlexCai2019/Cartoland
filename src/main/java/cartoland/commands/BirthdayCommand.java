@@ -33,11 +33,9 @@ public class BirthdayCommand extends HasSubcommands
 			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
 			TimerHandle.Birthday birthday = TimerHandle.getBirthday(target.getIdLong());
 			if (birthday == null) //查不到生日
-			{
 				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
-				return;
-			}
-			event.reply(JsonHandle.getString(userID, "birthday.get.set_on", target.getEffectiveName(),
+			else //查到生日
+				event.reply(JsonHandle.getString(userID, "birthday.get.set_on", target.getEffectiveName(),
 							JsonHandle.getString(userID, "birthday.month_" + birthday.month()), //月
 							JsonHandle.getString(userID, "birthday.date_" + birthday.date()))) //日
 						.queue();

@@ -24,9 +24,9 @@ public class ArchiveThreadButton extends ShowcaseThreadButtons
 	@Override
 	public void adminManage(ButtonInteractionEvent event, ThreadChannel channel)
 	{
-		//complete 才不會導致討論串被關了後才回覆
 		User user = event.getUser();
-		event.reply(JsonHandle.getString(user.getIdLong(), "archive_thread.archived", user.getEffectiveName())).complete();
-		channel.getManager().setArchived(true).queue();
+		event.reply(JsonHandle.getString(user.getIdLong(), "archive_thread.archived", user.getAsMention()))
+			.flatMap(hook -> channel.getManager().setArchived(true))
+			.queue();
 	}
 }

@@ -35,7 +35,11 @@ public final class QuestionForumHandle
 	private static final long LAST_MESSAGE_HOUR = 48L;
 	public static boolean isQuestionPost(ThreadChannel forumPost)
 	{
-		return forumPost.getParentChannel().getIdLong() == IDs.QUESTIONS_CHANNEL_ID;
+		return isQuestionPost(forumPost.getParentChannel().getIdLong());
+	}
+	public static boolean isQuestionPost(long parentID)
+	{
+		return parentID == IDs.QUESTIONS_CHANNEL_ID;
 	}
 
 	private QuestionForumHandle() {}

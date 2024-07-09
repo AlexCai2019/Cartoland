@@ -119,7 +119,9 @@ public class CommandUsage extends ListenerAdapter
 					return;
 				}
 
-				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue(message -> jda.shutdown()); //關機下線
+				botChannel.sendMessage(event.getOption("reboot", Boolean.FALSE, CommonFunctions.getAsBoolean) ?
+								"Cartoland Bot 重啟中…\nCartoland Bot is rebooting..." : "Cartoland Bot 已下線。\nCartoland Bot is now offline.")
+						.queue(message -> jda.shutdown()); //關機下線
 			});
 		});
 

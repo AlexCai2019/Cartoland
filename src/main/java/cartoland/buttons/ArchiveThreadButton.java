@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
-public class ArchiveThreadButton extends ShowcaseThreadButtons
+public final class ArchiveThreadButton extends ShowcaseThreadButtons
 {
 	public ArchiveThreadButton()
 	{

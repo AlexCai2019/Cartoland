@@ -32,6 +32,7 @@ public final class IDs
 	public static final long MAP_DISCUSS_CHANNEL_ID = 1072796680996532275L; //創聯的地圖專板
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道
 	public static final long RESOURCE_CHANNEL_ID = 1256209988825649245L; //創聯的素材頻道
+	public static final long POOP_JAM_CHANNEL_ID = 1259733026989019228L; //創聯的糞圖大賽頻道
 	public static final long LOBBY_CHANNEL_ID = 886936474723950611L; //創聯的大廳頻道
 	public static final long BOT_CHANNEL_ID = 891703579289718814L; //創聯的機器人頻道
 	public static final long TRAP_CHANNEL_ID = 1225886187017732256L; //創聯的陷阱頻道

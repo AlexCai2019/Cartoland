@@ -86,9 +86,9 @@ public final class QuestionForumHandle
 
 	public void messageEvent(MessageReceivedEvent event)
 	{
-		if (forumPost.getMessageCount() == 1) //是第一則訊息
-			forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 		Message message = event.getMessage();
+		if (forumPost.getIdLong() == message.getIdLong()) //是第一則訊息
+			forumPost.sendMessageEmbeds(startEmbed).queue(); //傳送發問指南
 		if (message.getContentRaw().equals(RESOLVED_FORMAT)) //輸入了resolved表情符號
 			typedResolved(message);
 	}

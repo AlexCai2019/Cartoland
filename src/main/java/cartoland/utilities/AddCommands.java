@@ -346,7 +346,8 @@ public final class AddCommands
 					.setDescriptionLocalization(JAPANESE, "最高のアニメの女の子"),
 
 			Commands.slash(SHUTDOWN, "Use this to shut down the bot")
-					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
+					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
+					.addOption(OptionType.BOOLEAN, "reboot", "Is for reboot", false, false),
 			Commands.slash(RELOAD, "Reload all JSON files")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 			Commands.slash(ADMIN, "Admin commands")

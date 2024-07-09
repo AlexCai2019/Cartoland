@@ -17,7 +17,7 @@ public interface IButton
 	void buttonProcess(ButtonInteractionEvent event);
 }
 
-abstract class ShowcaseThreadButtons implements IButton
+abstract sealed class ShowcaseThreadButtons implements IButton permits ArchiveThreadButton, RenameThreadButton
 {
 	private final String jsonKey;
 

@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -72,15 +71,15 @@ public class ContextMenu extends ListenerAdapter
 
 				//先回覆前1992個字 以及格式
 				event.reply("```\n" + rawContent.substring(0, maxLength) + "\n```")
-						.flatMap(InteractionHook::retrieveOriginal)
-						.queue(message ->
-						{
-							if (contentLength <= maxLength + maxLength) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
-								message.reply("```\n" + rawContent.substring(maxLength) + "\n```").mentionRepliedUser(false).queue();
-							else
-								message.reply("```\n" + rawContent.substring(maxLength, maxLength + maxLength) + "\n```").mentionRepliedUser(false)
-									.queue(message1 -> message1.reply("```\n" + rawContent.substring(maxLength + maxLength) + "\n```").mentionRepliedUser(false).queue());
-						});
+					.flatMap(InteractionHook::retrieveOriginal)
+					.queue(message ->
+					{
+						if (contentLength <= maxLength + maxLength) //如果從[1992] = 第1993個字開始算起 長度不超過1992個字
+							message.reply("```\n" + rawContent.substring(maxLength) + "\n```").mentionRepliedUser(false).queue();
+						else
+							message.reply("```\n" + rawContent.substring(maxLength, maxLength + maxLength) + "\n```").mentionRepliedUser(false)
+								.queue(message1 -> message1.reply("```\n" + rawContent.substring(maxLength + maxLength) + "\n```").mentionRepliedUser(false).queue());
+					});
 			}
 
 			case QUOTE_ -> QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());
@@ -95,11 +94,10 @@ public class ContextMenu extends ListenerAdapter
 				}
 
 				Message target = event.getTarget();
-				Channel channel = event.getChannel();
 				boolean isDiscussPostOwner = //如果是地圖專版的論壇貼文的開啟者 可以無視權限直接釘選
-					channel != null && channel.getType().isThread() && //是討論串
-					((ThreadChannel) channel).getParentChannel().getIdLong() == IDs.MAP_DISCUSS_CHANNEL_ID && //是地圖專版
-					((ThreadChannel) channel).getOwnerIdLong() == userID; //是開啟者
+					event.getChannel() instanceof ThreadChannel thread && //是討論串
+					thread.getParentChannel().getIdLong() == IDs.MAP_DISCUSS_CHANNEL_ID && //是地圖專版
+					thread.getOwnerIdLong() == userID; //是開啟者
 
 				if (!isDiscussPostOwner && !member.hasPermission(Permission.MESSAGE_MANAGE)) //如果不是地圖專版貼文不是開啟者且沒有權限
 				{

@@ -2,10 +2,9 @@ package cartoland.utilities;
 
 import cartoland.Cartoland;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.Map;
 
@@ -56,20 +55,17 @@ public final class AnonymousHandle
 
 		final String can_t = ", hence you can't send message to the NSFW channel.";
 
-		//原本這裡是用complete()而非queue()
-		//不過JDA官方群組說除非必要否則別用complete()
-		cartoland.retrieveMemberById(userID).queue(member ->
-		{
-			if (member == null) //不是成員
-				returnData.string("You are not a member of " + cartoland.getName() + can_t);
-			else if (member.isTimedOut()) //使用者已被禁言
-				returnData.string("You are timed out from " + cartoland.getName() + can_t);
-			else if (!member.getRoles().contains(nsfwRole)) //使用者沒有地下身分組
-				returnData.string("You don't have role " + nsfwRole.getName() + can_t);
-			else
-				returnData.object(undergroundChannel); //回傳地下頻道
-		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MEMBER, exception -> returnData.string("You are not a member of " + cartoland.getName() + can_t)));
+		//雖然JDA官方群組說除非必要否則別用complete()
+		//但是這裡不用的話會有同步問題
+		Member member = cartoland.retrieveMemberById(userID).complete();
 
-		return returnData;
+		if (member == null) //不是成員
+			return returnData.string("You are not a member of " + cartoland.getName() + can_t);
+		else if (member.isTimedOut()) //使用者已被禁言
+			return returnData.string("You are timed out from " + cartoland.getName() + can_t);
+		else if (!member.getRoles().contains(nsfwRole)) //使用者沒有地下身分組
+			return returnData.string("You don't have role " + nsfwRole.getName() + can_t);
+		else
+			return returnData.object(undergroundChannel); //回傳地下頻道
 	}
 }

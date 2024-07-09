@@ -11,24 +11,26 @@ import org.jetbrains.annotations.NotNull;
  * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
  * trigger if this bot was shutdown by accident, such as killed by ^C, server shutdown, etc. This class was
  * registered in {@link cartoland.Cartoland#main(String[])}, with the build of JDA. The {@link #onReady(ReadyEvent)}
- * invokes {@link CommandBlocksHandle#initial()}, and the {@link #onShutdown(ShutdownEvent)} method helps serialize
- * objects and stop scheduled functions.
+ * invokes {@link CommandBlocksHandle#initial()} if the second argument of {@link cartoland.Cartoland#main(String[])} is
+ * true. The {@link #onShutdown(ShutdownEvent)} method helps serialize objects and stop scheduled functions.
  *
  * @since 1.0
  * @author Alex Cai
  */
 public class BotOnlineOffline extends ListenerAdapter
 {
-	private final boolean initialCommandBlocks;
+	private final boolean shouldInitial;
+	private final boolean isReboot;
 
-	public BotOnlineOffline(boolean initialCommandBlocks)
+	public BotOnlineOffline(String initial, String reboot)
 	{
-		this.initialCommandBlocks = initialCommandBlocks;
+		shouldInitial = Boolean.parseBoolean(initial);
+		isReboot = Boolean.parseBoolean(reboot);
 	}
 
 	/**
 	 * The method that inherited from {@link ListenerAdapter}, triggers when the bot was online. It will send online
-	 * message to bot channel.
+	 * message to bot channel if the third argument of {@link cartoland.Cartoland#main(String[])} isn't "true".
 	 *
 	 * @param event The event that carries information.
 	 * @since 1.0
@@ -37,12 +39,16 @@ public class BotOnlineOffline extends ListenerAdapter
 	@Override
 	public void onReady(@NotNull ReadyEvent event)
 	{
-		if (initialCommandBlocks)
+		if (shouldInitial)
 			CommandBlocksHandle.initial(); //初始化idAndName
 
-		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
-		if (botChannel != null)
-			botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+		if (!isReboot)
+		{
+			TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
+			if (botChannel != null)
+				botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+		}
+
 		String logString = "online";
 		System.out.println(logString);
 		FileHandle.log(logString);

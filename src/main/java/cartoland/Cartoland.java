@@ -40,7 +40,7 @@ public class Cartoland
 
 		jda = JDABuilder.createDefault(args[0]) //以第一個參數為token 啟動機器人
 				.addEventListeners( //新增事件聆聽
-						new BotOnlineOffline(args.length != 1 && "initial".equals(args[1])), //當機器人上下線的時候
+						new BotOnlineOffline(args.length > 1 ? args[1] : "", args.length > 2 ? args[2] : ""), //當機器人上下線的時候
 						new MessageEvent(), //當有任何訊息
 						new AddReaction(), //當有人為訊息新增反應
 						new CommandUsage(), //當有人使用指令

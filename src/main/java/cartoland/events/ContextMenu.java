@@ -82,7 +82,11 @@ public class ContextMenu extends ListenerAdapter
 					});
 			}
 
-			case QUOTE_ -> QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());
+			case QUOTE_ ->
+			{
+				event.deferReply().queue(); //延後回覆
+				QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());
+			}
 
 			case PIN ->
 			{

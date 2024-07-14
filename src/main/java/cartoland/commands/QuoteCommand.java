@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +73,8 @@ public class QuoteCommand implements ICommand
 			return;
 		}
 
+		event.deferReply().queue(); //延後回覆
+
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同
 		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage -> quoteMessage(event, linkChannel, linkMessage),
 			new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
@@ -100,12 +102,12 @@ public class QuoteCommand implements ICommand
 			addImageAttachments(messageEmbed, embeds, attachments.stream().filter(Message.Attachment::isImage).toList());
 
 		//提及訊息作者 vs 不提及訊息作者
-		ReplyCallbackAction replyCallbackAction;
+		WebhookMessageCreateAction<Message> messageCreateAction;
 		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", Boolean.FALSE, CommonFunctions.getAsBoolean))
-			replyCallbackAction = event.reply(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
+			messageCreateAction = event.getHook().sendMessage(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
 		else
-			replyCallbackAction = event.replyEmbeds(embeds); //不標註作者
-		replyCallbackAction.addComponents(ActionRow.of(Button.link(messageLink, JsonHandle.getString(userID, "quote.jump_message")))).queue();
+			messageCreateAction = event.getHook().sendMessageEmbeds(embeds); //不標註作者
+		messageCreateAction.addComponents(ActionRow.of(Button.link(messageLink, JsonHandle.getString(userID, "quote.jump_message")))).queue();
 	}
 
 	private static void addImageAttachments(EmbedBuilder headEmbed, List<MessageEmbed> embeds, List<Message.Attachment> images)

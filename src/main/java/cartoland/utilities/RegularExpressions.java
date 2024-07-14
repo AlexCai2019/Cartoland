@@ -27,8 +27,8 @@ public final class RegularExpressions
 	{
 		final String BUG_NUMBER_STRING = "\\d{1,6}"; //目前bug數還沒超過999999個 等超過了再來改
 		final String BUG_ID_STRING = "(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-" + BUG_NUMBER_STRING;
-		JIRA_BROWSE_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/browse/" + BUG_ID_STRING);
-		JIRA_PROJECT_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/projects/MC/issues/" + BUG_ID_STRING);
+		JIRA_BROWSE_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/browse/(" + BUG_ID_STRING + ')');
+		JIRA_PROJECT_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/projects/MC/issues/(" + BUG_ID_STRING + ')');
 		BUG_ID_REGEX = Pattern.compile(BUG_ID_STRING);
 		BUG_NUMBER_REGEX = Pattern.compile(BUG_NUMBER_STRING);
 	}

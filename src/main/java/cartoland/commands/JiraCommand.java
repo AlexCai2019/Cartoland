@@ -29,8 +29,6 @@ import java.util.regex.Matcher;
  */
 public class JiraCommand implements ICommand
 {
-	private final int browseStart = "https://bugs.mojang.com/browse/".length();
-	private final int projectStart = "https://bugs.mojang.com/projects/MC/issues/".length();
 	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251
 	private static final int DESCRIPTION_CHARACTERS = 200;
 
@@ -114,13 +112,13 @@ public class JiraCommand implements ICommand
 			return "MC-" + inputLink;
 
 		//https://stackoverflow.com/questions/4662215/how-to-extract-a-substring-using-regex
-		Matcher browseMatcher = RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(inputLink); //https://bugs.mojang.com/browse/MC-87984
-		if (browseMatcher.find())
-			return browseMatcher.group(1).substring(browseStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+		Matcher browseMatcher = RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(inputLink);
+		if (browseMatcher.find()) //https://bugs.mojang.com/browse/MC-87984
+			return browseMatcher.group(1).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 
 		Matcher projectMatcher = RegularExpressions.JIRA_PROJECT_LINK_REGEX.matcher(inputLink);
 		if (projectMatcher.find()) //https://bugs.mojang.com/projects/MC/issues/MC-87984
-			return projectMatcher.group(1).substring(projectStart).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+			return projectMatcher.group(1).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 
 		return "";
 	}

@@ -67,6 +67,8 @@ public final class QuestionForumHandle
 
 	public void createEvent()
 	{
+		unresolvedPosts.add(forumPost.getIdLong()); //未解決
+
 		TwoTags twoTags = getTwoTags();
 
 		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags());
@@ -103,6 +105,7 @@ public final class QuestionForumHandle
 
 	public void postWakeUpEvent()
 	{
+		unresolvedPosts.add(forumPost.getIdLong()); //未解決
 		TwoTags twoTags = getTwoTags();
 		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
 		tags.remove(twoTags.resolved); //移除resolved

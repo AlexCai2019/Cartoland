@@ -25,11 +25,11 @@ public class ScheduleCommand extends HasSubcommands
 			String scheduledEventName = event.getOption("name", " ", CommonFunctions.getAsString); //事件名稱
 			if (TimerHandle.hasScheduledEvent(scheduledEventName)) //如果曾有schedule過該名稱的事件
 			{
-				event.reply("Removed scheduled " + scheduledEventName + " message.").queue();
+				event.reply("Removed scheduled `" + scheduledEventName + "` message.").queue();
 				TimerHandle.unregisterScheduledEvent(scheduledEventName); //移除事件
 			}
 			else
-				event.reply("There's no " + scheduledEventName + " event!").queue();
+				event.reply("There's no `" + scheduledEventName + "` event!").queue();
 		});
 		subcommands.put(LIST, event ->
 		{
@@ -37,7 +37,7 @@ public class ScheduleCommand extends HasSubcommands
 			if (eventNames.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
 				event.reply("There's no scheduled messages!").setEphemeral(true).queue();
 			else
-				event.reply(String.join("\n", eventNames)).queue();
+				event.reply("```\n" + String.join("\n", eventNames) + "\n```").queue();
 		});
 	}
 

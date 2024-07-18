@@ -73,32 +73,31 @@ public class JiraCommand implements ICommand
 
 		String description = textValue(issueContent.getElementById("description-val")).strip(); //bug描述
 		int descriptionLength = description.length(); //小於等於DESCRIPTION_CHARACTERS就全文放下
-		bugEmbed.appendDescription(descriptionLength <= DESCRIPTION_CHARACTERS ? description : new StringBuilder(description).replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…"))
+		bugEmbed.appendDescription(descriptionLength <= DESCRIPTION_CHARACTERS ? description : new StringBuilder(description).replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…"));
 
 		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
-				.addField("Status", textValue(issueContent.getElementById("opsbar-transitions_more")), true)
+		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
+		String status = textValue(issueContent.getElementById("opsbar-transitions_more"));
+		bugEmbed.addField("Status", status, true)
 				.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true)
 				.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
 
 		Element versionsField = issueContent.getElementById("versions-field");
 		Element allAffectsVersions = versionsField != null ? versionsField : new Element("span");
 
-		//此處不用getFirst()和getLast() 因為first()和last()會在沒有元素時回傳null 而不是擲出NoSuchElementException
-		bugEmbed.addField("First affects version", textValue(allAffectsVersions.firstElementChild()), true)
-				.addField("Last affects version", textValue(allAffectsVersions.lastElementChild()), true)
-				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true)
+		//此處不用getFirst()和getLast() firstElementChild()lastElementChild()會在沒有元素時回傳null 而不是擲出NoSuchElementException
+		bugEmbed.addField("Affects versions", textValue(allAffectsVersions.firstElementChild()) + '~' + textValue(allAffectsVersions.lastElementChild()), true)
+				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true);
 
-		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
-				.addField("Created", timeValue(issueContent.getElementById("created-val")), true)
-				.addField("Updated", timeValue(issueContent.getElementById("updated-val")), true)
-				.addField("Resolved", timeValue(issueContent.getElementById("resolutiondate-val")), true)
+		if ("Resolved".equals(status))
+		{
+			ZonedDateTime resolvedTime = timeValue(issueContent.getElementById("resolutiondate-val"));
+			if (resolvedTime != null)
+				bugEmbed.addField("Resolved", "<t:" + resolvedTime.toEpochSecond() + ":R>", true);
+		}
 
-				.addField("Checked", timeValue(issueContent.getElementById("customfield_10701-val")), true)
-				.addField("Votes", textValue(issueContent.getElementById("vote-data")), true)
-				.addField("Watchers", textValue(issueContent.getElementById("watcher-data")), true)
-
-				.setFooter(textValue(issueContent.getElementById("project-name-val")),
-						attributeValue(issueContent.getElementById("project-avatar"), "src", null));
+		bugEmbed.setFooter(textValue(issueContent.getElementById("project-name-val")), attributeValue(issueContent.getElementById("project-avatar"), "src", null))
+				.setTimestamp(timeValue(issueContent.getElementById("created-val"))); //建立的時間
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
@@ -131,21 +130,21 @@ public class JiraCommand implements ICommand
 	//2015-09-03T13:30:22+0200
 	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
 
-	private String timeValue(Element element)
+	private ZonedDateTime timeValue(Element element)
 	{
 		if (element == null)
-			return "";
+			return null;
 		Elements timeTags = element.getElementsByTag("time"); //找尋裡面的<time>
 		if (timeTags.isEmpty())
-			return "";
+			return null;
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
 		try
 		{
-			return "<t:" + ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", "1970-01-01T00:00:00+0000"), dateTimeFormatter).toEpochSecond() + ":R>";
+			return ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", "1970-01-01T00:00:00+0000"), dateTimeFormatter);
 		}
 		catch (DateTimeParseException e)
 		{
-			return "";
+			return null;
 		}
 	}
 

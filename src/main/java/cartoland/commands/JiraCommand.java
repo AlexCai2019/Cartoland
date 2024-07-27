@@ -84,17 +84,23 @@ public class JiraCommand implements ICommand
 
 		Element versionsField = issueContent.getElementById("versions-field");
 		Element allAffectsVersions = versionsField != null ? versionsField : new Element("span");
+		//影響的版本
+		String firstVersion = textValue(allAffectsVersions.firstElementChild());
+		String lastVersion = textValue(allAffectsVersions.lastElementChild());
+		//如果不一樣就加波浪號
+		String affectsVersions = firstVersion.equals(lastVersion) ? firstVersion : firstVersion + '~' + lastVersion;
 
 		//此處不用getFirst()和getLast() firstElementChild()lastElementChild()會在沒有元素時回傳null 而不是擲出NoSuchElementException
-		bugEmbed.addField("Affects versions", textValue(allAffectsVersions.firstElementChild()) + '~' + textValue(allAffectsVersions.lastElementChild()), true)
+		bugEmbed.addField("Affects versions", affectsVersions, true)
 				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true);
 
 		if ("Resolved".equals(status))
 		{
 			ZonedDateTime resolvedTime = timeValue(issueContent.getElementById("resolutiondate-val"));
-			if (resolvedTime != null)
-				bugEmbed.addField("Resolved", "<t:" + resolvedTime.toEpochSecond() + ":R>", true);
+			bugEmbed.addField("Resolved", resolvedTime == null ? "None" : "<t:" + resolvedTime.toEpochSecond() + ":R>", true);
 		}
+		else
+			bugEmbed.addField("", "", true);
 
 		bugEmbed.setFooter(textValue(issueContent.getElementById("project-name-val")), attributeValue(issueContent.getElementById("project-avatar"), "src", null))
 				.setTimestamp(timeValue(issueContent.getElementById("created-val"))); //建立的時間

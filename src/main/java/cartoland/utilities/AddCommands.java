@@ -88,8 +88,20 @@ public final class AddCommands
 		return new CommandData[]
 		{
 			Commands.slash(INVITE, "Get invite link of Cartoland")
-					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得創世聯邦的邀請連結")
-					.setDescriptionLocalization(CHINESE_CHINA, "获得创世联邦的邀请链接"),
+					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得伺服器的邀請連結")
+					.setDescriptionLocalization(CHINESE_CHINA, "获得服务器的邀请链接")
+					.addOptions(
+							new OptionData(OptionType.STRING, "guild_name", "The guild", false, false)
+								.setNameLocalization(CHINESE_TAIWAN, "伺服器")
+								.setNameLocalization(CHINESE_CHINA, "服务器")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "伺服器")
+								.setDescriptionLocalization(CHINESE_CHINA, "服务器")
+								.addChoices(
+										new Command.Choice("Cartoland", "cartoland"),
+										new Command.Choice("Minecraft Commands", "minecraft_commands"),
+										new Command.Choice("Spyglass", "spyglass"),
+										new Command.Choice("Blockbench", "blockbench")
+								)),
 
 			Commands.slash(HELP, "Get help with bot commands")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得機器人指令的介紹")

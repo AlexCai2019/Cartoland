@@ -56,6 +56,8 @@ public class LotteryCommand extends HasSubcommands
 			bet = nowHave;
 		else if ("half".equalsIgnoreCase(betString))
 			bet = nowHave >> 1;
+		else if ("quarter".equalsIgnoreCase(betString))
+			bet = nowHave >> 2;
 		else //都不是
 			return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
 
@@ -156,7 +158,7 @@ public class LotteryCommand extends HasSubcommands
 			if (showHand)
 			{
 				if (win)
-					replyBuilder.append("\nhttps://www.youtube.com/watch?v=RbMjxQEZ1IQ");
+					replyBuilder.append("\nhttps://www.youtube.com/watch?v=2s2QXGc1Ros");
 				else
 					replyBuilder.append('\n').append(JsonHandle.getString(userID, "lottery.bet.play_with_your_limit"));
 			}

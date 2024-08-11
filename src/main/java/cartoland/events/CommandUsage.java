@@ -44,7 +44,13 @@ public class CommandUsage extends ListenerAdapter
 
 		//初始化map 放入所有指令
 		//invite
-		commands.put(INVITE, event -> event.reply("https://discord.gg/UMYxwHyRNE").queue());
+		commands.put(INVITE, event -> event.reply(switch (event.getOption("guild_name", "cartoland", CommonFunctions.getAsString))
+			{
+				case "minecraft_commands" -> "https://discord.gg/QAFXFtZ";
+				case "spyglass" -> "https://discord.gg/EbdseuS";
+				case "blockbench" -> "https://discord.gg/blockbench";
+				default -> "https://discord.gg/UMYxwHyRNE";
+			}).queue());
 
 		//help
 		commands.put(HELP, event -> event.reply(minecraftCommandRelated("help", event)).queue());

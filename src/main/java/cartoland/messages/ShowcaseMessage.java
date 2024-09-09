@@ -21,8 +21,8 @@ import java.util.Set;
  */
 public class ShowcaseMessage implements IMessage
 {
-	private final Set<Long> showcaseChannels = Set.of(IDs.DATAPACK_SHOWCASE_CHANNEL_ID, IDs.MAP_SHOWCASE_CHANNEL_ID,
-			IDs.BUILDING_SHOWCASE_CHANNEL_ID, IDs.MODEL_SHOWCASE_CHANNEL_ID, IDs.VIDEOS_AND_STREAMS_CHANNEL_ID);
+	private final Set<Long> showcaseChannels = Set.of(IDs.DATAPACK_SHOWCASE_CHANNEL_ID, IDs.MAP_SHOWCASE_CHANNEL_ID, IDs.BUILDING_SHOWCASE_CHANNEL_ID,
+			IDs.MODEL_SHOWCASE_CHANNEL_ID, IDs.VIDEOS_AND_STREAMS_CHANNEL_ID, IDs.MAP_REVIEW_CHANNEL_ID);
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)

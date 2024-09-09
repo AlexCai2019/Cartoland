@@ -100,8 +100,7 @@ public final class AddCommands
 										new Command.Choice("Cartoland", "cartoland"),
 										new Command.Choice("Minecraft Commands", "minecraft_commands"),
 										new Command.Choice("Spyglass", "spyglass"),
-										new Command.Choice("Blockbench", "blockbench")
-								)),
+										new Command.Choice("Blockbench", "blockbench"))),
 
 			Commands.slash(HELP, "Get help with bot commands")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "獲得機器人指令的介紹")

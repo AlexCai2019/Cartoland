@@ -23,7 +23,7 @@ public class ReceiveModal extends ListenerAdapter
 	{
 		User user = event.getUser();
 		long userID = user.getIdLong();
-		if (!NEW_TITLE_MODAL_ID.equals(event.getModalId()))
+		if (!NEW_TITLE_MODAL_ID.equals(event.getModalId())) //不是要命名討論串
 			return;
 
 		ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);

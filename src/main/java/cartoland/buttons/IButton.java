@@ -41,19 +41,19 @@ abstract sealed class ShowcaseThreadButtons implements IButton permits ArchiveTh
 		ThreadChannel channel = (ThreadChannel) event.getChannel();
 		if (member.hasPermission(Permission.MANAGE_THREADS)) //有權限
 		{
-			adminManage(event, channel); //直接執行
+			authorizedOperation(event, channel); //直接執行
 			return; //不用再追溯了
 		}
 
 		channel.retrieveParentMessage().queue(parentMessage -> //追溯到開啟的訊息
 		{
 			if (userID == parentMessage.getAuthor().getIdLong()) //是討論串開啟者
-				adminManage(event, channel); //可以執行
+				authorizedOperation(event, channel); //可以執行
 			else
 				event.reply(JsonHandle.getString(userID, jsonKey + ".no_permission")).setEphemeral(true).queue();
 		}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, //找不到開啟的訊息
 				e -> event.reply(JsonHandle.getString(userID, "showcase_thread.no_owner")).setEphemeral(true).queue()));
 	}
 
-	public abstract void adminManage(ButtonInteractionEvent event, ThreadChannel channel);
+	public abstract void authorizedOperation(ButtonInteractionEvent event, ThreadChannel channel);
 }

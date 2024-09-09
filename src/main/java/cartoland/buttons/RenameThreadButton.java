@@ -17,7 +17,7 @@ public final class RenameThreadButton extends ShowcaseThreadButtons
 	}
 
 	@Override
-	public void adminManage(ButtonInteractionEvent event, ThreadChannel channel)
+	public void authorizedOperation(ButtonInteractionEvent event, ThreadChannel channel)
 	{
 		long userID = event.getUser().getIdLong();
 		TextInput newTitleInput = TextInput.create(ReceiveModal.NEW_TITLE_TEXT, JsonHandle.getString(userID, "rename_thread.new_title"), TextInputStyle.SHORT)

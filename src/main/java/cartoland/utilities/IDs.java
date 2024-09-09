@@ -28,6 +28,7 @@ public final class IDs
 	public static final long BUILDING_SHOWCASE_CHANNEL_ID = 903962262144970813L; //創聯的建築展示頻道
 	public static final long MODEL_SHOWCASE_CHANNEL_ID = 903964196063031346L; //創聯的材質與模型展示頻道
 	public static final long VIDEOS_AND_STREAMS_CHANNEL_ID = 1248704681543335987L; //創聯的影片與直播展示頻道
+	public static final long MAP_REVIEW_CHANNEL_ID = 1279852641077166243L; //創聯的地圖評鑑頻道
 	public static final long SELF_INTRO_CHANNEL_ID = 892415434240950282L; //創聯的會員申請頻道
 	public static final long MAP_DISCUSS_CHANNEL_ID = 1072796680996532275L; //創聯的地圖專板
 	public static final long QUESTIONS_CHANNEL_ID = 1079073022624940044L; //創聯的問題諮詢頻道

@@ -15,14 +15,14 @@ public final class ArchiveThreadButton extends ShowcaseThreadButtons
 	@Override
 	public void buttonProcess(ButtonInteractionEvent event)
 	{
-		if (event.getChannel().asThreadChannel().isArchived())
+		if (event.getChannel().asThreadChannel().isArchived()) //如果討論串已經關閉
 			event.reply(JsonHandle.getString(event.getUser().getIdLong(), "archive_thread.already_archived")).setEphemeral(true).queue();
 		else
 			super.buttonProcess(event);
 	}
 
 	@Override
-	public void adminManage(ButtonInteractionEvent event, ThreadChannel channel)
+	public void authorizedOperation(ButtonInteractionEvent event, ThreadChannel channel)
 	{
 		User user = event.getUser();
 		event.reply(JsonHandle.getString(user.getIdLong(), "archive_thread.archived", user.getAsMention()))

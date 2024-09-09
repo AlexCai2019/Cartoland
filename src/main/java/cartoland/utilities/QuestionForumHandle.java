@@ -13,7 +13,9 @@ import net.dv8tion.jda.api.entities.emoji.CustomEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.awt.Color;
 import java.time.Duration;
@@ -27,6 +29,7 @@ public final class QuestionForumHandle
 	public static QuestionForumHandle getInstance(ThreadChannel forumPost)
 	{
 		instance.forumPost = forumPost;
+		instance.forumManager = forumPost.getManager();
 		return instance;
 	}
 
@@ -45,6 +48,7 @@ public final class QuestionForumHandle
 	private QuestionForumHandle() {}
 
 	private ThreadChannel forumPost;
+	private ThreadChannelManager forumManager;
 	private final MessageEmbed startEmbed = new EmbedBuilder()
 			.setTitle("**-=發問指南=-**", "https://discord.com/channels/886936474723950603/1079081061658673253/1079081061658673253")
 			.appendDescription("""
@@ -73,17 +77,14 @@ public final class QuestionForumHandle
 
 		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags());
 		tags.remove(twoTags.resolved); //避免使用者自己加resolved
-		if (tags.contains(twoTags.unresolved)) //如果使用者有加unresolved
+		if (!tags.contains(twoTags.unresolved)) //如果使用者沒有自己加unresolved
 		{
-			forumPost.getManager().setAppliedTags(tags).queue(); //直接送出
-			return;
+			if (tags.size() == ForumChannel.MAX_POST_TAGS) //最多只能4個tag 要留一個位置給unresolved
+				tags.remove(tags.iterator().next());
+			tags.add(twoTags.unresolved); //直接加上去 反正前面有檢測過了 況且這是set 不會有重複的情況
 		}
 
-		//如果使用者沒有自己加unresolved
-		if (tags.size() == ForumChannel.MAX_POST_TAGS) //最多只能4個tag 要留一個位置給unresolved
-			tags.remove(tags.iterator().next());
-		tags.add(twoTags.unresolved); //直接加上去 反正前面有檢測過了 況且這是set 不會有重複的情況
-		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
+		forumManager.setAppliedTags(tags).queue(); //貼文狀態為未解決
 	}
 
 	public void messageEvent(MessageReceivedEvent event)
@@ -110,7 +111,7 @@ public final class QuestionForumHandle
 		Set<ForumTag> tags = new HashSet<>(forumPost.getAppliedTags()); //本貼文目前擁有的tag getAppliedTags()回傳的是不可變動的list
 		tags.remove(twoTags.resolved); //移除resolved
 		tags.add(twoTags.unresolved); //新增unresolved 因為是set所以不用擔心重複
-		forumPost.getManager().setAppliedTags(tags).queue(); //貼文狀態為未解決
+		forumManager.setAppliedTags(tags).queue(); //貼文狀態為未解決
 	}
 
 	public void remind()
@@ -129,7 +130,7 @@ public final class QuestionForumHandle
 								mentionOwner + ", did your question got a solution? If it did, remember to close this post using `:resolved:` " + RESOLVED_FORMAT + " emoji.\n" +
 								"If it didn't, try offer more information of question.")
 					.queue(); //提醒開串者
-		});
+		}, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 	}
 
 	private void typedResolved(Message message)
@@ -143,10 +144,7 @@ public final class QuestionForumHandle
 		Set<ForumTag> forumTags = new HashSet<>(forumPost.getAppliedTags()); //獲取標籤們
 		forumTags.remove(twoTags.unresolved);
 		forumTags.add(twoTags.resolved);
-		ThreadChannelManager forumManager = forumPost.getManager();
-		forumManager.setAppliedTags(forumTags).queue();
-
-		forumManager.setArchived(true).queue();
+		forumManager.setAppliedTags(forumTags).setArchived(true).queue();
 	}
 
 	private TwoTags getTwoTags()

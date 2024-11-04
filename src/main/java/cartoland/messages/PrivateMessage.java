@@ -36,6 +36,8 @@ public class PrivateMessage implements IMessage
 	{
 		Message message = event.getMessage();
 		User author = event.getAuthor();
+		if (author.isBot() || author.isSystem())
+			return;
 
 		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(author.getIdLong());
 		String errorMessage = channelAndString.string();
@@ -84,6 +86,9 @@ public class PrivateMessage implements IMessage
 
 			messageBuilder.addFiles(files);
 		}
+
+		if (messageBuilder.isEmpty())
+			return; //是空的就算了
 
 		((TextChannel) channelAndString.object()).sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
 				.queue(undergroundMessage -> AnonymousHandle.addConnection(message.getIdLong(), undergroundMessage.getIdLong()));

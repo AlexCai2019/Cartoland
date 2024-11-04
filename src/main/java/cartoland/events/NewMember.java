@@ -6,6 +6,7 @@ import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
@@ -73,8 +74,13 @@ public class NewMember extends ListenerAdapter
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event)
 	{
-		long userID = event.getUser().getIdLong();
+		User user = event.getUser();
+		long userID = user.getIdLong();
 		allMembers.remove(userID);
 		TimerHandle.deleteBirthday(userID);
+
+		TextChannel welcomeChannel = event.getGuild().getSystemChannel();
+		if (welcomeChannel != null)
+			welcomeChannel.sendMessage(user.getName() + '(' + Long.toUnsignedString(userID) + ") bye have a great time!").queue();
 	}
 }

@@ -77,7 +77,7 @@ public class QuoteCommand implements ICommand
 
 		//從頻道中取得訊息 注意ID是String 與慣例的long不同
 		linkChannel.retrieveMessageById(numbersInLink[1]).queue(linkMessage -> quoteMessage(event, linkChannel, linkMessage),
-			new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.reply(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
+			new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> event.getHook().sendMessage(JsonHandle.getString(userID, "quote.no_message")).setEphemeral(true).queue()));
 	}
 
 	public static void quoteMessage(IReplyCallback event, MessageChannel channel, Message message)

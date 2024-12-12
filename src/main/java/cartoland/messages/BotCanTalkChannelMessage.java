@@ -76,6 +76,12 @@ public class BotCanTalkChannelMessage implements IMessage
 		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
 		"豎子，不足與謀。"//死小孩，沒話跟你講。 Added by Champsing
 	};
+	private final String[] replySilentMention =
+	{
+		"你以為加了`@silent`我就不知道了嗎？",
+		"@silent <:ping:" + IDs.PING_EMOJI_ID + '>',
+		"做壞事是不用打廣告的，因其自當傳千里。"
+	};
 	private final String[] megumin =
 	{
 		"☆めぐみん大好き！☆",
@@ -132,7 +138,9 @@ public class BotCanTalkChannelMessage implements IMessage
 			{
 				long channelID = channel.getIdLong();
 				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) //如果頻道在機器人或地下 就正常地回傳replyMention
-					message.reply(Algorithm.randomElement(replyMention)).mentionRepliedUser(false).queue();
+					if (message.isSuppressedNotifications()) //如果是@silent訊息
+						message.reply(Algorithm.randomElement(replySilentMention)).mentionRepliedUser(false).queue();
+					else message.reply(Algorithm.randomElement(replyMention)).mentionRepliedUser(false).queue();
 				else //在其他地方ping就固定加一個ping的emoji
 					message.addReaction(Emoji.fromCustom("ping", IDs.PING_EMOJI_ID, false)).queue();
 			}

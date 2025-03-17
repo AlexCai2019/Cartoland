@@ -3,17 +3,12 @@ package cartoland.messages;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDs;
-import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -64,14 +59,7 @@ public class GuildMessage implements IMessage
 		if (rawMessage.contains("貓們"))
 		{
 			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
-			message.addReaction(Emoji.fromCustom("worship_a", IDs.WORSHIP_A_EMOJI_ID, true)).queue();
-		}
-		if (RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(rawMessage).matches()) //是bug連結
-		{
-			//這些程式不寫在BotCanTalkChannelMessage裡 是為了讓所有頻道都能受惠
-			String replyMessage = jiraLink(rawMessage); //獲得回覆訊息
-			if (replyMessage != null) //如果尋找成功
-				message.reply(replyMessage).mentionRepliedUser(false).queue(); //回覆
+			message.addReaction(Emoji.fromUnicode("🛐")).queue();
 		}
 
 		Category category = message.getCategory(); //嘗試從訊息獲取類別
@@ -79,22 +67,5 @@ public class GuildMessage implements IMessage
 		if (message.getChannel().getIdLong() != IDs.BOT_CHANNEL_ID && category != null && commandBlockCategories.contains(category.getIdLong()))
 			CommandBlocksHandle.getLotteryData(message.getAuthor().getIdLong())
 					.addBlocks(rawMessage.length() + 1 + message.getAttachments().size() + message.getStickers().size()); //說話加等級 +1當作加上\0 附加一個檔案或貼圖算1個
-	}
-
-	private String jiraLink(String link)
-	{
-		Document document; //HTML文件
-
-		try
-		{
-			document = Jsoup.connect(link).get(); //連線
-		}
-		catch (IOException e) //連線失敗就算了
-		{
-			return null;
-		}
-
-		Element title = document.getElementById("summary-val"); //獲得標題
-		return title != null ? '[' + title.text() + "](" + link + ')' : null; //如果獲得成功就傳送標題文字
 	}
 }

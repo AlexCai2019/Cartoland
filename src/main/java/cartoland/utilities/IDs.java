@@ -52,7 +52,6 @@ public final class IDs
 	public static final long COOL_PIKA_EMOJI_ID = 891714126424985610L; //:cool_pika:表情符號
 	public static final long YA_EMOJI_ID = 920200649830989825L; //:ya:表情符號
 	public static final long WOW_EMOJI_ID = 893499112228519996L; //:wow:表情符號
-	public static final long WORSHIP_A_EMOJI_ID = 935135593527128104L; //:worship_a:表情符號
 	public static final long PING_EMOJI_ID = 1065915559918719006L; //:ping:表情符號
 	public static final long RESOLVED_EMOJI_ID = 1081082902785314921L; //:resolved:表情符號
 	public static final long AC_ID = 355953951469731842L;

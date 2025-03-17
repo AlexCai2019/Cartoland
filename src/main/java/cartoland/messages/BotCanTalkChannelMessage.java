@@ -138,9 +138,7 @@ public class BotCanTalkChannelMessage implements IMessage
 			{
 				long channelID = channel.getIdLong();
 				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) //如果頻道在機器人或地下 就正常地回傳replyMention
-					if (message.isSuppressedNotifications()) //如果是@silent訊息
-						message.reply(Algorithm.randomElement(replySilentMention)).mentionRepliedUser(false).queue();
-					else message.reply(Algorithm.randomElement(replyMention)).mentionRepliedUser(false).queue();
+					message.reply(Algorithm.randomElement(message.isSuppressedNotifications() ? replySilentMention : replyMention)).mentionRepliedUser(false).queue(); //如果是@silent訊息就回覆replySilentMention
 				else //在其他地方ping就固定加一個ping的emoji
 					message.addReaction(Emoji.fromCustom("ping", IDs.PING_EMOJI_ID, false)).queue();
 			}

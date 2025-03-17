@@ -6,18 +6,23 @@ import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * {@code JiraCommand} is an execution when a user uses /jira command. This class implements {@link ICommand} interface,
@@ -30,7 +35,6 @@ import java.util.regex.Matcher;
 public class JiraCommand implements ICommand
 {
 	private static final int MOJANG_RED = new Color(239, 50, 61, 255).getRGB(); //-1101251
-	private static final int DESCRIPTION_CHARACTERS = 200;
 
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -40,70 +44,133 @@ public class JiraCommand implements ICommand
 		long userID = event.getUser().getIdLong();
 		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
-		String bugID = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
-		if (bugID.isEmpty())
+		String theBug = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
+		if (theBug.isEmpty())
 		{
 			hook.sendMessage(JsonHandle.getString(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
-		String link = "https://bugs.mojang.com/browse/" + bugID;
 
-		Document document; //HTML文件
+		String[] bugSplit = theBug.split("-");
+		String bugProject = bugSplit[0]; //MC、MCPE等等
+
+		HttpURLConnection conn;
+
 		try
 		{
-			document = Jsoup.connect(link).get(); //嘗試連線
+			URL url = new URI("https://bugs.mojang.com/api/jql-search-post").toURL();
+			conn = (HttpURLConnection) url.openConnection();
+
+			//設定請求方法與標頭
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+
+			//寫入請求
+			try (OutputStream os = conn.getOutputStream())
+			{
+				byte[] input = JsonHandle.bugPostAsString(theBug, bugProject).getBytes(StandardCharsets.UTF_8);
+				os.write(input, 0, input.length);
+			}
+		}
+		catch (URISyntaxException | IOException e)
+		{
+			hook.sendMessage(JsonHandle.getString(userID, "jira.invalid_link")).setEphemeral(true).queue();
+			return; //失敗就結束
+		}
+
+		StringBuilder response = new StringBuilder(); //用於接收資訊
+		try
+		{
+			int responseCode = conn.getResponseCode();
+			if (responseCode != 200 && responseCode != 201) //狀態失敗
+			{
+				hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", theBug)).setEphemeral(true).queue();
+				return;
+			}
+
+			//讀取回傳結果
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
+			{
+				while (true)
+				{
+					String responseLine = in.readLine();
+					if (responseLine == null)
+						break;
+					response.append(responseLine);
+				}
+			}
+			conn.disconnect();
 		}
 		catch (IOException e)
 		{
-			hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", bugID)).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", theBug)).setEphemeral(true).queue();
 			return;
 		}
 
-		Element issueContent = document.getElementById("issue-content"); //這樣之後就不用總是從整個document內get element
-		if (issueContent == null) //如果不存在id為issue-content的標籤
-		{
-			hook.sendMessage(JsonHandle.getString(userID, "jira.no_issue", link)).setEphemeral(true).queue();
-			return;
-		}
+		Map<String, Object> bugInfo = JsonHandle.getBugInformation(response.toString()); //獲取大部分資訊
+
+		String link = "https://bugs.mojang.com/browse/" + theBug;
 
 		EmbedBuilder bugEmbed = new EmbedBuilder()
 				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png") //縮圖為Mojang
 				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
-				.setTitle('[' + bugID + "] " + textValue(issueContent.getElementById("summary-val")), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+				.setTitle('[' + theBug + "] " + bugInfo.get("summary"), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
 
-		String description = textValue(issueContent.getElementById("description-val")).strip(); //bug描述
-		int descriptionLength = description.length(); //小於等於DESCRIPTION_CHARACTERS就全文放下
-		bugEmbed.appendDescription(descriptionLength <= DESCRIPTION_CHARACTERS ? description : new StringBuilder(description).replace(DESCRIPTION_CHARACTERS - 1, descriptionLength, "…"));
-
-		//如果該HTML元素不為null 就取該元素的文字 否則放空字串 比起找不到就直接回傳embed 使用者們較能一目了然
-		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
-		String status = textValue(issueContent.getElementById("opsbar-transitions_more"));
-		bugEmbed.addField("Status", status, true)
-				.addField("Resolution", textValue(issueContent.getElementById("resolution-val")), true)
-				.addField("Mojang priority", textValue(issueContent.getElementById("customfield_12200-val")), true);
-
-		Element versionsField = issueContent.getElementById("versions-field");
-		Element allAffectsVersions = versionsField != null ? versionsField : new Element("span");
-		//影響的版本
-		String firstVersion = textValue(allAffectsVersions.firstElementChild());
-		String lastVersion = textValue(allAffectsVersions.lastElementChild());
-		//如果不一樣就加波浪號
-		String affectsVersions = firstVersion.equals(lastVersion) ? firstVersion : firstVersion + '~' + lastVersion;
-
-		//此處不用getFirst()和getLast() firstElementChild()lastElementChild()會在沒有元素時回傳null 而不是擲出NoSuchElementException
-		bugEmbed.addField("Affects versions", affectsVersions, true)
-				.addField("Fix version/s", textValue(issueContent.getElementById("fixfor-val")), true);
-
-		if ("Resolved".equals(status))
+		if (bugInfo.isEmpty()) //如果是空的
 		{
-			ZonedDateTime resolvedTime = timeValue(issueContent.getElementById("resolutiondate-val"));
+			hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
+			return; //直接結束
+		}
+
+		//當field被設定為inline時 在電腦版看來 就會是三個排成一列
+		String status = maybeMapGet(bugInfo.get("status"), "name");
+		bugEmbed.addField("Status", status, true)
+				.addField("Resolution", maybeMapGet(bugInfo.get("resolution"), "name"), true)
+				.addField("Mojang priority", maybeMapGet(bugInfo.get("customfield_10049"), "value"), true);
+
+		//影響的版本
+		String affectsVersions = bugInfo.get("versions") instanceof List<?> versions ? switch (versions.size())
+		{
+			case 0 -> "";
+			case 1 -> maybeMapGet(versions.getFirst(), "name");
+			default -> maybeMapGet(versions.getFirst(), "name") + '~' + maybeMapGet(versions.getLast(), "name");
+		} : "";
+		bugEmbed.addField("Affects versions", affectsVersions, true);
+
+		String fixVersionsString;
+		if (bugInfo.get("fixVersions") instanceof List<?> fixVersions)
+		{
+			switch (fixVersions.size())
+			{
+				case 0:
+					fixVersionsString = "None";
+					break;
+				case 1:
+					fixVersionsString = maybeMapGet(fixVersions.getFirst(), "name");
+					break;
+				default:
+					StringBuilder builder = new StringBuilder();
+					for (Object version : fixVersions) //所有的修正版本
+						builder.append(maybeMapGet(version, "name")).append(',');
+					builder.setLength(builder.length() - 1);
+					fixVersionsString = builder.toString();
+					break;
+			}
+		}
+		else
+			fixVersionsString = "None";
+		bugEmbed.addField("Fix version/s", fixVersionsString, true);
+
+		if ("Resolved".equals(status)) //bug已解決
+		{
+			ZonedDateTime resolvedTime = timeValue(bugInfo.get("resolutiondate"));
 			bugEmbed.addField("Resolved", resolvedTime == null ? "None" : "<t:" + resolvedTime.toEpochSecond() + ":R>", true);
 		}
 		else
 			bugEmbed.addField("", "", true);
 
-		bugEmbed.setFooter(textValue(issueContent.getElementById("project-name-val")), attributeValue(issueContent.getElementById("project-avatar"), "src", null))
-				.setTimestamp(timeValue(issueContent.getElementById("created-val"))); //建立的時間
+		bugEmbed.setFooter("").setTimestamp(timeValue(bugInfo.get("created")));
 
 		hook.sendMessage(link).setEmbeds(bugEmbed.build()).queue();
 	}
@@ -128,34 +195,25 @@ public class JiraCommand implements ICommand
 		return "";
 	}
 
-	private String textValue(Element element)
+	private String maybeMapGet(Object maybeMap, String key)
 	{
-		return element != null ? element.text() : "";
+		return maybeMap instanceof Map<?,?> map && map.get(key) instanceof CharSequence cs ? cs.toString() : "";
 	}
 
 	//2015-09-03T13:30:22+0200
-	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"); //1970-01-01T00:00:00+0000
 
-	private ZonedDateTime timeValue(Element element)
+	private ZonedDateTime timeValue(Object time)
 	{
-		if (element == null)
-			return null;
-		Elements timeTags = element.getElementsByTag("time"); //找尋裡面的<time>
-		if (timeTags.isEmpty())
-			return null;
+		String timeString = time instanceof String s ? s : "1970-01-01T00:00:00+0000";
 		//取得<time>裡的datetime後 透過Formatter轉換為ZonedDateTime物件 再透過toEpochSecond()方法轉換為unix時間
 		try
 		{
-			return ZonedDateTime.parse(attributeValue(timeTags.getFirst(), "datetime", "1970-01-01T00:00:00+0000"), dateTimeFormatter);
+			return ZonedDateTime.parse(timeString, dateTimeFormatter);
 		}
 		catch (DateTimeParseException e)
 		{
 			return null;
 		}
-	}
-
-	private String attributeValue(Element element, String attributeKey, String defaultValue)
-	{
-		return element != null ? element.attr(attributeKey) : defaultValue;
 	}
 }

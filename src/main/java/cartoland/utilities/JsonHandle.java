@@ -1,6 +1,7 @@
 package cartoland.utilities;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collections;
@@ -32,10 +33,15 @@ public final class JsonHandle
 
 	private static JSONObject englishFile; //英文檔案
 
+	private static final JSONObject bugPost = new JSONObject();
+
 	static
 	{
 		reloadLanguageFiles();
 		FileHandle.registerSerialize(USERS_FILE_NAME, users);
+
+		bugPost.put("advanced", true);
+		bugPost.put("maxResult", 1);
 	}
 
 	public static String command(long userID, String commandName)
@@ -147,5 +153,36 @@ public final class JsonHandle
 	public static String getString(long userID, String key, Object... withs)
 	{
 		return getString(userID, key).formatted(withs);
+	}
+
+	public static String bugPostAsString(String theBug, String project)
+	{
+		bugPost.put("project", project);
+		bugPost.put("search", "key = " + theBug);
+		return bugPost.toString();
+	}
+
+	public static Map<String, Object> getBugInformation(String json)
+	{
+		JSONObject object;
+
+		try
+		{
+			object = new JSONObject(json);
+		}
+		catch (JSONException e) //如果字串不是json
+		{
+			return Map.of();
+		}
+
+		JSONArray issues = object.optJSONArray("issues"); //問題描述
+		if (issues == null || issues.isEmpty())
+			return Map.of();
+
+		//fields是bug的大部分資訊所在
+		if (issues.get(0) instanceof JSONObject issueObject && issueObject.opt("fields") instanceof JSONObject fieldsObject)
+			return fieldsObject.toMap();
+		else
+			return Map.of();
 	}
 }

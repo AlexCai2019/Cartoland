@@ -41,6 +41,7 @@ public final class IDs
 	public static final long UNDERGROUND_CHANNEL_ID = 962688156942073887L; //創聯的地下頻道
 	public static final long RESOLVED_FORUM_TAG_ID = 1079074167468605490L; //已解決的tag
 	public static final long UNRESOLVED_FORUM_TAG_ID = 1079074098493280347L; //未解決的tag
+	public static final long ADMIN_ROLE_ID = 891664569150341170L; //聯邦政府成員身分組
 	public static final long GOD_OF_GAMBLERS_ROLE_ID = 1119944573117014096L; //賭神身分組
 	public static final long MEMBER_ROLE_ID = 892415577002504272L; //會員身分組
 	public static final long NSFW_ROLE_ID = 919700598612426814L; //地下身分組

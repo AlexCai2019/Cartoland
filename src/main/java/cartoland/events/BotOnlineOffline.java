@@ -20,12 +20,12 @@ import org.jetbrains.annotations.NotNull;
 public class BotOnlineOffline extends ListenerAdapter
 {
 	private final boolean shouldInitial;
-	private final boolean isReboot;
+	private final String bootType;
 
-	public BotOnlineOffline(String initial, String reboot)
+	public BotOnlineOffline(String initial, String bootType)
 	{
 		shouldInitial = Boolean.parseBoolean(initial);
-		isReboot = Boolean.parseBoolean(reboot);
+		this.bootType = bootType;
 	}
 
 	/**
@@ -42,11 +42,18 @@ public class BotOnlineOffline extends ListenerAdapter
 		if (shouldInitial)
 			CommandBlocksHandle.initial(); //初始化idAndName
 
-		if (!isReboot)
+		TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
+		if (botChannel != null)
 		{
-			TextChannel botChannel = event.getJDA().getTextChannelById(IDs.BOT_CHANNEL_ID);
-			if (botChannel != null)
-				botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+			switch (bootType)
+			{
+				case "reboot":
+					botChannel.sendMessage("Cartoland Bot 重啟完畢。\nCartoland Bot rebooted.").queue();
+					break;
+				case "start":
+					botChannel.sendMessage("Cartoland Bot 已上線。\nCartoland Bot is now online.").queue();
+					break;
+			}
 		}
 
 		String logString = "online";

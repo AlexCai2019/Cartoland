@@ -3,6 +3,7 @@ package cartoland.utilities;
 import cartoland.commands.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -365,7 +366,7 @@ public final class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "管理員專用指令")
 					.setDescriptionLocalization(CHINESE_CHINA, "管理员专用命令")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MODERATE_MEMBERS, Permission.MANAGE_CHANNEL))
-					.setGuildOnly(true)
+					.setContexts(InteractionContextType.GUILD)
 					.addSubcommands(
 						new SubcommandData(AdminCommand.MUTE, "Mute a user")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
@@ -505,7 +506,7 @@ public final class AddCommands
 					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
 					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE))
-					.setGuildOnly(true)
+					.setContexts(InteractionContextType.GUILD)
 					.addSubcommands(
 						new SubcommandData(ScheduleCommand.CREATE, "Create a scheduled message")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "建立一個訊息排程")

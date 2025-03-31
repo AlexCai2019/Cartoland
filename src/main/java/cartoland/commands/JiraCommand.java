@@ -44,15 +44,14 @@ public class JiraCommand implements ICommand
 		long userID = event.getUser().getIdLong();
 		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
 
-		String theBug = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
-		if (theBug.isEmpty())
+		String bugID = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
+		if (bugID.isEmpty())
 		{
 			hook.sendMessage(JsonHandle.getString(userID, "jira.invalid_link")).setEphemeral(true).queue();
 			return;
 		}
 
-		String[] bugSplit = theBug.split("-");
-		String bugProject = bugSplit[0]; //MC、MCPE等等
+		String bugProject = bugID.split("-")[0]; //MC、MCPE等等
 
 		HttpURLConnection conn;
 
@@ -69,7 +68,7 @@ public class JiraCommand implements ICommand
 			//寫入請求
 			try (OutputStream os = conn.getOutputStream())
 			{
-				byte[] input = JsonHandle.bugPostAsString(theBug, bugProject).getBytes(StandardCharsets.UTF_8);
+				byte[] input = JsonHandle.bugPostAsString(bugID, bugProject).getBytes(StandardCharsets.UTF_8);
 				os.write(input, 0, input.length);
 			}
 		}
@@ -85,7 +84,7 @@ public class JiraCommand implements ICommand
 			int responseCode = conn.getResponseCode();
 			if (responseCode != 200 && responseCode != 201) //狀態失敗
 			{
-				hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", theBug)).setEphemeral(true).queue();
+				hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", bugID)).setEphemeral(true).queue();
 				return;
 			}
 
@@ -104,18 +103,18 @@ public class JiraCommand implements ICommand
 		}
 		catch (IOException e)
 		{
-			hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", theBug)).setEphemeral(true).queue();
+			hook.sendMessage(JsonHandle.getString(userID, "jira.no_bug", bugID)).setEphemeral(true).queue();
 			return;
 		}
 
 		Map<String, Object> bugInfo = JsonHandle.getBugInformation(response.toString()); //獲取大部分資訊
 
-		String link = "https://bugs.mojang.com/browse/" + theBug;
+		String link = "https://bugs.mojang.com/browse/" + bugID;
 
 		EmbedBuilder bugEmbed = new EmbedBuilder()
 				.setThumbnail("https://bugs.mojang.com/jira-favicon-hires.png") //縮圖為Mojang
 				.setColor(MOJANG_RED) //左邊的顏色是縮圖的紅色
-				.setTitle('[' + theBug + "] " + bugInfo.get("summary"), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
+				.setTitle('[' + bugID + "] " + bugInfo.get("summary"), link); //embed標題是[bug ID]bug標題 點了會連結到jira頁面
 
 		if (bugInfo.isEmpty()) //如果是空的
 		{
@@ -184,13 +183,17 @@ public class JiraCommand implements ICommand
 			return "MC-" + inputLink;
 
 		//https://stackoverflow.com/questions/4662215/how-to-extract-a-substring-using-regex
+		Matcher oldMatcher = RegularExpressions.JIRA_OLD_LINK_REGEX.matcher(inputLink);
+		if (oldMatcher.find()) //https://bugs.mojang.com/browse/MC-87984
+			return oldMatcher.group(1).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+
 		Matcher browseMatcher = RegularExpressions.JIRA_BROWSE_LINK_REGEX.matcher(inputLink);
-		if (browseMatcher.find()) //https://bugs.mojang.com/browse/MC-87984
-			return browseMatcher.group(1).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+		if (browseMatcher.find()) //https://bugs.mojang.com/browse/MC/issues/MC-87984
+			return browseMatcher.group(3).toUpperCase(Locale.ROOT);
 
 		Matcher projectMatcher = RegularExpressions.JIRA_PROJECT_LINK_REGEX.matcher(inputLink);
 		if (projectMatcher.find()) //https://bugs.mojang.com/projects/MC/issues/MC-87984
-			return projectMatcher.group(1).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
+			return projectMatcher.group(2).toUpperCase(Locale.ROOT); //避免在標題上出現[mc-87984]
 
 		return "";
 	}

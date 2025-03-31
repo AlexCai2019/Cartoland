@@ -1,6 +1,5 @@
 package cartoland.messages;
 
-import cartoland.utilities.Algorithm;
 import cartoland.utilities.CommandBlocksHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Message;
@@ -52,9 +51,9 @@ public class GuildMessage implements IMessage
 		Message message = event.getMessage(); //獲取訊息
 		String rawMessage = message.getContentRaw(); //獲取訊息字串
 
-		if (Algorithm.chance(20) && rawMessage.contains("learned")) //20%
+		if (rawMessage.contains("learned"))
 			message.addReaction(Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false)).queue();
-		if (Algorithm.chance(20) && rawMessage.contains("wow")) //20%
+		if (rawMessage.contains("wow"))
 			message.addReaction(Emoji.fromCustom("wow", IDs.WOW_EMOJI_ID, false)).queue();
 		if (rawMessage.contains("貓們"))
 		{

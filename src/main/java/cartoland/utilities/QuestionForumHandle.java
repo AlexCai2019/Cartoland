@@ -23,7 +23,7 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class QuestionForumHandle
+public final class QuestionForumHandle //這東西坦白講重構了還是蠻💩的
 {
 	private static final QuestionForumHandle instance = new QuestionForumHandle();
 	public static QuestionForumHandle getInstance(ThreadChannel forumPost)

@@ -10,7 +10,8 @@ public final class RegularExpressions
 	}
 
 	public static final Pattern CARTOLAND_MESSAGE_LINK_REGEX = Pattern.compile("https://discord\\.com/channels/" + IDs.CARTOLAND_SERVER_ID + "/\\d+/\\d+");
-	public static final Pattern JIRA_BROWSE_LINK_REGEX; //https://bugs.mojang.com/browse/MC-87984
+	public static final Pattern JIRA_OLD_LINK_REGEX; //https://bugs.mojang.com/browse/MC-87984
+	public static final Pattern JIRA_BROWSE_LINK_REGEX; //https://bugs.mojang.com/browse/MC/issues/MC-87984
 	public static final Pattern JIRA_PROJECT_LINK_REGEX; //https://bugs.mojang.com/projects/MC/issues/MC-87984
 	public static final Pattern BUG_ID_REGEX; //MC-87984
 	public static final Pattern BUG_NUMBER_REGEX; //87984
@@ -26,9 +27,11 @@ public final class RegularExpressions
 	static
 	{
 		final String BUG_NUMBER_STRING = "\\d{1,6}"; //目前bug數還沒超過999999個 等超過了再來改
-		final String BUG_ID_STRING = "(?i)(MC(PE|D|L|LG)?|REALMS|WEB|BDS)-" + BUG_NUMBER_STRING;
-		JIRA_BROWSE_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/browse/(" + BUG_ID_STRING + ')');
-		JIRA_PROJECT_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/projects/MC/issues/(" + BUG_ID_STRING + ')');
+		final String PROJECT_STRING = "(?i)(MC(PE|L)?|REALMS|WEB|BDS)";
+		final String BUG_ID_STRING = PROJECT_STRING + '-' + BUG_NUMBER_STRING;
+		JIRA_OLD_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/browse/(" + BUG_ID_STRING + ')');
+		JIRA_BROWSE_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/browse/" + PROJECT_STRING + "/issues/" + BUG_ID_STRING);
+		JIRA_PROJECT_LINK_REGEX = Pattern.compile("https://bugs\\.mojang\\.com/projects/" + PROJECT_STRING + "/issues/(" + BUG_ID_STRING + ')');
 		BUG_ID_REGEX = Pattern.compile(BUG_ID_STRING);
 		BUG_NUMBER_REGEX = Pattern.compile(BUG_NUMBER_STRING);
 	}

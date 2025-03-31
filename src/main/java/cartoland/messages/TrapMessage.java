@@ -16,7 +16,7 @@ public class TrapMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		return event.getChannel().getIdLong() == IDs.TRAP_CHANNEL_ID;
+		return event.getChannel().getIdLong() == IDs.TRAP_CHANNEL_ID; //第歐根尼俱樂部
 	}
 
 	@Override
@@ -25,10 +25,15 @@ public class TrapMessage implements IMessage
 		Member member = event.getMember();
 		if (member == null || member.isOwner()) //不能封鎖群主
 			return;
+
 		Guild cartoland = event.getGuild(); //創聯
 		if (!cartoland.getSelfMember().canInteract(member)) //只能封鎖比機器人身分更低的成員
 			return;
-		cartoland.ban(member, DELETE_MESSAGES_MINUTES, TimeUnit.MINUTES).reason('在' + event.getChannel().getName() + "傳送訊息。").queue();
+
+		cartoland.ban(member, DELETE_MESSAGES_MINUTES, TimeUnit.MINUTES)
+				.reason('在' + event.getChannel().getName() + "傳送訊息。")
+				.queue();
+
 		ThreadChannel strangersRoom = cartoland.getThreadChannelById(IDs.STRANGERS_ROOM_CHANNEL_ID); //討論串
 		if (strangersRoom != null)
 		{

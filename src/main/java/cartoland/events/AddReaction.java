@@ -1,6 +1,5 @@
 package cartoland.events;
 
-import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
 import cartoland.utilities.QuestionForumHandle;
 import net.dv8tion.jda.api.entities.User;
@@ -24,12 +23,10 @@ public class AddReaction extends ListenerAdapter
 		User user = event.getUser(); //按表情的使用者
 		if (user == null || user.isBot() || user.isSystem()) //是機器人或系統
 			return; //不用執行
-		if (Algorithm.chance(20)) //20%的機率跟著其他人按
-		{
-			Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
-			if (event.getReaction().getEmoji().equals(learned))
-				event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
-		}
+
+		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
+		if (event.getReaction().getEmoji().equals(learned))
+			event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
 
 		//有關疑難雜症
 		if (event.getChannel() instanceof ThreadChannel thread && QuestionForumHandle.isQuestionPost(thread))

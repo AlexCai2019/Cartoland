@@ -5,6 +5,7 @@ import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -13,6 +14,8 @@ import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,27 +63,44 @@ public class NewMember extends ListenerAdapter
 		Guild cartoland = event.getGuild();
 		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不是創聯
 			return; //結束
+
 		User user = event.getUser();
 		if (user.isBot() && user.isSystem())
 			return;
+
 		String userName = user.getEffectiveName();
 		String serverName = cartoland.getName();
 		user.openPrivateChannel()
 				.flatMap(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)))
 				.queue(null, new ErrorHandler().ignore(ErrorResponse.CANNOT_SEND_TO_USER)); //不能傳送私訊就算了
 		allMembers.add(user.getIdLong()); //記錄下每個成員
+
+		if (Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays() > 7) //創帳號日大於七天
+			return;
+
+		Role admin = cartoland.getRoleById(IDs.ADMIN_ROLE_ID);
+		TextChannel welcomeChannel = cartoland.getSystemChannel();
+		if (welcomeChannel != null)
+			welcomeChannel.sendMessage((admin != null ? admin.getAsMention() : "") + " 注意 " + user.getAsMention() + " 創帳號日期小於一週！").queue();
 	}
 
 	@Override
 	public void onGuildMemberRemove(GuildMemberRemoveEvent event)
 	{
+		Guild cartoland = event.getGuild();
+		if (cartoland.getIdLong() != IDs.CARTOLAND_SERVER_ID) //不是創聯
+			return; //結束
+
 		User user = event.getUser();
+		if (user.isBot() && user.isSystem())
+			return;
+
 		long userID = user.getIdLong();
 		allMembers.remove(userID);
 		TimerHandle.deleteBirthday(userID);
 
 		TextChannel welcomeChannel = event.getGuild().getSystemChannel();
 		if (welcomeChannel != null)
-			welcomeChannel.sendMessage(user.getName() + '(' + Long.toUnsignedString(userID) + ") bye have a great time!").queue();
+			welcomeChannel.sendMessage(user.getAsMention() + " " + user.getName() + '(' + Long.toUnsignedString(userID) + ") bye have a great time!").queue();
 	}
 }

@@ -86,20 +86,27 @@ public class QuoteCommand implements ICommand
 		long userID = user.getIdLong();
 		User author = message.getAuthor(); //連結訊息的發送者
 		String authorName = author.getName();
+		String messageTitle = author.getEffectiveName();
 		String messageLink = message.getJumpUrl();
-		List<MessageEmbed> embeds = new ArrayList<>();
+		List<MessageEmbed> embeds = new ArrayList<>(); //要被送出的所有embed們
 		EmbedBuilder messageEmbed = new EmbedBuilder()
-				.setTitle(author.getEffectiveName(), messageLink)
+				.setTitle(messageTitle, messageLink)
 				.setAuthor(authorName, null, author.getEffectiveAvatarUrl())
 				.appendDescription(message.getContentRaw()) //訊息的內容
 				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
 				.setFooter(channel != null ? channel.getName() : authorName, null); //訊息的發送頻道
 
 		List<Message.Attachment> attachments = message.getAttachments(); //訊息的附件
-		if (attachments.isEmpty()) //沒有任何附件
+
+		List<Message.Attachment> images;
+		if (attachments.isEmpty() || (images = attachments.stream().filter(Message.Attachment::isImage).toList()).isEmpty()) //沒有任何附件或圖片
 			embeds.add(messageEmbed.build());
-		else //有附件
-			addImageAttachments(messageEmbed, embeds, attachments.stream().filter(Message.Attachment::isImage).toList());
+		else //有圖片
+		{
+			embeds.add(messageEmbed.setImage(images.getFirst().getUrl()).build()); //第一個要放訊息embed
+			for (int i = 1, size = Math.min(images.size(), Message.MAX_EMBED_COUNT); i < size; i++) //剩下的要開新embed, 注意總數不能超過10個
+				embeds.add(new EmbedBuilder().setTitle(messageTitle, messageLink).setImage(images.get(i).getUrl()).build());
+		}
 
 		//提及訊息作者 vs 不提及訊息作者
 		WebhookMessageCreateAction<Message> messageCreateAction;
@@ -108,21 +115,5 @@ public class QuoteCommand implements ICommand
 		else
 			messageCreateAction = event.getHook().sendMessageEmbeds(embeds); //不標註作者
 		messageCreateAction.addComponents(ActionRow.of(Button.link(messageLink, JsonHandle.getString(userID, "quote.jump_message")))).queue();
-	}
-
-	private static void addImageAttachments(EmbedBuilder headEmbed, List<MessageEmbed> embeds, List<Message.Attachment> images)
-	{
-		if (images.isEmpty()) //沒有圖片
-		{
-			embeds.add(headEmbed.build()); //直接放上訊息embed
-			return; //結束
-		}
-
-		MessageEmbed headEmbedBuilt = headEmbed.setImage(images.getFirst().getUrl()).build();
-		embeds.add(headEmbedBuilt); //第一個要放訊息embed
-		String title = headEmbedBuilt.getTitle();
-		String link = headEmbedBuilt.getUrl();
-		for (int i = 1, size = Math.min(images.size(), Message.MAX_EMBED_COUNT); i < size; i++) //剩下的要開新embed, 注意總數不能超過10個
-			embeds.add(new EmbedBuilder().setTitle(title, link).setImage(images.get(i).getUrl()).build());
 	}
 }

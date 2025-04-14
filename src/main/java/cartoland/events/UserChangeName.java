@@ -19,6 +19,5 @@ public class UserChangeName extends ListenerAdapter
 	{
 		User user = event.getUser();
 		CommandBlocksHandle.getLotteryData(user.getIdLong()).setName(user.getEffectiveName()); //修改紀錄內的名字
-		CommandBlocksHandle.changed = true; //下次用/lottery ranking的時候要重新排序
 	}
 }

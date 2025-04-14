@@ -359,7 +359,7 @@ public final class AddCommands
 
 			Commands.slash(SHUTDOWN, "Use this to shut down the bot")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
-					.addOption(OptionType.BOOLEAN, "reboot", "Is for reboot", false, false),
+					.addOption(OptionType.BOOLEAN, "silent", "Should be silent", false, false),
 			Commands.slash(RELOAD, "Reload all JSON files")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
 			Commands.slash(ADMIN, "Admin commands")

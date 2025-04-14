@@ -25,7 +25,7 @@ public class AddReaction extends ListenerAdapter
 			return; //不用執行
 
 		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
-		if (event.getReaction().getEmoji().equals(learned))
+		if (event.getEmoji().equals(learned))
 			event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
 
 		//有關疑難雜症

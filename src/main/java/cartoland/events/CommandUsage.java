@@ -111,6 +111,13 @@ public class CommandUsage extends ListenerAdapter
 			event.reply("Shutting down...").queue(hook -> //先送訊息 再下線
 			{
 				JDA jda = Cartoland.getJDA();
+
+				if (event.getOption("silent", Boolean.FALSE, CommonFunctions.getAsBoolean)) //安靜
+				{
+					jda.shutdown();
+					return;
+				}
+
 				Guild cartoland = jda.getGuildById(IDs.CARTOLAND_SERVER_ID); //定位創聯
 				if (cartoland == null) //如果找不到創聯
 				{
@@ -125,9 +132,7 @@ public class CommandUsage extends ListenerAdapter
 					return;
 				}
 
-				botChannel.sendMessage(event.getOption("reboot", Boolean.FALSE, CommonFunctions.getAsBoolean) ?
-								"Cartoland Bot 重啟中…\nCartoland Bot is rebooting..." : "Cartoland Bot 已下線。\nCartoland Bot is now offline.")
-						.queue(message -> jda.shutdown()); //關機下線
+				botChannel.sendMessage("Cartoland Bot 已下線。\nCartoland Bot is now offline.").queue(message -> jda.shutdown()); //關機下線
 			});
 		});
 

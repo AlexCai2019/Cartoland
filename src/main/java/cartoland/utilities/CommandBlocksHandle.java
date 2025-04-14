@@ -26,7 +26,7 @@ public final class CommandBlocksHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	public static boolean changed = true; //清單是否更改過 用於決定/lottery ranking時是否重新排序
+	private static boolean changed = true; //清單是否更改過 用於決定/lottery ranking時是否重新排序
 	private static final String LOTTERY_DATA_FILE_NAME = "serialize/lottery_data.ser";
 	private static final long GAMBLE_ROLE_MIN = 100000L;
 
@@ -121,6 +121,7 @@ public final class CommandBlocksHandle
 		public void setName(String newName)
 		{
 			name = newName;
+			changed = true; //下次用/lottery ranking的時候要重新排序
 		}
 
 		public String getName()
@@ -162,11 +163,12 @@ public final class CommandBlocksHandle
 			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID); //創聯
 			if (cartoland == null) //找不到創聯
 				return;
+
+			Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID); //賭神身分組
+			if (godOfGamblersRole == null) //找不到賭神身分組
+				return;
 			cartoland.retrieveMemberById(userID).queue(member -> //根據userID 從創聯中找到這名成員
 			{
-				Role godOfGamblersRole = cartoland.getRoleById(IDs.GOD_OF_GAMBLERS_ROLE_ID); //賭神身分組
-				if (godOfGamblersRole == null) //找不到賭神身分組
-					return;
 				boolean hasRole = member.getRoles().contains(godOfGamblersRole);
 				if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
 					cartoland.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
@@ -310,5 +312,118 @@ public final class CommandBlocksHandle
 		{
 			return streak;
 		}
+	}
+
+	private static String lastReply; //上一次回覆過的字串
+	private static int lastPage = -1; //上一次查看的頁面
+	private static long lastUser = -1L; //上一次使用指令的使用者
+
+	public static String rankingString(long userID, int inputPage)
+	{
+		//page從1開始 預設1
+		int page;
+
+		//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
+		int maxPage = (lotteryDataList.size() - 1) / 10 + 1; //目前有幾頁
+		if (inputPage > maxPage) //超出範圍
+			page = maxPage; //同上例子 就改成顯示第3頁
+		else if (inputPage < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
+			page = (-inputPage < maxPage) ? maxPage + inputPage + 1 : 1;
+		else
+			page = inputPage;
+
+		boolean sameUser = userID == lastUser;
+		lastUser = userID;
+		boolean samePage = page == lastPage;
+		lastPage = page; //換過頁了
+
+		if (!changed) //指令方塊 距離上一次排序 沒有任何變動
+		{
+			if (!samePage || !sameUser) //有換頁 或 不是同一位使用者
+				lastReply = replyString(userID, page, maxPage); //重新建立字串
+			return lastReply; //省略排序
+		}
+
+		//排序
+		lotteryDataList.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面
+
+		changed = false; //已經排序過了
+		lastReply = replyString(userID, page, maxPage);
+		return lastReply;
+	}
+
+	/**
+	 * Builds a page in the ranking list of command blocks.
+	 *
+	 * @param userID The ID of the user who used the command.
+	 * @param page The page that the command user want to check.
+	 * @param maxPage The max of all pages.
+	 * @return A page of the ranking list into a single string.
+	 * @since 1.6
+	 * @author Alex Cai
+	 */
+	private static String replyString(long userID, int page, int maxPage)
+	{
+		//page 從1開始
+		int startElement = (page - 1) * 10; //開始的那個元素
+		int endElement = Math.min(startElement + 10, lotteryDataList.size()); //結束的那個元素 不可比list總長還長
+
+		List<LotteryData> ranking = lotteryDataList.subList(startElement, endElement); //要查看的那一頁
+		LotteryData myData = getLotteryData(userID);
+		long blocks = myData.getBlocks(); //本使用者擁有的方塊數
+
+		Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
+		StringBuilder rankBuilder = new StringBuilder("```ansi\n")
+				.append(JsonHandle.getString(userID, "lottery.ranking.title", cartoland != null ? cartoland.getName() : ""))
+				.append("\n--------------------\n")
+				.append(JsonHandle.getString(userID, "lottery.ranking.my_rank", forSortBinarySearch(blocks), blocks))
+				.append("\n\n");
+
+		for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
+		{
+			LotteryData rank = ranking.get(i);
+			rankBuilder.append("[\u001B[36m")
+					.append(String.format("%03d", add + i))
+					.append("\u001B[0m]\t")
+					.append(rank.getName())
+					.append(": \u001B[36m")
+					.append(String.format("%,d", rank.getBlocks()))
+					.append("\u001B[0m\n");
+		}
+
+		return rankBuilder.append("\n--------------------\n")
+				.append(page)
+				.append(" / ")
+				.append(maxPage)
+				.append("\n```")
+				.toString();
+	}
+
+	/**
+	 * Use binary search to find the index of the user that has these blocks in the {@link #lotteryDataList} list, in order to find
+	 * the ranking of a user. These code was stole... was <i>"borrowed"</i> from {@link java.util.Collections#binarySearch(List, Object)}
+	 *
+	 * @param blocks The number of blocks that are used to match in the {@link #lotteryDataList} list.
+	 * @return The index of the user that has these blocks in the {@link #lotteryDataList} list and add 1, because though an
+	 * array is 0-indexed, but the ranking that are going to display should be 1-indexed.
+	 * @since 2.0
+	 * @author Alex Cai
+	 */
+	private static int forSortBinarySearch(long blocks)
+	{
+		long midValue;
+		for (int low = 0, middle, high = lotteryDataList.size() - 1; low <= high;)
+		{
+			middle = (low + high) >>> 1;
+			midValue = lotteryDataList.get(middle).getBlocks();
+
+			if (midValue < blocks)
+				high = middle - 1;
+			else if (midValue > blocks)
+				low = middle + 1;
+			else
+				return middle + 1;
+		}
+		return 0;
 	}
 }

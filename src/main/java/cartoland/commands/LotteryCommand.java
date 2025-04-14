@@ -1,12 +1,9 @@
 package cartoland.commands;
 
-import cartoland.Cartoland;
 import cartoland.utilities.*;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -178,126 +175,11 @@ public class LotteryCommand extends HasSubcommands
 	 */
 	private static class RankingSubCommand implements ICommand
 	{
-		private List<CommandBlocksHandle.LotteryData> forSort; //需要排序的list
-		private String lastReply; //上一次回覆過的字串
-		private int lastPage = -1; //上一次查看的頁面
-		private long lastUser = -1L; //上一次使用指令的使用者
-		private int maxPage; //目前有幾頁
-
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			long userID = event.getUser().getIdLong();
-
-			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt); //page從1開始 預設1
-			int page;
-
-			//假設總共有27位使用者 (27 - 1) / 10 + 1 = 3 總共有3頁
-			maxPage = (CommandBlocksHandle.lotteryDataList.size() - 1) / 10 + 1;
-			if (inputPage > maxPage) //超出範圍
-				page = maxPage; //同上例子 就改成顯示第3頁
-			else if (inputPage < 0) //-1 = 最後一頁, -2 = 倒數第二頁 負太多就變第一頁
-				page = (-inputPage < maxPage) ? maxPage + inputPage + 1 : 1;
-			else
-				page = inputPage;
-
-			boolean sameUser = userID == lastUser;
-			lastUser = userID;
-			boolean samePage = page == lastPage;
-			lastPage = page; //換過頁了
-
-			if (!CommandBlocksHandle.changed) //指令方塊 距離上一次排序 沒有任何變動
-			{
-				if (!samePage || !sameUser) //有換頁 或 不是同一位使用者
-					lastReply = replyString(userID, page); //重新建立字串
-				event.reply(lastReply).queue();
-				return; //省略排序
-			}
-
-			forSort = CommandBlocksHandle.lotteryDataList; //直接copy reference
-
-			//排序
-			forSort.sort((user1, user2) -> Long.compare(user2.getBlocks(), user1.getBlocks())); //方塊較多的在前面 方塊較少的在後面
-
-			event.reply(lastReply = replyString(userID, page)).queue();
-			CommandBlocksHandle.changed = false; //已經排序過了
-		}
-
-		private final StringBuilder rankBuilder = new StringBuilder();
-
-		/**
-		 * Builds a page in the ranking list of command blocks.
-		 *
-		 * @param userID The ID of the user who used the command.
-		 * @param page The page that the command user want to check.
-		 * @return A page of the ranking list into a single string.
-		 * @since 1.6
-		 * @author Alex Cai
-		 */
-		private String replyString(long userID, int page)
-		{
-			//page 從1開始
-			int startElement = (page - 1) * 10; //開始的那個元素
-			int endElement = Math.min(startElement + 10, forSort.size()); //結束的那個元素 不可比list總長還長
-
-			List<CommandBlocksHandle.LotteryData> ranking = forSort.subList(startElement, endElement); //要查看的那一頁
-			CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
-			long blocks = myData.getBlocks(); //本使用者擁有的方塊數
-
-			Guild cartoland = Cartoland.getJDA().getGuildById(IDs.CARTOLAND_SERVER_ID);
-			rankBuilder.setLength(0);
-			rankBuilder.append("```ansi\n")
-					.append(JsonHandle.getString(userID, "lottery.ranking.title", cartoland != null ? cartoland.getName() : ""))
-					.append("\n--------------------\n")
-					.append(JsonHandle.getString(userID, "lottery.ranking.my_rank", forSortBinarySearch(blocks), blocks))
-					.append("\n\n");
-
-			for (int i = 0, add = page * 10 - 9, rankingSize = ranking.size(); i < rankingSize; i++) //add = (page - 1) * 10 + 1
-			{
-				CommandBlocksHandle.LotteryData rank = ranking.get(i);
-				rankBuilder.append("[\u001B[36m")
-						.append(String.format("%03d", add + i))
-						.append("\u001B[0m]\t")
-						.append(rank.getName())
-						.append(": \u001B[36m")
-						.append(String.format("%,d", rank.getBlocks()))
-						.append("\u001B[0m\n");
-			}
-
-			return rankBuilder.append("\n--------------------\n")
-					.append(page)
-					.append(" / ")
-					.append(maxPage)
-					.append("\n```")
-					.toString();
-		}
-
-		/**
-		 * Use binary search to find the index of the user that has these blocks in the {@link #forSort} list, in order to find
-		 * the ranking of a user. These code was stole... was <i>"borrowed"</i> from {@link java.util.Collections#binarySearch(List, Object)}
-		 *
-		 * @param blocks The number of blocks that are used to match in the {@link #forSort} list.
-		 * @return The index of the user that has these blocks in the {@link #forSort} list and add 1, because though an
-		 * array is 0-indexed, but the ranking that are going to display should be 1-indexed.
-		 * @since 2.0
-		 * @author Alex Cai
-		 */
-		private int forSortBinarySearch(long blocks)
-		{
-			long midValue;
-			for (int low = 0, middle, high = forSort.size() - 1; low <= high;)
-			{
-				middle = (low + high) >>> 1;
-				midValue = forSort.get(middle).getBlocks();
-
-				if (midValue < blocks)
-					high = middle - 1;
-				else if (midValue > blocks)
-					low = middle + 1;
-				else
-					return middle + 1;
-			}
-			return 0;
+			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt);
+			event.reply(CommandBlocksHandle.rankingString(event.getUser().getIdLong(), inputPage)).queue();
 		}
 	}
 

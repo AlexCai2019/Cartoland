@@ -20,20 +20,23 @@ import static cartoland.buttons.IButton.*;
  */
 public class ClickedButton extends ListenerAdapter
 {
-	private final Map<String, IButton> buttons = HashMap.newHashMap(3);
+	private final Map<String, IButton> buttons = HashMap.newHashMap(4);
 
 	public ClickedButton()
 	{
 		buttons.put(ARCHIVE_THREAD, new ArchiveThreadButton());
 		buttons.put(DELETE_THREAD, event -> event.reply("This feature is no longer supported.").setEphemeral(true).queue());
 		buttons.put(RENAME_THREAD, new RenameThreadButton());
+		buttons.put(CHANGE_PAGE, new ChangePageButton());
 	}
 
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event)
 	{
 		String componentName = event.getComponentId();
-		buttons.get(componentName).buttonProcess(event);
+		String buttonID = componentName.startsWith(CHANGE_PAGE) ? componentName.substring(0, CHANGE_PAGE_LENGTH) : componentName;
+		buttons.get(buttonID).buttonProcess(event);
+
 		User user = event.getUser();
 		FileHandle.log(user.getName(), '(', user.getId(), ") [", componentName + ']');
 	}

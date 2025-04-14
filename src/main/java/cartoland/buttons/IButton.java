@@ -13,6 +13,9 @@ public interface IButton
 	String ARCHIVE_THREAD = "archive_thread";
 	String DELETE_THREAD = "delete_thread";
 	String RENAME_THREAD = "rename_thread";
+	String CHANGE_PAGE = "change_page";
+
+	int CHANGE_PAGE_LENGTH = CHANGE_PAGE.length();
 
 	void buttonProcess(ButtonInteractionEvent event);
 }

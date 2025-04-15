@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,6 +28,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class AdminCommand extends HasSubcommands
 {
+	private static final Logger logger = LoggerFactory.getLogger(AdminCommand.class);
+
 	private static final String TEMP_BAN_SET = "serialize/temp_ban_set.ser";
 	public record BanData(long userID, long unbanTime, long bannedServerID) implements Serializable
 	{
@@ -183,7 +187,7 @@ public class AdminCommand extends HasSubcommands
 
 			event.reply(replyStringBuilder.toString()).queue();
 			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
-			FileHandle.log(member.getUser().getName(), '(', member.getId(), ") mute ", target.getUser().getName(), '(', target.getId(), ')', mutedTime, ' ', reason);
+			logger.info("{}({}) mute {}({}) {} {}", member.getUser().getName(), member.getId(), target.getUser().getName(), target.getId(), mutedTime, reason);
 		}
 	}
 
@@ -267,7 +271,7 @@ public class AdminCommand extends HasSubcommands
 			tempBanSet.add(new BanData(target.getIdLong(), Algorithm.safeAdd(TimerHandle.getHoursFrom1970(), durationHours), guild.getIdLong()));
 			//TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis())
 			guild.ban(target, 0, TimeUnit.SECONDS).reason(reason + '\n' + bannedTime).queue();
-			FileHandle.log(member.getUser().getName(), '(', member.getId(), ") temp_ban ", target.getUser().getName(), '(', target.getId(), ')', bannedTime, ' ', reason);
+			logger.info("{}({}) temp_ban {}({}) {} {}", member.getUser().getName(), member.getId(), target.getUser().getName(), target.getId(), bannedTime, reason);
 		}
 	}
 

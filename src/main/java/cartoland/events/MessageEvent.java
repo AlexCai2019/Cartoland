@@ -1,6 +1,7 @@
 package cartoland.events;
 
 import cartoland.messages.*;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -31,6 +32,9 @@ public class MessageEvent extends ListenerAdapter
 		User author = event.getAuthor();
 		if (author.isBot() || author.isSystem()) //傳訊息的是機器人或系統
 			return; //不用執行
+
+		if (event.getMessage().getType() != MessageType.DEFAULT) //是一般的訊息
+			return;
 
 		for (IMessage messageEvent : messageEvents)
 			if (messageEvent.messageCondition(event)) //讓類別自己檢測是否通過

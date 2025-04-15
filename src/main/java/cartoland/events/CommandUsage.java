@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,8 @@ import static cartoland.commands.ICommand.*;
  */
 public class CommandUsage extends ListenerAdapter
 {
+	private static final Logger logger = LoggerFactory.getLogger(CommandUsage.class);
+
 	/**
 	 * The key of this map is the n of a command, and the value is the execution.
 	 */
@@ -192,7 +196,7 @@ public class CommandUsage extends ListenerAdapter
 		String commandName = event.getName();
 		commands.get(commandName).commandProcess(event);
 		User user = event.getUser();
-		FileHandle.log(user.getName(), '(', user.getId(), ") /", commandName, ' ', event.getSubcommandName()); //IO放最後 避免超過3秒限制
+		logger.info("{}({}) /{} {}", user.getName(), user.getId(), commandName, event.getSubcommandName()); //log放最後 避免超過3秒限制
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package cartoland.utilities;
 
-import cartoland.Cartoland;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -17,13 +18,12 @@ import java.util.List;
  */
 public final class FileHandle
 {
+	private static final Logger logger = LoggerFactory.getLogger(FileHandle.class);
+
 	private FileHandle()
 	{
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
-
-	private static final StringBuilder logString = new StringBuilder();
-	private static final StringBuilder dmString = new StringBuilder();
 
 	//將JSON讀入進字串
 	static String buildJsonStringFromFile(String fileName)
@@ -34,7 +34,7 @@ public final class FileHandle
 		}
 		catch (IOException exception)
 		{
-			log(exception);
+			logger.error("Build JSON fail", exception);
 			return "{}";
 		}
 	}
@@ -89,7 +89,7 @@ public final class FileHandle
 		}
 		catch (IOException | ClassNotFoundException exception)
 		{
-			log(exception);
+			logger.error("Deserialize failed", exception);
 			return null; //讀不到就回傳null
 		}
 	}
@@ -106,59 +106,8 @@ public final class FileHandle
 			}
 			catch (IOException exception)
 			{
-				log(exception);
+				logger.error("Serialize failed", exception);
 			}
 		}
-	}
-
-	public synchronized static void flushLog()
-	{
-		String dateString = TimerHandle.getDateString();
-		//一定要事先備好logs資料夾
-		try (FileWriter logger = new FileWriter("logs/" + dateString, true);
-			FileWriter dmLogger = new FileWriter("dms/" + dateString, true))
-		{
-			logger.write(logString.toString()); //關閉時寫入
-			logString.setLength(0); //清空暫存
-			dmLogger.write(dmString.toString());
-			dmString.setLength(0);
-		}
-		catch (IOException exception)
-		{
-			//noinspection CallToPrintStackTrace
-			exception.printStackTrace();
-			Cartoland.getJDA().shutdownNow();
-		}
-	}
-
-	private synchronized static void log(StringBuilder logger, Object... outputs)
-	{
-		//時間 內容
-		logger.append(TimerHandle.getTimeString()).append('\t');
-		for (Object output : outputs)
-		{
-			if (output instanceof Character c) //StringBuilder面對char時不會套用String.valueOf
-				logger.append(c.charValue());
-			else
-				logger.append(output);
-		}
-		logger.append('\n');
-	}
-
-	public synchronized static void dmLog(Object... outputs)
-	{
-		log(dmString, outputs); //專為私訊的log
-	}
-
-	public synchronized static void log(Object... outputs)
-	{
-		log(logString, outputs);
-	}
-
-	public synchronized static void log(Exception exception)
-	{
-		logString.append(TimerHandle.getTimeString()).append("\t\n");
-		for (StackTraceElement trace : exception.getStackTrace())
-			logString.append('\t').append(trace).append('\n');
 	}
 }

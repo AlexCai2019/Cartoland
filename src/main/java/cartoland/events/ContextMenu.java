@@ -1,7 +1,6 @@
 package cartoland.events;
 
 import cartoland.commands.QuoteCommand;
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -12,6 +11,8 @@ import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionE
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
  */
 public class ContextMenu extends ListenerAdapter
 {
+	private static final Logger logger = LoggerFactory.getLogger(ContextMenu.class);
+
 	public static final String RAW_TEXT = "Raw Text";
 	public static final String REACTIONS = "Reactions";
 	public static final String CODE_BLOCK = "Code Block";
@@ -122,6 +125,6 @@ public class ContextMenu extends ListenerAdapter
 			}
 		}
 
-		FileHandle.log(user.getEffectiveName(), '(', userID, ") used ", eventName);
+		logger.info("{}({}) used {}", user.getEffectiveName(), Long.toUnsignedString(userID), eventName);
 	}
 }

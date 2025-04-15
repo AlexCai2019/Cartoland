@@ -1,10 +1,11 @@
 package cartoland.events;
 
 import cartoland.buttons.*;
-import cartoland.utilities.FileHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,8 @@ import static cartoland.buttons.IButton.*;
  */
 public class ClickedButton extends ListenerAdapter
 {
+	private static final Logger logger = LoggerFactory.getLogger(ClickedButton.class);
+
 	private final Map<String, IButton> buttons = HashMap.newHashMap(4);
 
 	public ClickedButton()
@@ -38,6 +41,6 @@ public class ClickedButton extends ListenerAdapter
 		buttons.get(buttonID).buttonProcess(event);
 
 		User user = event.getUser();
-		FileHandle.log(user.getName(), '(', user.getId(), ") [", componentName + ']');
+		logger.info("{}({}) [{}]", user.getName(), user.getId(), componentName);
 	}
 }

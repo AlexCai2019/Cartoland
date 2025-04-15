@@ -1,7 +1,6 @@
 package cartoland.messages;
 
 import cartoland.utilities.AnonymousHandle;
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.ObjectAndString;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -10,6 +9,8 @@ import net.dv8tion.jda.api.entities.sticker.StickerItem;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class PrivateMessage implements IMessage
 {
+	private static final Logger logger = LoggerFactory.getLogger(PrivateMessage.class);
+
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
@@ -92,6 +95,6 @@ public class PrivateMessage implements IMessage
 
 		((TextChannel) channelAndString.object()).sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
 				.queue(undergroundMessage -> AnonymousHandle.addConnection(message.getIdLong(), undergroundMessage.getIdLong()));
-		FileHandle.dmLog(author.getName(), ' ', author.getId(), ' ', message.getContentRaw());
+		logger.info("{} {} dm {}", author.getName(), author.getId(), message.getContentRaw());
 	}
 }

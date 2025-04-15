@@ -102,7 +102,6 @@ public final class TimerHandle
 
 		//半夜12點
 		final byte zero = 0;
-		TimerHandle.registerTimerEvent(new TimerEvent(zero, FileHandle::flushLog)); //更換log的日期
 		TimerHandle.registerTimerEvent(new TimerEvent(zero, () -> //和生日有關的
 		{
 			LocalDate today = LocalDate.now(utc8);
@@ -279,12 +278,6 @@ public final class TimerHandle
 		//https://stackoverflow.com/questions/34202701
 		everyHour.cancel(true);
 		executorService.shutdown();
-	}
-
-	public static String getTimeString()
-	{
-		int[] now = getTime();
-		return String.format("%02d:%02d:%02d", now[0], now[1], now[2]);
 	}
 
 	public static int[] getTime()

@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@code BotOnlineOffline} is a listener that triggers when this bot went online or went offline normally. It won't
@@ -19,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BotOnlineOffline extends ListenerAdapter
 {
+	private static final Logger logger = LoggerFactory.getLogger(BotOnlineOffline.class);
+
 	private final boolean shouldInitial;
 	private final String bootType;
 
@@ -55,10 +59,7 @@ public class BotOnlineOffline extends ListenerAdapter
 					break;
 			}
 		}
-
-		String logString = "online";
-		System.out.println(logString);
-		FileHandle.log(logString);
+		logger.info("online");
 	}
 
 	/**
@@ -76,9 +77,6 @@ public class BotOnlineOffline extends ListenerAdapter
 
 		TimerHandle.stopTimer(); //停止每小時的事件執行緒
 
-		String logString = "offline";
-		System.out.println(logString);
-		FileHandle.log(logString);
-		FileHandle.flushLog();
+		logger.info("offline");
 	}
 }

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * {@code FileHandle} is a utility class that provides every functions that this program need to deal with file input and
@@ -20,9 +21,23 @@ public final class FileHandle
 {
 	private static final Logger logger = LoggerFactory.getLogger(FileHandle.class);
 
+	private static final Properties config = new Properties();
+
 	private FileHandle()
 	{
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
+	}
+
+	static
+	{
+		try (FileInputStream configStream = new FileInputStream("config.properties"))
+		{
+			config.load(configStream);
+		}
+		catch (IOException e)
+		{
+			logger.error("Read properties", e);
+		}
 	}
 
 	//將JSON讀入進字串
@@ -37,6 +52,11 @@ public final class FileHandle
 			logger.error("Build JSON fail", exception);
 			return "{}";
 		}
+	}
+
+	public static String readConfig(String key)
+	{
+		return config.getProperty(key, "");
 	}
 
 	private static final List<SerializeObject> serializeObjects = new ArrayList<>(11);

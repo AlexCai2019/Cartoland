@@ -2,6 +2,7 @@ package cartoland.utilities;
 
 import cartoland.Cartoland;
 import cartoland.commands.AdminCommand;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -130,6 +131,7 @@ public final class TimerHandle
 	//https://stackoverflow.com/questions/65984126
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static int nowHour = LocalTime.now(utc8).getHour(); //現在是幾點
+	@Getter
 	private static long hoursFrom1970 = System.currentTimeMillis() / (1000 * 60 * 60); //從1970年1月1日開始過了幾個小時
 	private static final ScheduledFuture<?> everyHour = executorService.scheduleAtFixedRate(() -> //每小時執行一次
 	{
@@ -160,11 +162,6 @@ public final class TimerHandle
 			bannedMember.tryUnban(); //嘗試解ban
 
 	}, secondsUntil((nowHour + 1) % HOURS), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
-
-	public static long getHoursFrom1970()
-	{
-		return hoursFrom1970;
-	}
 
 	public static void setBirthday(long userID, int month, int date)
 	{

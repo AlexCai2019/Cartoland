@@ -183,8 +183,8 @@ public class LotteryCommand extends HasSubcommands
 		{
 			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt);
 			event.reply(CommandBlocksHandle.rankingString(event.getUser().getIdLong(), inputPage))
-					.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️▶")),
-							Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("◀▶️")))
+					.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️")),
+							Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("▶️")))
 					.queue();
 		}
 	}

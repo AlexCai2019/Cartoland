@@ -13,8 +13,8 @@ public class ChangePageButton implements IButton
 		String page = event.getComponentId().substring(CHANGE_PAGE_LENGTH);
 		int inputPage = Integer.parseInt(page);
 		event.reply(CommandBlocksHandle.rankingString(event.getUser().getIdLong(), inputPage))
-				.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️▶")),
-						Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("◀▶️")))
+				.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️")),
+						Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("▶️")))
 				.queue();
 	}
 }

@@ -2,6 +2,7 @@ package cartoland;
 
 import cartoland.events.*;
 import cartoland.utilities.AddCommands;
+import cartoland.utilities.FileHandle;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -35,12 +36,9 @@ public class Cartoland
 	 */
 	public static void main(String[] args) throws InterruptedException
 	{
-		if (args.length == 0) //在終端機執行java -jar Cartoland.jar時 沒有帶參數
-			return;
-
-		jda = JDABuilder.createDefault(args[0]) //以第一個參數為token 啟動機器人
+		jda = JDABuilder.createDefault(FileHandle.readConfig("token")) //以第一個參數為token 啟動機器人
 				.addEventListeners( //新增事件聆聽
-						new BotOnlineOffline(args.length > 1 ? args[1] : "", args.length > 2 ? args[2] : ""), //當機器人上下線的時候
+						new BotOnlineOffline(), //當機器人上下線的時候
 						new MessageEvent(), //當有任何訊息
 						new AddReaction(), //當有人為訊息新增反應
 						new CommandUsage(), //當有人使用指令

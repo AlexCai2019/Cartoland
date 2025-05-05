@@ -13,27 +13,26 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import java.util.Set;
 
 /**
- * {@code ShowcaseMessage} is a listener that triggers when a user types anything in text channels (excluding thread
- * channels) in showcase category. This class is in an array in {@link cartoland.events.MessageEvent}.
+ * {@code AutoThreadMessage} is a listener that triggers when a user types anything in text channels that need auto thread.
+ * This class is in an array in {@link cartoland.events.MessageEvent}.
  *
  * @since 2.0
  * @author Alex Cai
  */
-public class ShowcaseMessage implements IMessage
+public class AutoThreadMessage implements IMessage
 {
-	private final Set<Long> showcaseChannels = Set.of(IDs.DATAPACK_SHOWCASE_CHANNEL_ID, IDs.MAP_SHOWCASE_CHANNEL_ID, IDs.BUILDING_SHOWCASE_CHANNEL_ID,
-			IDs.MODEL_SHOWCASE_CHANNEL_ID, IDs.VIDEOS_AND_STREAMS_CHANNEL_ID, IDs.MAP_REVIEW_CHANNEL_ID);
+	private final Set<Long> autoThreadChannels = Set.of(IDs.VIDEOS_CHANNEL_ID, IDs.MAP_REVIEW_CHANNEL_ID, IDs.PLAY_TEST_CHANNEL_ID);
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		return showcaseChannels.contains(event.getChannel().getIdLong()); //在創作展示四頻道內
+		return autoThreadChannels.contains(event.getChannel().getIdLong()); //在創作展示六頻道內
 	}
 
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		User author = event.getAuthor();
+		User author = event.getAuthor(); //訊息發送者
 		long userID = author.getIdLong();
 		String name = author.getEffectiveName();
 
@@ -41,7 +40,8 @@ public class ShowcaseMessage implements IMessage
 		Button renameButton = Button.primary(IButton.RENAME_THREAD, JsonHandle.getString(userID, "rename_thread.name")).withEmoji(Emoji.fromUnicode("✏️"));
 		event.getMessage()
 			.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
-			.flatMap(thread -> thread.sendMessage(JsonHandle.getString(userID, "showcase_thread.creation", name)).addActionRow(archiveButton, renameButton))
+			.flatMap(thread -> thread.sendMessage(JsonHandle.getString(userID, "showcase_thread.creation", name))
+									.addActionRow(archiveButton, renameButton))
 			.flatMap(Message::pin)
 			.queue();
 	}

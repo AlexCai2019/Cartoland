@@ -3,13 +3,16 @@ package cartoland.events;
 import cartoland.Cartoland;
 import cartoland.commands.*;
 import cartoland.mini_games.MiniGame;
-import cartoland.utilities.*;
+import cartoland.utilities.Algorithm;
+import cartoland.utilities.IDs;
+import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +51,7 @@ public class CommandUsage extends ListenerAdapter
 
 		//初始化map 放入所有指令
 		//invite
-		commands.put(INVITE, event -> event.reply(switch (event.getOption("guild_name", "cartoland", CommonFunctions.getAsString))
+		commands.put(INVITE, event -> event.reply(switch (event.getOption("guild_name", "cartoland", OptionMapping::getAsString))
 			{
 				case "minecraft_commands" -> "https://discord.gg/QAFXFtZ";
 				case "spyglass" -> "https://discord.gg/EbdseuS";
@@ -92,7 +95,7 @@ public class CommandUsage extends ListenerAdapter
 		commands.put(QUOTE, new QuoteCommand());
 
 		//youtuber
-		commands.put(YOUTUBER, event -> event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", CommonFunctions.getAsString)).queue());
+		commands.put(YOUTUBER, event -> event.reply("https://www.youtube.com/" + event.getOption("youtuber_name", OptionMapping::getAsString)).queue());
 
 		//introduce
 		commands.put(INTRODUCE, new IntroduceCommand());
@@ -116,7 +119,7 @@ public class CommandUsage extends ListenerAdapter
 			{
 				JDA jda = Cartoland.getJDA();
 
-				if (event.getOption("silent", Boolean.FALSE, CommonFunctions.getAsBoolean)) //安靜
+				if (event.getOption("silent", Boolean.FALSE, OptionMapping::getAsBoolean)) //安靜
 				{
 					jda.shutdown();
 					return;
@@ -211,7 +214,7 @@ public class CommandUsage extends ListenerAdapter
 	 */
 	private String minecraftCommandRelated(String commandName, SlashCommandInteractionEvent event)
 	{
-		String argument = event.getOption(commandName + "_name", CommonFunctions.getAsString); //獲得參數
+		String argument = event.getOption(commandName + "_name", OptionMapping::getAsString); //獲得參數
 		if (argument == null) //沒有參數
 			return JsonHandle.command(event.getUser().getIdLong(), commandName); //儘管/lang的參數是必須的 但為了方便還是讓他用這個方法處理
 		else //有參數

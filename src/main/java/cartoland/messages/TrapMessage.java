@@ -1,6 +1,5 @@
 package cartoland.messages;
 
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -20,7 +19,7 @@ public class TrapMessage implements IMessage
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
 	{
-		return event.getChannel().getIdLong() == IDs.TRAP_CHANNEL_ID; //第歐根尼俱樂部
+		return event.getChannel().getIdLong() == IDs.THE_DIOGENES_CLUB_CHANNEL_ID; //第歐根尼俱樂部
 	}
 
 	@Override

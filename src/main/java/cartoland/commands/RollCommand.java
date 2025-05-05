@@ -2,7 +2,6 @@ package cartoland.commands;
 
 import cartoland.events.NewMember;
 import cartoland.utilities.Algorithm;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDs;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,8 +28,8 @@ public class RollCommand extends HasSubcommands
 		subcommands.put(MEMBER, new MemberSubcommand());
 		subcommands.put(NUMBER, event ->
 		{
-			int minimum = event.getOption("minimum", 0, CommonFunctions.getAsInt);
-			int maximum = event.getOption("maximum", 0, CommonFunctions.getAsInt);
+			int minimum = event.getOption("minimum", 0, OptionMapping::getAsInt);
+			int maximum = event.getOption("maximum", 0, OptionMapping::getAsInt);
 
 			if (minimum > maximum)
 				event.reply("Minimum mustn't larger than maximum!").setEphemeral(true).queue();

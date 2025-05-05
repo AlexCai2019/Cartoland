@@ -1,11 +1,11 @@
 package cartoland.commands;
 
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
  * {@code TransferCommand} is an execution when a user uses /transfer command. This class implements {@link ICommand}
@@ -21,7 +21,7 @@ public class TransferCommand implements ICommand
 	{
 		long userID = event.getUser().getIdLong();
 
-		User target = event.getOption("target", CommonFunctions.getAsUser);
+		User target = event.getOption("target", OptionMapping::getAsUser);
 		if (target == null)
 		{
 			event.reply("Impossible, this is required!").queue();
@@ -40,7 +40,7 @@ public class TransferCommand implements ICommand
 			return;
 		}
 
-		String transferAmountString = event.getOption("amount", "", CommonFunctions.getAsString);
+		String transferAmountString = event.getOption("amount", "", OptionMapping::getAsString);
 
 		CommandBlocksHandle.LotteryData myData = CommandBlocksHandle.getLotteryData(userID);
 		CommandBlocksHandle.LotteryData targetData = CommandBlocksHandle.getLotteryData(targetID);

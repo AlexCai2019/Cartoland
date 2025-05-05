@@ -1,6 +1,5 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.IDs;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.RegularExpressions;
@@ -14,6 +13,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.ErrorResponse;
@@ -38,7 +38,7 @@ public class QuoteCommand implements ICommand
 	{
 		User user = event.getUser();
 		long userID = user.getIdLong();
-		String link = event.getOption("link", "", CommonFunctions.getAsString);
+		String link = event.getOption("link", "", OptionMapping::getAsString);
 
 		if (!RegularExpressions.CARTOLAND_MESSAGE_LINK_REGEX.matcher(link).matches()) //不是一個有效的訊息連結 或不在創聯
 		{
@@ -110,7 +110,7 @@ public class QuoteCommand implements ICommand
 
 		//提及訊息作者 vs 不提及訊息作者
 		WebhookMessageCreateAction<Message> messageCreateAction;
-		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", Boolean.FALSE, CommonFunctions.getAsBoolean))
+		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", Boolean.FALSE, OptionMapping::getAsBoolean))
 			messageCreateAction = event.getHook().sendMessage(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
 		else
 			messageCreateAction = event.getHook().sendMessageEmbeds(embeds); //不標註作者

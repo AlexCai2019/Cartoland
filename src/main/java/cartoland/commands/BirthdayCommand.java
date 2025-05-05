@@ -1,10 +1,10 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
  * {@code BirthdayCommand} is an execution when a user uses /birthday command. This class implements {@link ICommand}
@@ -30,7 +30,7 @@ public class BirthdayCommand extends HasSubcommands
 		{
 			User user = event.getUser(); //自己
 			long userID = user.getIdLong();
-			User target = event.getOption("target", user, CommonFunctions.getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
+			User target = event.getOption("target", user, OptionMapping::getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
 			TimerHandle.Birthday birthday = TimerHandle.getBirthday(target.getIdLong());
 			if (birthday == null) //查不到生日
 				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
@@ -62,8 +62,8 @@ public class BirthdayCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 
-			int month = event.getOption("month", 1, CommonFunctions.getAsInt); //月
-			int date = event.getOption("date", 1, CommonFunctions.getAsInt); //日
+			int month = event.getOption("month", 1, OptionMapping::getAsInt); //月
+			int date = event.getOption("date", 1, OptionMapping::getAsInt); //日
 			if (month < 1 || month > 12) //月份不在1 ~ 12的區間
 			{
 				event.reply(JsonHandle.getString(userID, "birthday.set.wrong_month")).setEphemeral(true).queue();

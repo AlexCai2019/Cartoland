@@ -98,9 +98,7 @@ public class DatabaseHandle
 			statement.setLong(24, data.lastClaimSecond);
 			statement.setInt(25, data.streak);
 
-			statement.addBatch();
-
-			statement.executeBatch(); //執行
+			statement.execute(); //執行
 		}
 		catch (SQLException e)
 		{

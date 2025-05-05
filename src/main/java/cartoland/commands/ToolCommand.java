@@ -1,9 +1,9 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Arrays;
 
@@ -45,7 +45,7 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String rawUUID = event.getOption("raw_uuid", "", CommonFunctions.getAsString);
+			String rawUUID = event.getOption("raw_uuid", "", OptionMapping::getAsString);
 
 			String[] uuidStrings;
 			String dash, noDash;
@@ -129,7 +129,7 @@ public class ToolCommand extends HasSubcommands
 		{
 			Integer[] uuidArray = new Integer[4]; //裝箱類別應該比基本型別好 因為下面大量使用了String.format
 			for (char c = '0'; c < '4'; c++)
-				uuidArray[c - '0'] = event.getOption(String.valueOf(c), 0, CommonFunctions.getAsInt);
+				uuidArray[c - '0'] = event.getOption(String.valueOf(c), 0, OptionMapping::getAsInt);
 
 			//因為四個UUID是必填項 所以不須偵測是否存在 直接進程式
 			String[] uuidStrings = new String[5];
@@ -163,10 +163,10 @@ public class ToolCommand extends HasSubcommands
 			int[] rgbaColors = new int[4];
 			int[] argbColors = new int[4];
 
-			rgbaColors[0] = argbColors[1] = event.getOption("red", 0, CommonFunctions.getAsInt);
-			rgbaColors[1] = argbColors[2] = event.getOption("green", 0, CommonFunctions.getAsInt);
-			rgbaColors[2] = argbColors[3] = event.getOption("blue", 0, CommonFunctions.getAsInt);
-			rgbaColors[3] = argbColors[0] = event.getOption("alpha", 255, CommonFunctions.getAsInt); //沒有設定透明度就是255
+			rgbaColors[0] = argbColors[1] = event.getOption("red", 0, OptionMapping::getAsInt);
+			rgbaColors[1] = argbColors[2] = event.getOption("green", 0, OptionMapping::getAsInt);
+			rgbaColors[2] = argbColors[3] = event.getOption("blue", 0, OptionMapping::getAsInt);
+			rgbaColors[3] = argbColors[0] = event.getOption("alpha", 255, OptionMapping::getAsInt); //沒有設定透明度就是255
 			int[] rgbColors = { rgbaColors[0],rgbaColors[1],rgbaColors[2] };
 
 			int rgba = 0, argb = 0, rgb = 0;
@@ -222,7 +222,7 @@ public class ToolCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			String rgbString = event.getOption("rgba_or_argb", "", CommonFunctions.getAsString);
+			String rgbString = event.getOption("rgba_or_argb", "", OptionMapping::getAsString);
 
 			long userID = event.getUser().getIdLong();
 			long rgbaInput;

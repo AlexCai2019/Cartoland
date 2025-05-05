@@ -2,9 +2,9 @@ package cartoland.commands;
 
 import cartoland.mini_games.MiniGame;
 import cartoland.mini_games.TicTacToeGame;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
  * {@code TicTacToeCommand} is an execution when user uses /tic_tac_toe command. This class implements
@@ -38,7 +38,7 @@ public class TicTacToeCommand extends HasSubcommands
 			}
 
 			//沒有在玩遊戲 開始井字遊戲
-			int difficulty = event.getOption("difficulty", 0, CommonFunctions.getAsInt);
+			int difficulty = event.getOption("difficulty", 0, OptionMapping::getAsInt);
 			TicTacToeGame newGame = new TicTacToeGame(difficulty);
 			event.reply(JsonHandle.getString(userID, "tic_tac_toe.start") + newGame.getBoard()).queue();
 			games.put(userID, newGame);
@@ -106,8 +106,8 @@ public class TicTacToeCommand extends HasSubcommands
 				return;
 			}
 
-			int row = event.getOption("row", 1, CommonFunctions.getAsInt);
-			int column = event.getOption("column", 1, CommonFunctions.getAsInt);
+			int row = event.getOption("row", 1, OptionMapping::getAsInt);
+			int column = event.getOption("column", 1, OptionMapping::getAsInt);
 
 			if (!TicTacToeGame.isInBounds(row, column)) //不在範圍內
 			{

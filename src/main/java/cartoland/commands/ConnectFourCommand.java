@@ -2,9 +2,9 @@ package cartoland.commands;
 
 import cartoland.mini_games.ConnectFourGame;
 import cartoland.mini_games.MiniGame;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
  * {@code ConnectFourCommand} is an execution when user uses /connect_four command. This class implements
@@ -121,7 +121,7 @@ public class ConnectFourCommand extends HasSubcommands
 				return;
 			}
 
-			int column = event.getOption("column", 1, CommonFunctions.getAsInt) - 1; //因為輸入的行數是以1為開始 所以要 - 1
+			int column = event.getOption("column", 1, OptionMapping::getAsInt) - 1; //因為輸入的行數是以1為開始 所以要 - 1
 
 			if (!connectFour.isInBounds(column))
 			{

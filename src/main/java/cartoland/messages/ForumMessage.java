@@ -20,7 +20,7 @@ import java.util.Set;
 public class ForumMessage implements IMessage
 {
 	private ThreadChannel forumPost;
-	private final Set<Long> pinFirstMessage = Set.of(IDs.MAP_DISCUSS_CHANNEL_ID, IDs.RESOURCE_CHANNEL_ID, IDs.POOP_JAM_CHANNEL_ID);
+	private final Set<Long> pinFirstMessage = Set.of(IDs.MAP_DISCUSS_CHANNEL_ID, IDs.CREATION_CHANNEL_ID, IDs.RESOURCE_CHANNEL_ID);
 
 	@Override
 	public boolean messageCondition(MessageReceivedEvent event)
@@ -32,7 +32,7 @@ public class ForumMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		long parentID = forumPost.getParentChannel().getIdLong();
-		if (pinFirstMessage.contains(parentID)) //是地圖論壇或素材頻道
+		if (pinFirstMessage.contains(parentID)) //是地圖論壇、作品展示或素材頻道
 		{
 			Message message = event.getMessage();
 			if (forumPost.getIdLong() == message.getIdLong()) //是第一則訊息

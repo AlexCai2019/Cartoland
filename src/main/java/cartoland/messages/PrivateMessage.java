@@ -37,16 +37,16 @@ public class PrivateMessage implements IMessage
 	@Override
 	public void messageProcess(MessageReceivedEvent event)
 	{
-		Message message = event.getMessage();
-		User author = event.getAuthor();
-		if (author.isBot() || author.isSystem())
-			return;
+		Message message = event.getMessage(); //訊息
+		User author = event.getAuthor(); //訊息傳送者
+		if (author.isBot() || author.isSystem()) //是機器人或系統
+			return; //忽略
 
-		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(author.getIdLong());
-		String errorMessage = channelAndString.string();
+		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(author.getIdLong()); //檢查該ID的使用者有沒有權限
+		String errorMessage = channelAndString.string(); //valid後的錯誤訊息
 		if (!errorMessage.isEmpty()) //空字串代表沒有錯誤
 		{
-			message.reply(errorMessage).mentionRepliedUser(false).queue();
+			message.reply(errorMessage).mentionRepliedUser(false).queue(); //回覆錯誤訊息
 			return;
 		}
 
@@ -63,7 +63,7 @@ public class PrivateMessage implements IMessage
 				{
 					try
 					{
-						return attachment.getProxy().download().get();
+						return attachment.getProxy().download().get(); //下載圖片
 					}
 					catch (InterruptedException | ExecutionException e)
 					{
@@ -74,11 +74,12 @@ public class PrivateMessage implements IMessage
 
 			for (StickerItem sticker : stickers) //貼圖
 			{
+				//貼圖名.副檔名
 				files.add(FileUpload.fromStreamSupplier(sticker.getName() + '.' + sticker.getFormatType().getExtension(), () ->
 				{
 					try
 					{
-						return sticker.getIcon().download().get();
+						return sticker.getIcon().download().get(); //貼圖轉圖片
 					}
 					catch (InterruptedException | ExecutionException e)
 					{

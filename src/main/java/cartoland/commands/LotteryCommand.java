@@ -5,6 +5,7 @@ import cartoland.utilities.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.Random;
@@ -84,7 +85,7 @@ public class LotteryCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			User user = event.getUser();
-			User target = event.getOption("target", user, CommonFunctions.getAsUser); //目標 沒有填預設是自己
+			User target = event.getOption("target", user, OptionMapping::getAsUser); //目標 沒有填預設是自己
 			if (target.isBot() || target.isSystem())
 			{
 				event.reply(JsonHandle.getString(user.getIdLong(), "lottery.get.invalid_get")).queue();
@@ -92,7 +93,7 @@ public class LotteryCommand extends HasSubcommands
 			}
 
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(target.getIdLong());
-			if (!event.getOption("display_detail", Boolean.FALSE, CommonFunctions.getAsBoolean)) //不顯示細節
+			if (!event.getOption("display_detail", Boolean.FALSE, OptionMapping::getAsBoolean)) //不顯示細節
 			{
 				event.reply(JsonHandle.getString(user.getIdLong(), "lottery.get.query", lotteryData.getName(), lotteryData.getBlocks())).queue();
 				return;
@@ -130,7 +131,7 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			ObjectAndString validBet = createValidBet(event.getOption("bet", "", CommonFunctions.getAsString), userID, nowHave);
+			ObjectAndString validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
 			String errorMessage = validBet.string();
 			if (!errorMessage.isEmpty()) //有錯誤訊息
 			{
@@ -181,7 +182,7 @@ public class LotteryCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			int inputPage = event.getOption("page", 1, CommonFunctions.getAsInt);
+			int inputPage = event.getOption("page", 1, OptionMapping::getAsInt);
 			event.reply(CommandBlocksHandle.rankingString(event.getUser().getIdLong(), inputPage))
 					.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️")),
 							Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("▶️")))
@@ -263,7 +264,7 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			ObjectAndString validBet = createValidBet(event.getOption("bet", "", CommonFunctions.getAsString), userID, nowHave);
+			ObjectAndString validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
 			String errorMessage = validBet.string();
 			if (!errorMessage.isEmpty()) //有錯誤訊息
 			{

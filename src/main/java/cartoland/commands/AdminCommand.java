@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +133,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Member target = event.getOption("target", CommonFunctions.getAsMember); //要被禁言的目標
+			Member target = event.getOption("target", OptionMapping::getAsMember); //要被禁言的目標
 			if (target == null) //找不到要被禁言的成員
 			{
 				event.reply(JsonHandle.getString(userID, "admin.mute.no_member")).setEphemeral(true).queue();
@@ -150,8 +151,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			double duration = event.getOption("duration", 0.0, CommonFunctions.getAsDouble);
-			String unit = event.getOption("unit", "", CommonFunctions.getAsString);
+			double duration = event.getOption("duration", 0.0, OptionMapping::getAsDouble);
+			String unit = event.getOption("unit", "", OptionMapping::getAsString);
 
 			//不用java.util.concurrent.TimeUnit 因為它不接受浮點數
 			long durationMillis = Math.round(duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
@@ -181,7 +182,7 @@ public class AdminCommand extends HasSubcommands
 			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getString(userID, "admin.unit_" + unit);
 			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getString(userID, "admin.mute.success",
 					target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000));
-			String reason = event.getOption("reason", CommonFunctions.getAsString);
+			String reason = event.getOption("reason", OptionMapping::getAsString);
 			if (reason != null) //有理由
 				replyStringBuilder.append(JsonHandle.getString(userID, "admin.mute.reason", reason)); //加上理由
 
@@ -218,7 +219,7 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			Member target = event.getOption("target", CommonFunctions.getAsMember);
+			Member target = event.getOption("target", OptionMapping::getAsMember);
 			if (target == null)
 			{
 				event.reply(JsonHandle.getString(userID, "admin.temp_ban.no_member")).setEphemeral(true).queue();
@@ -230,8 +231,8 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			double duration = event.getOption("duration", 0.0, CommonFunctions.getAsDouble);
-			String unit = event.getOption("unit", "", CommonFunctions.getAsString);
+			double duration = event.getOption("duration", 0.0, OptionMapping::getAsDouble);
+			String unit = event.getOption("unit", "", OptionMapping::getAsString);
 
 			long durationHours = Math.round(duration * switch (unit) //將單位轉成小時
 			{
@@ -258,7 +259,7 @@ public class AdminCommand extends HasSubcommands
 					target.getAsMention(), bannedTime, System.currentTimeMillis() / 1000 + durationHours * 60 * 60)); //直到<t:> 以秒為單位
 			//TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + TimeUnit.HOURS.toSeconds(durationHours)
 
-			String reason = event.getOption("reason", CommonFunctions.getAsString);
+			String reason = event.getOption("reason", OptionMapping::getAsString);
 			if (reason != null)
 				replyStringBuilder.append(JsonHandle.getString(userID, "admin.temp_ban.reason", reason));
 
@@ -302,21 +303,21 @@ public class AdminCommand extends HasSubcommands
 				return;
 			}
 
-			if (!(event.getOption("channel", CommonFunctions.getAsChannel) instanceof ISlowmodeChannel channel)) //不是可以設慢速模式的頻道
+			if (!(event.getOption("channel", OptionMapping::getAsChannel) instanceof ISlowmodeChannel channel)) //不是可以設慢速模式的頻道
 			{
 				event.reply(JsonHandle.getString(userID, "admin.slow_mode.wrong_channel")).setEphemeral(true).queue();
 				return;
 			}
 
 			//可惜沒有getAsFloat
-			float time = event.getOption("time", 0.0, CommonFunctions.getAsDouble).floatValue(); //解包並轉float
+			float time = event.getOption("time", 0.0, OptionMapping::getAsDouble).floatValue(); //解包並轉float
 			if (time < 0) //不能負時間 可以0 0代表取消慢速
 			{
 				event.reply(JsonHandle.getString(userID, "admin.slow_mode.time_must_be_no_negative")).setEphemeral(true).queue();
 				return;
 			}
 
-			String unit = event.getOption("unit", "", CommonFunctions.getAsString); //單位字串
+			String unit = event.getOption("unit", "", OptionMapping::getAsString); //單位字串
 
 			int timeSecond = Math.round(time * switch (unit) //將單位轉成秒
 			{

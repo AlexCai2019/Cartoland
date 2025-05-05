@@ -2,7 +2,6 @@ package cartoland.messages;
 
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
-import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -70,9 +69,7 @@ public class BotCanTalkChannelMessage implements IMessage
 		"沒被打過是不是？",
 		"tag機器人是不好的行為，小朋友不要學。",
 		"上帝把智慧撒向人間的時候你撐了把傘嗎？",
-		"https://imgur.com/xxZVQvB", //你到別的地方去耍笨好不好
-		"小米格們也都別忘了Pick Me!\n在GitHub 點個星星 按個 讚。",
-		"如果大家喜歡這種機器人的話，別忘了點擊GitHub上面那個，大大～的星星！讓我知道。",
+		"https://imgur.com/lU4M8J2", //你到別的地方去耍笨好不好
 		"你再tag我啊，再tag啊，沒被禁言過是不是？", //由 brick-bk 新增，經 Alex Cai 大幅修改
 		"豎子，不足與謀。"//死小孩，沒話跟你講。 Added by Champsing
 	};
@@ -82,24 +79,8 @@ public class BotCanTalkChannelMessage implements IMessage
 		"@silent <:ping:" + IDs.PING_EMOJI_ID + '>',
 		"做壞事是不用打廣告的，因其自當傳千里。"
 	};
-	private final String[] megumin =
-	{
-		"☆めぐみん大好き！☆",
-		"☆めぐみんは最高だ！☆",
-		"☆めぐみん俺の嫁！☆"
-	};
-	private final String[] fbi =
-	{
-		"https://tenor.com/view/f-bi-raid-swat-gif-11500735",
-		"https://tenor.com/view/fbi-calling-tom-gif-12699976",
-		"https://tenor.com/view/fbi-swat-busted-police-open-up-gif-16928811",
-		"https://tenor.com/view/fbi-swat-police-entry-attack-gif-16037524",
-		"https://imgur.com/GLElBwY", //電話在那裡
-		"https://imgur.com/Aax1R2U", //我要走向電話
-		"https://imgur.com/gPlBEMV" //我越來越接近電話了
-	};
 
-	private final Set<Long> canTalkCategories = Set.of(IDs.GENERAL_CATEGORY_ID, IDs.VOICE_CATEGORY_ID, IDs.DANGEROUS_CATEGORY_ID);
+	private final Set<Long> canTalkChannels = Set.of(IDs.ZH_CHAT_CHANNEL_ID, IDs.EN_CHAT_CHANNEL_ID, IDs.VOICE_TEXT_CHANNEL_ID, IDs.UNDERGROUND_CHANNEL_ID);
 
 	private final Map<String, String[]> keywords =
 		Map.of("早安", new String[]{ "早上好中國 現在我有 Bing Chilling","早上好創聯 現在我有 Bing Chilling","道聲「早安」\n卻又讓我做了夢\n自然而然的生活方式不是很好嗎？" },
@@ -113,8 +94,11 @@ public class BotCanTalkChannelMessage implements IMessage
 		if (!event.isFromGuild()) //是私訊
 			return true; //私訊可以說話
 
+		if (canTalkChannels.contains(event.getChannel().getIdLong())) //訊息的頻道
+			return true; //在特定的頻道可以說話
+
 		Category category = event.getMessage().getCategory(); //嘗試從訊息獲取類別
-		return category != null && canTalkCategories.contains(category.getIdLong()); //只在特定類別說話
+		return category != null && category.getIdLong() == IDs.OFF_TOPIC_CATEGORY_ID; //雜談類別可以說話
 	}
 
 	@Override
@@ -137,21 +121,18 @@ public class BotCanTalkChannelMessage implements IMessage
 			else //是其他人
 			{
 				long channelID = channel.getIdLong();
-				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID) //如果頻道在機器人或地下 就正常地回傳replyMention
-					message.reply(Algorithm.randomElement(message.isSuppressedNotifications() ? replySilentMention : replyMention)).mentionRepliedUser(false).queue(); //如果是@silent訊息就回覆replySilentMention
+				//如果頻道在機器人或地下 就正常地回傳replyMention 如果是@silent訊息就回覆replySilentMention
+				if (channelID == IDs.BOT_CHANNEL_ID || channelID == IDs.UNDERGROUND_CHANNEL_ID)
+					message.reply(Algorithm.randomElement(message.isSuppressedNotifications() ? replySilentMention : replyMention))
+							.mentionRepliedUser(false)
+							.queue();
 				else //在其他地方ping就固定加一個ping的emoji
 					message.addReaction(Emoji.fromCustom("ping", IDs.PING_EMOJI_ID, false)).queue();
 			}
 		}
 
-		int rawMessageLength = rawMessage.length(); //訊息的字數
-
-		switch (rawMessageLength)
+		switch (rawMessage.length()) //訊息的字數
 		{
-			case 0: //只有檔案或貼圖
-			case 1: //只打一個字
-				return; //沒有必要執行下面那些檢測
-
 			case 2: //用字串長度去最佳化 注意keywords的keys若出現2以外的長度 那這個條件就要修改
 				String[] sendStrings = keywords.get(rawMessage); //尋找完全相同的字串
 				if (sendStrings != null) //如果找到了
@@ -163,30 +144,17 @@ public class BotCanTalkChannelMessage implements IMessage
 
 			case 3: //用字串長度去最佳化
 				if ("lol".equalsIgnoreCase(rawMessage))
-				{
 					channel.sendMessage("LOL").queue();
-					return; //在這之下的if們 全都不可能通過
-				}
-				if ("omg".equalsIgnoreCase(rawMessage))
-				{
+				else if ("omg".equalsIgnoreCase(rawMessage))
 					channel.sendMessage("OMG").queue();
-					return; //在這之下的if們 全都不可能通過
-				}
-				if ("owo".equalsIgnoreCase(rawMessage))
-				{
+				else if ("owo".equalsIgnoreCase(rawMessage))
 					channel.sendMessage("OwO").queue();
-					return; //在這之下的if們 全都不可能通過
-				}
-				if ("ouo".equalsIgnoreCase(rawMessage))
-				{
+				else if ("ouo".equalsIgnoreCase(rawMessage))
 					channel.sendMessage("OuO").queue();
-					return; //在這之下的if們 全都不可能通過
-				}
 				break;
 
 			case 4: //用字串長度去最佳化
 				if ("oeur".equalsIgnoreCase(rawMessage) || "芋圓柚子".equals(rawMessage))
-				{
 					channel.sendMessage(
 					"""
 						阿神的超神奇馬桶可以激發他的無限靈感
@@ -200,31 +168,9 @@ public class BotCanTalkChannelMessage implements IMessage
 						梅子空姐的廣播跳下飛機後再聽一次
 						丹丹的最強絕技就是永遠保持於狀況外
 						""").queue();
-					return;
-				}
-				if ("鬼島交通".equals(rawMessage)) //Added by Champsing
-				{
+				else if ("鬼島交通".equals(rawMessage)) //Added by Champsing
 					channel.sendMessage("https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1651071890313.jpg").queue();
-					return;
-				}
 				break;
 		}
-
-		if (rawMessage.contains("惠惠") || rawMessage.contains("めぐみん") || (rawMessageLength >= 7 && RegularExpressions.MEGUMIN_REGEX.matcher(rawMessage).matches()))
-			channel.sendMessage(Algorithm.randomElement(megumin)).queue();
-		if (rawMessage.contains("聰明"))
-			channel.sendMessage("https://tenor.com/view/galaxy-brain-meme-gif-25947987").queue();
-		if (rawMessage.contains("賺爛"))
-			channel.sendMessage("https://tenor.com/view/反正我很閒-賺爛了-gif-25311690").queue();
-		if (rawMessage.contains("蘿莉") || rawMessage.contains("羅莉"))
-			channel.sendMessage(Algorithm.randomElement(fbi)).queue();
-		if (rawMessage.contains("無情"))
-			channel.sendMessage("太無情了" + author.getEffectiveName() + "，你真的太無情了！").queue();
-		if (rawMessage.contains("閃現"))
-			channel.sendMessage("這什麼到底什麼閃現齁齁齁齁齁").queue();
-		if (rawMessage.contains("興奮"))
-			channel.sendMessage("https://tenor.com/view/excited-gif-8604873").queue();
-		if (rawMessage.contains("原神") && rawMessage.contains("啟動"))
-			channel.sendMessage("https://imgur.com/3LQqer3").queue();
 	}
 }

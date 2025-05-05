@@ -2,9 +2,9 @@ package cartoland.commands;
 
 import cartoland.mini_games.LightOutGame;
 import cartoland.mini_games.MiniGame;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class LightOutCommand extends HasSubcommands
 {
@@ -104,8 +104,8 @@ public class LightOutCommand extends HasSubcommands
 				return;
 			}
 
-			int row = event.getOption("row", 1, CommonFunctions.getAsInt) - 1;
-			int column = event.getOption("column", 1, CommonFunctions.getAsInt) - 1;
+			int row = event.getOption("row", 1, OptionMapping::getAsInt) - 1;
+			int column = event.getOption("column", 1, OptionMapping::getAsInt) - 1;
 
 			if (!LightOutGame.isInBounds(row, column))
 			{

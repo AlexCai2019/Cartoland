@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class IntroduceCommand extends HasSubcommands
 		subcommands.put("user", event ->
 		{
 			User user = event.getUser();
-			User target = event.getOption("user", user, CommonFunctions.getAsUser); //沒有填 預設是自己
+			User target = event.getOption("user", user, OptionMapping::getAsUser); //沒有填 預設是自己
 
 			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getString(user.getIdLong(), "introduce.user.no_info")))
 					.setEphemeral(true)
@@ -89,7 +90,7 @@ public class IntroduceCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			long userID = event.getUser().getIdLong();
-			String content = event.getOption("content", "", CommonFunctions.getAsString);
+			String content = event.getOption("content", "", OptionMapping::getAsString);
 			if (content.isEmpty()) //空的代表刪除
 			{
 				event.reply(JsonHandle.getString(userID, "introduce.update.delete")).queue();

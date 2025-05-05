@@ -1,11 +1,11 @@
 package cartoland.commands;
 
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class JiraCommand implements ICommand
 		event.deferReply().queue(); //延後回覆
 		InteractionHook hook = event.getHook();
 		long userID = event.getUser().getIdLong();
-		String inputLink = event.getOption("bug_link", "87984", CommonFunctions.getAsString);
+		String inputLink = event.getOption("bug_link", "87984", OptionMapping::getAsString);
 
 		String bugID = findBugID(inputLink); //將會變成像"MC-87984"那樣的bug ID
 		if (bugID.isEmpty())

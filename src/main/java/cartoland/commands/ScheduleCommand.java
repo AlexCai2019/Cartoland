@@ -1,12 +1,12 @@
 package cartoland.commands;
 
 import cartoland.Cartoland;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class ScheduleCommand extends HasSubcommands
 		subcommands.put(CREATE, new CreateSubCommand());
 		subcommands.put(DELETE, event ->
 		{
-			String scheduledEventName = event.getOption("name", " ", CommonFunctions.getAsString); //事件名稱
+			String scheduledEventName = event.getOption("name", " ", OptionMapping::getAsString); //事件名稱
 			if (TimerHandle.hasScheduledEvent(scheduledEventName)) //如果曾有schedule過該名稱的事件
 			{
 				event.reply("Removed scheduled `" + scheduledEventName + "` message.").queue();
@@ -46,14 +46,14 @@ public class ScheduleCommand extends HasSubcommands
 		@Override
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
-			int time = event.getOption("time", 0, CommonFunctions.getAsInt); //時間 介於0到23之間
+			int time = event.getOption("time", 0, OptionMapping::getAsInt); //時間 介於0到23之間
 			if (time < 0 || time > 23) //不得超出範圍
 			{
 				event.reply("Time must between 0 and 23!").setEphemeral(true).queue();
 				return;
 			}
 
-			GuildChannel guildChannel = event.getOption("channel", CommonFunctions.getAsChannel); //頻道
+			GuildChannel guildChannel = event.getOption("channel", OptionMapping::getAsChannel); //頻道
 			if (guildChannel == null)
 			{
 				event.reply("Error: The channel might be deleted, or I don't have permission to access it.").setEphemeral(true).queue();
@@ -71,7 +71,7 @@ public class ScheduleCommand extends HasSubcommands
 				return;
 			}
 
-			String content = event.getOption("content", " ", CommonFunctions.getAsString); //內容
+			String content = event.getOption("content", " ", OptionMapping::getAsString); //內容
 			int contentLength = content.length(); //訊息的長度
 			String first20Characters = contentLength <= 20 ? content : content.substring(0, 20); //取其前20個字
 			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名_時間_開頭前20個字
@@ -82,7 +82,7 @@ public class ScheduleCommand extends HasSubcommands
 				return;
 			}
 
-			boolean once = event.getOption("once", Boolean.FALSE, CommonFunctions.getAsBoolean); //是否為一次性
+			boolean once = event.getOption("once", Boolean.FALSE, OptionMapping::getAsBoolean); //是否為一次性
 
 			long channelID = guildChannel.getIdLong(); //頻道ID
 			Runnable sendMessageToChannel = () -> //事件內容的Runnable

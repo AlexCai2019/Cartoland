@@ -109,7 +109,7 @@ public final class TimerHandle
 			Set<Long> birthdayMembersID = birthdayToIDs.get(Birthday.valueOf(today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
-			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.LOBBY_CHANNEL_ID); //大廳頻道
+			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.ZH_CHAT_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null) //找不到大廳頻道
 				return;
 			for (long birthdayMemberID : birthdayMembersID)

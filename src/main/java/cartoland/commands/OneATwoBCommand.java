@@ -3,9 +3,9 @@ package cartoland.commands;
 import cartoland.mini_games.MiniGame;
 import cartoland.mini_games.OneATwoBGame;
 import cartoland.utilities.CommandBlocksHandle;
-import cartoland.utilities.CommonFunctions;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
  * {@code OneATwoBCommand} is an execution when user uses /one_a_two_b command. This class implements
@@ -105,7 +105,7 @@ public class OneATwoBCommand extends HasSubcommands
 				return;
 			}
 
-			int answer = Math.abs(event.getOption("answer", 0, CommonFunctions.getAsInt)); //避免負數
+			int answer = Math.abs(event.getOption("answer", 0, OptionMapping::getAsInt)); //避免負數
 			if (answer == Integer.MIN_VALUE) //Math.abs無法處理-2147483648
 			{
 				event.reply("Please input a positive integer!").setEphemeral(true).queue();

@@ -1,7 +1,7 @@
 package cartoland.messages;
 
 import cartoland.utilities.AnonymousHandle;
-import cartoland.utilities.ObjectAndString;
+import cartoland.utilities.ReturnResult;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -42,11 +42,10 @@ public class PrivateMessage implements IMessage
 		if (author.isBot() || author.isSystem()) //是機器人或系統
 			return; //忽略
 
-		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(author.getIdLong()); //檢查該ID的使用者有沒有權限
-		String errorMessage = channelAndString.string(); //valid後的錯誤訊息
-		if (!errorMessage.isEmpty()) //空字串代表沒有錯誤
+		ReturnResult<TextChannel> validChannel = AnonymousHandle.checkMemberValid(author.getIdLong()); //檢查該ID的使用者有沒有權限
+		if (!validChannel.isSuccess()) //有錯誤訊息
 		{
-			message.reply(errorMessage).mentionRepliedUser(false).queue(); //回覆錯誤訊息
+			message.reply(validChannel.getError()).mentionRepliedUser(false).queue(); //回覆錯誤訊息
 			return;
 		}
 
@@ -94,7 +93,7 @@ public class PrivateMessage implements IMessage
 		if (messageBuilder.isEmpty())
 			return; //是空的就算了
 
-		((TextChannel) channelAndString.object()).sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
+		validChannel.getValue().sendMessage(messageBuilder.build()) //私訊轉到地下聊天室
 				.queue(undergroundMessage -> AnonymousHandle.addConnection(message.getIdLong(), undergroundMessage.getIdLong()));
 		logger.info("{} {} dm {}", author.getName(), author.getId(), message.getContentRaw());
 	}

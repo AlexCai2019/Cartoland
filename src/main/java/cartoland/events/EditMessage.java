@@ -1,7 +1,7 @@
 package cartoland.events;
 
 import cartoland.utilities.AnonymousHandle;
-import cartoland.utilities.ObjectAndString;
+import cartoland.utilities.ReturnResult;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -28,15 +28,14 @@ public class EditMessage extends ListenerAdapter
 		if (undergroundMessageID == null) //沒有
 			return; //結束
 
-		ObjectAndString channelAndString = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong());
-		String errorMessage = channelAndString.string(); //錯誤訊息 預設為空字串""
-		if (!errorMessage.isEmpty()) //有錯誤訊息
+		ReturnResult<TextChannel> validChannel = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong());
+		if (!validChannel.isSuccess()) //有錯誤訊息
 		{
-			dm.reply(errorMessage).mentionRepliedUser(false).queue();
+			dm.reply(validChannel.getError()).mentionRepliedUser(false).queue();
 			return;
 		}
 
-		((TextChannel) channelAndString.object()).retrieveMessageById(undergroundMessageID).queue(message -> //獲取對應的地下訊息
+		validChannel.getValue().retrieveMessageById(undergroundMessageID).queue(message -> //獲取對應的地下訊息
 		{
 			String dmContent = dm.getContentRaw();
 			List<Message.Attachment> messageAttachments = message.getAttachments(); //原本的檔案們

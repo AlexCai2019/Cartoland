@@ -22,7 +22,6 @@ public class LotteryCommand extends HasSubcommands
 {
 	private static final Random random = new Random(); //不使用Algorithm.chance
 	private static final long MAXIMUM = 1000000L;
-	private static final byte INVALID_BET = -1;
 
 	public static final String GET = "get";
 	public static final String BET = "bet";
@@ -40,9 +39,8 @@ public class LotteryCommand extends HasSubcommands
 		subcommands.put(SLOT, new SlotSubCommand());
 	}
 
-	private static ObjectAndString createValidBet(String betString, long userID, long nowHave)
+	private static ReturnResult<Long> createValidBet(String betString, long userID, long nowHave)
 	{
-		ObjectAndString validBet = new ObjectAndString();
 		long bet;
 		if (RegularExpressions.BET_NUMBER_REGEX.matcher(betString).matches()) //賭數字
 			bet = Long.parseLong(betString);
@@ -50,7 +48,7 @@ public class LotteryCommand extends HasSubcommands
 		{
 			short percentage = Short.parseShort(betString.substring(0, betString.length() - 1));
 			if (percentage > 100) //百分比格式錯誤 不能賭超過100%
-				return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_percent", betString));
+				return ReturnResult.fail(JsonHandle.getString(userID, "lottery.bet.wrong_percent", betString));
 			bet = nowHave * percentage / 100;
 		}
 		else if ("all".equalsIgnoreCase(betString))
@@ -60,16 +58,16 @@ public class LotteryCommand extends HasSubcommands
 		else if ("quarter".equalsIgnoreCase(betString))
 			bet = nowHave >> 2;
 		else //都不是
-			return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
+			return ReturnResult.fail(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
 
 		if (bet == 0L) //不能賭0
-			return validBet.string(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
+			return ReturnResult.fail(JsonHandle.getString(userID, "lottery.bet.wrong_argument")); //格式錯誤
 		if (bet > MAXIMUM) //限紅
-			return validBet.string(JsonHandle.getString(userID, "lottery.bet.too_much", bet, MAXIMUM));
+			return ReturnResult.fail(JsonHandle.getString(userID, "lottery.bet.too_much", bet, MAXIMUM));
 		if (nowHave < bet) //如果現有的比要賭的還少
-			return validBet.string(JsonHandle.getString(userID, "lottery.bet.not_enough", bet, nowHave));
+			return ReturnResult.fail(JsonHandle.getString(userID, "lottery.bet.not_enough", bet, nowHave));
 
-		return validBet.object(bet);
+		return ReturnResult.success(bet);
 	}
 
 	/**
@@ -131,14 +129,14 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			ObjectAndString validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
-			String errorMessage = validBet.string();
-			if (!errorMessage.isEmpty()) //有錯誤訊息
+			ReturnResult<Long> validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
+			if (!validBet.isSuccess()) //有錯誤訊息
 			{
-				event.reply(errorMessage).setEphemeral(true).queue();
+				event.reply(validBet.getError()).setEphemeral(true).queue();
 				return;
 			}
-			long bet = (Long) validBet.object(); //沒有錯誤訊息 就轉換
+
+			long bet = validBet.getValue(); //沒有錯誤訊息 就轉換
 			long afterBet;
 			String result;
 			boolean win = random.nextBoolean(); //輸贏
@@ -264,16 +262,14 @@ public class LotteryCommand extends HasSubcommands
 			CommandBlocksHandle.LotteryData lotteryData = CommandBlocksHandle.getLotteryData(userID);
 			long nowHave = lotteryData.getBlocks();
 
-			ObjectAndString validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
-			String errorMessage = validBet.string();
-			if (!errorMessage.isEmpty()) //有錯誤訊息
+			ReturnResult<Long> validBet = createValidBet(event.getOption("bet", "", OptionMapping::getAsString), userID, nowHave);
+			if (!validBet.isSuccess()) //有錯誤訊息
 			{
-				event.reply(errorMessage).setEphemeral(true).queue();
+				event.reply(validBet.getError()).setEphemeral(true).queue();
 				return;
 			}
-			long bet = (Long) validBet.object(); //沒有錯誤訊息 就轉換
-			if (bet == INVALID_BET) //輸入有誤
-				return; //直接結束 createValidBet方法內已經reply過了
+
+			long bet = validBet.getValue(); //沒有錯誤訊息 就轉換
 
 			EmojiData[] slotResults =
 			{

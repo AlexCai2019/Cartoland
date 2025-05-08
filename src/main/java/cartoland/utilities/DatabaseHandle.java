@@ -106,60 +106,41 @@ class DatabaseHandle
 		}
 	}
 
-	static Map<Long, Long> readPrivateToUnderground()
+	static long readUndergroundID(long privateID)
 	{
-		String sql = "SELECT private_id, underground_id FROM private_to_underground;";
-
-		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-		     PreparedStatement statement = connection.prepareStatement(sql);
-		     ResultSet result = statement.executeQuery())
-		{
-			Map<Long, Long> privateToUnderground = new HashMap<>();
-			while (result.next())
-			{
-				long privateID = result.getLong(1);
-				long undergroundID = result.getLong(2);
-				privateToUnderground.put(privateID, undergroundID);
-			}
-			return privateToUnderground;
-		}
-		catch (SQLException e)
-		{
-			logger.error("讀取資料庫時發生問題！", e);
-			return new HashMap<>();
-		}
-	}
-
-	static void writePrivateToUnderground(Map<Long, Long> privateToUnderground)
-	{
-		String sql = """
-					INSERT INTO private_to_underground (private_id, underground_id)
-					VALUES (?,?)
-					ON DUPLICATE KEY UPDATE private_id = ?, underground_id = ?;
-					""";
+		String sql = "SELECT underground_id FROM private_to_underground WHERE private_id = ?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
 		{
-			for (Map.Entry<Long, Long> entry : privateToUnderground.entrySet())
+			statement.setLong(1, privateID);
+			try (ResultSet result = statement.executeQuery())
 			{
-				//每一個set 都對應了sql裡的問號
-				long privateID = entry.getKey();
-				long undergroundID = entry.getValue();
-
-				statement.setLong(1, privateID);
-				statement.setLong(2, undergroundID);
-
-				statement.setLong(3, privateID);
-				statement.setLong(4, undergroundID);
-
-				statement.addBatch(); //批次
+				return result.next() ? result.getLong(1) : AnonymousHandle.INVALID_CONNECTION;
 			}
-			statement.executeBatch(); //執行批次
 		}
 		catch (SQLException e)
 		{
-			logger.error("寫入資料庫時發生問題！", e);
+			logger.error("讀取underground_id時發生問題！", e);
+			return AnonymousHandle.INVALID_CONNECTION;
+		}
+	}
+
+	static void writeUndergroundConnection(long privateID, long undergroundID)
+	{
+		String sql = "INSERT INTO private_to_underground (private_id, underground_id) VALUES (?,?);";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, privateID);
+			statement.setLong(2, undergroundID);
+
+			statement.execute(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入private_to_underground時發生問題！", e);
 		}
 	}
 }

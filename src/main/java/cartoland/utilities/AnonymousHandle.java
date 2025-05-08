@@ -6,33 +6,36 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class AnonymousHandle
 {
-	private static final Map<Long, Long> privateToUnderground = DatabaseHandle.readPrivateToUnderground();
-	private static final Map<Long, Long> newConnection = HashMap.newHashMap(10);
+	private static final Map<Long, Long> cacheConnection = new LinkedHashMap<>()
+	{
+		private static final int CACHE_SIZE = 10;
+
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<Long, Long> eldest)
+		{
+			return size() > CACHE_SIZE; //超過cache大小後刪除最早的
+		}
+	};
+
+	public static final long INVALID_CONNECTION = -1L;
 
 	public static void addConnection(long privateMessageID, long undergroundMessageID)
 	{
-		privateToUnderground.put(privateMessageID, undergroundMessageID);
-		newConnection.put(privateMessageID, undergroundMessageID);
-		if (newConnection.size() >= 10)
-		{
-			writeDatabase();
-			newConnection.clear();
-		}
+		cacheConnection.put(privateMessageID, undergroundMessageID); //加入cache
+		DatabaseHandle.writeUndergroundConnection(privateMessageID, undergroundMessageID); //寫入資料庫
 	}
 
-	public static Long getConnection(long privateMessageID)
+	public static long getConnection(long privateMessageID)
 	{
-		return privateToUnderground.get(privateMessageID);
-	}
+		Long undergroundMessageID = cacheConnection.get(privateMessageID); //先從cache找 大部分人只會編輯最近的訊息
 
-	public static void writeDatabase()
-	{
-		DatabaseHandle.writePrivateToUnderground(newConnection);
+		//有找到就可回傳 沒找到再從資料庫裡找
+		return undergroundMessageID != null ? undergroundMessageID : DatabaseHandle.readUndergroundID(privateMessageID);
 	}
 
 	/**

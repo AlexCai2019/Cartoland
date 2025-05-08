@@ -47,8 +47,6 @@ public class BotOnlineOffline extends ListenerAdapter
 	{
 		FileHandle.serialize(); //所有有註冊的物件
 
-		AnonymousHandle.writeDatabase();
-
 		TimerHandle.stopTimer(); //停止每小時的事件執行緒
 
 		logger.info("offline");

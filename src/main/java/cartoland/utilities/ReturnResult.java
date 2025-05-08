@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class ReturnResult<T>
 {
-	private final T value;
-	private final String error;
+	private final T value; //如果成功的話要攜帶的資料
+	private final String error; //錯誤訊息
 
 	private ReturnResult(T value, String error)
 	{
@@ -21,7 +21,7 @@ public class ReturnResult<T>
 
 	public static<T> ReturnResult<T> fail(String error)
 	{
-		return new ReturnResult<>(null, error);
+		return new ReturnResult<>(null, String.valueOf(error));
 	}
 
 	public boolean isSuccess()

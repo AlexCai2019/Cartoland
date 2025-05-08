@@ -23,23 +23,23 @@ public class EditMessage extends ListenerAdapter
 		if (event.isFromGuild()) //不是私訊
 			return; //結束
 
-		Message dm = event.getMessage(); //私訊
-		Long undergroundMessageID = AnonymousHandle.getConnection(event.getMessageIdLong()); //查看有沒有記錄到這則訊息
-		if (undergroundMessageID == null) //沒有
+		long undergroundMessageID = AnonymousHandle.getConnection(event.getMessageIdLong()); //查看有沒有記錄到這則訊息
+		if (undergroundMessageID == AnonymousHandle.INVALID_CONNECTION) //沒有
 			return; //結束
 
-		ReturnResult<TextChannel> validChannel = AnonymousHandle.checkMemberValid(event.getAuthor().getIdLong());
-		if (!validChannel.isSuccess()) //有錯誤訊息
+		User author = event.getAuthor();
+		Message dm = event.getMessage(); //私訊
+		ReturnResult<TextChannel> undergroundChannel = AnonymousHandle.checkMemberValid(author.getIdLong());
+		if (!undergroundChannel.isSuccess()) //有錯誤訊息
 		{
-			dm.reply(validChannel.getError()).mentionRepliedUser(false).queue();
+			dm.reply(undergroundChannel.getError()).mentionRepliedUser(false).queue();
 			return;
 		}
 
-		validChannel.getValue().retrieveMessageById(undergroundMessageID).queue(message -> //獲取對應的地下訊息
+		undergroundChannel.getValue().retrieveMessageById(undergroundMessageID).queue(message -> //獲取對應的地下訊息
 		{
-			String dmContent = dm.getContentRaw();
+			String dmContent = dm.getContentRaw(); //私訊內容
 			List<Message.Attachment> messageAttachments = message.getAttachments(); //原本的檔案們
-			User author = event.getAuthor();
 			logger.info("{} {} edit {}", author.getName(), author.getId(), dmContent);
 
 			if (messageAttachments.isEmpty()) //本來就沒有 也不可能新增

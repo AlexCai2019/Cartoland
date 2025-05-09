@@ -101,6 +101,6 @@ public class NewMember extends ListenerAdapter
 
 		TextChannel welcomeChannel = event.getGuild().getSystemChannel();
 		if (welcomeChannel != null)
-			welcomeChannel.sendMessage(user.getAsMention() + " " + user.getName() + '(' + Long.toUnsignedString(userID) + ") bye have a great time!").queue();
+			welcomeChannel.sendMessage(user.getName() + '(' + Long.toUnsignedString(userID) + ") bye have a great time!").queue();
 	}
 }

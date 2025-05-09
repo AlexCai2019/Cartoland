@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+import java.time.LocalDate;
+
 /**
  * {@code BirthdayCommand} is an execution when a user uses /birthday command. This class implements {@link ICommand}
  * interface, which is for the commands HashMap in {@link cartoland.events.CommandUsage}. This class doesn't
@@ -31,13 +33,14 @@ public class BirthdayCommand extends HasSubcommands
 			User user = event.getUser(); //自己
 			long userID = user.getIdLong();
 			User target = event.getOption("target", user, OptionMapping::getAsUser); //要查詢的使用者 如果沒有指定查詢的對象 預設是自己
-			TimerHandle.Birthday birthday = TimerHandle.getBirthday(target.getIdLong());
+
+			LocalDate birthday = TimerHandle.getBirthday(target.getIdLong());
 			if (birthday == null) //查不到生日
 				event.reply(JsonHandle.getString(userID, "birthday.get.no_set", target.getEffectiveName())).queue();
 			else //查到生日
 				event.reply(JsonHandle.getString(userID, "birthday.get.set_on", target.getEffectiveName(),
-							JsonHandle.getString(userID, "birthday.month_" + birthday.month()), //月
-							JsonHandle.getString(userID, "birthday.date_" + birthday.date()))) //日
+							JsonHandle.getString(userID, "birthday.month_" + birthday.getMonthValue()), //月
+							JsonHandle.getString(userID, "birthday.date_" + birthday.getDayOfMonth()))) //日
 						.queue();
 		});
 		subcommands.put(DELETE, event ->

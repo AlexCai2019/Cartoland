@@ -4,7 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 class DatabaseHandle
 {
@@ -26,11 +30,11 @@ class DatabaseHandle
 					slot_won, slot_lost, slot_show_hand_won, slot_show_hand_lost, last_claim_second, streak
 					FROM lottery_data;
 					""";
+		Map<Long, CommandBlocksHandle.LotteryData> lotteryDataMap = new HashMap<>();
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql);
 		     ResultSet result = statement.executeQuery())
 		{
-			Map<Long, CommandBlocksHandle.LotteryData> lotteryDataMap = new HashMap<>();
 			while (result.next())
 			{
 				long userID = result.getLong(1);
@@ -49,13 +53,12 @@ class DatabaseHandle
 				newData.streak = result.getInt(13);
 				lotteryDataMap.put(userID, newData);
 			}
-			return lotteryDataMap;
 		}
 		catch (SQLException e)
 		{
 			logger.error("讀取資料庫時發生問題！", e);
-			return new HashMap<>();
 		}
+		return lotteryDataMap;
 	}
 
 	static void writeLotteryData(CommandBlocksHandle.LotteryData data)
@@ -98,7 +101,7 @@ class DatabaseHandle
 			statement.setLong(24, data.lastClaimSecond);
 			statement.setInt(25, data.streak);
 
-			statement.execute(); //執行
+			statement.executeUpdate(); //執行
 		}
 		catch (SQLException e)
 		{
@@ -136,11 +139,76 @@ class DatabaseHandle
 			statement.setLong(1, privateID);
 			statement.setLong(2, undergroundID);
 
-			statement.execute(); //執行
+			statement.executeUpdate(); //執行
 		}
 		catch (SQLException e)
 		{
 			logger.error("寫入private_to_underground時發生問題！", e);
 		}
+	}
+
+	static LocalDate readBirthday(long userID)
+	{
+		String sql = "SELECT birthday FROM users WHERE user_id = ?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, userID);
+			try (ResultSet result = statement.executeQuery())
+			{
+				if (result.next())
+				{
+					Date birthday = result.getDate(1);
+					if (birthday != null)
+						return birthday.toLocalDate();
+				}
+			}
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取birthday時發生問題！", e);
+		}
+		return null;
+	}
+
+	static void writeBirthday(long userID, LocalDate date)
+	{
+		String sql = "UPDATE users SET birthday=? WHERE user_id = ?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setDate(1, date == null ? null : Date.valueOf(date));
+			statement.setLong(2, userID);
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入birthday時發生問題！", e);
+		}
+	}
+
+	static List<Long> readTodayBirthday(LocalDate date)
+	{
+		String sql = "SELECT user_id FROM users WHERE birthday = ?;";
+		List<Long> todayBirthday = new ArrayList<>(); //所有今天生日的人
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setDate(1, Date.valueOf(date)); //日期
+			try (ResultSet result = statement.executeQuery())
+			{
+				while (result.next()) //找出所有今天生日的人
+					todayBirthday.add(result.getLong(1));
+			}
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取birthday時發生問題！", e);
+		}
+
+		return todayBirthday;
 	}
 }

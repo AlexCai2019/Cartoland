@@ -33,51 +33,13 @@ public final class TimerHandle
 		private static final long serialVersionUID = 2_718281828459045235L;
 	}
 
-	public record Birthday(byte month, byte date) implements Serializable
-	{
-		@Serial
-		private static final long serialVersionUID = 6022140760000000000L;
-
-		private static final Birthday[] cache = new Birthday[DAYS];
-
-		static
-		{
-			byte month = 1, date = 1, days = daysInMonth(month);
-			for (int i = 0; i < DAYS; i++)
-			{
-				cache[i] = new Birthday(month, date); //建立快取
-				date++;
-				if (date <= days) //還沒到月底
-					continue; //下一個快取
-				month++; //下個月
-				date = 1; //回到1號
-				days = daysInMonth(month); //查看這個月有幾天
-			}
-		}
-
-		public static Birthday valueOf(int month, int date)
-		{
-			return cache[getDateOfYear(month, date) - 1]; //記住陣列的索引是從0開始
-		}
-
-		@Override
-		public int hashCode()
-		{
-			return (month << 5) + date;
-		}
-	}
-
 	private static final ZoneId utc8 = ZoneId.of("UTC+8");
 
-	private static final short DAYS = 366; //一年有366天
+	private static final int STORE_YEAR = 2000; //用於在資料庫中佔位的年份
+
 	private static final short HOURS = 24; //一天有24小時
 
-	private static final String BIRTHDAY_MAP = "serialize/birthday_map.ser";
 	private static final String SCHEDULED_EVENTS = "serialize/scheduled_events.ser";
-
-	@SuppressWarnings("unchecked") //閉嘴IntelliJ IDEA
-	private static final Map<Long, Birthday> idToBirthday = CastToInstance.modifiableMap(FileHandle.deserialize(BIRTHDAY_MAP));
-	private static final Map<Birthday, Set<Long>> birthdayToIDs = HashMap.newHashMap(DAYS);
 
 	@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
 	private static final Set<Runnable>[] hourRunFunctions = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
@@ -87,15 +49,7 @@ public final class TimerHandle
 
 	static
 	{
-		FileHandle.registerSerialize(BIRTHDAY_MAP, idToBirthday);
 		FileHandle.registerSerialize(SCHEDULED_EVENTS, scheduledEvents);
-
-		for (int i = 0 ; i < DAYS; i++)
-			birthdayToIDs.put(Birthday.cache[i], new HashSet<>()); //準備366天份的HashSet
-
-		//生日
-		for (Map.Entry<Long, Birthday> idAndBirthday : idToBirthday.entrySet())
-			birthdayToIDs.get(idAndBirthday.getValue()).add(idAndBirthday.getKey());
 
 		//初始化時間事件
 		for (short i = 0; i < HOURS; i++)
@@ -106,14 +60,16 @@ public final class TimerHandle
 		TimerHandle.registerTimerEvent(new TimerEvent(zero, () -> //和生日有關的
 		{
 			LocalDate today = LocalDate.now(utc8);
-			Set<Long> birthdayMembersID = birthdayToIDs.get(Birthday.valueOf(today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
+			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonth(), today.getDayOfMonth())); //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
+
 			TextChannel lobbyChannel = Cartoland.getJDA().getTextChannelById(IDs.ZH_CHAT_CHANNEL_ID); //大廳頻道
 			if (lobbyChannel == null) //找不到大廳頻道
 				return;
+
 			for (long birthdayMemberID : birthdayMembersID)
-				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！").queue();
+				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！\n").queue();
 		}));
 
 		final byte three = 3;
@@ -163,64 +119,19 @@ public final class TimerHandle
 
 	}, secondsUntil((nowHour + 1) % HOURS), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
-	public static void setBirthday(long userID, int month, int date)
+	public static void setBirthday(long userID, int month, int day)
 	{
-		Birthday newBirthday = Birthday.valueOf(month, date); //新生日
-		birthdayToIDs.get(newBirthday).add(userID); //將該使用者增加到那天生日的清單中
-		Birthday oldBirthday = idToBirthday.put(userID, newBirthday); //設定使用者的生日 並同時獲取舊生日
-		if (oldBirthday != null) //如果確實設定過舊生日
-			birthdayToIDs.get(oldBirthday).remove(userID); //移除設定
+		DatabaseHandle.writeBirthday(userID, LocalDate.of(STORE_YEAR, month, day));
 	}
 
-	public static Birthday getBirthday(long userID)
+	public static LocalDate getBirthday(long userID)
 	{
-		return idToBirthday.get(userID); //查詢map的紀錄
+		return DatabaseHandle.readBirthday(userID); //查詢db的紀錄
 	}
 
 	public static void deleteBirthday(long userID)
 	{
-		Birthday oldBirthday = idToBirthday.remove(userID); //移除舊生日 並把移除掉的值存起來
-		if (oldBirthday != null) //如果設定過舊生日
-			birthdayToIDs.get(oldBirthday).remove(userID); //從記錄中移除這位成員
-	}
-
-	/**
-	 * Get date of year (start with 1). This method always assume the year is a leap year, hence February has
-	 * 29 days. The value range of the method is from 1 to 366.
-	 *
-	 * @param month The month
-	 * @param date The day of the month
-	 * @return The day of year. Range: 1 ~ 366
-	 * @since 2.1
-	 * @author Alex Cai
-	 */
-	private static int getDateOfYear(int month, int date)
-	{
-		return switch (month) //需要幾天才會抵達這個月 從0開始
-		{
-			default -> 0;
-			case 2 -> 31;
-			case 3 -> 31 + 29;
-			case 4 -> 31 + 29 + 31;
-			case 5 -> 31 + 29 + 31 + 30;
-			case 6 -> 31 + 29 + 31 + 30 + 31;
-			case 7 -> 31 + 29 + 31 + 30 + 31 + 30;
-			case 8 -> 31 + 29 + 31 + 30 + 31 + 30 + 31;
-			case 9 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31;
-			case 10 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
-			case 11 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
-			case 12 -> 31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30;
-		} + date;
-	}
-
-	private static byte daysInMonth(byte month)
-	{
-		return switch (month)
-		{
-			case 4, 6, 9, 11 -> 30;
-			case 2 -> 29;
-			default -> 31;
-		};
+		DatabaseHandle.writeBirthday(userID, null);
 	}
 
 	private static long secondsUntil(int hour)

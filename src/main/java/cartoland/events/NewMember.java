@@ -1,9 +1,7 @@
 package cartoland.events;
 
-import cartoland.utilities.CastToInstance;
-import cartoland.utilities.FileHandle;
 import cartoland.utilities.IDs;
-import cartoland.utilities.TimerHandle;
+import cartoland.utilities.MembersHandle;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -16,10 +14,6 @@ import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * {@code NewMember} is a listener that triggers when a user joined a server that the bot is in, or get a new role. For now,
@@ -38,24 +32,6 @@ public class NewMember extends ListenerAdapter
 			"%s, welcome to %s.\n" +
 			"Please read messages in <#" + IDs.READ_ME_CHANNEL_ID + ">, and follow all rules.\n" +
 			"Set the language of this bot through </language:1102681768840138936> .";
-	private static final String ALL_MEMBERS = "serialize/all_members.ser";
-
-	@SuppressWarnings("unchecked")
-	private static final Set<Long> allMembers = CastToInstance.modifiableSet(FileHandle.deserialize(ALL_MEMBERS));
-
-	private static List<Long> allMembersList = Collections.emptyList();
-
-	static
-	{
-		FileHandle.registerSerialize(ALL_MEMBERS, allMembers);
-	}
-
-	public static List<Long> getAllMembersList()
-	{
-		if (allMembersList.size() != allMembers.size())
-			allMembersList = new ArrayList<>(allMembers);
-		return allMembersList;
-	}
 
 	@Override
 	public void onGuildMemberJoin(GuildMemberJoinEvent event)
@@ -73,7 +49,7 @@ public class NewMember extends ListenerAdapter
 		user.openPrivateChannel()
 				.flatMap(privateChannel -> privateChannel.sendMessage(welcomeMessage.formatted(userName, serverName, userName, serverName)))
 				.queue(null, new ErrorHandler().ignore(ErrorResponse.CANNOT_SEND_TO_USER)); //不能傳送私訊就算了
-		allMembers.add(user.getIdLong()); //記錄下每個成員
+		MembersHandle.memberJoin(user.getIdLong()); //記錄下每個成員
 
 		if (Duration.between(user.getTimeCreated(), OffsetDateTime.now()).toDays() > 7) //創帳號日大於七天
 			return;
@@ -96,8 +72,7 @@ public class NewMember extends ListenerAdapter
 			return;
 
 		long userID = user.getIdLong();
-		allMembers.remove(userID);
-		TimerHandle.deleteBirthday(userID);
+		MembersHandle.memberLeave(userID);
 
 		TextChannel welcomeChannel = event.getGuild().getSystemChannel();
 		if (welcomeChannel != null)

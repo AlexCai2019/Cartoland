@@ -46,7 +46,7 @@ public class BirthdayCommand extends HasSubcommands
 		subcommands.put(DELETE, event ->
 		{
 			long userID = event.getUser().getIdLong();
-			TimerHandle.deleteBirthday(userID); //刪除自己的生日
+			TimerHandle.setBirthday(userID, 0, 0); //刪除自己的生日
 			event.reply(JsonHandle.getString(userID, "birthday.delete")).queue();
 		});
 	}

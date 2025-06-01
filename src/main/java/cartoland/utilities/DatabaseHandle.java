@@ -211,4 +211,65 @@ class DatabaseHandle
 
 		return todayBirthday;
 	}
+
+	static void writeLanguage(long userID, String language)
+	{
+		String sql = "INSERT INTO users (user_id, language) VALUES (?,?) ON DUPLICATE KEY UPDATE language = ?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, userID);
+			statement.setString(2, language);
+			statement.setString(3, language);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入language時發生問題！", e);
+		}
+	}
+
+	static List<Long> readAllUsers()
+	{
+		String sql = "SELECT user_id FROM users;";
+		List<Long> allMembers = new ArrayList<>(); //所有人
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql);
+		     ResultSet result = statement.executeQuery())
+		{
+			while (result.next()) //找出所有人
+				allMembers.add(result.getLong(1));
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取users時發生問題！", e);
+		}
+
+		return allMembers;
+	}
+
+	static void onMemberJoin(long userID)
+	{
+		writeLanguage(userID, Languages.TW_MANDARIN); //預設中文
+	}
+
+	static void onMemberLeave(long userID)
+	{
+		String sql = "DELETE FROM users WHERE user_id=?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, userID);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入user時發生問題！", e);
+		}
+	}
 }

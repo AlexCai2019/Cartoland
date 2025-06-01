@@ -1,8 +1,8 @@
 package cartoland.commands;
 
-import cartoland.events.NewMember;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
+import cartoland.utilities.MembersHandle;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -54,7 +54,7 @@ public class RollCommand extends HasSubcommands
 
 			Role targetRole = event.getOption("role", cartoland.getRoleById(IDs.MEMBER_ROLE_ID), OptionMapping::getAsRole); //目標身分組
 
-			List<Long> allMembers = NewMember.getAllMembersList(); //所有成員們的ID
+			List<Long> allMembers = MembersHandle.getAllMembers(); //所有成員們的ID
 			Collections.shuffle(allMembers); //洗牌
 			for (Long userID : allMembers) //一個一個看
 			{
@@ -62,18 +62,21 @@ public class RollCommand extends HasSubcommands
 				User user = member.getUser();
 				if (user.isBot() || user.isSystem() || !member.getRoles().contains(targetRole)) //如果是機器人或系統或沒有目標身分組
 					continue; //下一位成員
+
 				String userIDString = Long.toUnsignedString(userID); //成員ID 字串型態
 				event.getHook()
 						.sendMessage(member.getEffectiveName() + '(' + user.getName() + ')')
 						.setEmbeds(new EmbedBuilder()
+								.setTitle("抽取結果")
 								.setDescription("<@" + userIDString + '>') //注意此處的userIDString是字串 與慣例的long不同
 								.setAuthor(member.getEffectiveName(), null, member.getEffectiveAvatarUrl())
 								.setTimestamp(OffsetDateTime.now())
-								.setFooter(userIDString)
+								.setFooter(userIDString) //注意此處的userIDString是字串 與慣例的long不同
 								.build())
 						.queue();
 				return;
 			}
+
 			event.getHook().sendMessage("This guild doesn't have any members!").queue();
 		}
 	}

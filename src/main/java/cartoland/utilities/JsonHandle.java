@@ -24,10 +24,6 @@ public final class JsonHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private static final String USERS_FILE_NAME = "serialize/users.ser";
-
-	@SuppressWarnings("unchecked")
-	private static final Map<Long, String> users = CastToInstance.modifiableMap(FileHandle.deserialize(USERS_FILE_NAME)); //使用者的語言設定 id為key en, tw 等等的語言字串為value
 	private static final Map<String, JSONObject> languageFileMap = HashMap.newHashMap(7); //語言字串為key 語言檔案為value
 	private static final Map<String, List<String>> commandListMap = HashMap.newHashMap(4); //cmd.list等等為key 語言檔案對應的JSONArray為value
 
@@ -38,8 +34,8 @@ public final class JsonHandle
 	static
 	{
 		reloadLanguageFiles();
-		FileHandle.registerSerialize(USERS_FILE_NAME, users);
 
+		//mojang jira發送request
 		bugPost.put("advanced", true);
 		bugPost.put("maxResult", 1);
 	}
@@ -67,7 +63,8 @@ public final class JsonHandle
 		String result = getString(userID, commandName + ".name." + argument);
 		if ("lang".equals(commandName)) //如果使用的是/lang指令(或/language)
 		{
-			users.put(userID, argument); //更改語言
+			MembersHandle.userLanguage.put(userID, argument); //更改語言
+			DatabaseHandle.writeLanguage(userID, argument);
 			return result; //結束
 		}
 
@@ -99,9 +96,9 @@ public final class JsonHandle
 		languageFileMap.put(Languages.JAPANESE, new JSONObject(FileHandle.buildJsonStringFromFile("lang/jp.json")));
 
 		commandListMap.put("help.list", buildStringListFromJsonArray(englishFile.getJSONArray("help.list")));
-		commandListMap.put("cmd.list",  buildStringListFromJsonArray(englishFile.getJSONArray("cmd.list")));
-		commandListMap.put("faq.list",  buildStringListFromJsonArray(englishFile.getJSONArray("faq.list")));
-		commandListMap.put("dtp.list",  buildStringListFromJsonArray(englishFile.getJSONArray("dtp.list")));
+		commandListMap.put("cmd.list", buildStringListFromJsonArray(englishFile.getJSONArray("cmd.list")));
+		commandListMap.put("faq.list", buildStringListFromJsonArray(englishFile.getJSONArray("faq.list")));
+		commandListMap.put("dtp.list", buildStringListFromJsonArray(englishFile.getJSONArray("dtp.list")));
 	}
 
 	/**
@@ -120,7 +117,7 @@ public final class JsonHandle
 
 		//獲取使用者設定的語言
 		//找不到設定的語言就放台灣正體進去
-		JSONObject file = languageFileMap.get(users.computeIfAbsent(userID, defaultLanguage -> Languages.TW_MANDARIN));
+		JSONObject file = languageFileMap.get(MembersHandle.userLanguage.computeIfAbsent(userID, defaultLanguage -> Languages.TW_MANDARIN));
 		Object optionalValue; //要獲得的字串(物件型態)
 		String result; //要獲得的字串
 

@@ -60,7 +60,7 @@ public final class TimerHandle
 		TimerHandle.registerTimerEvent(new TimerEvent(zero, () -> //和生日有關的
 		{
 			LocalDate today = LocalDate.now(utc8);
-			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonth(), today.getDayOfMonth())); //今天生日的成員們的ID
+			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
 			if (birthdayMembersID.isEmpty()) //今天沒有人生日
 				return;
 
@@ -121,17 +121,15 @@ public final class TimerHandle
 
 	public static void setBirthday(long userID, int month, int day)
 	{
-		DatabaseHandle.writeBirthday(userID, LocalDate.of(STORE_YEAR, month, day));
+		if (month == 0 && day == 0) //刪除生日
+			DatabaseHandle.writeBirthday(userID, null);
+		else
+			DatabaseHandle.writeBirthday(userID, LocalDate.of(STORE_YEAR, month, day));
 	}
 
 	public static LocalDate getBirthday(long userID)
 	{
 		return DatabaseHandle.readBirthday(userID); //查詢db的紀錄
-	}
-
-	public static void deleteBirthday(long userID)
-	{
-		DatabaseHandle.writeBirthday(userID, null);
 	}
 
 	private static long secondsUntil(int hour)

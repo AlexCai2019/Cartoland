@@ -21,7 +21,8 @@ public final class MembersHandle
 
 	public static String getIntroduction(long userID)
 	{
-		return DatabaseHandle.readIntroduction(userID);
+		String introduction = DatabaseHandle.readIntroduction(userID);
+		return introduction == null ? "" : introduction; //null變空字串
 	}
 
 	public static void updateIntroduction(long userID, String content)

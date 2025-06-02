@@ -297,7 +297,7 @@ class DatabaseHandle
 			statement.setLong(1, userID); //使用者ID
 			try (ResultSet result = statement.executeQuery())
 			{
-				return result.getString(1);
+				return result.next() ? result.getString(1) : null;
 			}
 		}
 		catch (SQLException e)

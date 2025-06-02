@@ -41,7 +41,7 @@ public class IntroduceCommand extends HasSubcommands
 			User target = event.getOption("user", user, OptionMapping::getAsUser); //沒有填 預設是自己
 
 			String introduction = MembersHandle.getIntroduction(target.getIdLong());
-			event.reply(introduction == null ? JsonHandle.getString(user.getIdLong(), "introduce.user.no_info") : introduction)
+			event.reply(introduction.isEmpty() ? JsonHandle.getString(user.getIdLong(), "introduce.user.no_info") : introduction)
 					.setEphemeral(true)
 					.queue();
 		});

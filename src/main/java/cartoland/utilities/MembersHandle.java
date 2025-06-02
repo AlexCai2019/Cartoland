@@ -16,7 +16,20 @@ public final class MembersHandle
 
 	public static List<Long> getAllMembers()
 	{
-		return DatabaseHandle.readAllUsers();
+		return DatabaseHandle.readAllMembers();
+	}
+
+	public static String getIntroduction(long userID)
+	{
+		return DatabaseHandle.readIntroduction(userID);
+	}
+
+	public static void updateIntroduction(long userID, String content)
+	{
+		if (content.isEmpty())
+			DatabaseHandle.writeIntroduction(userID, null);
+		else
+			DatabaseHandle.writeIntroduction(userID, content);
 	}
 
 	public static void memberLeave(long userID)

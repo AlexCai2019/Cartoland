@@ -1,6 +1,9 @@
 package cartoland.commands;
 
-import cartoland.utilities.*;
+import cartoland.utilities.IDs;
+import cartoland.utilities.JsonHandle;
+import cartoland.utilities.MembersHandle;
+import cartoland.utilities.RegularExpressions;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -11,7 +14,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * {@code IntroduceCommand} is an execution when a user uses /introduce command. This class implements
@@ -23,21 +25,11 @@ import java.util.Map;
  */
 public class IntroduceCommand extends HasSubcommands
 {
-	private static final String INTRODUCTION_FILE_NAME = "serialize/introduction.ser";
-
-	@SuppressWarnings("unchecked")
-	private static final Map<Long, String> introduction = CastToInstance.modifiableMap(FileHandle.deserialize(INTRODUCTION_FILE_NAME));
-
 	public static final String USER = "user";
 
 	public static final String UPDATE = "update";
 
 	public static final String DELETE = "delete";
-
-	static
-	{
-		FileHandle.registerSerialize(INTRODUCTION_FILE_NAME, introduction); //註冊串聯化
-	}
 
 	public IntroduceCommand()
 	{
@@ -48,7 +40,8 @@ public class IntroduceCommand extends HasSubcommands
 			User user = event.getUser();
 			User target = event.getOption("user", user, OptionMapping::getAsUser); //沒有填 預設是自己
 
-			event.reply(introduction.getOrDefault(target.getIdLong(), JsonHandle.getString(user.getIdLong(), "introduce.user.no_info")))
+			String introduction = MembersHandle.getIntroduction(target.getIdLong());
+			event.reply(introduction == null ? JsonHandle.getString(user.getIdLong(), "introduce.user.no_info") : introduction)
 					.setEphemeral(true)
 					.queue();
 		});
@@ -57,22 +50,8 @@ public class IntroduceCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 			event.reply(JsonHandle.getString(userID, "introduce.update.delete")).queue();
-			introduction.remove(userID); //刪除自我介紹
+			MembersHandle.updateIntroduction(userID, ""); //刪除自我介紹
 		});
-	}
-
-	/**
-	 * Update the user introduction. Whenever user typed anything in the elf-intro channel, the message will
-	 * be store into {@link #introduction}.
-	 *
-	 * @param userID The ID of the user that are going to update his/her introduction.
-	 * @param content The content of the introduction that the user want to replace the old one.
-	 * @since 2.0
-	 * @author Alex Cai
-	 */
-	public static void updateIntroduction(long userID, String content)
-	{
-		introduction.put(userID, content);
 	}
 
 	/**
@@ -91,22 +70,15 @@ public class IntroduceCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 			String content = event.getOption("content", "", OptionMapping::getAsString);
-			if (content.isEmpty()) //空的代表刪除
-			{
-				event.reply(JsonHandle.getString(userID, "introduce.update.delete")).queue();
-				introduction.remove(userID); //刪除自我介紹
-				return;
-			}
 
 			if (!RegularExpressions.CARTOLAND_MESSAGE_LINK_REGEX.matcher(content).matches()) //如果內容不是創聯群組連結
 			{
 				event.reply(JsonHandle.getString(userID, "introduce.update.update")).queue();
-				updateIntroduction(userID, content);
-				return;
+				MembersHandle.updateIntroduction(userID, content); //直接更新
+				return; //結束
 			}
 
 			//以下就是處理創聯群組連結的部分
-			String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
 
 			//從創聯中取得頻道
 			Guild cartoland, eventGuild = event.getGuild(); //先假設指令在創聯中執行 這樣可以省去一次getGuildById
@@ -121,6 +93,9 @@ public class IntroduceCommand extends HasSubcommands
 			}
 			else
 				cartoland = eventGuild;
+
+			//獲取頻道和訊息的ID
+			String[] numbersInLink = content.substring(SUB_STRING_START).split("/");
 
 			//獲取訊息內的頻道 注意ID是String 與慣例的long不同
 			GuildMessageChannel linkChannel = cartoland.getChannelById(GuildMessageChannel.class, numbersInLink[0]);
@@ -145,11 +120,11 @@ public class IntroduceCommand extends HasSubcommands
 						introduceBuilder.append('\n').append(attachment.getUrl()); //一一獲取附件的連結
 					introductionString = introduceBuilder.toString();
 				}
-				updateIntroduction(linkMessage.getAuthor().getIdLong(), introductionString); //更新介紹
+				MembersHandle.updateIntroduction(userID, introductionString); //更新介紹
 			}, new ErrorHandler().handle(ErrorResponse.UNKNOWN_MESSAGE, e -> //找不到訊息
 			{
 				event.reply(JsonHandle.getString(userID, "introduce.update.no_message")).queue();
-				updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
+				MembersHandle.updateIntroduction(userID, content); //更新介紹 直接把連結放進內容中
 			}));
 		}
 	}

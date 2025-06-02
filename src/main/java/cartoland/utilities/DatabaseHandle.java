@@ -67,8 +67,8 @@ class DatabaseHandle
 				INSERT INTO lottery_data (user_id, name, blocks, bet_won, bet_lost, bet_show_hand_won, bet_show_hand_lost,
 					slot_won, slot_lost, slot_show_hand_won, slot_show_hand_lost, last_claim_second, streak)
 				VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
-				ON DUPLICATE KEY UPDATE blocks = ?, name = ?, bet_won = ?, bet_lost = ?, bet_show_hand_won = ?, bet_show_hand_lost = ?,
-					slot_won = ?, slot_lost = ?, slot_show_hand_won = ?, slot_show_hand_lost = ?, last_claim_second = ?, streak = ?;
+				ON DUPLICATE KEY UPDATE blocks=?, name=?, bet_won=?, bet_lost=?, bet_show_hand_won=?, bet_show_hand_lost=?,
+					slot_won=?, slot_lost=?, slot_show_hand_won=?, slot_show_hand_lost=?, last_claim_second=?, streak=?;
 				"""; //將資料寫入資料庫 如果已存在就更新
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -111,7 +111,7 @@ class DatabaseHandle
 
 	static long readUndergroundID(long privateID)
 	{
-		String sql = "SELECT underground_id FROM private_to_underground WHERE private_id = ?;";
+		String sql = "SELECT underground_id FROM private_to_underground WHERE private_id=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -149,7 +149,7 @@ class DatabaseHandle
 
 	static LocalDate readBirthday(long userID)
 	{
-		String sql = "SELECT birthday FROM users WHERE user_id = ?;";
+		String sql = "SELECT birthday FROM users WHERE user_id=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -174,7 +174,7 @@ class DatabaseHandle
 
 	static void writeBirthday(long userID, LocalDate date)
 	{
-		String sql = "UPDATE users SET birthday=? WHERE user_id = ?;";
+		String sql = "UPDATE users SET birthday=? WHERE user_id=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -185,13 +185,13 @@ class DatabaseHandle
 		}
 		catch (SQLException e)
 		{
-			logger.error("寫入birthday時發生問題！", e);
+			logger.error("寫入users.birthday時發生問題！", e);
 		}
 	}
 
 	static List<Long> readTodayBirthday(LocalDate date)
 	{
-		String sql = "SELECT user_id FROM users WHERE birthday = ?;";
+		String sql = "SELECT user_id FROM users WHERE birthday=?;";
 		List<Long> todayBirthday = new ArrayList<>(); //所有今天生日的人
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -206,7 +206,7 @@ class DatabaseHandle
 		}
 		catch (SQLException e)
 		{
-			logger.error("讀取birthday時發生問題！", e);
+			logger.error("讀取users.birthday時發生問題！", e);
 		}
 
 		return todayBirthday;
@@ -214,7 +214,7 @@ class DatabaseHandle
 
 	static void writeLanguage(long userID, String language)
 	{
-		String sql = "INSERT INTO users (user_id, language) VALUES (?,?) ON DUPLICATE KEY UPDATE language = ?;";
+		String sql = "INSERT INTO users (user_id, language) VALUES (?,?) ON DUPLICATE KEY UPDATE language=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -227,13 +227,13 @@ class DatabaseHandle
 		}
 		catch (SQLException e)
 		{
-			logger.error("寫入language時發生問題！", e);
+			logger.error("寫入users.language時發生問題！", e);
 		}
 	}
 
-	static List<Long> readAllUsers()
+	static List<Long> readAllMembers()
 	{
-		String sql = "SELECT user_id FROM users;";
+		String sql = "SELECT user_id FROM users WHERE in_guild=TRUE;";
 		List<Long> allMembers = new ArrayList<>(); //所有人
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -245,7 +245,7 @@ class DatabaseHandle
 		}
 		catch (SQLException e)
 		{
-			logger.error("讀取users時發生問題！", e);
+			logger.error("讀取users.user_id時發生問題！", e);
 		}
 
 		return allMembers;
@@ -253,12 +253,26 @@ class DatabaseHandle
 
 	static void onMemberJoin(long userID)
 	{
-		writeLanguage(userID, Languages.TW_MANDARIN); //預設中文
+		String sql = "INSERT INTO users (user_id, language, in_guild) VALUES (?,?,TRUE) ON DUPLICATE KEY UPDATE language=?, in_guild=TRUE;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, userID);
+			statement.setString(2, Languages.TW_MANDARIN); //預設中文
+			statement.setString(3, Languages.TW_MANDARIN);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入users.in_guild時發生問題！", e);
+		}
 	}
 
 	static void onMemberLeave(long userID)
 	{
-		String sql = "DELETE FROM users WHERE user_id=?;";
+		String sql = "UPDATE users SET in_guild=FALSE WHERE user_id=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -269,7 +283,46 @@ class DatabaseHandle
 		}
 		catch (SQLException e)
 		{
-			logger.error("寫入user時發生問題！", e);
+			logger.error("寫入users.in_guild時發生問題！", e);
+		}
+	}
+
+	static String readIntroduction(long userID)
+	{
+		String sql = "SELECT introduction FROM users WHERE user_id=?";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, userID); //使用者ID
+			try (ResultSet result = statement.executeQuery())
+			{
+				return result.getString(1);
+			}
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取users.introduction時發生問題！", e);
+		}
+
+		return null;
+	}
+
+	static void writeIntroduction(long userID, String content)
+	{
+		String sql = "UPDATE users SET introduction=? WHERE user_id=?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setString(1, content);
+			statement.setLong(2, userID);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入users.introduction時發生問題！", e);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 package cartoland.messages;
 
-import cartoland.commands.IntroduceCommand;
 import cartoland.utilities.IDs;
+import cartoland.utilities.MembersHandle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -38,6 +38,6 @@ public class IntroduceMessage implements IMessage
 				introduceBuilder.append('\n').append(attachment.getUrl()); //一一獲取附件的連結
 			introductionString = introduceBuilder.toString();
 		}
-		IntroduceCommand.updateIntroduction(message.getAuthor().getIdLong(), introductionString); //將自介頻道內的訊息設為/introduce的內容
+		MembersHandle.updateIntroduction(message.getAuthor().getIdLong(), introductionString); //將自介頻道內的訊息設為/introduce的內容
 	}
 }

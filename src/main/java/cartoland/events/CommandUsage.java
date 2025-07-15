@@ -1,59 +1,7 @@
 package cartoland.events;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import cartoland.Cartoland;
-import cartoland.commands.AdminCommand;
-import cartoland.commands.BirthdayCommand;
-import cartoland.commands.ConnectFourCommand;
-import cartoland.commands.DeleteSelfMessageCommand;
-import cartoland.commands.ICommand;
-import static cartoland.commands.ICommand.ADMIN;
-import static cartoland.commands.ICommand.BIRTHDAY;
-import static cartoland.commands.ICommand.BUG;
-import static cartoland.commands.ICommand.CMD;
-import static cartoland.commands.ICommand.COMMAND;
-import static cartoland.commands.ICommand.CONNECT_FOUR;
-import static cartoland.commands.ICommand.DATAPACK;
-import static cartoland.commands.ICommand.DELETE_SELF_MESSAGE;
-import static cartoland.commands.ICommand.DTP;
-import static cartoland.commands.ICommand.FAQ;
-import static cartoland.commands.ICommand.HELP;
-import static cartoland.commands.ICommand.INTRODUCE;
-import static cartoland.commands.ICommand.INVITE;
-import static cartoland.commands.ICommand.JIRA;
-import static cartoland.commands.ICommand.LANG;
-import static cartoland.commands.ICommand.LANGUAGE;
-import static cartoland.commands.ICommand.LIGHT_OUT;
-import static cartoland.commands.ICommand.LOTTERY;
-import static cartoland.commands.ICommand.MCC;
-import static cartoland.commands.ICommand.MEGUMIN;
-import static cartoland.commands.ICommand.ONE_A_TWO_B;
-import static cartoland.commands.ICommand.QUESTION;
-import static cartoland.commands.ICommand.QUOTE;
-import static cartoland.commands.ICommand.RELOAD;
-import static cartoland.commands.ICommand.ROLL;
-import static cartoland.commands.ICommand.SCHEDULE;
-import static cartoland.commands.ICommand.SHUTDOWN;
-import static cartoland.commands.ICommand.TIC_TAC_TOE;
-import static cartoland.commands.ICommand.TOOL;
-import static cartoland.commands.ICommand.TRANSFER;
-import static cartoland.commands.ICommand.YOUTUBER;
-import cartoland.commands.IntroduceCommand;
-import cartoland.commands.JiraCommand;
-import cartoland.commands.LightOutCommand;
-import cartoland.commands.LotteryCommand;
-import cartoland.commands.OneATwoBCommand;
-import cartoland.commands.QuoteCommand;
-import cartoland.commands.RollCommand;
-import cartoland.commands.ScheduleCommand;
-import cartoland.commands.TicTacToeCommand;
-import cartoland.commands.ToolCommand;
-import cartoland.commands.TransferCommand;
+import cartoland.commands.*;
 import cartoland.mini_games.MiniGame;
 import cartoland.utilities.Algorithm;
 import cartoland.utilities.IDs;
@@ -65,6 +13,13 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static cartoland.commands.ICommand.*;
 
 /**
  * {@code CommandUsage} is a listener that triggers when a user uses slash command. This class was registered in

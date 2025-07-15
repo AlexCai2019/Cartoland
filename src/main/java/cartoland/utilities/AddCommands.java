@@ -1,67 +1,19 @@
 package cartoland.utilities;
 
-import java.util.Map;
-
-import cartoland.commands.AdminCommand;
-import cartoland.commands.BirthdayCommand;
-import cartoland.commands.ConnectFourCommand;
-import static cartoland.commands.ICommand.ADMIN;
-import static cartoland.commands.ICommand.BIRTHDAY;
-import static cartoland.commands.ICommand.BUG;
-import static cartoland.commands.ICommand.CMD;
-import static cartoland.commands.ICommand.COMMAND;
-import static cartoland.commands.ICommand.CONNECT_FOUR;
-import static cartoland.commands.ICommand.DATAPACK;
-import static cartoland.commands.ICommand.DELETE_SELF_MESSAGE;
-import static cartoland.commands.ICommand.DTP;
-import static cartoland.commands.ICommand.FAQ;
-import static cartoland.commands.ICommand.HELP;
-import static cartoland.commands.ICommand.INTRODUCE;
-import static cartoland.commands.ICommand.INVITE;
-import static cartoland.commands.ICommand.JIRA;
-import static cartoland.commands.ICommand.LANG;
-import static cartoland.commands.ICommand.LANGUAGE;
-import static cartoland.commands.ICommand.LIGHT_OUT;
-import static cartoland.commands.ICommand.LOTTERY;
-import static cartoland.commands.ICommand.MCC;
-import static cartoland.commands.ICommand.MEGUMIN;
-import static cartoland.commands.ICommand.ONE_A_TWO_B;
-import static cartoland.commands.ICommand.QUESTION;
-import static cartoland.commands.ICommand.QUOTE;
-import static cartoland.commands.ICommand.RELOAD;
-import static cartoland.commands.ICommand.ROLL;
-import static cartoland.commands.ICommand.SCHEDULE;
-import static cartoland.commands.ICommand.SHUTDOWN;
-import static cartoland.commands.ICommand.TIC_TAC_TOE;
-import static cartoland.commands.ICommand.TOOL;
-import static cartoland.commands.ICommand.TRANSFER;
-import static cartoland.commands.ICommand.YOUTUBER;
-import cartoland.commands.IntroduceCommand;
-import cartoland.commands.LightOutCommand;
-import cartoland.commands.LotteryCommand;
-import cartoland.commands.OneATwoBCommand;
-import cartoland.commands.RollCommand;
-import cartoland.commands.ScheduleCommand;
-import cartoland.commands.TicTacToeCommand;
-import cartoland.commands.ToolCommand;
-import static cartoland.events.ContextMenu.CODE_BLOCK;
-import static cartoland.events.ContextMenu.PIN;
-import static cartoland.events.ContextMenu.QUOTE_;
-import static cartoland.events.ContextMenu.RAW_TEXT;
-import static cartoland.events.ContextMenu.REACTIONS;
+import cartoland.commands.*;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import static net.dv8tion.jda.api.interactions.DiscordLocale.CHINESE_CHINA;
-import static net.dv8tion.jda.api.interactions.DiscordLocale.CHINESE_TAIWAN;
-import static net.dv8tion.jda.api.interactions.DiscordLocale.JAPANESE;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.*;
+
+import java.util.Map;
+
+import static cartoland.commands.ICommand.*;
+import static cartoland.events.ContextMenu.*;
+import static net.dv8tion.jda.api.interactions.DiscordLocale.*;
 
 /**
  * {@code AddCommands} is a utility that holds every command. The only purpose and usage is for

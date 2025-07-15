@@ -54,6 +54,7 @@ public class AdminCommand extends HasSubcommands
 	public static final String MUTE = "mute";
 	public static final String TEMP_BAN = "temp_ban";
 	public static final String SLOW_MODE = "slow_mode";
+	public static final String CLEAR_MESSAGE = "clear_message";
 
 	static
 	{
@@ -62,10 +63,11 @@ public class AdminCommand extends HasSubcommands
 
 	public AdminCommand()
 	{
-		super(3);
+		super(4);
 		subcommands.put(MUTE, new MuteSubcommand());
 		subcommands.put(TEMP_BAN, new TempBanSubcommand());
 		subcommands.put(SLOW_MODE, new SlowModeSubcommand());
+		subcommands.put(CLEAR_MESSAGE, new ClearMessageSubcommand());
 	}
 
 	/**

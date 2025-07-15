@@ -184,9 +184,6 @@ public class CommandUsage extends ListenerAdapter
 
 		//light_out
 		commands.put(LIGHT_OUT, new LightOutCommand(games));
-
-		//deleteselfmessage
-		commands.put(DELETE_SELF_MESSAGE, new DeleteSelfMessageCommand());
 	}
 
 	/**

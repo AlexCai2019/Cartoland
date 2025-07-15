@@ -13,14 +13,14 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
 /**
- * {@code DeleteSelfMessageCommand} is an execution when a user uses /deleteselfmessage command. 
+ * {@code ClearMessageSubcommand} is an execution when a user uses /admin clear_message command.
  * This class implements {@link ICommand} interface, which is for the commands HashMap in 
  * {@link cartoland.events.CommandUsage}.
  *
  * @since 2.5
  * @author Alex Cai
  */
-public class DeleteSelfMessageCommand implements ICommand
+public class ClearMessageSubcommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -35,7 +35,7 @@ public class DeleteSelfMessageCommand implements ICommand
 		// 驗證數量範圍
 		if (number < 1 || number > 100)
 		{
-			event.reply(JsonHandle.getString(userID, "deleteselfmessage.invalid_number")).setEphemeral(true).queue();
+			event.reply(JsonHandle.getString(userID, "clear_message.invalid_number")).setEphemeral(true).queue();
 			return;
 		}
 		
@@ -51,7 +51,7 @@ public class DeleteSelfMessageCommand implements ICommand
 			
 			if (userMessages.isEmpty())
 			{
-				event.getHook().sendMessage(JsonHandle.getString(userID, "deleteselfmessage.no_messages")).queue();
+				event.getHook().sendMessage(JsonHandle.getString(userID, "clear_message.no_messages")).queue();
 				return;
 			}
 			
@@ -84,7 +84,7 @@ public class DeleteSelfMessageCommand implements ICommand
 				);
 			}
 		}, failure -> {
-			event.getHook().sendMessage(JsonHandle.getString(userID, "deleteselfmessage.fetch_error")).queue();
+			event.getHook().sendMessage(JsonHandle.getString(userID, "clear_message.fetch_error")).queue();
 		});
 	}
 	
@@ -98,11 +98,11 @@ public class DeleteSelfMessageCommand implements ICommand
 			// 所有訊息都已處理完成
 			if (deletedCount == 0)
 			{
-				event.getHook().sendMessage(JsonHandle.getString(userID, "deleteselfmessage.no_messages_deleted")).queue();
+				event.getHook().sendMessage(JsonHandle.getString(userID, "clear_message.no_messages_deleted")).queue();
 			}
 			else
 			{
-				String message = JsonHandle.getString(userID, "deleteselfmessage.success")
+				String message = JsonHandle.getString(userID, "clear_message.success")
 					.replace("{count}", String.valueOf(deletedCount));
 				event.getHook().sendMessage(message).queue();
 			}

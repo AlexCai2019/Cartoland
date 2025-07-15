@@ -502,16 +502,19 @@ public final class AddCommands
 										new Command.Choice("Double Hour", "double_hour")
 											.setNameLocalization(CHINESE_TAIWAN, "時辰")
 											.setNameLocalization(CHINESE_CHINA, "时辰"))),
-						new SubcommandData(DELETE_SELF_MESSAGE, "Delete your own messages in this channel")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "刪除您在此頻道中的訊息")
-							.setDescriptionLocalization(CHINESE_CHINA, "删除您在此频道中的消息")
+						new SubcommandData(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
+							.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")
 							.addOptions(
-								new OptionData(OptionType.INTEGER, "number", "Number of messages to delete (1-100)", false, false)
+								new OptionData(OptionType.INTEGER, "number", "Number of messages to delete (1-100)", true, false)
 									.setNameLocalization(CHINESE_TAIWAN, "數量")
 									.setNameLocalization(CHINESE_CHINA, "数量")
 									.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量 (1-100)")
 									.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量 (1-100)")
-									.setRequiredRange(1, 100))),
+									.setRequiredRange(1, 100),
+								new OptionData(OptionType.USER, "target", "The target user", false, false)
+									.setNameLocalization(CHINESE_TAIWAN, "使用者")
+									.setNameLocalization(CHINESE_CHINA, "用戶"))),
 			Commands.slash(SCHEDULE, "Schedule a message to be send to a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
 					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")

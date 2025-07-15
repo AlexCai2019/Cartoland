@@ -49,7 +49,7 @@ public interface ICommand
 	String TIC_TAC_TOE = "tic_tac_toe";
 	String CONNECT_FOUR = "connect_four";
 	String LIGHT_OUT = "light_out";
-	String DELETE_SELF_MESSAGE = "clear_message";
+	String CLEAR_MESSAGE = "clear_message";
 
 	/**
 	 * The execution of a slash command.

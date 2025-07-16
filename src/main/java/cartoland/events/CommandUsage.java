@@ -162,6 +162,12 @@ public class CommandUsage extends ListenerAdapter
 		//admin
 		commands.put(ADMIN, new AdminCommand());
 
+		//mute
+		commands.put(MUTE, new MuteCommand());
+
+		//clear_message
+		commands.put(CLEAR_MESSAGE, new ClearMessageCommand());
+
 		//schedule
 		commands.put(SCHEDULE, new ScheduleCommand());
 

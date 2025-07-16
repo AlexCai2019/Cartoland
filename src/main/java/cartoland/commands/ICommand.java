@@ -42,6 +42,8 @@ public interface ICommand
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";
 	String ADMIN = "admin";
+	String MUTE = "mute";
+	String CLEAR_MESSAGE = "clear_message";
 	String SCHEDULE = "schedule";
 	String ONE_A_TWO_B = "one_a_two_b";
 	String LOTTERY = "lottery";
@@ -49,7 +51,6 @@ public interface ICommand
 	String TIC_TAC_TOE = "tic_tac_toe";
 	String CONNECT_FOUR = "connect_four";
 	String LIGHT_OUT = "light_out";
-	String CLEAR_MESSAGE = "clear_message";
 
 	/**
 	 * The execution of a slash command.

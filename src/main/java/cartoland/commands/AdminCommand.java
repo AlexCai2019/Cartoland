@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -51,10 +50,8 @@ public class AdminCommand extends HasSubcommands
 	@SuppressWarnings("unchecked")
 	public static final Set<BanData> tempBanSet = CastToInstance.modifiableSet(FileHandle.deserialize(TEMP_BAN_SET));
 
-	public static final String MUTE = "mute";
 	public static final String TEMP_BAN = "temp_ban";
 	public static final String SLOW_MODE = "slow_mode";
-	public static final String CLEAR_MESSAGE = "clear_message";
 
 	static
 	{
@@ -63,11 +60,9 @@ public class AdminCommand extends HasSubcommands
 
 	public AdminCommand()
 	{
-		super(4);
-		subcommands.put(MUTE, new MuteSubcommand());
+		super(2);
 		subcommands.put(TEMP_BAN, new TempBanSubcommand());
 		subcommands.put(SLOW_MODE, new SlowModeSubcommand());
-		subcommands.put(CLEAR_MESSAGE, new ClearMessageSubcommand());
 	}
 
 	/**
@@ -104,94 +99,6 @@ public class AdminCommand extends HasSubcommands
 		//1.500000 => 1.5
 		//從第一個數字開始 一路到連續0的第一個 如果小數點後都是連續0 那就連小數點都不要了
 		return fpString.substring(0, (index == dotIndex) ? dotIndex : headOfTrailingZeros); //經歷過for迴圈 此時index必定是連續0開頭的左邊那個
-	}
-
-	/**
-	 * {@code MuteSubCommand} is a class that handles one of the subcommands of {@code /admin} command, which is
-	 * {@code /admin mute}.
-	 *
-	 * @since 2.1
-	 * @author Alex Cai
-	 */
-	private static class MuteSubcommand implements ICommand
-	{
-		private static final long MAX_TIME_OUT_LENGTH_MILLIS = 1000L * 60 * 60 * 24 * Member.MAX_TIME_OUT_LENGTH;
-
-		@Override
-		public void commandProcess(SlashCommandInteractionEvent event)
-		{
-			Member member = event.getMember(); //使用指令的成員
-			if (member == null)
-			{
-				event.reply("Impossible, this is required!").queue();
-				return;
-			}
-
-			long userID = member.getIdLong(); //使用指令的成員ID
-
-			if (!member.hasPermission(Permission.MODERATE_MEMBERS))
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.no_permission")).setEphemeral(true).queue();
-				return;
-			}
-
-			Member target = event.getOption("target", OptionMapping::getAsMember); //要被禁言的目標
-			if (target == null) //找不到要被禁言的成員
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.no_member")).setEphemeral(true).queue();
-				return;
-			}
-
-			if (target.isOwner()) //無法禁言群主 會擲出HierarchyException
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.can_t_owner")).setEphemeral(true).queue();
-				return;
-			}
-			if (target.isTimedOut()) //已經被禁言了
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.already_timed_out")).setEphemeral(true).queue();
-				return;
-			}
-
-			double duration = event.getOption("duration", 0.0, OptionMapping::getAsDouble);
-			String unit = event.getOption("unit", "", OptionMapping::getAsString);
-
-			//不用java.util.concurrent.TimeUnit 因為它不接受浮點數
-			long durationMillis = Math.round(duration * switch (unit) //將單位轉成毫秒 1000毫秒等於1秒
-			{
-				case "second" -> 1000;
-				case "minute" -> 1000 * 60;
-				case "quarter" -> 1000 * 60 * 15;
-				case "hour" -> 1000 * 60 * 60;
-				case "double_hour" -> 1000 * 60 * 60 * 2;
-				case "day" -> 1000 * 60 * 60 * 24;
-				case "week" -> 1000 * 60 * 60 * 24 * 7;
-				default -> 1; //millisecond
-			}); //Math.round會處理溢位
-
-			if (durationMillis <= 0) //不能負時間
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.duration_must_be_positive")).setEphemeral(true).queue();
-				return;
-			}
-
-			if (durationMillis > MAX_TIME_OUT_LENGTH_MILLIS) //不能禁言超過28天
-			{
-				event.reply(JsonHandle.getString(userID, "admin.mute.too_long", Member.MAX_TIME_OUT_LENGTH)).setEphemeral(true).queue();
-				return;
-			}
-
-			String mutedTime = cleanFPString(Double.toString(duration)) + ' ' + JsonHandle.getString(userID, "admin.unit_" + unit);
-			StringBuilder replyStringBuilder = new StringBuilder(JsonHandle.getString(userID, "admin.mute.success",
-					target.getAsMention(), mutedTime, (System.currentTimeMillis() + durationMillis) / 1000));
-			String reason = event.getOption("reason", OptionMapping::getAsString);
-			if (reason != null) //有理由
-				replyStringBuilder.append(JsonHandle.getString(userID, "admin.mute.reason", reason)); //加上理由
-
-			event.reply(replyStringBuilder.toString()).queue();
-			target.timeoutFor(Duration.ofMillis(durationMillis)).reason(reason).queue(); //執行禁言
-			logger.info("{}({}) mute {}({}) {} {}", member.getUser().getName(), member.getId(), target.getUser().getName(), target.getId(), mutedTime, reason);
-		}
 	}
 
 	/**

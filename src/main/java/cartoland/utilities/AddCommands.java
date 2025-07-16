@@ -368,55 +368,6 @@ public final class AddCommands
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MODERATE_MEMBERS, Permission.MANAGE_CHANNEL))
 					.setContexts(InteractionContextType.GUILD)
 					.addSubcommands(
-						new SubcommandData(AdminCommand.MUTE, "Mute a user")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
-							.setDescriptionLocalization(CHINESE_CHINA, "禁言一名用户")
-							.addOptions(
-								new OptionData(OptionType.USER, "target", "The member that you want to mute", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "目標")
-									.setNameLocalization(CHINESE_CHINA, "目标")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "你想禁言的成員")
-									.setDescriptionLocalization(CHINESE_CHINA, "你想禁言的成员"),
-								new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be muted", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "時間")
-									.setNameLocalization(CHINESE_CHINA, "时长")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被禁言的時間")
-									.setDescriptionLocalization(CHINESE_CHINA, "成员将被禁言的时长"),
-								new OptionData(OptionType.STRING, "unit", "The time unit of the duration", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "單位")
-									.setNameLocalization(CHINESE_CHINA, "单位")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
-									.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
-									.addChoices(
-										new Command.Choice("Millisecond", "millisecond")
-											.setNameLocalization(CHINESE_TAIWAN, "毫秒")
-											.setNameLocalization(CHINESE_CHINA, "毫秒"),
-										new Command.Choice("Second", "second")
-											.setNameLocalization(CHINESE_TAIWAN, "秒")
-											.setNameLocalization(CHINESE_CHINA, "秒"),
-										new Command.Choice("Minute", "minute")
-											.setNameLocalization(CHINESE_TAIWAN, "分鐘")
-											.setNameLocalization(CHINESE_CHINA, "分钟"),
-										new Command.Choice("Quarter", "quarter")
-											.setNameLocalization(CHINESE_TAIWAN, "刻")
-											.setNameLocalization(CHINESE_CHINA, "刻"),
-										new Command.Choice("Hour", "hour")
-											.setNameLocalization(CHINESE_TAIWAN, "小時")
-											.setNameLocalization(CHINESE_CHINA, "小时"),
-										new Command.Choice("Double Hour", "double_hour")
-											.setNameLocalization(CHINESE_TAIWAN, "時辰")
-											.setNameLocalization(CHINESE_CHINA, "时辰"),
-										new Command.Choice("Day", "day")
-											.setNameLocalization(CHINESE_TAIWAN, "天")
-											.setNameLocalization(CHINESE_CHINA, "天"),
-										new Command.Choice("Week", "week")
-											.setNameLocalization(CHINESE_TAIWAN, "星期")
-											.setNameLocalization(CHINESE_CHINA, "星期")),
-								new OptionData(OptionType.STRING, "reason", "Reason of mute", false, false)
-									.setNameLocalization(CHINESE_TAIWAN, "理由")
-									.setNameLocalization(CHINESE_CHINA, "理由")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "禁言的理由")
-									.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由")),
 						new SubcommandData(AdminCommand.TEMP_BAN, "Temporary ban a member")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "暫時停權一名成員")
 							.setDescriptionLocalization(CHINESE_CHINA, "暂时封锁一名成员")
@@ -502,18 +453,70 @@ public final class AddCommands
 										new Command.Choice("Double Hour", "double_hour")
 											.setNameLocalization(CHINESE_TAIWAN, "時辰")
 											.setNameLocalization(CHINESE_CHINA, "时辰")))),
+			Commands.slash(MUTE, "Mute a user")
+					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MODERATE_MEMBERS))
+					.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
+					.setDescriptionLocalization(CHINESE_CHINA, "禁言一名用户")
+					.setContexts(InteractionContextType.GUILD)
+					.addOptions(
+						new OptionData(OptionType.USER, "target", "The member that you want to mute", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "目標")
+							.setNameLocalization(CHINESE_CHINA, "目标")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "你想禁言的成員")
+							.setDescriptionLocalization(CHINESE_CHINA, "你想禁言的成员"),
+						new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be muted", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "時間")
+							.setNameLocalization(CHINESE_CHINA, "时长")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被禁言的時間")
+							.setDescriptionLocalization(CHINESE_CHINA, "成员将被禁言的时长"),
+						new OptionData(OptionType.STRING, "unit", "The time unit of the duration", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "單位")
+							.setNameLocalization(CHINESE_CHINA, "单位")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+							.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
+							.addChoices(
+								new Command.Choice("Millisecond", "millisecond")
+									.setNameLocalization(CHINESE_TAIWAN, "毫秒")
+									.setNameLocalization(CHINESE_CHINA, "毫秒"),
+								new Command.Choice("Second", "second")
+									.setNameLocalization(CHINESE_TAIWAN, "秒")
+									.setNameLocalization(CHINESE_CHINA, "秒"),
+								new Command.Choice("Minute", "minute")
+									.setNameLocalization(CHINESE_TAIWAN, "分鐘")
+									.setNameLocalization(CHINESE_CHINA, "分钟"),
+								new Command.Choice("Quarter", "quarter")
+									.setNameLocalization(CHINESE_TAIWAN, "刻")
+									.setNameLocalization(CHINESE_CHINA, "刻"),
+								new Command.Choice("Hour", "hour")
+									.setNameLocalization(CHINESE_TAIWAN, "小時")
+									.setNameLocalization(CHINESE_CHINA, "小时"),
+								new Command.Choice("Double Hour", "double_hour")
+									.setNameLocalization(CHINESE_TAIWAN, "時辰")
+									.setNameLocalization(CHINESE_CHINA, "时辰"),
+								new Command.Choice("Day", "day")
+									.setNameLocalization(CHINESE_TAIWAN, "天")
+									.setNameLocalization(CHINESE_CHINA, "天"),
+								new Command.Choice("Week", "week")
+									.setNameLocalization(CHINESE_TAIWAN, "星期")
+									.setNameLocalization(CHINESE_CHINA, "星期")),
+						new OptionData(OptionType.STRING, "reason", "Reason of mute", false, false)
+							.setNameLocalization(CHINESE_TAIWAN, "理由")
+							.setNameLocalization(CHINESE_CHINA, "理由")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "禁言的理由")
+							.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由")),
 			Commands.slash(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
 					.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")
+					.setContexts(InteractionContextType.GUILD)
 					.addOptions(
-					new OptionData(OptionType.INTEGER, "number", "Number of messages to delete", true, false)
-						.setNameLocalization(CHINESE_TAIWAN, "數量")
-						.setNameLocalization(CHINESE_CHINA, "数量")
-						.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量")
-						.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量"),
-					new OptionData(OptionType.USER, "target", "The target user", false, false)
-						.setNameLocalization(CHINESE_TAIWAN, "使用者")
-						.setNameLocalization(CHINESE_CHINA, "用戶")),
+						new OptionData(OptionType.INTEGER, "number", "Number of messages to delete", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "數量")
+							.setNameLocalization(CHINESE_CHINA, "数量")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量")
+							.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量"),
+						new OptionData(OptionType.USER, "target", "The target user", false, false)
+							.setNameLocalization(CHINESE_TAIWAN, "使用者")
+							.setNameLocalization(CHINESE_CHINA, "用戶")),
 			Commands.slash(SCHEDULE, "Schedule a message to be send to a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
 					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")

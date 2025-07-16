@@ -9,14 +9,14 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 /**
- * {@code ClearMessageSubcommand} is an execution when a user uses /admin clear_message command.
+ * {@code ClearMessageCommand} is an execution when a user uses /clear_message command.
  * This class implements {@link ICommand} interface, which is for the commands HashMap in 
  * {@link cartoland.events.CommandUsage}.
  *
  * @since 2.5
  * @author Alex Cai
  */
-public class ClearMessageSubcommand implements ICommand
+public class ClearMessageCommand implements ICommand
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)

@@ -23,37 +23,39 @@ public class ClearMessageSubcommand implements ICommand
 	{
 		User user = event.getUser();
 		long userID = user.getIdLong();
-		
-		// 獲取要刪除的訊息數量參數
-		int number = event.getOption("number", 1, OptionMapping::getAsInt);
-		User target = event.getOption("target", OptionMapping::getAsUser);
 
 		Member member = event.getMember();
 		if (member == null) //找不到成員 說明不是在群組裡
 		{
-			event.reply("Please use this in a server!").setEphemeral(true).queue();
-			return;
-		}
-
-		if (!user.equals(target) && !member.hasPermission(Permission.MESSAGE_MANAGE)) //想要刪除不是自己的訊息 又沒有權限
-		{
-			event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue();
+			event.reply(JsonHandle.getString(userID, "clear_message.wrong_place")).setEphemeral(true).queue();
 			return;
 		}
 
 		GuildMessageChannel channel = event.getGuildChannel(); //獲取頻道
-		event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
+		int number = event.getOption("number", 1, OptionMapping::getAsInt); //要刪除的訊息數量
+		User target = event.getOption("target", OptionMapping::getAsUser); //要刪除的訊息的發送者
 
-		if (target == null) //沒有指定目標
+		if (target == null && member.hasPermission(Permission.MESSAGE_MANAGE)) //沒有指定目標
+		{
+			event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
 			channel.getIterableHistory()
 					.limit(number)
-					.queue(messages -> channel.deleteMessages(messages).queue());
-		else
-			channel.deleteMessages(channel.getIterableHistory()
-						.stream()
-						.filter(message -> message.getAuthor().equals(target))
-						.limit(number)
-						.toList())
+					.flatMap(channel::deleteMessages)
 					.queue();
+			return;
+		}
+
+		if (user.equals(target) || member.hasPermission(Permission.MESSAGE_MANAGE)) //要刪除自己的訊息 或是有權限
+		{
+			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", user.getName(), number)).queue(); //趕快回覆避免超過3秒限制
+			channel.deleteMessages(
+					channel.getIterableHistory()
+							.stream()
+							.filter(message -> message.getAuthor().equals(target))
+							.limit(number)
+					.toList()).queue();
+		}
+		else
+			event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue(); //沒有權限
 	}
 }

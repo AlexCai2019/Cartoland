@@ -270,40 +270,40 @@ public final class AddCommands
 									.setDescriptionLocalization(CHINESE_TAIWAN, "你的生日月份")
 									.setDescriptionLocalization(CHINESE_CHINA, "你的生日月份")
 									.addChoices(
-										new Command.Choice("January", 1)
+										new Command.Choice("January", 1L)
 											.setNameLocalization(CHINESE_TAIWAN, "一月")
 											.setNameLocalization(CHINESE_CHINA, "一月"),
-										new Command.Choice("February", 2)
+										new Command.Choice("February", 2L)
 											.setNameLocalization(CHINESE_TAIWAN, "二月")
 											.setNameLocalization(CHINESE_CHINA, "二月"),
-										new Command.Choice("March", 3)
+										new Command.Choice("March", 3L)
 											.setNameLocalization(CHINESE_TAIWAN, "三月")
 											.setNameLocalization(CHINESE_CHINA, "三月"),
-										new Command.Choice("April", 4)
+										new Command.Choice("April", 4L)
 											.setNameLocalization(CHINESE_TAIWAN, "四月")
 											.setNameLocalization(CHINESE_CHINA, "四月"),
-										new Command.Choice("May", 5)
+										new Command.Choice("May", 5L)
 											.setNameLocalization(CHINESE_TAIWAN, "五月")
 											.setNameLocalization(CHINESE_CHINA, "五月"),
-										new Command.Choice("June", 6)
+										new Command.Choice("June", 6L)
 											.setNameLocalization(CHINESE_TAIWAN, "六月")
 											.setNameLocalization(CHINESE_CHINA, "六月"),
-										new Command.Choice("July", 7)
+										new Command.Choice("July", 7L)
 											.setNameLocalization(CHINESE_TAIWAN, "七月")
 											.setNameLocalization(CHINESE_CHINA, "七月"),
-										new Command.Choice("August", 8)
+										new Command.Choice("August", 8L)
 											.setNameLocalization(CHINESE_TAIWAN, "八月")
 											.setNameLocalization(CHINESE_CHINA, "八月"),
-										new Command.Choice("September", 9)
+										new Command.Choice("September", 9L)
 											.setNameLocalization(CHINESE_TAIWAN, "九月")
 											.setNameLocalization(CHINESE_CHINA, "九月"),
-										new Command.Choice("October", 10)
+										new Command.Choice("October", 10L)
 											.setNameLocalization(CHINESE_TAIWAN, "十月")
 											.setNameLocalization(CHINESE_CHINA, "十月"),
-										new Command.Choice("November", 11)
+										new Command.Choice("November", 11L)
 											.setNameLocalization(CHINESE_TAIWAN, "十一月")
 											.setNameLocalization(CHINESE_CHINA, "十一月"),
-										new Command.Choice("December", 12)
+										new Command.Choice("December", 12L)
 											.setNameLocalization(CHINESE_TAIWAN, "十二月")
 											.setNameLocalization(CHINESE_CHINA, "十二月")),
 								new OptionData(OptionType.INTEGER, "date", "Your birthday", true, true)
@@ -501,20 +501,19 @@ public final class AddCommands
 											.setNameLocalization(CHINESE_CHINA, "小时"),
 										new Command.Choice("Double Hour", "double_hour")
 											.setNameLocalization(CHINESE_TAIWAN, "時辰")
-											.setNameLocalization(CHINESE_CHINA, "时辰"))),
-						new SubcommandData(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
-							.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")
-							.addOptions(
-								new OptionData(OptionType.INTEGER, "number", "Number of messages to delete (1-100)", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "數量")
-									.setNameLocalization(CHINESE_CHINA, "数量")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量 (1-100)")
-									.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量 (1-100)")
-									.setRequiredRange(1, 100),
-								new OptionData(OptionType.USER, "target", "The target user", false, false)
-									.setNameLocalization(CHINESE_TAIWAN, "使用者")
-									.setNameLocalization(CHINESE_CHINA, "用戶"))),
+											.setNameLocalization(CHINESE_CHINA, "时辰")))),
+			Commands.slash(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
+					.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")
+					.addOptions(
+					new OptionData(OptionType.INTEGER, "number", "Number of messages to delete", true, false)
+						.setNameLocalization(CHINESE_TAIWAN, "數量")
+						.setNameLocalization(CHINESE_CHINA, "数量")
+						.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量")
+						.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量"),
+					new OptionData(OptionType.USER, "target", "The target user", false, false)
+						.setNameLocalization(CHINESE_TAIWAN, "使用者")
+						.setNameLocalization(CHINESE_CHINA, "用戶")),
 			Commands.slash(SCHEDULE, "Schedule a message to be send to a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
 					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")

@@ -1,7 +1,6 @@
 package cartoland.utilities;
 
 import cartoland.Cartoland;
-import cartoland.commands.AdminCommand;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -112,12 +111,10 @@ public final class TimerHandle
 				QuestionForumHandle.getInstance(forumPost).remind(); //試著提醒
 
 		//根據現在的時間 決定是否解ban
-		if (AdminCommand.tempBanSet.isEmpty()) //沒有人被temp_ban
-			return; //不用執行
-		for (AdminCommand.BanData bannedMember : new HashSet<>(AdminCommand.tempBanSet)) //建立新物件 以免修改到原set
-			bannedMember.tryUnban(); //嘗試解ban
+		for (MembersHandle.BannedUser user : DatabaseHandle.readAllBannedUsers())
+			user.tryUnban(); //嘗試解ban
 
-	}, secondsUntil((nowHour + 1) % HOURS), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
+	}, Duration.between(LocalDateTime.now(utc8), LocalDateTime.now(utc8).withMinute(0).withSecond(0).plusHours(1L)).getSeconds(), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	public static void setBirthday(long userID, int month, int day)
 	{
@@ -130,15 +127,6 @@ public final class TimerHandle
 	public static LocalDate getBirthday(long userID)
 	{
 		return DatabaseHandle.readBirthday(userID); //查詢db的紀錄
-	}
-
-	private static long secondsUntil(int hour)
-	{
-		LocalDateTime now = LocalDateTime.now(utc8); //現在的時間
-		LocalDateTime untilTime = now.withHour(hour).withMinute(0).withSecond(0); //目標時間
-
-		//如果現在的小時已經超過了目標的小時 例如要在3點時執行 但現在的時間已經4點了 那就明天再執行 否則今天就可執行
-		return Duration.between(now, now.isAfter(untilTime) ? untilTime.plusDays(1L) : untilTime).getSeconds();
 	}
 
 	private static void registerTimerEvent(TimerEvent timerEvent)

@@ -368,56 +368,6 @@ public final class AddCommands
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MODERATE_MEMBERS, Permission.MANAGE_CHANNEL))
 					.setContexts(InteractionContextType.GUILD)
 					.addSubcommands(
-						new SubcommandData(AdminCommand.TEMP_BAN, "Temporary ban a member")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "暫時停權一名成員")
-							.setDescriptionLocalization(CHINESE_CHINA, "暂时封锁一名成员")
-							.addOptions(
-								new OptionData(OptionType.USER, "target", "The member that you want to ban", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "目標")
-									.setNameLocalization(CHINESE_CHINA, "目标")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "你想停權的成員")
-									.setDescriptionLocalization(CHINESE_CHINA, "你想封锁的成员"),
-								new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be banned", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "時間")
-									.setNameLocalization(CHINESE_CHINA, "时长")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被停權的時間")
-									.setDescriptionLocalization(CHINESE_CHINA, "成员将被封锁的时长"),
-								new OptionData(OptionType.STRING, "unit", "The time unit of the duration", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "單位")
-									.setNameLocalization(CHINESE_CHINA, "单位")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
-									.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
-									.addChoices(
-										new Command.Choice("Hour", "hour")
-											.setNameLocalization(CHINESE_TAIWAN, "小時")
-											.setNameLocalization(CHINESE_CHINA, "小时"),
-										new Command.Choice("Double Hour", "double_hour")
-											.setNameLocalization(CHINESE_TAIWAN, "時辰")
-											.setNameLocalization(CHINESE_CHINA, "时辰"),
-										new Command.Choice("Day", "day")
-											.setNameLocalization(CHINESE_TAIWAN, "天")
-											.setNameLocalization(CHINESE_CHINA, "天"),
-										new Command.Choice("Week", "week")
-											.setNameLocalization(CHINESE_TAIWAN, "星期")
-											.setNameLocalization(CHINESE_CHINA, "星期"),
-										new Command.Choice("Month", "month")
-											.setNameLocalization(CHINESE_TAIWAN, "月")
-											.setNameLocalization(CHINESE_CHINA, "月"),
-										new Command.Choice("Season", "season")
-											.setNameLocalization(CHINESE_TAIWAN, "季")
-											.setNameLocalization(CHINESE_CHINA, "季"),
-										new Command.Choice("Year", "year")
-											.setNameLocalization(CHINESE_TAIWAN, "年")
-											.setNameLocalization(CHINESE_CHINA, "年"),
-										new Command.Choice("Decade", "decade")
-											.setNameLocalization(CHINESE_TAIWAN, "年代")
-											.setNameLocalization(CHINESE_CHINA, "年代"),
-										new Command.Choice("Wood Rat", "wood_rat")
-											.setNameLocalization(CHINESE_TAIWAN, "甲子")
-											.setNameLocalization(CHINESE_CHINA, "甲子"),
-										new Command.Choice("Century", "century")
-											.setNameLocalization(CHINESE_TAIWAN, "世紀")
-											.setNameLocalization(CHINESE_CHINA, "世纪"))),
 						new SubcommandData(AdminCommand.SLOW_MODE, "Set the slow mode of a channel")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
 							.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")
@@ -504,6 +454,57 @@ public final class AddCommands
 							.setNameLocalization(CHINESE_CHINA, "理由")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "禁言的理由")
 							.setDescriptionLocalization(CHINESE_CHINA, "禁言的理由")),
+				Commands.slash(TEMP_BAN, "Temporary ban a member")
+						.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
+						.setDescriptionLocalization(CHINESE_TAIWAN, "暫時停權一名成員")
+						.setDescriptionLocalization(CHINESE_CHINA, "暂时封锁一名成员")
+						.addOptions(
+							new OptionData(OptionType.USER, "target", "The member that you want to ban", true, false)
+								.setNameLocalization(CHINESE_TAIWAN, "目標")
+								.setNameLocalization(CHINESE_CHINA, "目标")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "你想停權的成員")
+								.setDescriptionLocalization(CHINESE_CHINA, "你想封锁的成员"),
+							new OptionData(OptionType.NUMBER, "duration", "Duration that the member is going to be banned", true, false)
+								.setNameLocalization(CHINESE_TAIWAN, "時間")
+								.setNameLocalization(CHINESE_CHINA, "时长")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "成員將被停權的時間")
+								.setDescriptionLocalization(CHINESE_CHINA, "成员将被封锁的时长"),
+							new OptionData(OptionType.STRING, "unit", "The time unit of the duration", true, false)
+								.setNameLocalization(CHINESE_TAIWAN, "單位")
+								.setNameLocalization(CHINESE_CHINA, "单位")
+								.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+								.setDescriptionLocalization(CHINESE_CHINA, "时长的单位")
+								.addChoices(
+										new Command.Choice("Hour", "hour")
+												.setNameLocalization(CHINESE_TAIWAN, "小時")
+												.setNameLocalization(CHINESE_CHINA, "小时"),
+										new Command.Choice("Double Hour", "double_hour")
+												.setNameLocalization(CHINESE_TAIWAN, "時辰")
+												.setNameLocalization(CHINESE_CHINA, "时辰"),
+										new Command.Choice("Day", "day")
+												.setNameLocalization(CHINESE_TAIWAN, "天")
+												.setNameLocalization(CHINESE_CHINA, "天"),
+										new Command.Choice("Week", "week")
+												.setNameLocalization(CHINESE_TAIWAN, "星期")
+												.setNameLocalization(CHINESE_CHINA, "星期"),
+										new Command.Choice("Month", "month")
+												.setNameLocalization(CHINESE_TAIWAN, "月")
+												.setNameLocalization(CHINESE_CHINA, "月"),
+										new Command.Choice("Season", "season")
+												.setNameLocalization(CHINESE_TAIWAN, "季")
+												.setNameLocalization(CHINESE_CHINA, "季"),
+										new Command.Choice("Year", "year")
+												.setNameLocalization(CHINESE_TAIWAN, "年")
+												.setNameLocalization(CHINESE_CHINA, "年"),
+										new Command.Choice("Decade", "decade")
+												.setNameLocalization(CHINESE_TAIWAN, "年代")
+												.setNameLocalization(CHINESE_CHINA, "年代"),
+										new Command.Choice("Wood Rat", "wood_rat")
+												.setNameLocalization(CHINESE_TAIWAN, "甲子")
+												.setNameLocalization(CHINESE_CHINA, "甲子"),
+										new Command.Choice("Century", "century")
+												.setNameLocalization(CHINESE_TAIWAN, "世紀")
+												.setNameLocalization(CHINESE_CHINA, "世纪"))),
 			Commands.slash(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
 					.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")

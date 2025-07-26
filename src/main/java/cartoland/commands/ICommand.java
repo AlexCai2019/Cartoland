@@ -43,6 +43,7 @@ public interface ICommand
 	String RELOAD = "reload";
 	String ADMIN = "admin";
 	String MUTE = "mute";
+	String TEMP_BAN = "temp_ban";
 	String CLEAR_MESSAGE = "clear_message";
 	String SCHEDULE = "schedule";
 	String ONE_A_TWO_B = "one_a_two_b";

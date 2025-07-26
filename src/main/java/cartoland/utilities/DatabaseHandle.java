@@ -289,7 +289,7 @@ class DatabaseHandle
 
 	static String readIntroduction(long userID)
 	{
-		String sql = "SELECT introduction FROM users WHERE user_id=?";
+		String sql = "SELECT introduction FROM users WHERE user_id=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))
@@ -323,6 +323,68 @@ class DatabaseHandle
 		catch (SQLException e)
 		{
 			logger.error("寫入users.introduction時發生問題！", e);
+		}
+	}
+
+	static void banUser(MembersHandle.BannedUser user)
+	{
+		String sql = "INSERT INTO ban_list (user_id, unban_time, guild_id) VALUES (?,?,?);";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, user.userID());
+			statement.setLong(2, user.unbanTime());
+			statement.setLong(3, user.guildID());
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入ban_list時發生問題！", e);
+		}
+	}
+
+	static List<MembersHandle.BannedUser> readAllBannedUsers()
+	{
+		String sql = "SELECT user_id, unban_time, guild_id FROM ban_list;";
+		List<MembersHandle.BannedUser> bannedUsers = new ArrayList<>(); //所有人
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql);
+		     ResultSet result = statement.executeQuery())
+		{
+			while (result.next()) //找出所有人
+			{
+				long userID = result.getLong(1);
+				long unbanTime = result.getLong(2);
+				long guildID = result.getLong(3);
+				bannedUsers.add(new MembersHandle.BannedUser(userID, unbanTime, guildID));
+			}
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取ban_list時發生問題！", e);
+		}
+
+		return bannedUsers;
+	}
+
+	static void pardonUser(MembersHandle.BannedUser user)
+	{
+		String sql = "DELETE FROM ban_list WHERE user_id=? AND guild_id=?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, user.userID());
+			statement.setLong(2, user.guildID());
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("刪除ban_list時發生問題！", e);
 		}
 	}
 }

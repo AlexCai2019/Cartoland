@@ -165,6 +165,9 @@ public class CommandUsage extends ListenerAdapter
 		//mute
 		commands.put(MUTE, new MuteCommand());
 
+		//temp_ban
+		commands.put(TEMP_BAN, new TempBanCommand());
+
 		//clear_message
 		commands.put(CLEAR_MESSAGE, new ClearMessageCommand());
 

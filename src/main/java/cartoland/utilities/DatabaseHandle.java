@@ -387,4 +387,51 @@ class DatabaseHandle
 			logger.error("刪除ban_list時發生問題！", e);
 		}
 	}
+
+	static void writeScheduledEvent(int hour, String name, String contents, long channelID)
+	{
+		String sql = "INSERT INTO scheduled_event (hour, name, contents, channel_id) VALUES (?,?,?,?);";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setInt(1, hour);
+			statement.setString(2, name);
+			statement.setString(3, contents);
+			statement.setLong(4, channelID);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入scheduled_event時發生問題！", e);
+		}
+	}
+
+	static List<TimerHandle.TimerEvent> readAllScheduledEvents()
+	{
+		String sql = "SELECT hour, name, contents, channel_id FROM scheduled_event;";
+		List<TimerHandle.TimerEvent> scheduledEvents = new ArrayList<>(); //所有事件
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql);
+		     ResultSet result = statement.executeQuery())
+		{
+			while (result.next()) //找出所有事件
+			{
+				int hour = result.getInt(1);
+				String name = result.getString(2);
+				String contents = result.getString(3);
+				long channelID = result.getLong(4);
+
+				scheduledEvents.add(new TimerHandle.TimerEvent(hour, name, contents, channelID));
+			}
+		}
+		catch (SQLException e)
+		{
+			logger.error("讀取scheduled_event時發生問題！", e);
+		}
+
+		return scheduledEvents;
+	}
 }

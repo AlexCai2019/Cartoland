@@ -32,6 +32,8 @@ public class BotOnlineOffline extends ListenerAdapter
 	@Override
 	public void onReady(@NotNull ReadyEvent event)
 	{
+		TimerHandle.startTimer();
+
 		logger.info("online");
 	}
 

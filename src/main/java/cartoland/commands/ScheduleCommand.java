@@ -1,10 +1,8 @@
 package cartoland.commands;
 
-import cartoland.Cartoland;
 import cartoland.utilities.TimerHandle;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -90,9 +88,9 @@ public class ScheduleCommand extends HasSubcommands
 			String first20Characters = contentLength <= 20 ? content : content.substring(0, 20); //取其前20個字
 			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名_時間_開頭前20個字
 			boolean once = event.getOption("once", Boolean.FALSE, OptionMapping::getAsBoolean); //是否為一次性
-			TimerHandle.TimerEvent timerEvent = new TimerHandle.TimerEvent(time, content, guildChannel.getIdLong());
+			TimerHandle.TimerEvent timerEvent = new TimerHandle.TimerEvent(time, name, content, guildChannel.getIdLong());
 			timerEvent.setOnce(once); //設定是否為一次性
-			timerEvent.register(name); //註冊
+			timerEvent.register(); //註冊
 
 			event.reply("The bot will send \"" + first20Characters + (contentLength > 20 ? "…" : "") + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}

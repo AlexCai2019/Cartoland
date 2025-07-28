@@ -30,34 +30,36 @@ public final class TimerHandle
 	public static class TimerEvent implements Runnable
 	{
 		private final int hour;
+		@Getter
+		private final String name;
 		private final Runnable function;
 		private final boolean isSystem;
 
 		@Setter
 		private boolean once = false;
-		@Getter
-		private String name = "";
 
-		public TimerEvent(int hour, String contents, long channelID)
+		public TimerEvent(int hour, String name, String contents, long channelID)
 		{
-			this(hour, () ->
+			this(hour, name, () ->
 			{
 				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
 				if (channel != null) //如果找到頻道
 					channel.sendMessage(contents).queue(); //發送訊息
 			}, false);
+
+			DatabaseHandle.writeScheduledEvent(hour, name, contents, channelID);
 		}
 
-		private TimerEvent(int hour, Runnable function, boolean isSystem)
+		private TimerEvent(int hour, String name, Runnable function, boolean isSystem)
 		{
-			this.hour = hour;
-			this.function = function;
-			this.isSystem = isSystem;
-		}
-
-		public void register(String name)
-		{
+			this.hour = hour; //執行時間
 			this.name = name; //註冊名稱
+			this.function = function; //執行函數
+			this.isSystem = isSystem; //是否為系統
+		}
+
+		public void register()
+		{
 			hourRunFunctions[hour].add(this); //記錄下這個小時要跑這個
 		}
 
@@ -88,33 +90,6 @@ public final class TimerHandle
 		//初始化時間事件
 		for (short i = 0; i < HOURS; i++)
 			hourRunFunctions[i] = new LinkedHashSet<>();
-		JDA jda = Cartoland.getJDA();
-
-		//半夜12點
-		new TimerEvent(0, () -> //和生日有關的
-		{
-			LocalDate today = LocalDate.now(utc8);
-			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
-			if (birthdayMembersID.isEmpty()) //今天沒有人生日
-				return;
-
-			TextChannel lobbyChannel = jda.getTextChannelById(IDs.ZH_CHAT_CHANNEL_ID); //大廳頻道
-			if (lobbyChannel == null) //找不到大廳頻道
-				return;
-
-			for (long birthdayMemberID : birthdayMembersID)
-				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！\n").queue();
-		}, true).register("zero");
-
-		//凌晨3點
-		new TimerEvent(3, () -> //好棒 三點了
-		{
-			TextChannel undergroundChannel = jda.getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
-			if (undergroundChannel == null) //找不到地下頻道
-				return; //結束
-			undergroundChannel.sendMessage("https://i.imgur.com/nWkSB2G.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
-			undergroundChannel.sendMessage("https://i.imgur.com/gF69EIo.jpg").queue(); //好棒，三點了
-		}, true).register("three");
 	}
 
 	//https://stackoverflow.com/questions/65984126
@@ -161,6 +136,40 @@ public final class TimerHandle
 				if (!timerEvent.isSystem) //不可以回傳與系統運作相關的事件
 					events.add(timerEvent);
 		return events;
+	}
+
+	public static void startTimer()
+	{
+		JDA jda = Cartoland.getJDA();
+
+		//半夜12點
+		new TimerEvent(0, "zero", () -> //和生日有關的
+		{
+			LocalDate today = LocalDate.now(utc8);
+			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
+			if (birthdayMembersID.isEmpty()) //今天沒有人生日
+				return;
+
+			TextChannel lobbyChannel = jda.getTextChannelById(IDs.ZH_CHAT_CHANNEL_ID); //大廳頻道
+			if (lobbyChannel == null) //找不到大廳頻道
+				return;
+
+			for (long birthdayMemberID : birthdayMembersID)
+				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！\n").queue();
+		}, true).register();
+
+		//凌晨3點
+		new TimerEvent(3, "three", () -> //好棒 三點了
+		{
+			TextChannel undergroundChannel = jda.getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
+			if (undergroundChannel == null) //找不到地下頻道
+				return; //結束
+			undergroundChannel.sendMessage("https://i.imgur.com/nWkSB2G.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
+			undergroundChannel.sendMessage("https://i.imgur.com/gF69EIo.jpg").queue(); //好棒，三點了
+		}, true).register();
+
+		for (TimerEvent scheduledEvent : DatabaseHandle.readAllScheduledEvents())
+			scheduledEvent.register();
 	}
 
 	/**

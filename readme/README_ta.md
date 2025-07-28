@@ -19,12 +19,7 @@
 - 📁`lang/`，以及本專案的 `lang/` 資料匣仔內底的所有 `.json` 檔案。
 - 📁`logs/`
 - 📁`serialize/`，以及下列檔案：
-  - 📄`all_members.ser`，從一个值是`Long`的`HashSet`串聯化而來。
-  - 📄`introduction.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
-  - 📄`scheduled_events.ser`，從一个索引是`String`、值是`cartoland.utilities.TimerHandle.TimerEvent`的`HashMap`串聯化而來。
-  - 📄`temp_ban_list.ser`，從一个值是`cartoland.commands.AdminCommand.BanData`的`HashSet`串聯化而來。
   - 📄`unresolved_questions.ser`，從一个值是`Long`的`HashSet`串聯化而來。
-  - 📄`users.ser`，從一个索引是`Long`、值是`String`的`HashMap`串聯化而來。
 
 ## 啟動
 透過佇終端機輸入以下的指令啟動機器人：

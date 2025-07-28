@@ -19,12 +19,7 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
 - 📁`lang/` with all `.json` files found in the `lang/` folder of this repository.
 - 📁`logs/`
 - 📁`serialize/` with these following files:
-  - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
-  - 📄`scheduled_events.ser` serialized from a `HashMap` which use `String` as key and `cartoland.utilities.TimerHandle.TimerEvent` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashSet` which use `cartoland.commands.AdminCommand.BanData` as value.
   - 📄`unresolved_questions.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## Launching
 Start the bot by running the following command in your terminal:

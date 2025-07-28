@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
-import java.util.Set;
+import java.util.List;
 
 public class ScheduleCommand extends HasSubcommands
 {
@@ -23,21 +23,35 @@ public class ScheduleCommand extends HasSubcommands
 		subcommands.put(DELETE, event ->
 		{
 			String scheduledEventName = event.getOption("name", " ", OptionMapping::getAsString); //事件名稱
-			if (TimerHandle.hasScheduledEvent(scheduledEventName)) //如果曾有schedule過該名稱的事件
+
+			int found = 0;
+			for (TimerHandle.TimerEvent timerEvent : TimerHandle.scheduledEvents())
 			{
-				event.reply("Removed scheduled `" + scheduledEventName + "` message.").queue();
-				TimerHandle.unregisterScheduledEvent(scheduledEventName); //移除事件
+				if (timerEvent.getName().equals(scheduledEventName))
+				{
+					timerEvent.unregister(); //移除事件
+					found++;
+				}
 			}
+
+			if (found != 0) //如果曾有schedule過該名稱的事件
+				event.reply("Removed " + found + " scheduled `" + scheduledEventName + "` message(s).").queue();
 			else
 				event.reply("There's no `" + scheduledEventName + "` event!").queue();
 		});
 		subcommands.put(LIST, event ->
 		{
-			Set<String> eventNames = TimerHandle.scheduledEventsNames(); //事件名稱們
-			if (eventNames.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
+			List<TimerHandle.TimerEvent> events = TimerHandle.scheduledEvents(); //事件們
+			if (events.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
+			{
 				event.reply("There's no scheduled messages!").setEphemeral(true).queue();
-			else
-				event.reply("```\n" + String.join("\n", eventNames) + "\n```").queue();
+				return;
+			}
+
+			StringBuilder replyString = new StringBuilder("```\n"); //回覆字串
+			for (TimerHandle.TimerEvent timerEvent : events)
+				replyString.append(timerEvent.getName()).append('\n');
+			event.reply(replyString.append("```").toString()).queue();
 		});
 	}
 
@@ -65,7 +79,7 @@ public class ScheduleCommand extends HasSubcommands
 				return;
 			}
 			GuildMessageChannel guildMessageChannel = (GuildMessageChannel)guildChannel;
-			if (!guildMessageChannel.canTalk())
+			if (!guildMessageChannel.canTalk()) //不能說話
 			{
 				event.reply("I don't have the permission to view or talk in this channel!").setEphemeral(true).queue();
 				return;
@@ -75,27 +89,10 @@ public class ScheduleCommand extends HasSubcommands
 			int contentLength = content.length(); //訊息的長度
 			String first20Characters = contentLength <= 20 ? content : content.substring(0, 20); //取其前20個字
 			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名_時間_開頭前20個字
-
-			if (TimerHandle.hasScheduledEvent(name)) //如果已經註冊過這個事件名稱了
-			{
-				event.reply("Already has " + name + " event!").setEphemeral(true).queue();
-				return;
-			}
-
 			boolean once = event.getOption("once", Boolean.FALSE, OptionMapping::getAsBoolean); //是否為一次性
-
-			long channelID = guildChannel.getIdLong(); //頻道ID
-			Runnable sendMessageToChannel = () -> //事件內容的Runnable
-			{
-				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
-				if (channel != null) //如果找到頻道
-					channel.sendMessage(content).queue(); //發送訊息
-			};
-			TimerHandle.registerScheduledEvent(name, new TimerHandle.TimerEvent((byte) time, once ? () -> //如果是一次性
-			{
-				sendMessageToChannel.run(); //執行Runnable
-				TimerHandle.unregisterScheduledEvent(name); //執行完後刪除事件
-			} : sendMessageToChannel)); //不是一次性 就直接把Runnable傳入
+			TimerHandle.TimerEvent timerEvent = new TimerHandle.TimerEvent(time, content, guildChannel.getIdLong());
+			timerEvent.setOnce(once); //設定是否為一次性
+			timerEvent.register(name); //註冊
 
 			event.reply("The bot will send \"" + first20Characters + (contentLength > 20 ? "…" : "") + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}

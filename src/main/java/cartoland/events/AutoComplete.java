@@ -235,8 +235,9 @@ public class AutoComplete extends ListenerAdapter
 				return;
 			String optionValue = focusedOption.getValue();
 			event.replyChoices(
-					TimerHandle.scheduledEventsNames()
+					TimerHandle.scheduledEvents()
 							.stream()
+							.map(TimerHandle.TimerEvent::getName)
 							.filter(name -> name.contains(optionValue))
 							.limit(OptionData.MAX_CHOICES)
 							.map(GenericComplete::stringToChoice)

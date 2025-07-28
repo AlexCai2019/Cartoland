@@ -2,6 +2,19 @@ package cartoland.utilities;
 
 public interface IStringHelper
 {
+	/**
+	 * Create a string from the value of a double without trailing zeros.
+	 * <pre>
+	 *     String s1 = Algorithm.cleanFPString("5.5"); //5.5
+	 *     String s2 = Algorithm.cleanFPString("5.0"); //5
+	 *     String s3 = Algorithm.cleanFPString("1.500"); //1.5
+	 * </pre>
+	 *
+	 * @param fpString The string that are going to trim the trailing zeros.
+	 * @return The string of duration without trailing zeros.
+	 * @since 2.1
+	 * @author Alex Cai
+	 */
 	default String cleanFPString(String fpString)
 	{
 		int dotIndex = fpString.indexOf('.'); //小數點的索引

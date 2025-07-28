@@ -14,12 +14,7 @@
 - 📁`lang/`，以及本專案的 `lang/` 文件夾內的所有 `.json` 文件。
 - 📁`logs/`
 - 📁`serialize/` with these following files:
-  - 📄`all_members.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`introduction.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
-  - 📄`scheduled_events.ser` serialized from a `HashMap` which use `String` as key and `cartoland.utilities.TimerHandle.TimerEvent` as value.
-  - 📄`temp_ban_list.ser` serialized from a `HashSet` which use `cartoland.commands.AdminCommand.BanData` as value.
   - 📄`unresolved_questions.ser` serialized from a `HashSet` which use `Long` as value.
-  - 📄`users.ser` serialized from a `HashMap` which use `Long` as key and `String` as value.
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

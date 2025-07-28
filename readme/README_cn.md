@@ -14,12 +14,7 @@
 - 📁`lang/`，以及本项目的 `lang/` 文件夹内的所有 `.json` 文件。
 - 📁`logs/`
 - 📁`serialize/`，以及下列文件：
-  - 📄`all_members.ser`，从一个键为`Long`的`HashSet`序列化而来。
-  - 📄`introduction.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
-  - 📄`scheduled_events.ser`，从一个键为`String`、值为`cartoland.utilities.TimerHandle.TimerEvent`的`HashMap`序列化而来。
-  - 📄`temp_ban_list.ser`，从一个值为`cartoland.commands.AdminCommand.BanData`的`HashSet`序列化而来。
   - 📄`unresolved_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
-  - 📄`users.ser`，从一个键为`Long`、值为`String`的`HashMap`序列化而来。
 
 ## 激活
 通过在终端输入以下的命令激活机器人：

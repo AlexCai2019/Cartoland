@@ -45,6 +45,7 @@ public interface ICommand
 	String MUTE = "mute";
 	String TEMP_BAN = "temp_ban";
 	String CLEAR_MESSAGE = "clear_message";
+	String SLOW_MODE = "slow_mode";
 	String SCHEDULE = "schedule";
 	String ONE_A_TWO_B = "one_a_two_b";
 	String LOTTERY = "lottery";

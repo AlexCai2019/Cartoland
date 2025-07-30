@@ -362,47 +362,6 @@ public final class AddCommands
 					.addOption(OptionType.BOOLEAN, "silent", "Should be silent", false, false),
 			Commands.slash(RELOAD, "Reload all JSON files")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR)),
-			Commands.slash(ADMIN, "Admin commands")
-					.setDescriptionLocalization(CHINESE_TAIWAN, "管理員專用指令")
-					.setDescriptionLocalization(CHINESE_CHINA, "管理员专用命令")
-					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MODERATE_MEMBERS, Permission.MANAGE_CHANNEL))
-					.setContexts(InteractionContextType.GUILD)
-					.addSubcommands(
-						new SubcommandData(AdminCommand.SLOW_MODE, "Set the slow mode of a channel")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
-							.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")
-							.addOptions(
-								new OptionData(OptionType.CHANNEL, "channel", "The channel that you want to modify", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "頻道")
-									.setNameLocalization(CHINESE_CHINA, "频道")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "要修改的頻道")
-									.setDescriptionLocalization(CHINESE_CHINA, "要修改的频道"),
-								new OptionData(OptionType.NUMBER, "time", "The time that you want to delay", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "時間")
-									.setNameLocalization(CHINESE_CHINA, "时间")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "要延遲的時間")
-									.setDescriptionLocalization(CHINESE_CHINA, "要延迟的时间"),
-								new OptionData(OptionType.STRING, "unit", "The time unit of delay", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "單位")
-									.setNameLocalization(CHINESE_CHINA, "单位")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
-									.setDescriptionLocalization(CHINESE_CHINA, "时间的单位")
-									.addChoices(
-										new Command.Choice("Second", "second")
-											.setNameLocalization(CHINESE_TAIWAN, "秒")
-											.setNameLocalization(CHINESE_CHINA, "秒"),
-										new Command.Choice("Minute", "minute")
-											.setNameLocalization(CHINESE_TAIWAN, "分鐘")
-											.setNameLocalization(CHINESE_CHINA, "分钟"),
-										new Command.Choice("Quarter", "quarter")
-											.setNameLocalization(CHINESE_TAIWAN, "刻")
-											.setNameLocalization(CHINESE_CHINA, "刻"),
-										new Command.Choice("Hour", "hour")
-											.setNameLocalization(CHINESE_TAIWAN, "小時")
-											.setNameLocalization(CHINESE_CHINA, "小时"),
-										new Command.Choice("Double Hour", "double_hour")
-											.setNameLocalization(CHINESE_TAIWAN, "時辰")
-											.setNameLocalization(CHINESE_CHINA, "时辰")))),
 			Commands.slash(MUTE, "Mute a user")
 					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MODERATE_MEMBERS))
 					.setDescriptionLocalization(CHINESE_TAIWAN, "禁言一名使用者")
@@ -518,6 +477,43 @@ public final class AddCommands
 						new OptionData(OptionType.USER, "target", "The target user", false, false)
 							.setNameLocalization(CHINESE_TAIWAN, "使用者")
 							.setNameLocalization(CHINESE_CHINA, "用戶")),
+			Commands.slash(SLOW_MODE, "Set the slow mode of a channel")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
+					.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")
+					.setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_CHANNEL))
+					.setContexts(InteractionContextType.GUILD)
+					.addOptions(
+					new OptionData(OptionType.CHANNEL, "channel", "The channel that you want to modify", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "頻道")
+							.setNameLocalization(CHINESE_CHINA, "频道")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "要修改的頻道")
+							.setDescriptionLocalization(CHINESE_CHINA, "要修改的频道"),
+					new OptionData(OptionType.NUMBER, "time", "The time that you want to delay", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "時間")
+							.setNameLocalization(CHINESE_CHINA, "时间")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "要延遲的時間")
+							.setDescriptionLocalization(CHINESE_CHINA, "要延迟的时间"),
+					new OptionData(OptionType.STRING, "unit", "The time unit of delay", true, false)
+							.setNameLocalization(CHINESE_TAIWAN, "單位")
+							.setNameLocalization(CHINESE_CHINA, "单位")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "時間的單位")
+							.setDescriptionLocalization(CHINESE_CHINA, "时间的单位")
+							.addChoices(
+									new Command.Choice("Second", "second")
+											.setNameLocalization(CHINESE_TAIWAN, "秒")
+											.setNameLocalization(CHINESE_CHINA, "秒"),
+									new Command.Choice("Minute", "minute")
+											.setNameLocalization(CHINESE_TAIWAN, "分鐘")
+											.setNameLocalization(CHINESE_CHINA, "分钟"),
+									new Command.Choice("Quarter", "quarter")
+											.setNameLocalization(CHINESE_TAIWAN, "刻")
+											.setNameLocalization(CHINESE_CHINA, "刻"),
+									new Command.Choice("Hour", "hour")
+											.setNameLocalization(CHINESE_TAIWAN, "小時")
+											.setNameLocalization(CHINESE_CHINA, "小时"),
+									new Command.Choice("Double Hour", "double_hour")
+											.setNameLocalization(CHINESE_TAIWAN, "時辰")
+											.setNameLocalization(CHINESE_CHINA, "时辰"))),
 			Commands.slash(SCHEDULE, "Schedule a message to be send to a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "排程一則訊息發送至一個頻道")
 					.setDescriptionLocalization(CHINESE_CHINA, "排程一则信息发送至一个频道")

@@ -41,7 +41,6 @@ public interface ICommand
 	String MEGUMIN = "megumin";
 	String SHUTDOWN = "shutdown";
 	String RELOAD = "reload";
-	String ADMIN = "admin";
 	String MUTE = "mute";
 	String TEMP_BAN = "temp_ban";
 	String CLEAR_MESSAGE = "clear_message";

@@ -84,15 +84,25 @@ public class ScheduleCommand extends HasSubcommands
 			}
 
 			String content = event.getOption("content", " ", OptionMapping::getAsString); //內容
-			int contentLength = content.length(); //訊息的長度
-			String first20Characters = contentLength <= 20 ? content : content.substring(0, 20); //取其前20個字
-			String name = guildChannel.getName() + '_' + time + '_' + first20Characters; //頻道名_時間_開頭前20個字
+			String truncate, ellipsis;
+			if (content.length() > 20) //訊息太長就取其前20個字
+			{
+				truncate = content.substring(0, 20);
+				ellipsis = "…";
+			}
+			else
+			{
+				truncate = content;
+				ellipsis = "";
+			}
+			String name = guildChannel.getName() + '_' + time + '_' + truncate; //頻道名_時間_開頭前20個字
 			boolean once = event.getOption("once", Boolean.FALSE, OptionMapping::getAsBoolean); //是否為一次性
+
 			TimerHandle.TimerEvent timerEvent = new TimerHandle.TimerEvent(time, name, content, guildChannel.getIdLong());
 			timerEvent.setOnce(once); //設定是否為一次性
 			timerEvent.register(); //註冊
 
-			event.reply("The bot will send \"" + first20Characters + (contentLength > 20 ? "…" : "") + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
+			event.reply("The bot will send \"" + truncate + ellipsis + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}
 	}
 }

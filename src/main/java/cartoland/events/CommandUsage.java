@@ -159,9 +159,6 @@ public class CommandUsage extends ListenerAdapter
 			JsonHandle.reloadLanguageFiles();
 		});
 
-		//admin
-		commands.put(ADMIN, new AdminCommand());
-
 		//mute
 		commands.put(MUTE, new MuteCommand());
 
@@ -170,6 +167,9 @@ public class CommandUsage extends ListenerAdapter
 
 		//clear_message
 		commands.put(CLEAR_MESSAGE, new ClearMessageCommand());
+
+		//slow_mode
+		commands.put(SLOW_MODE, new SlowModeCommand());
 
 		//schedule
 		commands.put(SCHEDULE, new ScheduleCommand());

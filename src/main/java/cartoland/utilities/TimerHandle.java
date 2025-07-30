@@ -34,7 +34,6 @@ public final class TimerHandle
 		private final String name;
 		private final Runnable function;
 		private final boolean isSystem;
-
 		@Setter
 		private boolean once = false;
 
@@ -45,7 +44,7 @@ public final class TimerHandle
 				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
 				if (channel != null) //如果找到頻道
 					channel.sendMessage(contents).queue(); //發送訊息
-			}, false);
+			}, false); //不是系統的一部份 可以被清除
 
 			DatabaseHandle.writeScheduledEvent(hour, name, contents, channelID);
 		}

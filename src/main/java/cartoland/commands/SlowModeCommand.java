@@ -7,16 +7,7 @@ import net.dv8tion.jda.api.entities.channel.attribute.ISlowmodeChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
-/**
- * {@code AdminCommand} is an execution when a moderator uses /admin command. This class extends
- * {@link HasSubcommands} class which implements {@link ICommand} interface, which is for the commands HashMap in
- * {@link cartoland.events.CommandUsage}. This class doesn't handle sub commands, but call other classes to
- * deal with it.
- *
- * @since 2.1
- * @author Alex Cai
- */
-public class AdminCommand implements ICommand, IStringHelper
+public class SlowModeCommand implements ICommand, IStringHelper
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)

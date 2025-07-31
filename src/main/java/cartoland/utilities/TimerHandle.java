@@ -27,13 +27,23 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
+	private record ScheduledEvent(String contents, long channelID) implements Runnable
+	{
+		@Override
+		public void run()
+		{
+			MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
+			if (channel != null) //如果找到頻道
+				channel.sendMessage(contents).queue(); //發送訊息
+		}
+	}
+
 	public static class TimerEvent implements Runnable
 	{
 		private final int hour;
 		@Getter
 		private final String name;
-		private final Runnable function;
-		private final boolean isSystem;
+		private final Runnable function; //執行函數 當類別為ScheduledEvent時代表是排程事件 否則是系統事件
 		@Setter
 		private boolean once = false;
 
@@ -42,7 +52,8 @@ public final class TimerHandle
 		@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
 		private static final Set<TimerEvent>[] allTimerEvents = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
 		private static int scheduledEventsCount = 0; //scheduled event的數量
-		@Getter private static long updatedTime = System.currentTimeMillis();
+		@Getter
+		private static long updatedTime = System.currentTimeMillis();
 		static
 		{
 			//初始化時間事件
@@ -55,41 +66,36 @@ public final class TimerHandle
 			if (scheduledEventsCount == 0) //如果沒有
 				return Collections.emptyList();
 
-			List<TimerEvent> events = new ArrayList<>(); //要回傳的 正被排程的事件
+			List<TimerEvent> events = new ArrayList<>(scheduledEventsCount); //要回傳的 正被排程的事件
 			for (Set<TimerEvent> timerEvents : allTimerEvents) //所有定時事件 包括系統事件
 				for (TimerEvent timerEvent : timerEvents)
-					if (!timerEvent.isSystem) //不可以回傳系統定時事件
+					if (timerEvent.function instanceof ScheduledEvent) //不可以回傳系統定時事件
 						events.add(timerEvent); //只儲存排程事件
 			return events;
 		}
 
 		public TimerEvent(int hour, String name, String contents, long channelID)
 		{
-			this(hour, name, () ->
-			{
-				MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
-				if (channel != null) //如果找到頻道
-					channel.sendMessage(contents).queue(); //發送訊息
-			}, false); //不是系統的一部份 可以被清除
-
-			DatabaseHandle.writeScheduledEvent(hour, name, contents, channelID);
+			this(hour, name, new ScheduledEvent(contents, channelID)); //不是系統的一部份 可以被清除
 		}
 
-		private TimerEvent(int hour, String name, Runnable function, boolean isSystem)
+		private TimerEvent(int hour, String name, Runnable function)
 		{
 			this.hour = hour; //執行時間
 			this.name = name; //註冊名稱
 			this.function = function; //執行函數
-			this.isSystem = isSystem; //是否為系統
 		}
 
 		public void register()
 		{
 			allTimerEvents[hour].add(this); //記錄下這個小時要跑這個
-			if (isSystem)
-				return;
-			scheduledEventsCount++; //數量 + 1
 			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
+
+			if (function instanceof ScheduledEvent eventFunction) //如果是排程事件
+			{
+				scheduledEventsCount++; //數量 + 1
+				DatabaseHandle.writeScheduledEvent(hour, name, eventFunction.contents, eventFunction.channelID, once);
+			}
 		}
 
 		@Override
@@ -103,10 +109,13 @@ public final class TimerHandle
 		public void unregister()
 		{
 			allTimerEvents[hour].remove(this); //不再需要跑這個
-			if (isSystem)
-				return;
-			scheduledEventsCount--; //數量 - 1
 			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
+
+			if (function instanceof ScheduledEvent eventFunction) //如果是排程事件
+			{
+				scheduledEventsCount--; //數量 - 1
+				DatabaseHandle.eraseScheduledEvent(hour, name, eventFunction.contents, eventFunction.channelID, once);
+			}
 		}
 	}
 
@@ -170,7 +179,7 @@ public final class TimerHandle
 
 			for (long birthdayMemberID : birthdayMembersID)
 				lobbyChannel.sendMessage("今天是 <@" + Long.toUnsignedString(birthdayMemberID) + "> 的生日！\n").queue();
-		}, true).register();
+		}).register();
 
 		//凌晨3點
 		new TimerEvent(3, "three", () -> //好棒 三點了
@@ -180,7 +189,7 @@ public final class TimerHandle
 				return; //結束
 			undergroundChannel.sendMessage("https://i.imgur.com/nWkSB2G.jpg").queue(); //誰會想在凌晨三點吃美味蟹堡
 			undergroundChannel.sendMessage("https://i.imgur.com/gF69EIo.jpg").queue(); //好棒，三點了
-		}, true).register();
+		}).register();
 
 		for (TimerEvent scheduledEvent : DatabaseHandle.readAllScheduledEvents()) //所有資料庫內儲存的排程事件
 			scheduledEvent.register(); //註冊

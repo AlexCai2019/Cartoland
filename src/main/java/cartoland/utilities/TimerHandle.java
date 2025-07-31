@@ -37,6 +37,32 @@ public final class TimerHandle
 		@Setter
 		private boolean once = false;
 
+		//timer event: 泛指所有定時事件
+		//scheduled event: 特指透過schedule指令新增的定時事件 又稱排程事件
+		@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
+		private static final Set<TimerEvent>[] allTimerEvents = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
+		private static int scheduledEventsCount = 0; //scheduled event的數量
+		@Getter private static long updatedTime = System.currentTimeMillis();
+		static
+		{
+			//初始化時間事件
+			for (short i = 0; i < HOURS; i++)
+				allTimerEvents[i] = new LinkedHashSet<>();
+		}
+
+		public static List<TimerEvent> scheduledEvents()
+		{
+			if (scheduledEventsCount == 0) //如果沒有
+				return Collections.emptyList();
+
+			List<TimerEvent> events = new ArrayList<>(); //要回傳的 正被排程的事件
+			for (Set<TimerEvent> timerEvents : allTimerEvents) //所有定時事件 包括系統事件
+				for (TimerEvent timerEvent : timerEvents)
+					if (!timerEvent.isSystem) //不可以回傳系統定時事件
+						events.add(timerEvent); //只儲存排程事件
+			return events;
+		}
+
 		public TimerEvent(int hour, String name, String contents, long channelID)
 		{
 			this(hour, name, () ->
@@ -59,7 +85,11 @@ public final class TimerHandle
 
 		public void register()
 		{
-			hourRunFunctions[hour].add(this); //記錄下這個小時要跑這個
+			allTimerEvents[hour].add(this); //記錄下這個小時要跑這個
+			if (isSystem)
+				return;
+			scheduledEventsCount++; //數量 + 1
+			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
 		}
 
 		@Override
@@ -72,7 +102,11 @@ public final class TimerHandle
 
 		public void unregister()
 		{
-			hourRunFunctions[hour].remove(this); //不再需要跑這個
+			allTimerEvents[hour].remove(this); //不再需要跑這個
+			if (isSystem)
+				return;
+			scheduledEventsCount--; //數量 - 1
+			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
 		}
 	}
 
@@ -82,20 +116,11 @@ public final class TimerHandle
 
 	private static final short HOURS = 24; //一天有24小時
 
-	@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
-	private static final Set<TimerEvent>[] hourRunFunctions = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
-	static
-	{
-		//初始化時間事件
-		for (short i = 0; i < HOURS; i++)
-			hourRunFunctions[i] = new LinkedHashSet<>();
-	}
-
 	//https://stackoverflow.com/questions/65984126
 	private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 	private static final ScheduledFuture<?> everyHour = executorService.scheduleAtFixedRate(() -> //每小時執行一次
 	{
-		for (TimerEvent event : hourRunFunctions[LocalTime.now(utc8).getHour()]) //根據現在是幾點 走訪被註冊的事件們
+		for (TimerEvent event : TimerEvent.allTimerEvents[LocalTime.now(utc8).getHour()]) //根據現在是幾點 走訪被註冊的事件們
 			event.run(); //執行
 
 		//根據現在的時間 決定是否解ban
@@ -125,16 +150,6 @@ public final class TimerHandle
 	public static LocalDate getBirthday(long userID)
 	{
 		return DatabaseHandle.readBirthday(userID); //查詢db的紀錄
-	}
-
-	public static List<TimerEvent> scheduledEvents()
-	{
-		List<TimerEvent> events = new ArrayList<>(); //正被排程的事件
-		for (Set<TimerEvent> timerEvents : hourRunFunctions)
-			for (TimerEvent timerEvent : timerEvents)
-				if (!timerEvent.isSystem) //不可以回傳與系統運作相關的事件
-					events.add(timerEvent);
-		return events;
 	}
 
 	public static void startTimer()
@@ -167,8 +182,8 @@ public final class TimerHandle
 			undergroundChannel.sendMessage("https://i.imgur.com/gF69EIo.jpg").queue(); //好棒，三點了
 		}, true).register();
 
-		for (TimerEvent scheduledEvent : DatabaseHandle.readAllScheduledEvents())
-			scheduledEvent.register();
+		for (TimerEvent scheduledEvent : DatabaseHandle.readAllScheduledEvents()) //所有資料庫內儲存的排程事件
+			scheduledEvent.register(); //註冊
 	}
 
 	/**

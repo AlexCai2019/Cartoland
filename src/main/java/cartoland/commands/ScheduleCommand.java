@@ -20,26 +20,40 @@ public class ScheduleCommand extends HasSubcommands
 		subcommands.put(CREATE, new CreateSubCommand());
 		subcommands.put(DELETE, event ->
 		{
-			String scheduledEventName = event.getOption("name", " ", OptionMapping::getAsString); //事件名稱
+			List<TimerHandle.TimerEvent> scheduledEvents = TimerHandle.TimerEvent.scheduledEvents(); //所有排程事件
+			if (scheduledEvents.isEmpty())
+			{
+				event.reply("There's no any scheduled events!").queue();
+				return;
+			}
+
+			String scheduledEventName = event.getOption("name", " ", OptionMapping::getAsString); //排程事件名稱
 
 			int found = 0;
-			for (TimerHandle.TimerEvent timerEvent : TimerHandle.scheduledEvents())
+			for (TimerHandle.TimerEvent timerEvent : scheduledEvents) //走訪所有排程事件
 			{
-				if (timerEvent.getName().equals(scheduledEventName))
+				if (timerEvent.getName().equals(scheduledEventName)) //名字一樣
 				{
 					timerEvent.unregister(); //移除事件
-					found++;
+					found++; //計數 + 1 畢竟允許重名
 				}
 			}
 
-			if (found != 0) //如果曾有schedule過該名稱的事件
-				event.reply("Removed " + found + " scheduled `" + scheduledEventName + "` message(s).").queue();
-			else
+			if (found == 0) //如果不曾schedule過該名稱的事件
+			{
 				event.reply("There's no `" + scheduledEventName + "` event!").queue();
+				return;
+			}
+
+			//如果有找到
+			if (found > 1)
+				event.reply("Removed " + found + " scheduled `" + scheduledEventName + "` messages.").queue();
+			else
+				event.reply("Removed scheduled `" + scheduledEventName + "` message.").queue();
 		});
 		subcommands.put(LIST, event ->
 		{
-			List<TimerHandle.TimerEvent> events = TimerHandle.scheduledEvents(); //事件們
+			List<TimerHandle.TimerEvent> events = TimerHandle.TimerEvent.scheduledEvents(); //事件們
 			if (events.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
 			{
 				event.reply("There's no scheduled messages!").setEphemeral(true).queue();

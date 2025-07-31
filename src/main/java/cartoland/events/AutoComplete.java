@@ -227,22 +227,40 @@ public class AutoComplete extends ListenerAdapter
 
 	private static class ScheduleComplete extends GenericComplete
 	{
+		private List<TimerHandle.TimerEvent> scheduledEvents;
+		private long localLastUpdate;
+		private ScheduleComplete()
+		{
+			scheduledEvents = TimerHandle.TimerEvent.scheduledEvents();
+			localLastUpdate = TimerHandle.TimerEvent.getUpdatedTime();
+		}
+
 		@Override
 		void completeProcess(CommandAutoCompleteInteractionEvent event)
 		{
 			AutoCompleteQuery focusedOption = event.getFocusedOption();
 			if (!"name".equals(focusedOption.getName())) //必須要是name
 				return;
-			String optionValue = focusedOption.getValue();
-			event.replyChoices(
-					TimerHandle.scheduledEvents()
-							.stream()
-							.map(TimerHandle.TimerEvent::getName)
-							.filter(name -> name.contains(optionValue))
-							.limit(OptionData.MAX_CHOICES)
-							.map(GenericComplete::stringToChoice)
-							.toList())
-					.queue();
+
+			long lastUpdate = TimerHandle.TimerEvent.getUpdatedTime(); //上次更新的時間
+			if (localLastUpdate != lastUpdate) //時間不對
+			{
+				scheduledEvents = TimerHandle.TimerEvent.scheduledEvents(); //立刻更新
+				localLastUpdate = lastUpdate; //更新時間
+			}
+
+			String optionValue = focusedOption.getValue(); //先提出來
+			List<Command.Choice> choices;
+			if (scheduledEvents.isEmpty()) //是空的
+				choices = Collections.emptyList(); //沒有必要跑stream
+			else
+				choices = scheduledEvents.stream()
+					.map(TimerHandle.TimerEvent::getName)
+					.filter(name -> name.contains(optionValue))
+					.limit(OptionData.MAX_CHOICES)
+					.map(GenericComplete::stringToChoice)
+					.toList();
+			event.replyChoices(choices).queue();
 		}
 	}
 }

@@ -88,7 +88,7 @@ public class ContextMenu extends ListenerAdapter
 			case QUOTE_ ->
 			{
 				event.deferReply().queue(); //延後回覆
-				QuoteCommand.quoteMessage(event, event.getChannel(), event.getTarget());
+				QuoteCommand.quoteMessage(event, event.getTarget());
 			}
 
 			case PIN ->

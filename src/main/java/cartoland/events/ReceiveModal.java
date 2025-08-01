@@ -1,10 +1,16 @@
 package cartoland.events;
 
-import cartoland.utilities.JsonHandle;
+import cartoland.modals.*;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.modals.ModalMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static cartoland.modals.IModal.*;
 
 /**
  * {@code ReceiveModal} is a listener that triggers when a user interact with a modal. This class was registered in
@@ -15,26 +21,23 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
  */
 public class ReceiveModal extends ListenerAdapter
 {
-	public static final String NEW_TITLE_MODAL_ID = "new_title";
-	public static final String NEW_TITLE_TEXT = "new_title";
+	private static final Logger logger = LoggerFactory.getLogger(ReceiveModal.class);
+
+	private final Map<String, IModal> modals = new HashMap<>();
+
+	public ReceiveModal()
+	{
+		modals.put(NEW_TITLE_MODAL_ID, new NewTitleModal());
+		modals.put(UPDATE_INTRODUCE_ID, new UpdateIntroduceModal());
+	}
 
 	@Override
 	public void onModalInteraction(ModalInteractionEvent event)
 	{
+		String modalID = event.getModalId();
+		modals.get(modalID).modalProcess(event);
+
 		User user = event.getUser();
-		long userID = user.getIdLong();
-		if (!NEW_TITLE_MODAL_ID.equals(event.getModalId())) //不是要命名討論串
-			return;
-
-		ModalMapping newTitle = event.getValue(NEW_TITLE_TEXT);
-		if (newTitle == null)
-		{
-			event.reply("Impossible, this is required!").setEphemeral(true).queue();
-			return;
-		}
-
-		String newTitleString = newTitle.getAsString(); //新標題
-		event.reply(JsonHandle.getString(userID, "rename_thread.changed", user.getEffectiveName(), newTitleString)).queue();
-		event.getGuildChannel().getManager().setName(newTitleString).queue();
+		logger.info("{}({}) modal {}", user.getName(), user.getId(), modalID); //log放最後 避免超過3秒限制
 	}
 }

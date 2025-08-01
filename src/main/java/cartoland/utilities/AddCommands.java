@@ -245,13 +245,7 @@ public final class AddCommands
 									.setDescriptionLocalization(CHINESE_CHINA, "你想认识的用户")),
 						new SubcommandData(IntroduceCommand.UPDATE, "Update your introduction")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "更新你的自我介紹")
-							.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍")
-							.addOptions(
-								new OptionData(OptionType.STRING, "content", "Your self introduction", true, false)
-									.setNameLocalization(CHINESE_TAIWAN, "內容")
-									.setNameLocalization(CHINESE_CHINA, "内容")
-									.setDescriptionLocalization(CHINESE_TAIWAN, "你的自我介紹")
-									.setDescriptionLocalization(CHINESE_CHINA, "你的自我介绍")),
+							.setDescriptionLocalization(CHINESE_CHINA, "更新你的自我介绍"),
 						new SubcommandData(IntroduceCommand.DELETE, "Delete your introduction")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的自我介紹")
 							.setDescriptionLocalization(CHINESE_CHINA, "删除你的自我介绍")),

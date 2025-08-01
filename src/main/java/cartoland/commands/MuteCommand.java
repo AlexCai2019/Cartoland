@@ -1,6 +1,6 @@
 package cartoland.commands;
 
-import cartoland.utilities.IStringHelper;
+import cartoland.methods.IStringHelper;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

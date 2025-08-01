@@ -35,7 +35,7 @@ public class ClearMessageCommand implements ICommand
 		int number = event.getOption("number", 1, OptionMapping::getAsInt); //要刪除的訊息數量
 		User target = event.getOption("target", OptionMapping::getAsUser); //要刪除的訊息的發送者
 
-		if (target == null && member.hasPermission(Permission.MESSAGE_MANAGE)) //沒有指定目標
+		if (target == null && member.hasPermission(Permission.MESSAGE_MANAGE)) //沒有指定目標且有管理權限
 		{
 			event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
 			channel.getIterableHistory()
@@ -45,9 +45,16 @@ public class ClearMessageCommand implements ICommand
 			return;
 		}
 
+		// 如果沒有指定目標且沒有管理權限，默認為使用者自己
+		if (target == null)
+		{
+			target = user;
+		}
+
 		if (user.equals(target) || member.hasPermission(Permission.MESSAGE_MANAGE)) //要刪除自己的訊息 或是有權限
 		{
-			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", user.getName(), number)).queue(); //趕快回覆避免超過3秒限制
+			String targetName = target.equals(user) ? user.getName() : target.getName();
+			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", targetName, number)).queue(); //趕快回覆避免超過3秒限制
 			channel.deleteMessages(
 					channel.getIterableHistory()
 							.stream()

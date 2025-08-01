@@ -458,9 +458,9 @@ public final class AddCommands
 									new Command.Choice("Century", "century")
 											.setNameLocalization(CHINESE_TAIWAN, "世紀")
 											.setNameLocalization(CHINESE_CHINA, "世纪"))),
-			Commands.slash(CLEAR_MESSAGE, "Delete messages from a user in the current channel")
-					.setDescriptionLocalization(CHINESE_TAIWAN, "刪除使用者在此頻道中的訊息")
-					.setDescriptionLocalization(CHINESE_CHINA, "删除用戶在此频道中的消息")
+			Commands.slash(CLEAR_MESSAGE, "Delete your messages or messages from a specific user (admin only)")
+					.setDescriptionLocalization(CHINESE_TAIWAN, "刪除你的訊息或指定使用者的訊息（僅管理員）")
+					.setDescriptionLocalization(CHINESE_CHINA, "删除你的消息或指定用户的消息（仅管理员）")
 					.setContexts(InteractionContextType.GUILD)
 					.addOptions(
 						new OptionData(OptionType.INTEGER, "number", "Number of messages to delete", true, false)
@@ -468,9 +468,11 @@ public final class AddCommands
 							.setNameLocalization(CHINESE_CHINA, "数量")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量")
 							.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量"),
-						new OptionData(OptionType.USER, "target", "The target user", false, false)
+						new OptionData(OptionType.USER, "target", "The target user (defaults to yourself if not specified)", false, false)
 							.setNameLocalization(CHINESE_TAIWAN, "使用者")
-							.setNameLocalization(CHINESE_CHINA, "用戶")),
+							.setNameLocalization(CHINESE_CHINA, "用戶")
+							.setDescriptionLocalization(CHINESE_TAIWAN, "目標使用者（如未指定則預設為自己）")
+							.setDescriptionLocalization(CHINESE_CHINA, "目标用户（如未指定则默认为自己）")),
 			Commands.slash(SLOW_MODE, "Set the slow mode of a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
 					.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")

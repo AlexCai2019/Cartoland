@@ -35,25 +35,30 @@ public class ClearMessageCommand implements ICommand
 		int number = event.getOption("number", 1, OptionMapping::getAsInt); //要刪除的訊息數量
 		User target = event.getOption("target", OptionMapping::getAsUser); //要刪除的訊息的發送者
 
-		if (target == null && member.hasPermission(Permission.MESSAGE_MANAGE)) //沒有指定目標
+		if (target == null) //沒有指定目標
 		{
-			event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
-			channel.getIterableHistory()
-					.limit(number)
-					.flatMap(channel::deleteMessages)
-					.queue();
+			if (member.hasPermission(Permission.MESSAGE_MANAGE)) //有管理權限
+			{
+				event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
+				channel.getIterableHistory()
+						.limit(number)
+						.flatMap(channel::deleteMessages)
+						.queue();
+			}
+			else //沒有權限
+				event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue();
 			return;
 		}
 
 		if (user.equals(target) || member.hasPermission(Permission.MESSAGE_MANAGE)) //要刪除自己的訊息 或是有權限
 		{
-			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", user.getName(), number)).queue(); //趕快回覆避免超過3秒限制
+			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", target.getEffectiveName(), number)).queue(); //趕快回覆避免超過3秒限制
 			channel.deleteMessages(
-					channel.getIterableHistory()
+						channel.getIterableHistory()
 							.stream()
 							.filter(message -> message.getAuthor().equals(target))
 							.limit(number)
-					.toList()).queue();
+							.toList()).queue();
 		}
 		else
 			event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue(); //沒有權限

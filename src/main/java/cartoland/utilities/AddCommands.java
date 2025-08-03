@@ -468,11 +468,11 @@ public final class AddCommands
 							.setNameLocalization(CHINESE_CHINA, "数量")
 							.setDescriptionLocalization(CHINESE_TAIWAN, "要刪除的訊息數量")
 							.setDescriptionLocalization(CHINESE_CHINA, "要删除的消息数量"),
-						new OptionData(OptionType.USER, "target", "The target user (defaults to yourself if not specified)", false, false)
+						new OptionData(OptionType.USER, "target", "The target user", false, false)
 							.setNameLocalization(CHINESE_TAIWAN, "使用者")
 							.setNameLocalization(CHINESE_CHINA, "用戶")
-							.setDescriptionLocalization(CHINESE_TAIWAN, "目標使用者（如未指定則預設為自己）")
-							.setDescriptionLocalization(CHINESE_CHINA, "目标用户（如未指定则默认为自己）")),
+							.setDescriptionLocalization(CHINESE_TAIWAN, "目標使用者")
+							.setDescriptionLocalization(CHINESE_CHINA, "目标用户")),
 			Commands.slash(SLOW_MODE, "Set the slow mode of a channel")
 					.setDescriptionLocalization(CHINESE_TAIWAN, "設定頻道的慢速模式")
 					.setDescriptionLocalization(CHINESE_CHINA, "设定频道的慢速模式")

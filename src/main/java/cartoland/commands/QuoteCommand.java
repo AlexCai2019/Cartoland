@@ -1,9 +1,9 @@
 package cartoland.commands;
 
 import cartoland.methods.IAnalyzeCTLCLink;
+import cartoland.methods.IQuotable;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.RegularExpressions;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -14,7 +14,6 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +23,7 @@ import java.util.List;
  * @since 1.6
  * @author Alex Cai
  */
-public class QuoteCommand implements ICommand, IAnalyzeCTLCLink
+public class QuoteCommand implements ICommand, IAnalyzeCTLCLink, IQuotable
 {
 	@Override
 	public void commandProcess(SlashCommandInteractionEvent event)
@@ -42,7 +41,24 @@ public class QuoteCommand implements ICommand, IAnalyzeCTLCLink
 	@Override
 	public void whenSuccess(IReplyCallback event, Message message)
 	{
-		quoteMessage(event, message);
+		User user = event.getUser();
+		long userID = user.getIdLong();
+		List<MessageEmbed> embeds = quoteMessage(message);
+		SlashCommandInteractionEvent commandEvent = (SlashCommandInteractionEvent) event;
+		boolean isMentionAuthor = commandEvent.getOption("mention_author", Boolean.FALSE, OptionMapping::getAsBoolean);
+
+		//提及訊息作者 vs 不提及訊息作者
+		WebhookMessageCreateAction<Message> messageAction;
+		if (isMentionAuthor) //要tag訊息作者
+		{
+			String mention = message.getAuthor().getAsMention();
+			messageAction = event.getHook()
+					.sendMessage(JsonHandle.getString(userID, "quote.mention", user.getEffectiveName(), mention))
+					.addEmbeds(embeds);
+		}
+		else
+			messageAction = event.getHook().sendMessageEmbeds(embeds);
+		messageAction.addComponents(ActionRow.of(Button.link(message.getJumpUrl(), JsonHandle.getString(userID, "quote.jump_message")))).queue();
 	}
 
 	@Override
@@ -55,40 +71,5 @@ public class QuoteCommand implements ICommand, IAnalyzeCTLCLink
 			default -> "quote.no_message";
 		};
 		event.getHook().sendMessage(JsonHandle.getString(event.getUser().getIdLong(), jsonKey)).setEphemeral(true).queue(); //回覆
-	}
-
-	public static void quoteMessage(IReplyCallback event, Message message)
-	{
-		User user = event.getUser(); //使用指令的使用者
-		User author = message.getAuthor(); //連結訊息的發送者
-		String messageTitle = author.getEffectiveName();
-		String messageLink = message.getJumpUrl();
-		List<MessageEmbed> embeds = new ArrayList<>(); //要被送出的所有embed們
-		EmbedBuilder messageEmbed = new EmbedBuilder()
-				.setTitle(messageTitle, messageLink)
-				.setAuthor(author.getName(), null, author.getEffectiveAvatarUrl())
-				.appendDescription(message.getContentRaw()) //訊息的內容
-				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
-				.setFooter(message.getChannel().getName(), null); //訊息的發送頻道
-
-		List<Message.Attachment> attachments = message.getAttachments(); //訊息的附件
-
-		List<Message.Attachment> images;
-		if (attachments.isEmpty() || (images = attachments.stream().filter(Message.Attachment::isImage).toList()).isEmpty()) //沒有任何附件或圖片
-			embeds.add(messageEmbed.build());
-		else //有圖片
-		{
-			embeds.add(messageEmbed.setImage(images.getFirst().getUrl()).build()); //第一個要放訊息embed
-			for (int i = 1, size = Math.min(images.size(), Message.MAX_EMBED_COUNT); i < size; i++) //剩下的要開新embed, 注意總數不能超過10個
-				embeds.add(new EmbedBuilder().setTitle(messageTitle, messageLink).setImage(images.get(i).getUrl()).build());
-		}
-
-		//提及訊息作者 vs 不提及訊息作者
-		WebhookMessageCreateAction<Message> messageCreateAction;
-		if (event instanceof SlashCommandInteractionEvent commandEvent && commandEvent.getOption("mention_author", Boolean.FALSE, OptionMapping::getAsBoolean))
-			messageCreateAction = event.getHook().sendMessage(JsonHandle.getString(user.getIdLong(), "quote.mention", user.getEffectiveName(), author.getAsMention())).addEmbeds(embeds);
-		else
-			messageCreateAction = event.getHook().sendMessageEmbeds(embeds); //不標註作者
-		messageCreateAction.addComponents(ActionRow.of(Button.link(messageLink, JsonHandle.getString(user.getIdLong(), "quote.jump_message")))).queue(); //連結按鈕
 	}
 }

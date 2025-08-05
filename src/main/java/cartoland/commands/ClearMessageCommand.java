@@ -3,10 +3,13 @@ package cartoland.commands;
 import cartoland.utilities.JsonHandle;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+
+import java.util.List;
 
 /**
  * {@code ClearMessageCommand} is an execution when a user uses /clear_message command.
@@ -42,25 +45,38 @@ public class ClearMessageCommand implements ICommand
 				event.reply(JsonHandle.getString(userID, "clear_message.success", number)).queue(); //趕快回覆避免超過3秒限制
 				channel.getIterableHistory()
 						.limit(number)
-						.flatMap(channel::deleteMessages)
-						.queue();
+						.queue(messages -> clearMessages(channel, messages));
 			}
 			else //沒有權限
 				event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue();
 			return;
 		}
 
-		if (user.equals(target) || member.hasPermission(Permission.MESSAGE_MANAGE)) //要刪除自己的訊息 或是有權限
+		boolean isSelf = user.equals(target);
+		if (isSelf || member.hasPermission(Permission.MESSAGE_MANAGE)) //要刪除自己的訊息 或是有權限
 		{
-			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", target.getEffectiveName(), number)).queue(); //趕快回覆避免超過3秒限制
-			channel.deleteMessages(
-						channel.getIterableHistory()
-							.stream()
-							.filter(message -> message.getAuthor().equals(target))
-							.limit(number)
-							.toList()).queue();
+			List<Message> messages = channel.getIterableHistory()
+					.stream()
+					.filter(message -> message.getAuthor().equals(target))
+					.limit(number)
+					.toList();
+			event.reply(JsonHandle.getString(userID, "clear_message.success_with_user", target.getEffectiveName(), messages.size()))
+				.setEphemeral(isSelf)
+				.queue();
+			clearMessages(channel, messages);
 		}
 		else
 			event.reply(JsonHandle.getString(userID, "clear_message.no_permission")).setEphemeral(true).queue(); //沒有權限
+	}
+
+	private void clearMessages(GuildMessageChannel channel, List<Message> messages)
+	{
+		if (messages.isEmpty()) //空的就算了
+			return;
+
+		if (messages.size() == 1) //只有一則
+			channel.deleteMessageById(messages.getFirst().getIdLong()).queue(); //那麼必須使用deleteMessageById
+		else //兩則或以上
+			channel.deleteMessages(messages).queue(); //可以用批次
 	}
 }

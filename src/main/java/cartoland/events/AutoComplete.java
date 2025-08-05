@@ -73,7 +73,7 @@ public class AutoComplete extends ListenerAdapter
 	{
 		abstract void completeProcess(CommandAutoCompleteInteractionEvent event);
 
-		protected static Command.Choice stringToChoice(String keyAndValue)
+		protected Command.Choice stringToChoice(String keyAndValue)
 		{
 			return new Command.Choice(keyAndValue, keyAndValue);
 		}
@@ -109,7 +109,7 @@ public class AutoComplete extends ListenerAdapter
 					commandList.stream()
 							.filter(word -> word.startsWith(optionValue))
 							.limit(OptionData.MAX_CHOICES)
-							.map(GenericComplete::stringToChoice)
+							.map(this::stringToChoice)
 							.toList()).queue();
 		}
 	}
@@ -125,7 +125,7 @@ public class AutoComplete extends ListenerAdapter
 	{
 		//這是TreeMap的排序方式 若要新增YouTuber 必須寫一個小程式測試TreeMap會怎麼排序
 		//Map<String, String> map = new TreeMap<>();
-		//map.put("Cloud Wolf", "@CloudWolfMinecraft") ... ...
+		//map.put("Cloud Wolf", "@CloudWolfMinecraft"); ... ...
 		private final YouTuber[] youtubers =
 		{
 			new YouTuber("Cloud Wolf", "@CloudWolfMinecraft"),
@@ -187,14 +187,18 @@ public class AutoComplete extends ListenerAdapter
 			"11","12","13","14","15","16","17","18","19","20",
 			"21","22","23","24","25","26","27","28","29","30","31"
 		};
+		private final Command.Choice[] thirtyOneChoices = new Command.Choice[31];
 		private final List<Command.Choice> twentyFive;
 
 		private BirthdayComplete()
 		{
+			for (byte b = 0; b < 31; b++)
+				thirtyOneChoices[b] = new Command.Choice(dates[b], b + 1L); //dates[0] ~ dates[30] 對應到1 ~ 31
+
 			//直接轉成固定大小的List 應該會比ArrayList快
 			Command.Choice[] twentyFiveArray = new Command.Choice[OptionData.MAX_CHOICES]; //1 ~ 25
 			for (byte b = 0; b < OptionData.MAX_CHOICES; b++)
-				twentyFiveArray[b] = new Command.Choice(dates[b], b + 1L); //dates[0] ~ dates[24] 對應到1 ~ 25
+				twentyFiveArray[b] = thirtyOneChoices[0];
 			twentyFive = Arrays.asList(twentyFiveArray); //event.replyChoices可以接受陣列 不過內部也是呼叫asList 不如事先呼叫好
 		}
 
@@ -205,7 +209,7 @@ public class AutoComplete extends ListenerAdapter
 			if (!"date".equals(focusedOption.getName())) //必須要是date
 				return;
 			String optionValue = focusedOption.getValue();
-			if (optionValue.isEmpty()) //代表沒有填值
+			if (optionValue.isEmpty() || optionValue.isBlank()) //代表沒有填值
 			{
 				event.replyChoices(twentyFive).queue(); //直接給出1 ~ 25
 				return;
@@ -217,7 +221,7 @@ public class AutoComplete extends ListenerAdapter
 			{
 				if (!dates[b].contains(optionValue)) //如果日期字串內沒有包含
 					continue; //下一個日期
-				choices.add(new Command.Choice(dates[b], b + 1L)); //給予選項 dates[0] 對應到1 依此類推
+				choices.add(thirtyOneChoices[b]); //給予選項 dates[0] 對應到1 依此類推
 				if (++choicesCount == OptionData.MAX_CHOICES) //不得超過25個
 					break;
 			}
@@ -227,12 +231,12 @@ public class AutoComplete extends ListenerAdapter
 
 	private static class ScheduleComplete extends GenericComplete
 	{
-		private List<TimerHandle.TimerEvent> scheduledEvents;
+		private List<TimerHandle.ScheduledEvent> scheduledEvents;
 		private long localLastUpdate;
 		private ScheduleComplete()
 		{
-			scheduledEvents = TimerHandle.TimerEvent.scheduledEvents();
-			localLastUpdate = TimerHandle.TimerEvent.getUpdatedTime();
+			scheduledEvents = TimerHandle.ScheduledEvent.scheduledEvents();
+			localLastUpdate = TimerHandle.ScheduledEvent.getUpdatedTime();
 		}
 
 		@Override
@@ -242,10 +246,10 @@ public class AutoComplete extends ListenerAdapter
 			if (!"name".equals(focusedOption.getName())) //必須要是name
 				return;
 
-			long lastUpdate = TimerHandle.TimerEvent.getUpdatedTime(); //上次更新的時間
+			long lastUpdate = TimerHandle.ScheduledEvent.getUpdatedTime(); //上次更新的時間
 			if (localLastUpdate != lastUpdate) //時間不對
 			{
-				scheduledEvents = TimerHandle.TimerEvent.scheduledEvents(); //立刻更新
+				scheduledEvents = TimerHandle.ScheduledEvent.scheduledEvents(); //立刻更新
 				localLastUpdate = lastUpdate; //更新時間
 			}
 
@@ -258,7 +262,7 @@ public class AutoComplete extends ListenerAdapter
 					.map(TimerHandle.TimerEvent::getName)
 					.filter(name -> name.contains(optionValue))
 					.limit(OptionData.MAX_CHOICES)
-					.map(GenericComplete::stringToChoice)
+					.map(this::stringToChoice)
 					.toList();
 			event.replyChoices(choices).queue();
 		}

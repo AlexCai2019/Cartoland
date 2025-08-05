@@ -426,9 +426,7 @@ class DatabaseHandle
 				long channelID = result.getLong(4);
 				boolean once = result.getBoolean(5);
 
-				TimerHandle.TimerEvent event = new TimerHandle.TimerEvent(hour, name, contents, channelID);
-				event.setOnce(once);
-				scheduledEvents.add(event);
+				scheduledEvents.add(TimerHandle.ScheduledEvent.create(hour, name, contents, channelID, once));
 			}
 		}
 		catch (SQLException e)
@@ -441,7 +439,7 @@ class DatabaseHandle
 
 	static void eraseScheduledEvent(int hour, String name, String contents, long channelID, boolean once)
 	{
-		String sql = "DELETE FROM scheduled_event WHERE hour=? AND name=? AND contents=? AND channel_id=?;";
+		String sql = "DELETE FROM scheduled_event WHERE hour=? AND name=? AND contents=? AND channel_id=? AND once=?;";
 
 		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
 		     PreparedStatement statement = connection.prepareStatement(sql))

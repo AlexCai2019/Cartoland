@@ -2,7 +2,6 @@ package cartoland.utilities;
 
 import cartoland.Cartoland;
 import lombok.Getter;
-import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -27,33 +26,17 @@ public final class TimerHandle
 		throw new AssertionError(IDs.YOU_SHALL_NOT_ACCESS);
 	}
 
-	private record ScheduledEvent(String contents, long channelID) implements Runnable
+	public static abstract sealed class TimerEvent permits SystemEvent, ScheduledEvent
 	{
-		@Override
-		public void run()
-		{
-			MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
-			if (channel != null) //如果找到頻道
-				channel.sendMessage(contents).queue(); //發送訊息
-		}
-	}
-
-	public static class TimerEvent implements Runnable
-	{
-		private final int hour;
+		protected final int hour;
 		@Getter
-		private final String name;
-		private final Runnable function; //執行函數 當類別為ScheduledEvent時代表是排程事件 否則是系統事件
-		@Setter
-		private boolean once = false;
+		protected final String name;
 
 		//timer event: 泛指所有定時事件
 		//scheduled event: 特指透過schedule指令新增的定時事件 又稱排程事件
+		//system event: 非透過schedule指令 而是在程式碼內寫死的定時事件
 		@SuppressWarnings({"unchecked"}) //閉嘴IntelliJ IDEA
 		private static final Set<TimerEvent>[] allTimerEvents = new LinkedHashSet[HOURS]; //用LinkedHashSet確保訊息根據schedule的順序發送
-		private static int scheduledEventsCount = 0; //scheduled event的數量
-		@Getter
-		private static long updatedTime = System.currentTimeMillis();
 		static
 		{
 			//初始化時間事件
@@ -61,61 +44,104 @@ public final class TimerHandle
 				allTimerEvents[i] = new LinkedHashSet<>();
 		}
 
-		public static List<TimerEvent> scheduledEvents()
-		{
-			if (scheduledEventsCount == 0) //如果沒有
-				return Collections.emptyList();
-
-			List<TimerEvent> events = new ArrayList<>(scheduledEventsCount); //要回傳的 正被排程的事件
-			for (Set<TimerEvent> timerEvents : allTimerEvents) //所有定時事件 包括系統事件
-				for (TimerEvent timerEvent : timerEvents)
-					if (timerEvent.function instanceof ScheduledEvent) //不可以回傳系統定時事件
-						events.add(timerEvent); //只儲存排程事件
-			return events;
-		}
-
-		public TimerEvent(int hour, String name, String contents, long channelID)
-		{
-			this(hour, name, new ScheduledEvent(contents, channelID)); //不是系統的一部份 可以被清除
-		}
-
-		private TimerEvent(int hour, String name, Runnable function)
+		protected TimerEvent(int hour, String name)
 		{
 			this.hour = hour; //執行時間
 			this.name = name; //註冊名稱
-			this.function = function; //執行函數
 		}
 
 		public void register()
 		{
 			allTimerEvents[hour].add(this); //記錄下這個小時要跑這個
-			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
-
-			if (function instanceof ScheduledEvent eventFunction) //如果是排程事件
-			{
-				scheduledEventsCount++; //數量 + 1
-				DatabaseHandle.writeScheduledEvent(hour, name, eventFunction.contents, eventFunction.channelID, once);
-			}
 		}
 
-		@Override
-		public void run()
-		{
-			function.run();
-			if (once)
-				unregister();
-		}
+		protected abstract void run();
 
 		public void unregister()
 		{
 			allTimerEvents[hour].remove(this); //不再需要跑這個
-			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
+		}
+	}
 
-			if (function instanceof ScheduledEvent eventFunction) //如果是排程事件
-			{
-				scheduledEventsCount--; //數量 - 1
-				DatabaseHandle.eraseScheduledEvent(hour, name, eventFunction.contents, eventFunction.channelID, once);
-			}
+	private static final class SystemEvent extends TimerEvent
+	{
+		private final Runnable function; //執行函數
+
+		private SystemEvent(int hour, String name, Runnable function)
+		{
+			super(hour, name);
+			this.function = function; //執行函數
+		}
+
+		protected void run()
+		{
+			function.run();
+		}
+	}
+
+	public static final class ScheduledEvent extends TimerEvent
+	{
+		private final String contents;
+		private final long channelID;
+		private final boolean once;
+
+		private static int scheduledEventsCount = 0; //scheduled event的數量
+		@Getter
+		private static long updatedTime = System.currentTimeMillis();
+
+		public static TimerEvent create(int hour, String name, String contents, long channelID, boolean once)
+		{
+			return new ScheduledEvent(hour, name, contents, channelID, once); //創造一個scheduled event
+		}
+
+		public static List<ScheduledEvent> scheduledEvents()
+		{
+			if (scheduledEventsCount == 0) //如果沒有
+				return Collections.emptyList();
+
+			List<ScheduledEvent> events = new ArrayList<>(scheduledEventsCount); //要回傳的 正被排程的事件
+			for (short hour = 0; hour < HOURS; hour++) //所有定時事件 包括系統事件
+				for (TimerEvent timerEvent : TimerEvent.allTimerEvents[hour])
+					if (timerEvent instanceof ScheduledEvent scheduledEvent) //不可以回傳系統定時事件
+						events.add(scheduledEvent); //只儲存排程事件
+			return events;
+		}
+
+		private ScheduledEvent(int hour, String name, String contents, long channelID, boolean once)
+		{
+			super(hour, name); //不是系統的一部份 可以被清除
+
+			this.contents = contents;
+			this.channelID = channelID;
+			this.once = once;
+		}
+
+		@Override
+		public void register()
+		{
+			super.register();
+			scheduledEventsCount++; //數量 + 1
+			DatabaseHandle.writeScheduledEvent(hour, name, contents, channelID, once);
+			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
+		}
+
+		@Override
+		protected void run()
+		{
+			MessageChannel channel = Cartoland.getJDA().getChannelById(MessageChannel.class, channelID); //尋找頻道
+			if (channel != null) //如果找到頻道
+				channel.sendMessage(contents).queue(); //發送訊息
+			if (once)
+				unregister();
+		}
+
+		@Override
+		public void unregister()
+		{
+			super.unregister();
+			scheduledEventsCount--; //數量 - 1
+			DatabaseHandle.eraseScheduledEvent(hour, name, contents, channelID, once);
+			updatedTime = System.currentTimeMillis(); //最後一次更新的時間
 		}
 	}
 
@@ -166,7 +192,7 @@ public final class TimerHandle
 		JDA jda = Cartoland.getJDA();
 
 		//半夜12點
-		new TimerEvent(0, "zero", () -> //和生日有關的
+		new SystemEvent(0, "zero", () -> //和生日有關的
 		{
 			LocalDate today = LocalDate.now(utc8);
 			List<Long> birthdayMembersID = DatabaseHandle.readTodayBirthday(LocalDate.of(STORE_YEAR, today.getMonthValue(), today.getDayOfMonth())); //今天生日的成員們的ID
@@ -182,7 +208,7 @@ public final class TimerHandle
 		}).register();
 
 		//凌晨3點
-		new TimerEvent(3, "three", () -> //好棒 三點了
+		new SystemEvent(3, "three", () -> //好棒 三點了
 		{
 			TextChannel undergroundChannel = jda.getTextChannelById(IDs.UNDERGROUND_CHANNEL_ID);
 			if (undergroundChannel == null) //找不到地下頻道

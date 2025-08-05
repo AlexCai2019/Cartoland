@@ -43,9 +43,10 @@ public class IntroduceCommand extends HasSubcommands
 		subcommands.put("update", event ->
 		{
 			long userID = event.getUser().getIdLong();
+			String introduction = MembersHandle.getIntroduction(userID);
 			TextInput newIntroductionInput = TextInput.create(UpdateIntroduceModal.NEW_INTRODUCTION_TEXT, JsonHandle.getString(userID, "introduce.update.new_introduction"), TextInputStyle.PARAGRAPH)
 					.setRequiredRange(0, Message.MAX_CONTENT_LENGTH)
-					.setValue(MembersHandle.getIntroduction(userID))
+					.setValue(introduction.isEmpty() || introduction.isBlank() ? null : introduction) //不可為空字串或空白字串
 					.build();
 			event.replyModal(Modal.create(IModal.UPDATE_INTRODUCE_ID, JsonHandle.getString(userID, "introduce.update.title"))
 					.addComponents(ActionRow.of(newIntroductionInput))

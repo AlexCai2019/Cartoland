@@ -20,7 +20,7 @@ public class ScheduleCommand extends HasSubcommands
 		subcommands.put(CREATE, new CreateSubCommand());
 		subcommands.put(DELETE, event ->
 		{
-			List<TimerHandle.TimerEvent> scheduledEvents = TimerHandle.TimerEvent.scheduledEvents(); //所有排程事件
+			List<TimerHandle.ScheduledEvent> scheduledEvents = TimerHandle.ScheduledEvent.scheduledEvents(); //所有排程事件
 			if (scheduledEvents.isEmpty())
 			{
 				event.reply("There's no any scheduled events!").queue();
@@ -30,11 +30,11 @@ public class ScheduleCommand extends HasSubcommands
 			String scheduledEventName = event.getOption("name", " ", OptionMapping::getAsString); //排程事件名稱
 
 			int found = 0;
-			for (TimerHandle.TimerEvent timerEvent : scheduledEvents) //走訪所有排程事件
+			for (TimerHandle.TimerEvent scheduledEvent : scheduledEvents) //走訪所有排程事件
 			{
-				if (timerEvent.getName().equals(scheduledEventName)) //名字一樣
+				if (scheduledEvent.getName().equals(scheduledEventName)) //名字一樣
 				{
-					timerEvent.unregister(); //移除事件
+					scheduledEvent.unregister(); //移除事件
 					found++; //計數 + 1 畢竟允許重名
 				}
 			}
@@ -53,7 +53,7 @@ public class ScheduleCommand extends HasSubcommands
 		});
 		subcommands.put(LIST, event ->
 		{
-			List<TimerHandle.TimerEvent> events = TimerHandle.TimerEvent.scheduledEvents(); //事件們
+			List<TimerHandle.ScheduledEvent> events = TimerHandle.ScheduledEvent.scheduledEvents(); //事件們
 			if (events.isEmpty()) //如果沒有事件名稱 必須至少回覆一個字 否則會卡在deferReply
 			{
 				event.reply("There's no scheduled messages!").setEphemeral(true).queue();
@@ -112,9 +112,7 @@ public class ScheduleCommand extends HasSubcommands
 			String name = guildChannel.getName() + '_' + time + '_' + truncate; //頻道名_時間_開頭前20個字
 			boolean once = event.getOption("once", Boolean.FALSE, OptionMapping::getAsBoolean); //是否為一次性
 
-			TimerHandle.TimerEvent timerEvent = new TimerHandle.TimerEvent(time, name, content, guildChannel.getIdLong());
-			timerEvent.setOnce(once); //設定是否為一次性
-			timerEvent.register(); //註冊
+			TimerHandle.ScheduledEvent.create(time, name, content, guildChannel.getIdLong(), once).register(); //註冊
 
 			event.reply("The bot will send \"" + truncate + ellipsis + "\" to " + guildChannel.getAsMention() + " at " + time + (once ? " once." : " everyday.")).queue();
 		}

@@ -10,11 +10,14 @@
 
 ## 必备的文件夹和文件
 为了节省效能，本机器人并没有检查必要的文件夹和文件是否存在。因此，你必须准备好以下的文件夹和文件，才能让机器人正常运作：
+- 📄`config.properties` with properties of
+  - `token`
+  - `db.url`
+  - `db.users`
+  - `db.password`
 - 📁`dms/`
 - 📁`lang/`，以及本项目的 `lang/` 文件夹内的所有 `.json` 文件。
 - 📁`logs/`
-- 📁`serialize/`，以及下列文件：
-  - 📄`unresolved_questions.ser`，从一个键为`Long`的`HashSet`序列化而来。
 
 ## 激活
 通过在终端输入以下的命令激活机器人：

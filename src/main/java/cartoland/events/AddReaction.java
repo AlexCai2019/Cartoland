@@ -2,6 +2,7 @@ package cartoland.events;
 
 import cartoland.utilities.IDs;
 import cartoland.utilities.QuestionForumHandle;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -20,16 +21,20 @@ public class AddReaction extends ListenerAdapter
 	@Override
 	public void onMessageReactionAdd(MessageReactionAddEvent event)
 	{
-		User user = event.getUser(); //按表情的使用者
-		if (user == null || user.isBot() || user.isSystem()) //是機器人或系統
+		Member member = event.getMember();
+		if (member == null) //按表情的成員
+			return;
+		User user = member.getUser();
+		if (user.isBot() || user.isSystem()) //是機器人或系統
 			return; //不用執行
 
+		Emoji emoji = event.getEmoji();
 		Emoji learned = Emoji.fromCustom("learned", IDs.LEARNED_EMOJI_ID, false); //宇宙貓貓
-		if (event.getEmoji().equals(learned))
+		if (emoji.equals(learned))
 			event.retrieveMessage().flatMap(message -> message.addReaction(learned)).queue();
 
 		//有關疑難雜症
 		if (event.getChannel() instanceof ThreadChannel thread && QuestionForumHandle.isQuestionPost(thread))
-			QuestionForumHandle.getInstance(thread).reactionEvent(event); //加表情的事件
+			event.retrieveMessage().queue(message -> QuestionForumHandle.getInstance(thread).reactionEvent(member, message, emoji)); //加表情的事件
 	}
 }

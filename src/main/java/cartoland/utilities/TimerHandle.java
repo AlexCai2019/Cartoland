@@ -166,7 +166,8 @@ public final class TimerHandle
 		if (questionsChannel == null) //找不到就算了
 			return;
 		for (ThreadChannel forumPost : questionsChannel.getThreadChannels()) //走訪論壇貼文們
-			QuestionForumHandle.getInstance(forumPost).remind(); //試著提醒
+			if (!forumPost.isArchived())
+				QuestionForumHandle.getInstance(forumPost).remind(); //試著提醒
 	}, Duration.between(LocalDateTime.now(utc8), LocalDateTime.now(utc8).withMinute(0).withSecond(0).plusHours(1L)).getSeconds(), 60 * 60, TimeUnit.SECONDS); //從下個小時開始
 
 	public static long getHoursFrom1970()

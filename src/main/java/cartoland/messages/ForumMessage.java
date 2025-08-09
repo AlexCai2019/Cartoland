@@ -32,13 +32,13 @@ public class ForumMessage implements IMessage
 	public void messageProcess(MessageReceivedEvent event)
 	{
 		long parentID = forumPost.getParentChannel().getIdLong();
+		Message message = event.getMessage();
 		if (pinFirstMessage.contains(parentID)) //是地圖論壇、作品展示或素材頻道
 		{
-			Message message = event.getMessage();
 			if (forumPost.getIdLong() == message.getIdLong()) //是第一則訊息
 				message.pin().queue(); //釘選訊息
 		}
 		else if (QuestionForumHandle.isQuestionPost(parentID)) //是疑難雜症
-			QuestionForumHandle.getInstance(forumPost).messageEvent(event); //找到handle並執行事件
+			QuestionForumHandle.getInstance(forumPost).messageEvent(message); //找到handle並執行事件
 	}
 }

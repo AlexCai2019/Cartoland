@@ -151,7 +151,7 @@ public final class CommandBlocksHandle
 				return;
 			cartoland.retrieveMemberById(userID).queue(member -> //根據userID 從創聯中找到這名成員
 			{
-				boolean hasRole = member.getRoles().contains(godOfGamblersRole);
+				boolean hasRole = member.getUnsortedRoles().contains(godOfGamblersRole);
 				if (!less && !hasRole) //大於等於GAMBLE_ROLE_MIN 且沒有身分組
 					cartoland.addRoleToMember(member, godOfGamblersRole).queue(); //給予賭神身分組
 				else if (less && hasRole) //小於GAMBLE_ROLE_MIN 且有身分組

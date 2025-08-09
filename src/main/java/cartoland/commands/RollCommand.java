@@ -60,7 +60,7 @@ public class RollCommand extends HasSubcommands
 			{
 				Member member = cartoland.retrieveMemberById(userID).complete(); //找到該名成員
 				User user = member.getUser();
-				if (user.isBot() || user.isSystem() || !member.getRoles().contains(targetRole)) //如果是機器人或系統或沒有目標身分組
+				if (user.isBot() || user.isSystem() || !member.getUnsortedRoles().contains(targetRole)) //如果是機器人或系統或沒有目標身分組
 					continue; //下一位成員
 
 				String userIDString = Long.toUnsignedString(userID); //成員ID 字串型態
@@ -77,7 +77,7 @@ public class RollCommand extends HasSubcommands
 				return;
 			}
 
-			event.getHook().sendMessage("This guild doesn't have any members!").queue();
+			event.getHook().sendMessage("This guild doesn't have any members!").setEphemeral(true).queue();
 		}
 	}
 }

@@ -70,7 +70,7 @@ public final class AnonymousHandle
 			return ReturnResult.fail("You are not a member of " + cartoland.getName() + can_t);
 		else if (member.isTimedOut()) //使用者已被禁言
 			return ReturnResult.fail("You are timed out from " + cartoland.getName() + can_t);
-		else if (!member.getRoles().contains(nsfwRole)) //使用者沒有地下身分組
+		else if (!member.getUnsortedRoles().contains(nsfwRole)) //使用者沒有地下身分組
 			return ReturnResult.fail("You don't have role " + nsfwRole.getName() + can_t);
 		else //成功
 			return ReturnResult.success(undergroundChannel); //回傳地下頻道

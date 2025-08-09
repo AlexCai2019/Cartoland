@@ -18,8 +18,6 @@
 - 📁`dms/`
 - 📁`lang/`，以及本專案的 `lang/` 資料匣仔內底的所有 `.json` 檔案。
 - 📁`logs/`
-- 📁`serialize/`，以及下列檔案：
-  - 📄`unresolved_questions.ser`，從一个值是`Long`的`HashSet`串聯化而來。
 
 ## 啟動
 透過佇終端機輸入以下的指令啟動機器人：

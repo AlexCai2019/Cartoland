@@ -10,11 +10,14 @@
 
 ## 必備的資料夾和檔案
 為咗節省效能，本機器人並唔會特別檢查你嘅文件夾同文件是否符合條件。因此，你必須準備好以下嘅文件夾同文件，先可以令機器人正常運作：
+- 📄`config.properties` with properties of
+  - `token`
+  - `db.url`
+  - `db.users`
+  - `db.password`
 - 📁`dms/`
 - 📁`lang/`，以及本專案的 `lang/` 文件夾內的所有 `.json` 文件。
 - 📁`logs/`
-- 📁`serialize/` with these following files:
-  - 📄`unresolved_questions.ser` serialized from a `HashSet` which use `Long` as value.
 
 ## 啟動
 透過在終端機輸入以下的指令啟動機器人：

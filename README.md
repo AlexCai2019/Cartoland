@@ -18,8 +18,6 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
 - 📁`dms/`
 - 📁`lang/` with all `.json` files found in the `lang/` folder of this repository.
 - 📁`logs/`
-- 📁`serialize/` with these following files:
-  - 📄`unresolved_questions.ser` serialized from a `HashSet` which use `Long` as value.
 
 ## Launching
 Start the bot by running the following command in your terminal:

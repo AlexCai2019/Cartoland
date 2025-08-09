@@ -457,4 +457,39 @@ class DatabaseHandle
 			logger.error("刪除scheduled_event時發生問題！", e);
 		}
 	}
+
+	static void addUnresolvedQuestion(long forumPostID)
+	{
+		String sql = "INSERT IGNORE INTO unresolved (channel_id) VALUES (?);";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, forumPostID);
+
+			statement.executeUpdate(); //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("寫入unresolved時發生問題！", e);
+		}
+	}
+
+	static boolean removeUnresolvedQuestion(long forumPostID)
+	{
+		String sql = "DELETE FROM unresolved WHERE channel_id=?;";
+
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+		     PreparedStatement statement = connection.prepareStatement(sql))
+		{
+			statement.setLong(1, forumPostID);
+
+			return statement.executeUpdate() > 0; //執行
+		}
+		catch (SQLException e)
+		{
+			logger.error("刪除unresolved時發生問題！", e);
+			return false;
+		}
+	}
 }

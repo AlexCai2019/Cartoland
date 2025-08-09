@@ -2,10 +2,10 @@ package cartoland.events;
 
 import cartoland.utilities.FileHandle;
 import cartoland.utilities.TimerHandle;
+import lombok.NonNull;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class BotOnlineOffline extends ListenerAdapter
 	 * @author Alex Cai
 	 */
 	@Override
-	public void onReady(@NotNull ReadyEvent event)
+	public void onReady(@NonNull ReadyEvent event)
 	{
 		TimerHandle.startTimer();
 
@@ -46,7 +46,7 @@ public class BotOnlineOffline extends ListenerAdapter
 	 * @author Alex Cai
 	 */
 	@Override
-	public void onShutdown(@NotNull ShutdownEvent event)
+	public void onShutdown(@NonNull ShutdownEvent event)
 	{
 		FileHandle.serialize(); //所有有註冊的物件
 

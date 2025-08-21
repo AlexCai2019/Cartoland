@@ -23,12 +23,17 @@ public class EditMessage extends ListenerAdapter
 		if (event.isFromGuild()) //不是私訊
 			return; //結束
 
+		User author = event.getAuthor();
+		if (author.isBot() || author.isSystem())
+			return;
+
 		long undergroundMessageID = AnonymousHandle.getConnection(event.getMessageIdLong()); //查看有沒有記錄到這則訊息
 		if (undergroundMessageID == AnonymousHandle.INVALID_CONNECTION) //沒有
 			return; //結束
 
-		User author = event.getAuthor();
 		Message dm = event.getMessage(); //私訊
+		if (!dm.isEdited())
+			return; //不處理沒編輯過的訊息
 		ReturnResult<TextChannel> undergroundChannel = AnonymousHandle.checkMemberValid(author.getIdLong());
 		if (!undergroundChannel.isSuccess()) //有錯誤訊息
 		{

@@ -15,7 +15,6 @@ For performance reasons, this bot won't verify if all the necessary paths and fi
   - `db.url`
   - `db.users`
   - `db.password`
-- 📁`dms/`
 - 📁`lang/` with all `.json` files found in the `lang/` folder of this repository.
 - 📁`logs/`
 

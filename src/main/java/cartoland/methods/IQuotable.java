@@ -18,11 +18,11 @@ public interface IQuotable
 		String messageContent = message.getContentRaw();
 		List<MessageEmbed> embeds = new ArrayList<>(); //要被送出的所有embed們
 		EmbedBuilder messageEmbed = new EmbedBuilder()
-				.setTitle(messageTitle, messageLink) //標題是訊息發送者的名字 連結是訊息的連結
-				.setAuthor(author.getName(), null, author.getEffectiveAvatarUrl()) //底部是發送者的Discord名稱和頭像
+				.setTitle(messageTitle, "https://discord.com/users/" + author.getId()) //標題是訊息發送者的名字 連結是訊息的連結
+				.setAuthor(author.getName(), "https://discord.com/users/" + author.getId(), author.getEffectiveAvatarUrl()) //底部是發送者的Discord名稱和頭像
 				.appendDescription(messageContent.length() <= MessageEmbed.DESCRIPTION_MAX_LENGTH ? messageContent : messageContent.substring(0, MessageEmbed.DESCRIPTION_MAX_LENGTH)) //訊息的內容
 				.setTimestamp(message.getTimeCreated()) //連結訊息的發送時間
-				.setFooter(message.getChannel().getName(), null); //訊息的發送頻道
+				.setFooter(message.getChannel().getName(), message.getGuild().getIconUrl()); //訊息的發送頻道
 
 		List<Message.Attachment> attachments = message.getAttachments(); //訊息的附件
 

@@ -2,11 +2,12 @@ package cartoland.commands;
 
 import cartoland.buttons.IButton;
 import cartoland.utilities.*;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.Random;
 
@@ -181,9 +182,11 @@ public class LotteryCommand extends HasSubcommands
 		public void commandProcess(SlashCommandInteractionEvent event)
 		{
 			int inputPage = event.getOption("page", 1, OptionMapping::getAsInt);
+			Button previous = Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️"));
+			Button next = Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("▶️"));
+
 			event.reply(CommandBlocksHandle.rankingString(event.getUser().getIdLong(), inputPage))
-					.addActionRow(Button.primary(IButton.CHANGE_PAGE + (inputPage - 1), Emoji.fromUnicode("◀️")),
-							Button.primary(IButton.CHANGE_PAGE + (inputPage + 1), Emoji.fromUnicode("▶️")))
+					.addComponents(ActionRow.of(previous, next))
 					.queue();
 		}
 	}

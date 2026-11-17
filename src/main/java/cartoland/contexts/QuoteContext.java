@@ -2,10 +2,10 @@ package cartoland.contexts;
 
 import cartoland.methods.IQuotable;
 import cartoland.utilities.JsonHandle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class QuoteContext implements IContext, IQuotable
 {

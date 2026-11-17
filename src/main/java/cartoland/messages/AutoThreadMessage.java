@@ -4,11 +4,12 @@ import cartoland.buttons.IButton;
 import cartoland.utilities.IDs;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.TimerHandle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public class AutoThreadMessage implements IMessage
 		event.getMessage()
 			.createThreadChannel(name + '(' + TimerHandle.getDateString() + ')')
 			.flatMap(thread -> thread.sendMessage(JsonHandle.getString(userID, "showcase_thread.creation", name))
-									.addActionRow(archiveButton, renameButton))
+									.addComponents(ActionRow.of(archiveButton, renameButton)))
 			.flatMap(Message::pin)
 			.queue();
 	}

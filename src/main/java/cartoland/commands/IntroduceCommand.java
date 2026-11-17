@@ -4,13 +4,13 @@ import cartoland.modals.IModal;
 import cartoland.modals.UpdateIntroduceModal;
 import cartoland.utilities.JsonHandle;
 import cartoland.utilities.MembersHandle;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 
 /**
  * {@code IntroduceCommand} is an execution when a user uses /introduce command. This class implements
@@ -44,12 +44,12 @@ public class IntroduceCommand extends HasSubcommands
 		{
 			long userID = event.getUser().getIdLong();
 			String introduction = MembersHandle.getIntroduction(userID);
-			TextInput newIntroductionInput = TextInput.create(UpdateIntroduceModal.NEW_INTRODUCTION_TEXT, JsonHandle.getString(userID, "introduce.update.new_introduction"), TextInputStyle.PARAGRAPH)
+			TextInput newIntroductionInput = TextInput.create(UpdateIntroduceModal.NEW_INTRODUCTION_TEXT, TextInputStyle.PARAGRAPH)
 					.setRequiredRange(0, Message.MAX_CONTENT_LENGTH)
-					.setValue(introduction.isEmpty() || introduction.isBlank() ? null : introduction) //不可為空字串或空白字串
+					.setValue(introduction.isBlank() ? null : introduction) //不可為空字串或空白字串
 					.build();
 			event.replyModal(Modal.create(IModal.UPDATE_INTRODUCE_ID, JsonHandle.getString(userID, "introduce.update.title"))
-					.addComponents(ActionRow.of(newIntroductionInput))
+					.addComponents(Label.of(JsonHandle.getString(userID, "introduce.update.new_introduction"), newIntroductionInput))
 					.build()).queue(); //如果Modal可以事先建好就好了
 		});
 		subcommands.put("delete", event ->
